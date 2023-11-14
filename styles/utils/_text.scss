@@ -1,0 +1,33 @@
+@import '../grid/grid';
+
+@mixin text-align($breakpoint-prefix: '') {
+  /* stylelint-disable */
+  $prefix: $breakpoint-prefix;
+
+  @if $breakpoint-prefix != '' {
+    $prefix: '-' + $breakpoint-prefix;
+  }
+
+  .text-center#{$prefix} {
+    text-align: center;
+  }
+
+  .text-left#{$prefix} {
+    text-align: left;
+  }
+
+  .text-right#{$prefix} {
+    text-align: right;
+  }
+  /* stylelint-enable */
+}
+
+@include text-align;
+
+@if $use-responsive-text-align {
+  @each $prefix in $breakpoint-up-prefixes {
+    @media #{map-get($breakpoint-up-prefixes-map, $prefix)} {
+      @include text-align($prefix);
+    }
+  }
+}
