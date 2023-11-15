@@ -1,0 +1,79 @@
+{
+  "extends": ["stylelint-config-standard", "stylelint-prettier/recommended"],
+  "plugins": ["stylelint-prettier", "stylelint-scss", "stylelint-order"],
+  "ignoreAtRules": ["function", "if", "else", "mixin", "include"],
+  "rules": {
+    "prettier/prettier": true,
+    "indentation": 2,
+    "max-nesting-depth": 4,
+    "declaration-colon-newline-after": null,
+    "block-closing-brace-newline-after": [
+      "always",
+      {
+        "ignoreAtRules": ["if", "else"]
+      }
+    ],
+    "order/order": [
+      "dollar-variables",
+      "custom-properties",
+      "at-variables",
+      {
+        "type": "at-rule",
+        "name": "import"
+      },
+      {
+        "type": "at-rule",
+        "name": "include"
+      },
+      {
+        "type": "at-rule",
+        "name": "extend"
+      },
+      {
+        "type": "at-rule",
+        "name": "mixin"
+      },
+      {
+        "type": "at-rule",
+        "name": "for"
+      },
+      "declarations",
+      "rules",
+      "at-rules",
+      "less-mixins"
+    ],
+    "at-rule-empty-line-before": [
+      "always",
+      {
+        "except": [
+          "after-same-name",
+          "blockless-after-same-name-blockless",
+          "first-nested"
+        ],
+        "ignoreAtRules": ["if", "else", "include"]
+      }
+    ],
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": [
+          "extend",
+          "at-root",
+          "debug",
+          "warn",
+          "error",
+          "if",
+          "else",
+          "for",
+          "each",
+          "while",
+          "mixin",
+          "include",
+          "content",
+          "return",
+          "function"
+        ]
+      }
+    ]
+  }
+}
