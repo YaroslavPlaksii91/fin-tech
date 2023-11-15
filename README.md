@@ -25,20 +25,6 @@ The underwriting platform is a cloud solution that helps to automate and configu
 
     Your project will be available at [http://localhost:3000](http://localhost:3000).
 
-## Project Structure
-
-- `pages/`: Location for Next.js pages.
-- `components/`
-- `constants/`
-- `hooks/`
-- `utils/`
-
-## Technologies Used
-
-- [Next.js]
-- [TypeScript]
-- [Material UI](https://mui.com/)
-
 ## Additional Commands
 
 - `npm run build`: Builds the project for production.
@@ -46,10 +32,6 @@ The underwriting platform is a cloud solution that helps to automate and configu
 - `npm run dev`: Starts the production server (after running `npm run build`).
 
 - `npm run lint`: Uses ESLint to analyze and fix syntax and style errors in JavaScript and JSX files.
-
-- `npm run stylelint`: Uses Stylelint to check styles in SCSS files for compliance with coding standards.
-
-- `npm run dep-list`: Shows a list of installed dependencies, including only production dependencies, providing extended information.
 
 - `npm run prepare`: Uses Husky to initialize hooks in your project.
 
