@@ -38,6 +38,8 @@ function AuthMock(props: GoogleAuthProps) {
     }
   };
 
+  // const fromPage: string = location?.state?.from?.pathname || '/';
+
   return (
     <Button onClick={() => void login(mockUser.key)} variant="contained">
       Log in
