@@ -25,13 +25,13 @@ const Dropdown: React.FC<Props> = ({ options, label }) => {
     <div>
       <StyledButton
         size="medium"
-        endIcon={<StyledKeyboardArrowDownIcon isOpen={open} />}
+        endIcon={<StyledKeyboardArrowDownIcon open={open} />}
         id="basic-button"
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleOpenMenu}
-        isOpen={open}
+        open={open}
       >
         {label}
       </StyledButton>

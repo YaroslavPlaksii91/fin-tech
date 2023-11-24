@@ -11,23 +11,23 @@ export const StyledAppBar = styled(MuiAppBar)(({ theme }) => ({
 }));
 
 export const StyledKeyboardArrowDownIcon = styled(KeyboardArrowDownIcon)<
-  SvgIconProps & { isOpen: boolean }
->(({ isOpen }) => ({
+  SvgIconProps & { open: boolean }
+>(({ open }) => ({
   transform: 'rotate(0deg)',
   transition: 'transform 0.3s ease',
-  ...(isOpen && {
+  ...(open && {
     transform: 'rotate(180deg)'
   })
 }));
 
-export const StyledButton = styled(Button)<ButtonProps & { isOpen: boolean }>(
-  ({ theme, isOpen }) => ({
+export const StyledButton = styled(Button)<ButtonProps & { open: boolean }>(
+  ({ theme, open }) => ({
     color: theme.palette.gray,
     background: 'none',
     '&:hover': {
       backgroundColor: 'transparent'
     },
-    ...(isOpen && {
+    ...(open && {
       backgroundColor: theme.palette.gray,
       color: theme.palette.secondary.contrastText
     })

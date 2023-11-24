@@ -3,8 +3,9 @@ import { createBrowserRouter } from 'react-router-dom';
 import PrivateRoutes from '@components/Router/PrivateRoutes';
 import PrivateAuthRoute from '@components/Router/PrivateAuthRoute';
 import Login from '@pages/Login';
-import Layout from '@components/Layout/Layout';
+import Layout from '@components/Layouts/Layout';
 import routes from '@constants/routes';
+import Flows from '@pages/Flows';
 
 export const router = createBrowserRouter([
   {
@@ -22,7 +23,7 @@ export const router = createBrowserRouter([
         path: routes.underwriting.flowList,
         element: (
           <PrivateRoutes>
-            <div>Flow list page</div>
+            <Flows />
           </PrivateRoutes>
         )
       },

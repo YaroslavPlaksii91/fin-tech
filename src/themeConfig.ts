@@ -7,7 +7,8 @@ interface CustomPalette {
 
 export const palette = {
   lightGray: '#F8F9FB',
-  gray: '#5F6D7E'
+  gray: '#5F6D7E',
+  dark: '#2E3646'
 };
 
 declare module '@mui/material/styles' {
@@ -54,6 +55,23 @@ export const theme = createTheme({
   },
 
   typography: {
-    fontFamily: 'Inter, sans-serif'
+    fontFamily: 'Inter, sans-serif',
+    h1: {
+      fontSize: '28px',
+      lineHeight: '24px',
+      fontWeight: 600,
+      color: palette.dark
+    },
+    h5: {
+      fontSize: '16px',
+      lineHeight: '24px',
+      fontWeight: 600,
+      color: palette.dark
+    },
+    subtitle1: {
+      fontSize: '16px',
+      lineHeight: '24px',
+      fontWeight: 500
+    }
   }
 });
