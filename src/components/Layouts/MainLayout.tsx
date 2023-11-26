@@ -1,4 +1,4 @@
-import { Box, Divider, Typography } from '@mui/material';
+import { Box, Divider, Stack, Typography } from '@mui/material';
 import React from 'react';
 
 import {
@@ -27,12 +27,16 @@ const SideNavContainer: React.FC<SideNavContainerProps> = ({
   title,
   footer
 }) => (
-  <StyledSideNavContainer component="nav">
-    <Typography variant="h5">{title}</Typography>
+  <StyledSideNavContainer borderTop="3px" component="nav">
+    <Typography pl={2} pr={2} variant="h5">
+      {title}
+    </Typography>
     {children}
     <StyledSideNavFooter component="footer">
       <Divider />
-      {footer}
+      <Stack pt={2} pr={2} pl={2}>
+        {footer}
+      </Stack>
     </StyledSideNavFooter>
   </StyledSideNavContainer>
 );

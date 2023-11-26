@@ -1,8 +1,8 @@
 import React from 'react';
 import { MenuItem, ListItemIcon } from '@mui/material';
-import HexagonOutlinedIcon from '@mui/icons-material/HexagonOutlined';
 
 import Link from '../Link/Link';
+import { HexagonOutlinedIcon } from '../Icons';
 
 import { StyledMenu } from './styled';
 
@@ -26,7 +26,7 @@ const Menu: React.FC<MenuProps> = ({ options, anchorEl, handleCloseMenu }) => {
       {options.map((option, index) => (
         <MenuItem key={index} onClick={() => handleClick(option.cb)}>
           <ListItemIcon>
-            <HexagonOutlinedIcon sx={{ fontSize: ' 16px' }} />
+            <HexagonOutlinedIcon size="16px" />
           </ListItemIcon>
           <Link path={option.path} label={option.label} />
         </MenuItem>

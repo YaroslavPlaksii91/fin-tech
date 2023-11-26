@@ -29,7 +29,7 @@ export const StyledButton = styled(Button)<ButtonProps & { open: boolean }>(
     },
     ...(open && {
       backgroundColor: theme.palette.gray,
-      color: theme.palette.secondary.contrastText
+      color: theme.palette.primary.contrastText
     })
   })
 );

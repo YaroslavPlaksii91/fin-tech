@@ -24,7 +24,6 @@ const Dropdown: React.FC<Props> = ({ options, label }) => {
   return (
     <div>
       <StyledButton
-        size="medium"
         endIcon={<StyledKeyboardArrowDownIcon open={open} />}
         id="basic-button"
         aria-controls={open ? 'basic-menu' : undefined}

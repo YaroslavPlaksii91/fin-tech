@@ -8,7 +8,9 @@ interface CustomPalette {
 export const palette = {
   lightGray: '#F8F9FB',
   gray: '#5F6D7E',
-  dark: '#2E3646'
+  dark: '#2E3646',
+  primary: '#2E3646',
+  secondary: '#E6E9EC'
 };
 
 declare module '@mui/material/styles' {
@@ -19,6 +21,16 @@ declare module '@mui/material/styles' {
 export const theme = createTheme({
   palette: {
     ...palette,
+    text: {
+      primary: palette.gray
+    },
+    primary: {
+      main: palette.primary
+    },
+    secondary: {
+      main: palette.secondary,
+      contrastText: palette.gray
+    },
     background: {
       paper: '#F8F9FB',
       default: '#fff'
@@ -26,6 +38,25 @@ export const theme = createTheme({
     divider: '#D1D9E2'
   },
   components: {
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          fontWeight: '500'
+        }
+      }
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        input: {}
+      }
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: '8px'
+        }
+      }
+    },
     MuiButton: {
       styleOverrides: {
         root: {
@@ -51,9 +82,42 @@ export const theme = createTheme({
           padding: '14px 0'
         }
       }
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          minWidth: '464px',
+          boxShadow: 'none',
+          borderRadius: '12px'
+        }
+      }
+    },
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: {
+          padding: '24px 24px 16px 24px',
+          color: palette.dark,
+          fontWeight: '600',
+          fontSize: '28px',
+          lineHeight: '38px'
+        }
+      }
+    },
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          padding: '0 24px 24px 24px'
+        }
+      }
+    },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: {
+          padding: '0px 24px 24px 24px'
+        }
+      }
     }
   },
-
   typography: {
     fontFamily: 'Inter, sans-serif',
     h1: {
@@ -72,6 +136,16 @@ export const theme = createTheme({
       fontSize: '16px',
       lineHeight: '24px',
       fontWeight: 500
+    },
+    body1: {
+      fontSize: '16px',
+      lineHeight: '24px',
+      fontWeight: 400
+    },
+    body2: {
+      fontSize: '14px',
+      lineHeight: '24px',
+      fontWeight: 400
     }
   }
 });

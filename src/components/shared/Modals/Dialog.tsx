@@ -33,10 +33,21 @@ const Dialog: React.FC<DialogProps> = ({
   <MuiDialog open={open} onClose={onClose}>
     <DialogTitle>{title}</DialogTitle>
     <DialogContent>{children}</DialogContent>
-    <DialogActions>
-      {displayedCancelBtn && <Button onClick={onClose}>{cancelText}</Button>}
-      {displayConfirmBtn && <Button onClick={onConfirm}>{confirmText}</Button>}
-    </DialogActions>
+    {displayedCancelBtn ||
+      (displayConfirmBtn && (
+        <DialogActions>
+          {displayedCancelBtn && (
+            <Button variant="contained" color="secondary" onClick={onClose}>
+              {cancelText}
+            </Button>
+          )}
+          {displayConfirmBtn && (
+            <Button variant="contained" color="primary" onClick={onConfirm}>
+              {confirmText}
+            </Button>
+          )}
+        </DialogActions>
+      ))}
   </MuiDialog>
 );
 export default Dialog;

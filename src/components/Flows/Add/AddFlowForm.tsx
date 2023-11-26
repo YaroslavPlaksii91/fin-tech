@@ -1,7 +1,7 @@
 // TODO fix this error
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState } from 'react';
-import { Box, Button } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -9,6 +9,7 @@ import validationSchema from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
+import { AddIcon } from '@components/shared/Icons';
 
 interface FormData {
   name: string;
@@ -37,7 +38,13 @@ export const AddFlow: React.FC = () => {
 
   return (
     <>
-      <Button onClick={handleOpenModal} variant="contained">
+      <Button
+        onClick={handleOpenModal}
+        fullWidth
+        color="primary"
+        variant="contained"
+        endIcon={<AddIcon />}
+      >
         Add new flow
       </Button>
       <Dialog
@@ -47,11 +54,25 @@ export const AddFlow: React.FC = () => {
         displayedCancelBtn={false}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
-          <InputText name="name" control={control} label="name" />
-          <Box>
-            <Button onClick={handleCloseModal}>Cancel</Button>
-            <Button type="submit">Confirm</Button>
-          </Box>
+          <InputText
+            fullWidth
+            name="name"
+            control={control}
+            label="Name"
+            placeholder="Enter name"
+          />
+          <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleCloseModal}
+            >
+              Cancel
+            </Button>
+            <Button variant="contained" color="primary" type="submit">
+              Confirm
+            </Button>
+          </Stack>
         </form>
       </Dialog>
     </>
