@@ -6,8 +6,8 @@ import {
   SideNavContainer,
   MainContainer
 } from '@components/Layouts/MainLayout';
-import { AddFlow } from '@components/Flows/Add/AddFlowForm';
-import FlowChartNew from '@components/Flows/FlowChart/FlowChartNew';
+import { AddFlow } from '@components/FlowManagment/Add/AddFlowForm';
+import FlowChartNew from '@components/FlowManagment/FlowChart/FlowChartNew';
 
 export default function Flows() {
   const [flowList, setFlowList] = useState([

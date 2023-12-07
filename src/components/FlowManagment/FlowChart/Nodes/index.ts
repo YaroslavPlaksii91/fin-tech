@@ -9,5 +9,5 @@ export const nodeTypes: NodeTypes = {
   end: Node.EndNode,
   test: Node.Calculation,
   [ObjectType.CALCULATION]: Node.Calculation,
-  [ObjectType.CASE]: Node.Condition
+  [ObjectType.CONDITION]: Node.Condition
 };

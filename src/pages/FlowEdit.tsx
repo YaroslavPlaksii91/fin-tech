@@ -2,16 +2,19 @@ import { useState, useEffect } from 'react';
 import { Node, Edge } from 'reactflow';
 import { Button } from '@mui/material';
 
-import { initialEdges, initialNodes } from '../components/Flows/FlowChart/data';
+import {
+  initialEdges,
+  initialNodes
+} from '../components/FlowManagment/FlowChart/data';
 
 import {
   LayoutContainer,
   SideNavContainer,
   MainContainer
 } from '@components/Layouts/MainLayout';
-import { getUpdatedElementsAfterNodeAddition } from '@components/Flows/FlowChart/utils/workflowElementsUtils';
-import FlowChartNew from '@components/Flows/FlowChart/FlowChartNew';
-import { ObjectType } from '@components/Flows/FlowChart/types';
+import { getUpdatedElementsAfterNodeAddition } from '@components/FlowManagment/FlowChart/utils/workflowElementsUtils';
+import FlowChartNew from '@components/FlowManagment/FlowChart/FlowChartNew';
+import { ObjectType } from '@components/FlowManagment/FlowChart/types';
 
 export default function FlowEdit() {
   const [elements, setElements] = useState<Array<Node | Edge>>([]);

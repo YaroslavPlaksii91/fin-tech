@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Node, Edge } from 'reactflow';
+import _ from 'lodash';
 
 import { ObjectType } from '../types';
 

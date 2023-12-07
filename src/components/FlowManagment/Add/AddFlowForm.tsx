@@ -1,5 +1,3 @@
-// TODO fix this error
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState } from 'react';
 import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -16,6 +14,9 @@ interface FormData {
   name: string;
 }
 
+// TODO: mock request
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export const AddFlow: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { handleSubmit, reset, control } = useForm<FormData>({
@@ -25,9 +26,13 @@ export const AddFlow: React.FC = () => {
     }
   });
 
-  const onSubmit: SubmitHandler<FormData> = (data: FormData) => {
-    Logger.info('data', data);
-    handleCloseModal();
+  const onSubmit: SubmitHandler<FormData> = async (data): Promise<void> => {
+    try {
+      await sleep(2000);
+      Logger.info(data);
+    } catch (error) {
+      Logger.error(error);
+    }
   };
 
   const handleOpenModal = () => {
@@ -55,7 +60,7 @@ export const AddFlow: React.FC = () => {
         displayConfirmBtn={false}
         displayedCancelBtn={false}
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={() => void handleSubmit(onSubmit)}>
           <InputText
             fullWidth
             name="name"

@@ -5,7 +5,7 @@ import {
   getSmoothStepPath
 } from 'reactflow';
 
-import { EdgeObjectMenu } from '../AddButton/EdgeObjectMenu';
+import { ObjectCreationMenu } from '../ObjectCreationMenu/ObjectCreationMenu';
 
 export function CustomEdge({
   id,
@@ -43,7 +43,7 @@ export function CustomEdge({
           className="nodrag nopan"
         >
           {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
-          <EdgeObjectMenu id={id} data={data} />
+          <ObjectCreationMenu id={id} data={data} />
         </div>
       </EdgeLabelRenderer>
     </>

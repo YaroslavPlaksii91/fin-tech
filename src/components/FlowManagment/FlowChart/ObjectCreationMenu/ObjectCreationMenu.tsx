@@ -7,10 +7,10 @@ import { StyledRhombButton } from './styled';
 import { AddIcon } from '@components/shared/Icons';
 import Menu from '@components/shared/Menu/Menu';
 
-interface EdgeObjectMenuProps {
+interface ObjectCreationMenuProps {
   id: string;
   data: {
-    onAddNodeCallback: ({ id, type }: { id: string; type: string }) => void;
+    onAddNodeCallback: ({ id, type }: { id: string; type: ObjectType }) => void;
   };
 }
 
@@ -19,7 +19,10 @@ const options = [
   { label: 'Condition', dataKey: ObjectType.CONDITION }
 ];
 
-export const EdgeObjectMenu: React.FC<EdgeObjectMenuProps> = ({ data, id }) => {
+export const ObjectCreationMenu: React.FC<ObjectCreationMenuProps> = ({
+  data,
+  id
+}) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -30,7 +33,7 @@ export const EdgeObjectMenu: React.FC<EdgeObjectMenuProps> = ({ data, id }) => {
     if (key) {
       data &&
         data.onAddNodeCallback &&
-        data.onAddNodeCallback({ id, type: key });
+        data.onAddNodeCallback({ id, type: key as ObjectType });
     }
     setAnchorEl(null);
   };
