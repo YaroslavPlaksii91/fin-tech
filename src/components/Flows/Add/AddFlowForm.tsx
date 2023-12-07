@@ -10,6 +10,7 @@ import validationSchema from './validationSchema';
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
 import { AddIcon } from '@components/shared/Icons';
+import Logger from '@utils/logger';
 
 interface FormData {
   name: string;
@@ -24,7 +25,8 @@ export const AddFlow: React.FC = () => {
     }
   });
 
-  const onSubmit: SubmitHandler<FormData> = () => {
+  const onSubmit: SubmitHandler<FormData> = (data: FormData) => {
+    Logger.info('data', data);
     handleCloseModal();
   };
 

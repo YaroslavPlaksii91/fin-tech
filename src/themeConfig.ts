@@ -2,12 +2,14 @@ import { createTheme } from '@mui/material/styles';
 
 interface CustomPalette {
   lightGray: string;
+  grayLine: string;
   gray: string;
 }
 
 export const palette = {
   lightGray: '#F8F9FB',
   gray: '#5F6D7E',
+  grayLine: '#8FA5BE',
   dark: '#2E3646',
   primary: '#2E3646',
   secondary: '#E6E9EC'
@@ -126,6 +128,12 @@ export const theme = createTheme({
       fontWeight: 600,
       color: palette.dark
     },
+    h2: {
+      fontSize: '28px',
+      lineHeight: '38px',
+      fontWeight: 600,
+      color: palette.dark
+    },
     h5: {
       fontSize: '16px',
       lineHeight: '24px',
@@ -144,8 +152,13 @@ export const theme = createTheme({
     },
     body2: {
       fontSize: '14px',
-      lineHeight: '24px',
+      lineHeight: '22px',
       fontWeight: 400
+    },
+    caption: {
+      fontSize: '12px',
+      lineHeight: '15px',
+      fontWeight: 500
     }
   }
 });

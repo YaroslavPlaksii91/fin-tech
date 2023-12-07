@@ -8,27 +8,52 @@ import { StyledMenu } from './styled';
 
 interface MenuProps {
   anchorEl: HTMLElement | null;
-  handleCloseMenu: () => void;
-  options: { cb?: () => void; path: string; label: string }[];
+  handleCloseMenu: (key?: string) => void;
+  options: { label: string; dataKey?: string; path?: string }[];
+  anchorPositionTop?: boolean;
 }
 
-const Menu: React.FC<MenuProps> = ({ options, anchorEl, handleCloseMenu }) => {
-  const handleClick = (cb?: () => void) => {
-    cb && cb();
-    handleCloseMenu();
+const Menu: React.FC<MenuProps> = ({
+  options,
+  anchorEl,
+  handleCloseMenu,
+  anchorPositionTop = false
+}) => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    handleCloseMenu(event.currentTarget.dataset.key);
   };
+
+  const anchorHorizontal = anchorPositionTop ? 'center' : 'left';
+
   return (
     <StyledMenu
+      anchorPosition={{ top: 500, left: 0 }}
+      anchorOrigin={{
+        vertical: anchorPositionTop ? 'top' : 'bottom',
+        horizontal: anchorHorizontal
+      }}
+      transformOrigin={{
+        vertical: anchorPositionTop ? 'bottom' : 'top',
+        horizontal: anchorHorizontal
+      }}
       anchorEl={anchorEl}
       open={Boolean(anchorEl)}
-      onClose={handleCloseMenu}
+      onClose={() => handleCloseMenu()}
     >
       {options.map((option, index) => (
-        <MenuItem key={index} onClick={() => handleClick(option.cb)}>
+        <MenuItem
+          key={index}
+          data-key={option?.dataKey ? option.dataKey : option.label}
+          onClick={(event) => handleClick(event)}
+        >
           <ListItemIcon>
             <HexagonOutlinedIcon size="16px" />
           </ListItemIcon>
-          <Link path={option.path} label={option.label} />
+          {option?.path ? (
+            <Link path={option.path} label={option.label} />
+          ) : (
+            option.label
+          )}
         </MenuItem>
       ))}
     </StyledMenu>

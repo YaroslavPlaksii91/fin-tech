@@ -6,6 +6,8 @@ import Login from '@pages/Login';
 import Layout from '@components/Layouts/Layout';
 import routes from '@constants/routes';
 import Flows from '@pages/Flows';
+import FlowDetails from '@pages/FlowDetails';
+import FlowEdit from '@pages/FlowEdit';
 
 export const router = createBrowserRouter([
   {
@@ -20,10 +22,26 @@ export const router = createBrowserRouter([
         )
       },
       {
-        path: routes.underwriting.flowList,
+        path: `${routes.underwriting.flowList}/:id?`,
         element: (
           <PrivateRoutes>
             <Flows />
+          </PrivateRoutes>
+        )
+      },
+      {
+        path: `${routes.underwriting.flowList}/details/:id`,
+        element: (
+          <PrivateRoutes>
+            <FlowDetails />
+          </PrivateRoutes>
+        )
+      },
+      {
+        path: `${routes.underwriting.flowList}/edit/:id`,
+        element: (
+          <PrivateRoutes>
+            <FlowEdit />
           </PrivateRoutes>
         )
       },

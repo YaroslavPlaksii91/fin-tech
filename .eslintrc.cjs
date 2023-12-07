@@ -49,6 +49,7 @@ module.exports = {
     'import/order': ['error', { 'newlines-between': 'always' }],
     'react/jsx-curly-brace-presence': 'error',
     'prettier/prettier': ['error', { endOfLine: 'auto' }],
-    '@typescript-eslint/no-floating-promises': ['error']
+    '@typescript-eslint/no-floating-promises': ['error'],
+    'react/prop-types': 'off'
   }
 };
