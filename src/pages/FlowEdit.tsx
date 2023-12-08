@@ -59,7 +59,7 @@ export default function FlowEdit() {
         Object list
       </SideNavContainer>
       <MainContainer>
-        <FlowChartNew elements={elements} />
+        <FlowChartNew isEditMode={true} elements={elements} />
       </MainContainer>
     </LayoutContainer>
   );

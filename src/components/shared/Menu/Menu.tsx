@@ -19,7 +19,7 @@ const Menu: React.FC<MenuProps> = ({
   handleCloseMenu,
   anchorPositionTop = false
 }) => {
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     handleCloseMenu(event.currentTarget.dataset.key);
   };
 

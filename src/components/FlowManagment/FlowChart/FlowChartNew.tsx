@@ -11,8 +11,7 @@ import ReactFlow, {
   Viewport,
   ConnectionLineType,
   ReactFlowProvider,
-  ReactFlowInstance,
-  isNode
+  ReactFlowInstance
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
@@ -21,20 +20,27 @@ import { nodeTypes } from './Nodes';
 import { edgeTypes } from './Edges';
 import DagreNodePositioning from './Nodes/DagreNodePositioning';
 import ControlPanel from './ContolPanel/ControlPanel';
+import { getEdges, getNodes } from './utils/workflowElementsUtils';
 
 const viewport: Viewport = { x: 200, y: 300, zoom: 1 };
 
 interface FlowChartViewProps {
-  elements: Array<Node | Edge>;
+  elements: (Node | Edge)[];
+  isEditMode?: boolean;
 }
 
-const FlowChartNew: React.FC<FlowChartViewProps> = ({ elements }) => {
+const FlowChartNew: React.FC<FlowChartViewProps> = ({
+  elements,
+  isEditMode = false
+}) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>(
-    elements.filter<Node>((el: Node) => isNode(el))
+    getNodes(elements)
   );
+
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>(
-    elements.filter((el) => !isNode(el))
+    getEdges(elements)
   );
+
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
 
   const onConnect: OnConnect = useCallback(
@@ -43,8 +49,8 @@ const FlowChartNew: React.FC<FlowChartViewProps> = ({ elements }) => {
   );
 
   useEffect(() => {
-    const nodes: Node[] = elements.filter<Node>((el: Node) => isNode(el));
-    const edges: Edge[] = elements.filter((el) => !isNode(el));
+    const nodes = getNodes(elements);
+    const edges = getEdges(elements);
     setEdges(edges);
     setNodes(nodes);
   }, [elements]);
@@ -69,79 +75,11 @@ const FlowChartNew: React.FC<FlowChartViewProps> = ({ elements }) => {
         attributionPosition="bottom-left"
         connectionLineType={ConnectionLineType.Straight}
       >
-        <ControlPanel rfInstance={rfInstance} />
         <Background variant={BackgroundVariant.Lines} />
+        {isEditMode && <ControlPanel rfInstance={rfInstance} />}
       </ReactFlow>
     </ReactFlowProvider>
   );
 };
 
 export default FlowChartNew;
-
-// const onAdd = useCallback(
-//   (id: string) => {
-//     const newNodeId = getNodeId();
-//     const newEdgesId = getNodeId();
-//     const newNode: Node = {
-//       id: newNodeId,
-//       data: { label: 'Added node' },
-//       position: { x: 0, y: 0 },
-//       sourcePosition: Position.Right,
-//       targetPosition: Position.Left
-//     };
-//     setNodes((nodes) => nodes.concat(newNode));
-
-//     setEdges((eds) => {
-//       const targetEdgeIndex = eds.findIndex((ed) => ed.id === id);
-//       const targetEdge = eds[targetEdgeIndex];
-//       const { target: targetNodeId } = targetEdge;
-
-//       const updatedTargetEdge = { ...targetEdge, target: newNodeId };
-
-//       const updatedEdges = [...eds];
-//       updatedEdges[targetEdgeIndex] = updatedTargetEdge;
-
-//       const newEdge = {
-//         id: newEdgesId,
-//         source: newNodeId,
-//         target: targetNodeId,
-//         type: 'add',
-//         data: { onAddNode: onAdd }
-//       };
-
-//       return updatedEdges.concat(newEdge);
-//     });
-//   },
-//   [setNodes, setEdges]
-// );
-
-// const onNodesDelete = useCallback(
-//   (deleted) => {
-//     setEdges(
-//       deleted.reduce((acc, node) => {
-//         const incomers = getIncomers(node, nodes, edges);
-//         const outgoers = getOutgoers(node, nodes, edges);
-//         const connectedEdges = getConnectedEdges([node], edges);
-
-//         const remainingEdges = acc.filter(
-//           (edge) => !connectedEdges.includes(edge)
-//         );
-
-//         console.log('remainingEdges', remainingEdges);
-
-//         const createdEdges = incomers.flatMap(({ id: source }) =>
-//           outgoers.map(({ id: target }) => ({
-//             id: `${source}->${target}`,
-//             source,
-//             target
-//           }))
-//         );
-
-//         console.log('createdEdges', createdEdges);
-
-//         return [...remainingEdges, ...createdEdges];
-//       }, edges)
-//     );
-//   },
-//   [nodes, edges]
-// );

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Node, Edge } from 'reactflow';
+import { Node, Edge, isNode } from 'reactflow';
 import _ from 'lodash';
 
 import { EdgeData, ObjectType } from '../types';
@@ -61,3 +61,9 @@ export const getUpdatedElementsAfterNodeAddition = ({
     return elements;
   }
 };
+
+export const getNodes = (elements: (Node | Edge)[]): Node[] =>
+  elements.filter<Node>((el): el is Node => !!isNode(el));
+
+export const getEdges = (elements: (Node | Edge)[]): Edge[] =>
+  elements.filter<Edge>((el): el is Edge => !isNode(el));
