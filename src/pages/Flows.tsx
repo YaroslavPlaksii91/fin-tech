@@ -32,7 +32,7 @@ export default function Flows() {
           {flowList.length &&
             flowList.map((flow, index) => (
               <li key={index}>
-                <Link to={`/flow-list/${flow.id}`}>{flow.name}</Link>
+                <Link to={`/flow-list/edit/${flow.id}`}>{flow.name}</Link>
               </li>
             ))}
         </ul>

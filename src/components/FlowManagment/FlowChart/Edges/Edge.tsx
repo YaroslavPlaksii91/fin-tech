@@ -15,9 +15,7 @@ export function CustomEdge({
   targetY,
   sourcePosition,
   targetPosition,
-  style = {
-    color: 'red'
-  },
+  style,
   markerEnd,
   data
 }: EdgeProps) {

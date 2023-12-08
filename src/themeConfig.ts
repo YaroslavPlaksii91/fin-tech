@@ -4,15 +4,24 @@ interface CustomPalette {
   lightGray: string;
   grayLine: string;
   gray: string;
+  pink: string;
+  lightGreen: string;
+  white: string;
+  dark: string;
+  yellow: string;
 }
 
 export const palette = {
   lightGray: '#F8F9FB',
   gray: '#5F6D7E',
   grayLine: '#8FA5BE',
+  pink: '#FFB4B4',
   dark: '#2E3646',
   primary: '#2E3646',
-  secondary: '#E6E9EC'
+  secondary: '#E6E9EC',
+  lightGreen: '#ABDCB9',
+  white: '#FFF',
+  yellow: '#DDCD93'
 };
 
 declare module '@mui/material/styles' {

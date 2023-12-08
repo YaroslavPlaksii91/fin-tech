@@ -7,33 +7,33 @@ const CircleNode = styled(Box)<BoxProps>(() => ({
   borderRadius: '50%'
 }));
 
-export const StyledStartNode = styled(CircleNode)(() => ({
-  background: '#FFB4B4'
+export const StyledStartNode = styled(CircleNode)(({ theme }) => ({
+  background: theme.palette.pink
 }));
 
-export const StyledEndNode = styled(CircleNode)(() => ({
-  background: '#ABDCB9'
+export const StyledEndNode = styled(CircleNode)(({ theme }) => ({
+  background: theme.palette.lightGreen
 }));
 
-export const StyledRectangle = styled(Box)(() => ({
-  background: '#2E3646',
+export const StyledRectangle = styled(Box)(({ theme }) => ({
+  background: theme.palette.dark,
   padding: '6px 18px',
   borderRadius: '5px',
-  color: '#FFFFFF'
+  color: theme.palette.white
 }));
 
-export const StyledDiamond = styled(Box)(() => ({
+export const StyledDiamond = styled(Box)(({ theme }) => ({
   width: '60px',
   height: '60px',
   transform: 'translate(-50%, -50%) rotate(45deg)',
-  background: 'white',
+  background: theme.palette.white,
   position: 'absolute',
   left: '50%',
   top: '50%',
-  backgroundColor: '#DDCD93'
+  backgroundColor: theme.palette.yellow
 }));
 
-export const StyledDiamondLabel = styled(Box)(() => ({
+export const StyledDiamondLabel = styled(Box)(({ theme }) => ({
   zIndex: 10,
   position: 'relative',
   fontSize: 12,
@@ -41,7 +41,7 @@ export const StyledDiamondLabel = styled(Box)(() => ({
   justifyContent: 'center',
   alignItems: 'center',
   height: '100%',
-  color: '#2E3646'
+  color: theme.palette.dark
 }));
 
 export const targetHandDiamondStyle = {
