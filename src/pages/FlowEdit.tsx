@@ -17,7 +17,7 @@ import FlowChartNew from '@components/FlowManagment/FlowChart/FlowChartNew';
 import { ObjectType } from '@components/FlowManagment/FlowChart/types';
 
 export default function FlowEdit() {
-  const [elements, setElements] = useState<Array<Node | Edge>>([]);
+  const [elements, setElements] = useState<(Node | Edge)[]>([]);
 
   const onAddNodeCallback = ({
     id,
@@ -31,7 +31,7 @@ export default function FlowEdit() {
         elements,
         type,
         targetEdgeId: id,
-        onAddNodeCallback
+        onAdd: onAddNodeCallback
       })
     );
   };
@@ -41,9 +41,7 @@ export default function FlowEdit() {
     const nodes = initialNodes;
     const edges = initialEdges.map((edge) => ({
       ...edge,
-      // TODO: fix after discussion
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      data: { ...edge.data, onAddNodeCallback }
+      data: { onAdd: onAddNodeCallback }
     }));
     setElements([...nodes, ...edges]);
   }, []);

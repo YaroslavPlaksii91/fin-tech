@@ -9,5 +9,6 @@ export const nodeTypes: NodeTypes = {
   end: Node.EndNode,
   test: Node.Calculation,
   [ObjectType.CALCULATION]: Node.Calculation,
-  [ObjectType.CONDITION]: Node.Condition
+  [ObjectType.CONDITION]: Node.Condition,
+  [ObjectType.CHAMPION_CHALLENGER]: Node.ChampionChallender
 };

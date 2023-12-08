@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { ObjectType } from '../types';
+import { EdgeData, ObjectType } from '../types';
 
 import { StyledRhombButton } from './styled';
 
@@ -9,14 +9,13 @@ import Menu from '@components/shared/Menu/Menu';
 
 interface ObjectCreationMenuProps {
   id: string;
-  data: {
-    onAddNodeCallback: ({ id, type }: { id: string; type: ObjectType }) => void;
-  };
+  data: EdgeData;
 }
 
 const options = [
   { label: 'Calculation', dataKey: ObjectType.CALCULATION },
-  { label: 'Condition', dataKey: ObjectType.CONDITION }
+  { label: 'Condition', dataKey: ObjectType.CONDITION },
+  { label: 'Champion Chalenger', dataKey: ObjectType.CHAMPION_CHALLENGER }
 ];
 
 export const ObjectCreationMenu: React.FC<ObjectCreationMenuProps> = ({
@@ -31,9 +30,7 @@ export const ObjectCreationMenu: React.FC<ObjectCreationMenuProps> = ({
 
   const handleCloseMenu = (key?: string) => {
     if (key) {
-      data &&
-        data.onAddNodeCallback &&
-        data.onAddNodeCallback({ id, type: key as ObjectType });
+      data && data.onAdd && data.onAdd({ id, type: key as ObjectType });
     }
     setAnchorEl(null);
   };

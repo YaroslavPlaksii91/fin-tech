@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ReactFlow, {
   addEdge,
   Node,
@@ -11,7 +11,8 @@ import ReactFlow, {
   Viewport,
   ConnectionLineType,
   ReactFlowProvider,
-  ReactFlowInstance
+  ReactFlowInstance,
+  isNode
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
@@ -28,8 +29,12 @@ interface FlowChartViewProps {
 }
 
 const FlowChartNew: React.FC<FlowChartViewProps> = ({ elements }) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>(
+    elements.filter<Node>((el: Node) => isNode(el))
+  );
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>(
+    elements.filter((el) => !isNode(el))
+  );
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
 
   const onConnect: OnConnect = useCallback(
@@ -37,10 +42,17 @@ const FlowChartNew: React.FC<FlowChartViewProps> = ({ elements }) => {
     [setEdges]
   );
 
+  useEffect(() => {
+    const nodes: Node[] = elements.filter<Node>((el: Node) => isNode(el));
+    const edges: Edge[] = elements.filter((el) => !isNode(el));
+    setEdges(edges);
+    setNodes(nodes);
+  }, [elements]);
+
   return (
     <ReactFlowProvider>
       <DagreNodePositioning
-        elements={elements}
+        edges={edges}
         setEdges={setEdges}
         setNodes={setNodes}
       />

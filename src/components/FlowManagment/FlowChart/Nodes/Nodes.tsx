@@ -72,3 +72,23 @@ export function Condition() {
     </div>
   );
 }
+
+const championChallenderStyle = {
+  border: '1px solid black',
+  backgroundColor: '#ffff'
+};
+
+export function ChampionChallender() {
+  return (
+    <div style={championChallenderStyle}>
+      <Handle type="target" position={Position.Left} />
+      <h5>Champion Chalenger</h5>
+      <p>30%</p>
+      <p>20%</p>
+      <p>50%</p>
+      <Handle type="source" position={Position.Right} />
+      <Handle type="source" position={Position.Right} id="a" />
+      <Handle type="source" position={Position.Right} id="b" />
+    </div>
+  );
+}

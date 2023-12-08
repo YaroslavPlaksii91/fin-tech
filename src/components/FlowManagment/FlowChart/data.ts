@@ -1,5 +1,12 @@
-import { Node, Edge } from 'reactflow';
+import { Node, Edge, Position } from 'reactflow';
+
+import { EdgeData } from './types';
 const position = { x: 0, y: 0 };
+const edgeType = 'smoothstep';
+const connectionsPosition = {
+  targetPosition: Position.Left,
+  sourcePosition: Position.Right
+};
 
 export const initialNodes: Node[] = [
   {
@@ -14,6 +21,12 @@ export const initialNodes: Node[] = [
     data: {},
     position
   }
+  // {
+  //   id: '3',
+  //   type: 'calculation',
+  //   data: {},
+  //   position: { x: 90, y: 20 }
+  // }
   // {
   //   id: '2a',
   //   data: { label: 'node 2a' },
@@ -41,8 +54,9 @@ export const initialNodes: Node[] = [
   // }
 ];
 
-export const initialEdges: Edge[] = [
+export const initialEdges: Edge<EdgeData>[] = [
   { id: 'e12', source: '1', target: '2', type: 'add' }
+  // { id: 'e32', source: '3', target: '2', type: 'add' }
   // { id: 'e13', source: '1', target: '3', type: 'add', animated: true },
   // { id: 'e22a', source: '2', target: '2a', type: 'add', animated: true },
   // { id: 'e22b', source: '2', target: '2b', type: 'add', animated: true },
@@ -50,51 +64,57 @@ export const initialEdges: Edge[] = [
   // { id: 'e2c2d', source: '2c', target: '2d', type: 'add', animated: true }
 ];
 
-export const initialNodes2 = [
+export const initialNodes2: Node[] = [
   {
     id: '1',
-    type: 'start',
-    data: {},
-    position
+    type: 'input',
+    data: { label: 'input' },
+    position,
+    ...connectionsPosition
   },
   {
     id: '2',
-    type: 'end',
-    data: {},
-    position
+    data: { label: 'node 2' },
+    position,
+    ...connectionsPosition
+  },
+  {
+    id: '2a',
+    data: { label: 'node 2a' },
+    position,
+    ...connectionsPosition
+  },
+  {
+    id: '2b',
+    data: { label: 'node 2b' },
+    position,
+    ...connectionsPosition
+  },
+  {
+    id: '2c',
+    data: { label: 'node 2c' },
+    position,
+    ...connectionsPosition
+  },
+  {
+    id: '2d',
+    data: { label: 'node 2d' },
+    position,
+    ...connectionsPosition
+  },
+  {
+    id: '3',
+    data: { label: 'node 3' },
+    position,
+    ...connectionsPosition
   }
 ];
 
-export const initialEdges2 = [
-  { id: 'e1-2', source: '1', target: '2', type: 'add' }
+export const initialEdges2: Edge<EdgeData>[] = [
+  { id: 'e12', source: '1', target: '2', type: 'add' },
+  { id: 'e13', source: '1', target: '3', type: edgeType },
+  { id: 'e22a', source: '2', target: '2a', type: edgeType },
+  { id: 'e22b', source: '2', target: '2b', type: edgeType },
+  { id: 'e22c', source: '2', target: '2c', type: edgeType },
+  { id: 'e2c2d', source: '2c', target: '2d', type: edgeType }
 ];
-
-// const initialNodes = [
-//   {
-//     id: '1',
-//     type: 'input',
-//     data: { label: 'Start here...' },
-//     position: { x: -150, y: 0 }
-//   },
-//   {
-//     id: '2',
-//     type: 'input',
-//     data: { label: '...or here!' },
-//     position: { x: 150, y: 0 }
-//   },
-//   { id: '3', data: { label: 'Delete me.' }, position: { x: 0, y: 100 } },
-//   { id: '4', data: { label: 'Then me!' }, position: { x: 0, y: 200 } },
-//   {
-//     id: '5',
-//     type: 'output',
-//     data: { label: 'End here!' },
-//     position: { x: 0, y: 300 }
-//   }
-// ];
-
-// const initialEdges = [
-//   { id: '1->3', source: '1', target: '3' },
-//   { id: '2->3', source: '2', target: '3' },
-//   { id: '3->4', source: '3', target: '4' },
-//   { id: '4->5', source: '4', target: '5' }
-// ];

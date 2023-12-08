@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { Node, Edge, Position, isNode } from 'reactflow';
 
 const nodeWidth = 250;
-const nodeHeight = 80;
+const nodeHeight = 60;
 
 const getLayoutedElements = (data: Array<Node | Edge>) => {
   const elements = _.cloneDeep(data);

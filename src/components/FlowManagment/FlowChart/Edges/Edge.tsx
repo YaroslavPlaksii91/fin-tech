@@ -6,6 +6,7 @@ import {
 } from 'reactflow';
 
 import { ObjectCreationMenu } from '../ObjectCreationMenu/ObjectCreationMenu';
+import { EdgeData } from '../types';
 
 export function CustomEdge({
   id,
@@ -18,7 +19,7 @@ export function CustomEdge({
   style,
   markerEnd,
   data
-}: EdgeProps) {
+}: EdgeProps<EdgeData>) {
   const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
     sourceY,
@@ -40,8 +41,7 @@ export function CustomEdge({
           }}
           className="nodrag nopan"
         >
-          {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
-          <ObjectCreationMenu id={id} data={data} />
+          {data && <ObjectCreationMenu id={id} data={data} />}
         </div>
       </EdgeLabelRenderer>
     </>

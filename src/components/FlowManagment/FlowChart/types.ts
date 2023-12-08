@@ -7,3 +7,7 @@ export enum ObjectType {
   CHAMPION_CHALLENGER = 'champion-challender',
   SUBFLOW = 'subflow'
 }
+
+export type EdgeData = {
+  onAdd?: (payload: { id: string; type: ObjectType }) => void;
+};
