@@ -3,13 +3,13 @@ import { Node, Edge, useStore, ReactFlowState } from 'reactflow';
 
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
 
-interface DagreNodePositioningProps {
+interface NodePositioningProps {
   setNodes: (nodes: Node[]) => void;
   setEdges: (edges: Edge[]) => void;
   edges: Edge[];
 }
 
-const DagreNodePositioning: React.FC<DagreNodePositioningProps> = ({
+const NodePositioning: React.FC<NodePositioningProps> = ({
   setNodes,
   setEdges,
   edges
@@ -32,4 +32,4 @@ const DagreNodePositioning: React.FC<DagreNodePositioningProps> = ({
   return null;
 };
 
-export default DagreNodePositioning;
+export default NodePositioning;

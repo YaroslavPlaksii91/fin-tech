@@ -1,15 +1,11 @@
-/* .react-flow__node-input,
-.react-flow__node-output {
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+/* stylelint-disable */
+
+/* General react-flow styles overriding  */
+.react-flow {
+  font-family: 'Inter', sans-serif;
 }
 
-.react-flow__node-input {
-  background-color: #ffb4b4;
+.react-flow__edge-path {
+  stroke: #8FA5BE;
+  stroke-width: 2px;
 }
-
-.react-flow__node-output {
-  background-color: #ABDCB9;
-} */

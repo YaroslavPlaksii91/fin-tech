@@ -18,9 +18,11 @@ import 'reactflow/dist/style.css';
 
 import { nodeTypes } from './Nodes';
 import { edgeTypes } from './Edges';
-import DagreNodePositioning from './Nodes/DagreNodePositioning';
+import NodePositioning from './Nodes/NodePositioning';
 import ControlPanel from './ContolPanel/ControlPanel';
 import { getEdges, getNodes } from './utils/workflowElementsUtils';
+import './overview.css';
+import { ADD_BUTTON_ON_EDGE } from './types';
 
 const viewport: Viewport = { x: 200, y: 300, zoom: 1 };
 
@@ -43,11 +45,6 @@ const FlowChartNew: React.FC<FlowChartViewProps> = ({
 
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
 
-  const onConnect: OnConnect = useCallback(
-    (connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges]
-  );
-
   useEffect(() => {
     const nodes = getNodes(elements);
     const edges = getEdges(elements);
@@ -55,13 +52,27 @@ const FlowChartNew: React.FC<FlowChartViewProps> = ({
     setNodes(nodes);
   }, [elements]);
 
+  const onConnect: OnConnect = useCallback(
+    (connection) => {
+      if (connection.source === connection.target) {
+        return;
+      }
+      return setEdges((eds) =>
+        addEdge(
+          {
+            ...connection,
+            type: ADD_BUTTON_ON_EDGE
+          },
+          eds
+        )
+      );
+    },
+    [setEdges]
+  );
+
   return (
     <ReactFlowProvider>
-      <DagreNodePositioning
-        edges={edges}
-        setEdges={setEdges}
-        setNodes={setNodes}
-      />
+      <NodePositioning edges={edges} setEdges={setEdges} setNodes={setNodes} />
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -73,7 +84,7 @@ const FlowChartNew: React.FC<FlowChartViewProps> = ({
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         attributionPosition="bottom-left"
-        connectionLineType={ConnectionLineType.Straight}
+        connectionLineType={ConnectionLineType.SmoothStep}
       >
         <Background variant={BackgroundVariant.Lines} />
         {isEditMode && <ControlPanel rfInstance={rfInstance} />}

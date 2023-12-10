@@ -2,13 +2,13 @@ import { NodeTypes } from 'reactflow';
 
 import { ObjectType } from '../types';
 
-import * as Node from './Nodes';
+import * as InitialNodes from './InitialNodes';
+import RectangleNode from './RectangleNode';
+import ListNode from './ListNode';
 
 export const nodeTypes: NodeTypes = {
-  start: Node.StartNode,
-  end: Node.EndNode,
-  test: Node.Calculation,
-  [ObjectType.CALCULATION]: Node.Calculation,
-  [ObjectType.CONDITION]: Node.Condition,
-  [ObjectType.CHAMPION_CHALLENGER]: Node.ChampionChallender
+  start: InitialNodes.StartNode,
+  end: InitialNodes.EndNode,
+  [ObjectType.CALCULATION]: RectangleNode,
+  [ObjectType.CHAMPION_CHALLENGER]: ListNode
 };

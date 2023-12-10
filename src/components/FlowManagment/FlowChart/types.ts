@@ -8,6 +8,8 @@ export enum ObjectType {
   SUBFLOW = 'subflow'
 }
 
+export const ADD_BUTTON_ON_EDGE = 'add-button-on-edge';
+
 export type EdgeData = {
   onAdd?: (payload: { id: string; type: ObjectType }) => void;
 };

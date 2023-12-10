@@ -31,7 +31,7 @@ export function CustomEdge({
 
   return (
     <>
-      <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
+      <BaseEdge id={id} style={style} path={edgePath} markerEnd={markerEnd} />
       <EdgeLabelRenderer>
         <div
           style={{
@@ -41,7 +41,7 @@ export function CustomEdge({
           }}
           className="nodrag nopan"
         >
-          {data && <ObjectCreationMenu id={id} data={data} />}
+          <ObjectCreationMenu id={id} data={data} />
         </div>
       </EdgeLabelRenderer>
     </>

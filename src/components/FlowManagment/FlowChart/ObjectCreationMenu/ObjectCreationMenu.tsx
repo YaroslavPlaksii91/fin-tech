@@ -9,7 +9,7 @@ import Menu from '@components/shared/Menu/Menu';
 
 interface ObjectCreationMenuProps {
   id: string;
-  data: EdgeData;
+  data?: EdgeData;
 }
 
 const options = [

@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Node, Edge, isNode } from 'reactflow';
 import _ from 'lodash';
 
-import { EdgeData, ObjectType } from '../types';
+import { ADD_BUTTON_ON_EDGE, EdgeData, ObjectType } from '../types';
 
 import Logger from '@utils/logger';
 
@@ -49,7 +49,7 @@ export const getUpdatedElementsAfterNodeAddition = ({
       id: newEdgeId,
       source: newNodeId,
       target: targetNodeId,
-      type: 'add',
+      type: ADD_BUTTON_ON_EDGE,
       data: { onAdd }
     };
 

@@ -1,6 +1,6 @@
 import { Node, Edge, Position } from 'reactflow';
 
-import { EdgeData } from './types';
+import { ADD_BUTTON_ON_EDGE, EdgeData } from './types';
 
 const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
@@ -26,7 +26,12 @@ export const initialNodes: Node[] = [
 ];
 
 export const initialEdges: Edge<EdgeData>[] = [
-  { id: 'e12', source: '1', target: '2', type: 'add' }
+  {
+    id: 'e12',
+    source: '1',
+    target: '2',
+    type: ADD_BUTTON_ON_EDGE
+  }
 ];
 
 export const initialNodes2: Node[] = [
@@ -76,7 +81,12 @@ export const initialNodes2: Node[] = [
 ];
 
 export const initialEdges2: Edge<EdgeData>[] = [
-  { id: 'e12', source: '1', target: '2', type: 'add' },
+  {
+    id: 'e12',
+    source: '1',
+    target: '2',
+    type: ADD_BUTTON_ON_EDGE
+  },
   { id: 'e13', source: '1', target: '3', type: edgeType },
   { id: 'e22a', source: '2', target: '2a', type: edgeType },
   { id: 'e22b', source: '2', target: '2b', type: edgeType },
