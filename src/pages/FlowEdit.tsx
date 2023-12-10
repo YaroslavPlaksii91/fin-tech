@@ -15,6 +15,7 @@ import {
 import { getUpdatedElementsAfterNodeAddition } from '@components/FlowManagment/FlowChart/utils/workflowElementsUtils';
 import FlowChartNew from '@components/FlowManagment/FlowChart/FlowChartNew';
 import { ObjectType } from '@components/FlowManagment/FlowChart/types';
+import NavigateBack from '@components/shared/Link/NavigateBack';
 
 export default function FlowEdit() {
   const [elements, setElements] = useState<(Node | Edge)[]>([]);
@@ -54,7 +55,7 @@ export default function FlowEdit() {
             Add new object
           </Button>
         }
-        title="Back to view mode"
+        header={<NavigateBack title="Back to view mode" />}
       >
         Object list
       </SideNavContainer>

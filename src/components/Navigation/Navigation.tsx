@@ -9,7 +9,7 @@ import { StyledAppBar } from './styled';
 import Dropdown from './Dropdown';
 
 import routes from '@constants/routes';
-import { PersonOutlineIcon } from '@components/shared/Icons';
+import { Logo, PersonOutlineIcon } from '@components/shared/Icons';
 
 const pages = [
   {
@@ -40,7 +40,7 @@ function Navigation() {
       <Container maxWidth="xl">
         <Toolbar variant="dense" disableGutters>
           <Typography variant="h6" noWrap component="a" href="/">
-            LOGO
+            <Logo />
           </Typography>
           <Box
             flexGrow="1"

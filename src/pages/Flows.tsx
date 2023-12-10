@@ -27,7 +27,7 @@ export default function Flows() {
 
   return (
     <LayoutContainer>
-      <SideNavContainer footer={<AddFlow />} title="Flow list">
+      <SideNavContainer footer={<AddFlow />} header="Flow list">
         <ul>
           {flowList.length &&
             flowList.map((flow, index) => (

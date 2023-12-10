@@ -2,6 +2,7 @@ import { Box, Divider, Stack, Typography } from '@mui/material';
 import React from 'react';
 
 import {
+  StyledDivider,
   StyledLayoutContainer,
   StyledSideNavContainer,
   StyledSideNavFooter
@@ -18,19 +19,24 @@ const LayoutContainer: React.FC<LayoutContainerProps> = ({ children }) => (
 
 interface SideNavContainerProps {
   footer: React.ReactNode;
-  title: React.ReactNode | string;
+  header: React.ReactNode | string;
   children: React.ReactNode;
 }
 
 const SideNavContainer: React.FC<SideNavContainerProps> = ({
   children,
-  title,
+  header,
   footer
 }) => (
   <StyledSideNavContainer borderTop="3px" component="nav">
-    <Typography pl={2} pr={2} variant="h5">
-      {title}
-    </Typography>
+    {typeof header == 'string' ? (
+      <Typography pl={2} pr={2} variant="h5">
+        {header}
+      </Typography>
+    ) : (
+      header
+    )}
+    <StyledDivider />
     {children}
     <StyledSideNavFooter component="footer">
       <Divider />

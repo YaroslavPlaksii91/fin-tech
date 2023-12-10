@@ -74,7 +74,8 @@ export const theme = createTheme({
           fontSize: '14px',
           textTransform: 'none',
           borderRadius: '8px',
-          boxShadow: 'none'
+          boxShadow: 'none',
+          minWidth: 'auto'
         }
       }
     },
@@ -146,6 +147,12 @@ export const theme = createTheme({
     h5: {
       fontSize: '16px',
       lineHeight: '24px',
+      fontWeight: 600,
+      color: palette.dark
+    },
+    h6: {
+      fontSize: '14px',
+      lineHeight: '20px',
       fontWeight: 600,
       color: palette.dark
     },

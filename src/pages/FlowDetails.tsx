@@ -6,6 +6,7 @@ import {
   SideNavContainer,
   MainContainer
 } from '@components/Layouts/MainLayout';
+import NavigateBack from '@components/shared/Link/NavigateBack';
 
 export default function FlowDetails() {
   return (
@@ -17,7 +18,7 @@ export default function FlowDetails() {
               Edit flow
             </Button>
           }
-          title="Back to flow list"
+          header={<NavigateBack title="Back to flow list" />}
         >
           Object list
         </SideNavContainer>

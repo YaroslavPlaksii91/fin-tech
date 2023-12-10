@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles';
-import { Box } from '@mui/material';
+import { Box, Divider } from '@mui/material';
 
 const DRAWER_WIDTH = 276;
 const HEADER_HAEIGHT = '48px';
@@ -19,4 +19,9 @@ export const StyledSideNavContainer = styled(Box)(({ theme }) => ({
 
 export const StyledSideNavFooter = styled(Box)(() => ({
   marginTop: 'auto'
+}));
+
+export const StyledDivider = styled(Divider)(() => ({
+  marginTop: '14px',
+  marginBottom: '16px'
 }));
