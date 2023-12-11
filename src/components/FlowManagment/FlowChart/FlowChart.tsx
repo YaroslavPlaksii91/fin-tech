@@ -31,7 +31,7 @@ interface FlowChartViewProps {
   isEditMode?: boolean;
 }
 
-const FlowChartNew: React.FC<FlowChartViewProps> = ({
+const FlowChart: React.FC<FlowChartViewProps> = ({
   elements,
   isEditMode = false
 }) => {
@@ -93,4 +93,4 @@ const FlowChartNew: React.FC<FlowChartViewProps> = ({
   );
 };
 
-export default FlowChartNew;
+export default FlowChart;

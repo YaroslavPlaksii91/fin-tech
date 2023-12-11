@@ -13,7 +13,7 @@ import {
   MainContainer
 } from '@components/Layouts/MainLayout';
 import { getUpdatedElementsAfterNodeAddition } from '@components/FlowManagment/FlowChart/utils/workflowElementsUtils';
-import FlowChartNew from '@components/FlowManagment/FlowChart/FlowChartNew';
+import FlowChart from '@components/FlowManagment/FlowChart/FlowChart';
 import { ObjectType } from '@components/FlowManagment/FlowChart/types';
 import NavigateBack from '@components/shared/Link/NavigateBack';
 
@@ -60,7 +60,7 @@ export default function FlowEdit() {
         Object list
       </SideNavContainer>
       <MainContainer>
-        <FlowChartNew isEditMode={true} elements={elements} />
+        <FlowChart isEditMode={true} elements={elements} />
       </MainContainer>
     </LayoutContainer>
   );

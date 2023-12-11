@@ -7,7 +7,7 @@ import {
   MainContainer
 } from '@components/Layouts/MainLayout';
 import { AddFlow } from '@components/FlowManagment/Add/AddFlowForm';
-import FlowChartNew from '@components/FlowManagment/FlowChart/FlowChartNew';
+import FlowChart from '@components/FlowManagment/FlowChart/FlowChart';
 
 export default function Flows() {
   const [flowList, setFlowList] = useState([
@@ -38,7 +38,7 @@ export default function Flows() {
         </ul>
       </SideNavContainer>
       <MainContainer>
-        {flowList.length ? <FlowChartNew elements={[]} /> : <p>Empty page</p>}
+        {flowList.length ? <FlowChart elements={[]} /> : <p>Empty page</p>}
       </MainContainer>
     </LayoutContainer>
   );
