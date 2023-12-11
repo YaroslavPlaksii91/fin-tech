@@ -1,10 +1,9 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import Cookie from 'js-cookie';
 import { Navigate } from 'react-router-dom';
 
-import { isAuthorized } from '@store/user/selectors';
-
-const PrivateAuthRoute = (props: { children: React.ReactNode }) =>
-  useSelector(isAuthorized) ? <Navigate to="/" /> : props.children;
+const PrivateAuthRoute = (props: { children: React.ReactNode }) => {
+  const user = Cookie.get('authToken');
+  return user ? <Navigate to="/" /> : props.children;
+};
 
 export default PrivateAuthRoute;

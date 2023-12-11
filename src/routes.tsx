@@ -1,27 +1,75 @@
 import { createBrowserRouter } from 'react-router-dom';
 
-import PrivateRoute from '@components/Router/PrivateRoute';
+import PrivateRoutes from '@components/Router/PrivateRoutes';
 import PrivateAuthRoute from '@components/Router/PrivateAuthRoute';
-import Auth from '@pages/Auth';
-import TestPage from '@pages/TestPage';
+import Login from '@pages/Login';
+import Layout from '@components/Layouts/Layout';
+import routes from '@constants/routes';
+import Flows from '@pages/Flows';
+import FlowDetails from '@pages/FlowDetails';
+import FlowEdit from '@pages/FlowEdit';
 
 export const router = createBrowserRouter([
   {
-    id: 'root',
-    path: '/',
-    element: (
-      <PrivateRoute>
-        <TestPage />
-      </PrivateRoute>
-    )
+    element: <Layout />,
+    children: [
+      {
+        path: '/',
+        element: (
+          <PrivateRoutes>
+            <div>Home</div>
+          </PrivateRoutes>
+        )
+      },
+      {
+        path: `${routes.underwriting.flowList}/:id?`,
+        element: (
+          <PrivateRoutes>
+            <Flows />
+          </PrivateRoutes>
+        )
+      },
+      {
+        path: `${routes.underwriting.flowList}/details/:id`,
+        element: (
+          <PrivateRoutes>
+            <FlowDetails />
+          </PrivateRoutes>
+        )
+      },
+      {
+        path: `${routes.underwriting.flowList}/edit/:id`,
+        element: (
+          <PrivateRoutes>
+            <FlowEdit />
+          </PrivateRoutes>
+        )
+      },
+      {
+        path: routes.underwriting.dataDictionary,
+        element: (
+          <PrivateRoutes>
+            <div>Data dictionary</div>
+          </PrivateRoutes>
+        )
+      },
+      {
+        path: routes.underwriting.changeHistory,
+        element: (
+          <PrivateRoutes>
+            <div>Change history</div>
+          </PrivateRoutes>
+        )
+      }
+    ]
   },
   {
-    id: 'auth',
-    path: '/auth',
+    path: routes.auth.login,
     element: (
       <PrivateAuthRoute>
-        <Auth />
+        <Login />
       </PrivateAuthRoute>
     )
-  }
+  },
+  { path: '*', element: <p>Not found</p> }
 ]);

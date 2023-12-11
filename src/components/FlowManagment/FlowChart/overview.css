@@ -1,0 +1,11 @@
+/* stylelint-disable */
+
+/* General react-flow styles overriding  */
+.react-flow {
+  font-family: 'Inter', sans-serif;
+}
+
+.react-flow__edge-path {
+  stroke: #8FA5BE;
+  stroke-width: 2px;
+}
