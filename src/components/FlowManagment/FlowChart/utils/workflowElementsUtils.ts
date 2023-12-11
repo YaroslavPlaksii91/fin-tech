@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Node, Edge, isNode } from 'reactflow';
-import _ from 'lodash';
+import { cloneDeep } from 'lodash';
 
 import { ADD_BUTTON_ON_EDGE, EdgeData, ObjectType } from '../types';
 
@@ -32,7 +32,7 @@ export const getUpdatedElementsAfterNodeAddition = ({
     data: {},
     position
   };
-  const clonedElements = _.cloneDeep(elements);
+  const clonedElements = cloneDeep(elements);
 
   const targetEdgeIndex = clonedElements.findIndex(
     (x) => x.id === targetEdgeId
