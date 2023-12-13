@@ -1,22 +1,41 @@
 import axios, { AxiosInstance } from 'axios';
+import Cookie from 'js-cookie';
+
+import Logger from './logger';
 
 import { apiBaseUrl } from '@constants/api-urls';
+import { cookiesKeys } from '@constants/constants';
 
-const api: AxiosInstance = axios.create({
+const Api: AxiosInstance = axios.create({
   baseURL: apiBaseUrl,
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
-const setAuthHeader = (token: string) => {
-  if (token) {
-    api.defaults.headers['Authorization'] = `Token ${token}`;
-  } else {
-    delete api.defaults.headers['Authorization'];
+Api.interceptors.request.use((config) => {
+  const credentialsCookie = Cookie.get(cookiesKeys.credentials);
+  if (credentialsCookie) {
+    const decodedCredentials = decodeURIComponent(credentialsCookie);
+    const [storedUsername, storedPassword] = decodedCredentials.split(':');
+    const credentials = btoa(storedUsername + ':' + storedPassword);
+    const basicAuth = 'Basic ' + credentials;
+    config.headers['Authorization'] = `${basicAuth}`;
   }
-};
+  return config;
+});
 
-export { setAuthHeader };
+Api.interceptors.response.use(
+  (response) => {
+    Logger.info(response);
+    return response;
+  },
+  (error) => {
+    if (axios.isAxiosError(error)) {
+      Logger.error(error);
+    }
+    return Promise.reject(error);
+  }
+);
 
-export default api;
+export default Api;

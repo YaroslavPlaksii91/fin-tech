@@ -6,7 +6,6 @@ import {
 } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 import { FormControl, InputLabel } from '@mui/material';
-
 interface InputProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>
@@ -14,6 +13,7 @@ interface InputProps<
   label: string;
   placeholder: string;
   fullWidth?: boolean;
+  type?: string;
 }
 
 export const InputText = <
@@ -24,6 +24,7 @@ export const InputText = <
   name,
   label,
   placeholder,
+  type = 'text',
   fullWidth = false
 }: InputProps<TFieldValues, TName>) => {
   const { field, fieldState } = useController({ control, name });
@@ -38,6 +39,8 @@ export const InputText = <
         size="small"
         error={!!fieldState?.error}
         helperText={fieldState?.error?.message}
+        id={name}
+        type={type}
         {...field}
       />
     </FormControl>

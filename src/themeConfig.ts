@@ -144,6 +144,12 @@ export const theme = createTheme({
       fontWeight: 600,
       color: palette.dark
     },
+    h3: {
+      fontSize: '22px',
+      lineHeight: '38px',
+      fontWeight: 600,
+      color: palette.dark
+    },
     h5: {
       fontSize: '16px',
       lineHeight: '24px',

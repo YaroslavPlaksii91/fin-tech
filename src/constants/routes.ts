@@ -1,8 +1,6 @@
 const routes = {
   index: '/',
-  auth: {
-    login: '/auth/login'
-  },
+  login: '/login',
   underwriting: {
     flowList: '/flow-list',
     dataDictionary: '/data-dictionary',

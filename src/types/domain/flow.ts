@@ -8,3 +8,7 @@ export interface IFlow extends IEntity {
   edges: Edge[];
   viewport: Viewport;
 }
+
+export interface IFlowListItem extends IEntity {
+  name: string;
+}

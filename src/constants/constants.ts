@@ -1,3 +1,3 @@
 export const cookiesKeys = {
-  authToken: 'authToken'
+  credentials: 'credentials'
 };

@@ -50,6 +50,14 @@ module.exports = {
     'react/jsx-curly-brace-presence': 'error',
     'prettier/prettier': ['error', { endOfLine: 'auto' }],
     '@typescript-eslint/no-floating-promises': ['error'],
-    'react/prop-types': 'off'
+    'react/prop-types': 'off',
+    '@typescript-eslint/no-misused-promises': [
+      2,
+      {
+        checksVoidReturn: {
+          attributes: false
+        }
+      }
+    ]
   }
 };
