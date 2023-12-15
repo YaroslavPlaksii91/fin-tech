@@ -17,6 +17,7 @@ type FlowData = {
 };
 
 type NodeData = {
+  $type: ObjectType;
   objectId: string;
   objectType: ObjectType;
   name: string;

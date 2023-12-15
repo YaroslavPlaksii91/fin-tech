@@ -42,23 +42,14 @@ function useInitialFlow() {
       try {
         startLoading();
         const {
-          nodes: nodesData,
+          nodes,
           edges: edgesData,
           viewport,
           data,
           id
         } = await flowService.getFlow(flowId);
-        const nodes = nodesData.map((node) => ({
-          id: node.id,
-          type: node.type,
-          position: node.position,
-          data: { ...node.data }
-        }));
         const edges = edgesData.map((edge) => ({
-          id: edge.id,
-          type: edge.type,
-          source: edge.source,
-          target: edge.target,
+          ...edge,
           data: { onAdd: onAddNodeCallback }
         }));
         setElements([...nodes, ...edges]);

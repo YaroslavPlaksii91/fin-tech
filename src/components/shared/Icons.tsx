@@ -6,6 +6,9 @@ import MuiBookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import MuiTaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import MuiKeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import MuiBorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
+import MuiCircularProgress, {
+  CircularProgressProps
+} from '@mui/material/CircularProgress';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 
 const defaultIconSize = '18px';
@@ -87,6 +90,10 @@ export const EditNoteOutlinedIcon = ({
     sx={{ width: size, height: size, ...sx }}
     {...props}
   />
+);
+
+export const CircularProgress = ({ ...props }: CircularProgressProps) => (
+  <MuiCircularProgress {...props} />
 );
 
 export const HexagonOutlinedIconSvg = () => (

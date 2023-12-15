@@ -13,6 +13,7 @@ export const createStartNodeData = () => {
     id: startNodeId,
     type: ObjectType.START,
     data: {
+      $type: ObjectType.START,
       objectId: startNodeId,
       objectType: ObjectType.START,
       name: ObjectType.START
@@ -29,6 +30,7 @@ export const createEndNodeData = () => {
     id: endNodeId,
     type: ObjectType.END,
     data: {
+      $type: ObjectType.END,
       objectId: endNodeId,
       objectType: ObjectType.END,
       name: ObjectType.END
