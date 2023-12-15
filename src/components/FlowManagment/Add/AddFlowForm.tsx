@@ -2,23 +2,28 @@ import { useState } from 'react';
 import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigate } from 'react-router-dom';
 
-import validationSchema from './validationSchema';
+import { flowService } from '../../../services/flow-service';
+
+import {
+  validationSchema,
+  createInitialFlowDataHelper
+} from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
 import { AddIcon } from '@components/shared/Icons';
 import Logger from '@utils/logger';
+import routes from '@constants/routes';
 
 interface FormData {
   name: string;
 }
 
-// TODO: mock request
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 export const AddFlow: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const navigate = useNavigate();
   const { handleSubmit, reset, control } = useForm<FormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -26,10 +31,14 @@ export const AddFlow: React.FC = () => {
     }
   });
 
-  const onSubmit: SubmitHandler<FormData> = async (data): Promise<void> => {
+  const onSubmit: SubmitHandler<FormData> = async ({ name }): Promise<void> => {
     try {
-      await sleep(2000);
-      Logger.info(data);
+      const data = createInitialFlowDataHelper(name);
+      const res = await flowService.createFlow(data);
+      handleCloseModal();
+      navigate(`${routes.underwriting.flowList}/details/${res.data.id}`, {
+        replace: true
+      });
     } catch (error) {
       Logger.error(error);
     }
@@ -60,7 +69,7 @@ export const AddFlow: React.FC = () => {
         displayConfirmBtn={false}
         displayedCancelBtn={false}
       >
-        <form onSubmit={() => void handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <InputText
             fullWidth
             name="name"

@@ -7,8 +7,11 @@ import {
   MainContainer
 } from '@components/Layouts/MainLayout';
 import NavigateBack from '@components/shared/Link/NavigateBack';
+import FlowChart from '@components/FlowManagment/FlowChart/FlowChart';
+import useInitialFlow from '@hooks/useInitialFlow';
 
 export default function FlowDetails() {
+  const { elements, data } = useInitialFlow();
   return (
     <LayoutContainer>
       <ReactFlowProvider>
@@ -22,7 +25,9 @@ export default function FlowDetails() {
         >
           Object list
         </SideNavContainer>
-        <MainContainer>flow details</MainContainer>
+        <MainContainer>
+          <FlowChart isEditMode data={data} elements={elements} />
+        </MainContainer>
       </ReactFlowProvider>
     </LayoutContainer>
   );

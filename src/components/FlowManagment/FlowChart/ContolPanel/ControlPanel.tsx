@@ -12,12 +12,11 @@ import {
 } from '@components/shared/Icons';
 
 interface ControlPanelProps {
+  flowKey: string;
   rfInstance: ReactFlowInstance | undefined;
 }
 
-const flowKey = 'new-flow-key';
-
-const ControlPanel: React.FC<ControlPanelProps> = ({ rfInstance }) => {
+const ControlPanel: React.FC<ControlPanelProps> = ({ rfInstance, flowKey }) => {
   const onSave = useCallback(() => {
     if (rfInstance) {
       const flow = rfInstance.toObject();

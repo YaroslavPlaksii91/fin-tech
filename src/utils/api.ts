@@ -26,10 +26,7 @@ Api.interceptors.request.use((config) => {
 });
 
 Api.interceptors.response.use(
-  (response) => {
-    Logger.info(response);
-    return response;
-  },
+  (response) => response,
   (error) => {
     if (axios.isAxiosError(error)) {
       Logger.error(error);

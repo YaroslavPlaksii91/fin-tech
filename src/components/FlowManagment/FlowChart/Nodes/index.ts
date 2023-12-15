@@ -7,8 +7,8 @@ import RectangleNode from './RectangleNode';
 import ListNode from './ListNode';
 
 export const nodeTypes: NodeTypes = {
-  start: InitialNodes.StartNode,
-  end: InitialNodes.EndNode,
+  [ObjectType.START]: InitialNodes.StartNode,
+  [ObjectType.END]: InitialNodes.EndNode,
   [ObjectType.CALCULATION]: RectangleNode,
   [ObjectType.CHAMPION_CHALLENGER]: ListNode
 };

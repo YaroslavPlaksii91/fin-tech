@@ -10,7 +10,6 @@ import {
   MainContainer
 } from '@components/Layouts/MainLayout';
 import { AddFlow } from '@components/FlowManagment/Add/AddFlowForm';
-import FlowChart from '@components/FlowManagment/FlowChart/FlowChart';
 import Logger from '@utils/logger';
 
 export default function Flows() {
@@ -36,13 +35,13 @@ export default function Flows() {
           {!!flowList.length &&
             flowList.map((flow, index) => (
               <li key={index}>
-                <Link to={`/flow-list/edit/${flow.id}`}>{flow.name}</Link>
+                <Link to={`/flow-list/details/${flow.id}`}>{flow.name}</Link>
               </li>
             ))}
         </ul>
       </SideNavContainer>
       <MainContainer>
-        {flowList.length ? <FlowChart elements={[]} /> : <p>Empty page</p>}
+        <p>Empty page</p>
       </MainContainer>
     </LayoutContainer>
   );

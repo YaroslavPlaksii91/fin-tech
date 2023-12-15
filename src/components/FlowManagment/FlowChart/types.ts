@@ -5,7 +5,9 @@ export enum ObjectType {
   CONDITION = 'condition',
   CASE = 'case',
   CHAMPION_CHALLENGER = 'champion-challender',
-  SUBFLOW = 'subflow'
+  SUBFLOW = 'subflow',
+  START = 'StartObject',
+  END = 'EndObject'
 }
 
 export const ADD_BUTTON_ON_EDGE = 'add-button-on-edge';
