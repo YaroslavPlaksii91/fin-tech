@@ -4,6 +4,7 @@ import { Box, Divider } from '@mui/material';
 import { HEADER_HAEIGHT, DRAWER_WIDTH } from '@constants/themeConstants';
 
 export const StyledLayoutContainer = styled(Box)(() => ({
+  display: 'flex',
   height: `calc(100vh - ${HEADER_HAEIGHT}px)`
 }));
 

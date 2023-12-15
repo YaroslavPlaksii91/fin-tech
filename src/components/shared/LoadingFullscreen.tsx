@@ -3,7 +3,8 @@ import Box from '@mui/material/Box';
 
 const LoadingFullscreen = () => (
   <Box
-    height="100vh"
+    height="100%"
+    width="100%"
     display="flex"
     justifyContent="center"
     alignItems="center"

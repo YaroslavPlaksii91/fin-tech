@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { IFlowListItem } from '../types';
 import { flowService } from '../services/flow-service';
+import { useLoading } from '../contexts/LoadingContext';
 
 import {
   LayoutContainer,
@@ -14,14 +15,18 @@ import Logger from '@utils/logger';
 
 export default function Flows() {
   const [flowList, setFlowList] = useState<IFlowListItem[]>([]);
+  const { startLoading, stopLoading } = useLoading();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        startLoading();
         const response = await flowService.getFlows();
         setFlowList(response.data);
       } catch (error) {
         Logger.error('Error fetching data:', error);
+      } finally {
+        stopLoading();
       }
     };
 

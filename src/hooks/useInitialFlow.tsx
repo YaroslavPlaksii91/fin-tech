@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Node, Edge } from 'reactflow';
 
+import { useLoading } from '../contexts/LoadingContext';
 import { flowService } from '../services/flow-service';
 
 import Logger from '@utils/logger';
@@ -11,6 +12,8 @@ import { ObjectType } from '@components/FlowManagment/FlowChart/types';
 function useInitialFlow() {
   const { id } = useParams();
   const [elements, setElements] = useState<(Node | Edge)[]>([]);
+  const { startLoading, stopLoading } = useLoading();
+
   const [generalData, setGeneralData] = useState({
     viewport: { x: 0, y: 0, zoom: 1 },
     id: '',
@@ -37,6 +40,7 @@ function useInitialFlow() {
   useEffect(() => {
     const fetchInitialData = async (flowId: string) => {
       try {
+        startLoading();
         const {
           nodes: nodesData,
           edges: edgesData,
@@ -61,6 +65,8 @@ function useInitialFlow() {
         setGeneralData({ viewport, data, id });
       } catch (error) {
         Logger.error('Error fetching initial data:', error);
+      } finally {
+        stopLoading();
       }
     };
 
