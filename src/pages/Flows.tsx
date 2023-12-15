@@ -12,6 +12,7 @@ import {
 } from '@components/Layouts/MainLayout';
 import { AddFlow } from '@components/FlowManagment/Add/AddFlowForm';
 import Logger from '@utils/logger';
+import Header from '@components/shared/SubHeader';
 
 export default function Flows() {
   const [flowList, setFlowList] = useState<IFlowListItem[]>([]);
@@ -35,7 +36,10 @@ export default function Flows() {
 
   return (
     <LayoutContainer>
-      <SideNavContainer footer={<AddFlow />} header="Flow list">
+      <SideNavContainer
+        footer={<AddFlow />}
+        header={<Header text="Flow list" />}
+      >
         <ul>
           {!!flowList.length &&
             flowList.map((flow, index) => (

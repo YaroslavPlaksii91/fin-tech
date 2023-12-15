@@ -5,6 +5,7 @@ import MuiDeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import MuiBookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import MuiTaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import MuiKeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
+import MuiBorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 
 const defaultIconSize = '18px';
@@ -72,6 +73,17 @@ export const KeyboardDoubleArrowLeftIcon = ({
   ...props
 }: IconPros) => (
   <MuiKeyboardDoubleArrowLeftIcon
+    sx={{ width: size, height: size, ...sx }}
+    {...props}
+  />
+);
+
+export const EditNoteOutlinedIcon = ({
+  size = defaultIconSize,
+  sx,
+  ...props
+}: IconPros) => (
+  <MuiBorderColorOutlinedIcon
     sx={{ width: size, height: size, ...sx }}
     {...props}
   />
