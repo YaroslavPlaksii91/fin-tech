@@ -4,13 +4,12 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
 
-import { flowService } from '../../../services/flow-service';
-
 import {
   validationSchema,
   createInitialFlowDataHelper
 } from './validationSchema';
 
+import { flowService } from '@services/flow-service';
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
 import { AddIcon } from '@components/shared/Icons';
@@ -36,9 +35,7 @@ export const AddFlow: React.FC = () => {
       const data = createInitialFlowDataHelper(name);
       const res = await flowService.createFlow(data);
       handleCloseModal();
-      navigate(`${routes.underwriting.flowList}/details/${res.data.id}`, {
-        replace: true
-      });
+      navigate(`${routes.underwriting.flowList}/details/${res.data.id}`);
     } catch (error) {
       Logger.error(error);
     }

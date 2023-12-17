@@ -50,6 +50,18 @@ export default defineConfig(({ mode }) => {
         {
           find: '@constants',
           replacement: resolve(__dirname, './src/constants')
+        },
+        {
+          find: '@services',
+          replacement: resolve(__dirname, './src/services')
+        },
+        {
+          find: '@domain',
+          replacement: resolve(__dirname, './src/domain')
+        },
+        {
+          find: '@hook',
+          replacement: resolve(__dirname, './src/hook')
         }
       ]
     }

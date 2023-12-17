@@ -1,13 +1,14 @@
 import * as yup from 'yup';
 
-import { IFlowData } from '../../../types/domain';
-
 import {
   createEdgeData,
   createEndNodeData,
   createStartNodeData,
   getInitialViewData
 } from './initialFlowUtils';
+
+import { IFlowData } from '@domain/flow';
+import Auth from '@utils/auth';
 
 export const validationSchema = yup.object().shape({
   name: yup
@@ -21,12 +22,13 @@ export const createInitialFlowDataHelper = (name: string): IFlowData => {
   const startNodeData = createStartNodeData();
   const endNodeData = createEndNodeData();
   const edgeData = createEdgeData();
+  const username = Auth.getUsername();
 
   return {
     data: {
       name,
-      createdBy: 'userapi',
-      editedBy: 'userapi'
+      createdBy: username,
+      editedBy: username
     },
     nodes: [startNodeData, endNodeData],
     edges: [edgeData],

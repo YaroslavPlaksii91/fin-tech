@@ -47,7 +47,7 @@ export const theme = createTheme({
       paper: palette.lightGray,
       default: palette.white
     },
-    divider: '#D1D9E2'
+    divider: '#E8ECF1'
   },
   components: {
     MuiInputLabel: {

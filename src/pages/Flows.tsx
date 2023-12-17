@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
 
-import { flowService } from '../services/flow-service';
 import { useLoading } from '../contexts/LoadingContext';
 
+import { flowService } from '@services/flow-service';
 import {
   LayoutContainer,
-  SideNavContainer,
-  MainContainer
+  SideNavContainer
 } from '@components/Layouts/MainLayout';
 import { AddFlow } from '@components/FlowManagment/Add/AddFlowForm';
 import Logger from '@utils/logger';
 import Header from '@components/shared/SubHeader';
 import List from '@components/shared/List/List';
+import { IFlowListItem } from '@domain/flow';
 
 export default function Flows() {
   const [flowList, setFlowList] = useState<{ value: string; id: string }[]>([]);
@@ -22,7 +22,7 @@ export default function Flows() {
       try {
         startLoading();
         const response = await flowService.getFlows();
-        const formatedList = response.data.map((el) => ({
+        const formatedList = response.data.map((el: IFlowListItem) => ({
           id: el.id,
           value: el.name
         }));
@@ -45,9 +45,6 @@ export default function Flows() {
       >
         <List items={flowList} />
       </SideNavContainer>
-      <MainContainer>
-        <p>Empty page</p>
-      </MainContainer>
     </LayoutContainer>
   );
 }

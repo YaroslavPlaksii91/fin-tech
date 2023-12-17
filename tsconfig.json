@@ -23,6 +23,8 @@
       "@hooks/*": ["./hooks/*"],
       "@pages/*": ["./pages/*"],
       "@utils/*": ["./utils/*"],
+      "@services/*": ["./services/*"],
+      "@domain/*": ["./domain/*"],
       "@constants/*": ["./constants/*"]
     },
 

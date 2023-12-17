@@ -8,6 +8,7 @@ import routes from '@constants/routes';
 import Flows from '@pages/Flows';
 import FlowDetails from '@pages/FlowDetails';
 import FlowEdit from '@pages/FlowEdit';
+import Home from '@pages/Home';
 
 export const router = createBrowserRouter([
   {
@@ -17,7 +18,7 @@ export const router = createBrowserRouter([
         path: '/',
         element: (
           <PrivateRoutes>
-            <div>Home</div>
+            <Home />
           </PrivateRoutes>
         )
       },

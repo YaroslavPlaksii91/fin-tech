@@ -29,6 +29,9 @@ module.exports = {
         alias: {
           '@constants': './src/constants',
           '@components': './src/components',
+          '@hook': './src/hook',
+          '@domain': 'src/domain',
+          '@services': 'src/services',
           '@pages': './src/pages',
           '@utils': './src/utils',
           '@hooks': './src/hooks',

@@ -9,7 +9,7 @@ import validationSchema from './validationSchema';
 
 import { InputText } from '@components/shared/Forms/InputText';
 import api from '@utils/api';
-import { LoginIcon } from '@components/shared/Icons';
+import { ChartIcon } from '@components/shared/Icons';
 import Auth from '@utils/auth';
 
 type FormData = {
@@ -69,7 +69,7 @@ function Login() {
       sx={{ minHeight: '100vh' }}
     >
       <Grid container direction="column" alignItems="center">
-        <LoginIcon />
+        <ChartIcon />
         <Typography pb={3} align="center" variant="h3">
           Welcome to Underwriting platform
         </Typography>

@@ -15,8 +15,6 @@ import ReactFlow, {
 
 import 'reactflow/dist/style.css';
 
-import { IFlowData } from '../../../types/domain/flow';
-
 import { nodeTypes } from './Nodes';
 import { edgeTypes } from './Edges';
 import NodePositioning from './Nodes/NodePositioning';
@@ -25,6 +23,8 @@ import { getEdges, getNodes } from './utils/workflowElementsUtils';
 import './overview.css';
 import { ADD_BUTTON_ON_EDGE } from './types';
 import { getLayoutedElements } from './utils/workflowLayoutUtils';
+
+import { IFlowData } from '@domain/flow';
 
 interface FlowChartViewProps {
   elements: (Node | Edge)[];

@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 
-import { IFlowData, IFlowListItem } from '../types/domain';
-import api from '../utils/api';
+import api from '@utils/api';
+import { IFlowData, IFlowListItem } from '@domain/flow';
 
 class FlowService {
   async getFlows(): Promise<AxiosResponse<IFlowListItem[]>> {

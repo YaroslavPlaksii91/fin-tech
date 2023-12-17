@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { FlowNode } from '../../../types/domain';
 import { ADD_BUTTON_ON_EDGE, ObjectType } from '../FlowChart/types';
 
+import { FlowNode } from '@domain/flow';
 import { DRAWER_WIDTH, HEADER_HAEIGHT } from '@constants/themeConstants';
 
 const startNodeId = uuidv4();

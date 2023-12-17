@@ -1,8 +1,9 @@
 import { Edge, Node, Viewport } from '@reactflow/core';
 
-import { IEntity } from '../entity';
+import { IEntity } from './entity';
 
 import { ObjectType } from '@components/FlowManagment/FlowChart/types';
+
 export interface IFlowListItem extends IEntity {
   name: string;
 }

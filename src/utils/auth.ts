@@ -14,6 +14,16 @@ class Auth {
       expires: tomorrow
     });
   }
+
+  static getUsername() {
+    const credentialsCookie = Cookie.get(cookiesKeys.credentials);
+    if (credentialsCookie) {
+      const decodedCredentials = decodeURIComponent(credentialsCookie);
+      const [storedUsername] = decodedCredentials.split(':');
+      return storedUsername;
+    }
+    return '';
+  }
 }
 
 export default Auth;
