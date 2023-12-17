@@ -9,6 +9,7 @@ interface CustomPalette {
   white: string;
   dark: string;
   yellow: string;
+  secondary: string;
 }
 
 export const palette = {
@@ -43,8 +44,8 @@ export const theme = createTheme({
       contrastText: palette.gray
     },
     background: {
-      paper: '#F8F9FB',
-      default: '#fff'
+      paper: palette.lightGray,
+      default: palette.white
     },
     divider: '#D1D9E2'
   },

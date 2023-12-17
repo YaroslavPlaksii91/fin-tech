@@ -9,6 +9,7 @@ import MuiBorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined'
 import MuiCircularProgress, {
   CircularProgressProps
 } from '@mui/material/CircularProgress';
+import MuiMoreVertIcon from '@mui/icons-material/MoreVert';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 
 const defaultIconSize = '18px';
@@ -90,6 +91,14 @@ export const EditNoteOutlinedIcon = ({
     sx={{ width: size, height: size, ...sx }}
     {...props}
   />
+);
+
+export const MoreVertIcon = ({
+  size = defaultIconSize,
+  sx,
+  ...props
+}: IconPros) => (
+  <MuiMoreVertIcon sx={{ width: size, height: size, ...sx }} {...props} />
 );
 
 export const CircularProgress = ({ ...props }: CircularProgressProps) => (

@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 
-import { IFlowListItem } from '../types';
 import { flowService } from '../services/flow-service';
 import { useLoading } from '../contexts/LoadingContext';
 
@@ -13,9 +11,10 @@ import {
 import { AddFlow } from '@components/FlowManagment/Add/AddFlowForm';
 import Logger from '@utils/logger';
 import Header from '@components/shared/SubHeader';
+import List from '@components/shared/List/List';
 
 export default function Flows() {
-  const [flowList, setFlowList] = useState<IFlowListItem[]>([]);
+  const [flowList, setFlowList] = useState<{ value: string; id: string }[]>([]);
   const { startLoading, stopLoading } = useLoading();
 
   useEffect(() => {
@@ -23,7 +22,11 @@ export default function Flows() {
       try {
         startLoading();
         const response = await flowService.getFlows();
-        setFlowList(response.data);
+        const formatedList = response.data.map((el) => ({
+          id: el.id,
+          value: el.name
+        }));
+        setFlowList(formatedList);
       } catch (error) {
         Logger.error('Error fetching data:', error);
       } finally {
@@ -40,14 +43,7 @@ export default function Flows() {
         footer={<AddFlow />}
         header={<Header text="Flow list" />}
       >
-        <ul>
-          {!!flowList.length &&
-            flowList.map((flow, index) => (
-              <li key={index}>
-                <Link to={`/flow-list/details/${flow.id}`}>{flow.name}</Link>
-              </li>
-            ))}
-        </ul>
+        <List items={flowList} />
       </SideNavContainer>
       <MainContainer>
         <p>Empty page</p>
