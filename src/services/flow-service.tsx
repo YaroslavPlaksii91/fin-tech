@@ -1,14 +1,14 @@
 import { AxiosResponse } from 'axios';
 
 import api from '@utils/api';
-import { IFlowData, IFlowListItem } from '@domain/flow';
+import { IFlowData, IFlowDataCreate, IFlowListItem } from '@domain/flow';
 
 class FlowService {
   async getFlows(): Promise<AxiosResponse<IFlowListItem[]>> {
     return await api.get('/flows');
   }
 
-  async createFlow(data: IFlowData): Promise<IFlowData> {
+  async createFlow(data: IFlowDataCreate): Promise<IFlowData> {
     return await api.post('/flows', data);
   }
 

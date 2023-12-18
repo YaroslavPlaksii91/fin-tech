@@ -10,7 +10,8 @@ import ReactFlow, {
   BackgroundVariant,
   ConnectionLineType,
   ReactFlowInstance,
-  useReactFlow
+  useReactFlow,
+  Viewport
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
@@ -24,11 +25,9 @@ import './overview.css';
 import { ADD_BUTTON_ON_EDGE } from './types';
 import { getLayoutedElements } from './utils/workflowLayoutUtils';
 
-import { IFlowData } from '@domain/flow';
-
 interface FlowChartViewProps {
   elements: (Node | Edge)[];
-  data: Omit<IFlowData, 'edges' | 'nodes'>;
+  data: { viewport: Viewport; id: string };
   isEditMode?: boolean;
 }
 
@@ -98,7 +97,7 @@ const FlowChart: React.FC<FlowChartViewProps> = ({
       >
         <Background variant={BackgroundVariant.Lines} />
         {isEditMode && (
-          <ControlPanel flowKey={data.data.name} rfInstance={rfInstance} />
+          <ControlPanel flowKey={data.id} rfInstance={rfInstance} />
         )}
       </ReactFlow>
     </>

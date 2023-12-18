@@ -8,13 +8,13 @@ export interface IFlowListItem extends IEntity {
   name: string;
 }
 
-type FlowData = {
+export type FlowData = {
+  id: string;
   name: string;
-  id?: string;
-  createdBy?: string;
-  createdOn?: string;
-  editedBy?: string;
-  editedOn?: string;
+  createdBy: string;
+  createdOn: string;
+  editedBy: string;
+  editedOn: string;
 };
 
 type NodeData = {
@@ -28,9 +28,15 @@ type NodeData = {
 export type FlowNode = Node<NodeData>;
 
 export interface IFlowData {
+  id: string;
   nodes: FlowNode[];
   edges: Edge[];
   viewport: Viewport;
   data: FlowData;
-  id?: string;
 }
+
+type FlowDataCreate = Pick<FlowData, 'name' | 'createdBy' | 'editedBy'>;
+
+export type IFlowDataCreate = Omit<IFlowData, 'id' | 'data'> & {
+  data: FlowDataCreate;
+};

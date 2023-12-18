@@ -7,7 +7,7 @@ import {
   getInitialViewData
 } from './initialFlowUtils';
 
-import { IFlowData } from '@domain/flow';
+import { IFlowDataCreate } from '@domain/flow';
 import Auth from '@utils/auth';
 
 export const validationSchema = yup.object().shape({
@@ -18,7 +18,7 @@ export const validationSchema = yup.object().shape({
     .max(30, 'Flow name cannot have more than 30 characters')
 });
 
-export const createInitialFlowDataHelper = (name: string): IFlowData => {
+export const createInitialFlowDataHelper = (name: string): IFlowDataCreate => {
   const startNodeData = createStartNodeData();
   const endNodeData = createEndNodeData();
   const edgeData = createEdgeData();
