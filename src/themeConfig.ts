@@ -10,12 +10,14 @@ interface CustomPalette {
   dark: string;
   yellow: string;
   secondary: string;
+  grayBorder: string;
 }
 
 export const palette = {
   lightGray: '#F8F9FB',
   gray: '#5F6D7E',
   grayLine: '#8FA5BE',
+  grayBorder: '#D1D9E2',
   pink: '#FFB4B4',
   dark: '#2E3646',
   primary: '#2E3646',

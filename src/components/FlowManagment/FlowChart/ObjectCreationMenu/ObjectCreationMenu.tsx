@@ -41,7 +41,14 @@ export const ObjectCreationMenu: React.FC<ObjectCreationMenuProps> = ({
         <AddIcon sx={{ transform: 'rotate(45deg)' }} />
       </StyledRhombButton>
       <Menu
-        anchorPositionTop
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }}
+        transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
         anchorEl={anchorEl}
         handleCloseMenu={handleCloseMenu}
         options={options}

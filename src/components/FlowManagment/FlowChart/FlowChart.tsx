@@ -20,7 +20,12 @@ import { nodeTypes } from './Nodes';
 import { edgeTypes } from './Edges';
 import NodePositioning from './Nodes/NodePositioning';
 import ControlPanel from './ContolPanel/ControlPanel';
-import { getEdges, getNodes } from './utils/workflowElementsUtils';
+import {
+  areOnlyStartAndEndObjects,
+  centeredInitialFlowViewport,
+  getEdges,
+  getNodes
+} from './utils/workflowElementsUtils';
 import './overview.css';
 import { ADD_BUTTON_ON_EDGE } from './types';
 import { getLayoutedElements } from './utils/workflowLayoutUtils';
@@ -57,7 +62,10 @@ const FlowChart: React.FC<FlowChartViewProps> = ({
   }, [elements]);
 
   useEffect(() => {
-    if (data?.viewport) {
+    if (areOnlyStartAndEndObjects(nodes)) {
+      const viewport = centeredInitialFlowViewport();
+      setViewport(viewport, { duration: 500 });
+    } else {
       setViewport(data.viewport, { duration: 500 });
     }
   }, [data?.viewport, setViewport]);

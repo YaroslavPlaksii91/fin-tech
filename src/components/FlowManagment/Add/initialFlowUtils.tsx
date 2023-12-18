@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { ADD_BUTTON_ON_EDGE, ObjectType } from '../FlowChart/types';
 
 import { FlowNode } from '@domain/flow';
-import { DRAWER_WIDTH, HEADER_HAEIGHT } from '@constants/themeConstants';
 
 const startNodeId = uuidv4();
 const endNodeId = uuidv4();
@@ -52,10 +51,4 @@ export const createEdgeData = () => {
   };
 
   return newEdge;
-};
-
-export const getInitialViewData = () => {
-  const x = (window.innerWidth - 2 * DRAWER_WIDTH) / 2;
-  const y = (window.innerHeight - HEADER_HAEIGHT) / 2;
-  return { x, y, zoom: 1 };
 };

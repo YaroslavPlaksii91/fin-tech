@@ -1,11 +1,15 @@
-import { AxiosResponse } from 'axios';
-
 import api from '@utils/api';
-import { IFlowData, IFlowDataCreate, IFlowListItem } from '@domain/flow';
+import {
+  FlowData,
+  IFlowData,
+  IFlowDataCreate,
+  IFlowListItem
+} from '@domain/flow';
 
 class FlowService {
-  async getFlows(): Promise<AxiosResponse<IFlowListItem[]>> {
-    return await api.get('/flows');
+  async getFlows() {
+    const { data } = await api.get<IFlowListItem[]>('/flows');
+    return data;
   }
 
   async createFlow(data: IFlowDataCreate): Promise<IFlowData> {
@@ -13,8 +17,8 @@ class FlowService {
   }
 
   async getFlow(id: string) {
-    const response = await api.get<IFlowData>(`/flows/${id}`);
-    return response.data;
+    const { data } = await api.get<IFlowData>(`/flows/${id}`);
+    return data;
   }
 
   async updateFlow(id: string): Promise<IFlowData> {
@@ -23,6 +27,16 @@ class FlowService {
 
   async deleteFlow(id: string): Promise<void> {
     return await api.delete(`/flows/${id}`);
+  }
+
+  async getProductionFlow() {
+    const { data } = await api.get<FlowData>('/production-flow');
+    return data;
+  }
+
+  async getProductionFlowDetails() {
+    const { data } = await api.get<IFlowData>('/production-flow/details');
+    return data;
   }
 }
 

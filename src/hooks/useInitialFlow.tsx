@@ -8,7 +8,7 @@ import { flowService } from '../services/flow-service';
 import Logger from '@utils/logger';
 import { getUpdatedElementsAfterNodeAddition } from '@components/FlowManagment/FlowChart/utils/workflowElementsUtils';
 import { ObjectType } from '@components/FlowManagment/FlowChart/types';
-import { FlowData } from '@domain/flow';
+import { FlowData, IFlowData } from '@domain/flow';
 
 const defaultData = {
   id: '',
@@ -55,19 +55,22 @@ function useInitialFlow() {
     const fetchInitialData = async (flowId: string) => {
       try {
         startLoading();
-        const {
-          nodes,
-          edges: edgesData,
-          viewport,
-          data,
-          id
-        } = await flowService.getFlow(flowId);
-        const edges = edgesData.map((edge) => ({
+        let response: IFlowData;
+        if (id == 'production-flow') {
+          response = await flowService.getProductionFlowDetails();
+        } else {
+          response = await flowService.getFlow(flowId);
+        }
+        const edges = response.edges.map((edge) => ({
           ...edge,
           data: { onAdd: onAddNodeCallback }
         }));
-        setElements([...nodes, ...edges]);
-        setGeneralData({ viewport, data, id });
+        setElements([...response.nodes, ...edges]);
+        setGeneralData({
+          viewport: response.viewport,
+          data: response.data,
+          id: response.id
+        });
       } catch (error) {
         Logger.error('Error fetching initial data:', error);
       } finally {
