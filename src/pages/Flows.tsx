@@ -4,6 +4,7 @@ import { Stack, Typography } from '@mui/material';
 
 import { useLoading } from '../contexts/LoadingContext';
 
+import Header from '@components/shared/Header';
 import { flowService } from '@services/flow-service';
 import {
   LayoutContainer,
@@ -12,7 +13,6 @@ import {
 } from '@components/Layouts/MainLayout';
 import { AddFlow } from '@components/FlowManagment/Add/AddFlowForm';
 import Logger from '@utils/logger';
-import Header from '@components/shared/SubHeader';
 import {
   StyledList,
   StyledListItem,
@@ -69,6 +69,7 @@ export default function Flows() {
           </Stack>
         }
       >
+        <Header pb={1} text="Flow list" />
         <StyledList>
           {flowList.map((flow) => (
             <StyledListItemNavLink

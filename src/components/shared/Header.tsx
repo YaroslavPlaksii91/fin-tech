@@ -1,19 +1,20 @@
-import { Stack, Typography, TypographyProps } from '@mui/material';
+import { Stack, StackProps, Typography, TypographyProps } from '@mui/material';
 
 import { palette } from '../../themeConfig';
 
 import { HexagonOutlinedIcon } from './Icons';
 
-interface SubHeaderProps {
+interface HeaderProps extends StackProps {
   text: string;
   variant?: TypographyProps['variant'];
   icon?: React.ReactNode;
 }
 
-const SubHeader: React.FC<SubHeaderProps> = ({
+const Header: React.FC<HeaderProps> = ({
   variant = 'h5',
   icon = <HexagonOutlinedIcon />,
-  text
+  text,
+  ...props
 }) => (
   <Stack
     color={palette.gray}
@@ -22,10 +23,11 @@ const SubHeader: React.FC<SubHeaderProps> = ({
     direction="row"
     spacing={1}
     alignItems="center"
+    {...props}
   >
     {icon}
     <Typography variant={variant}>{text}</Typography>
   </Stack>
 );
 
-export default SubHeader;
+export default Header;
