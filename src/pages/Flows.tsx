@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ReactFlowProvider } from 'reactflow';
-import { Stack, Typography } from '@mui/material';
+import { ListItemSecondaryAction, Stack, Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 
 import { useLoading } from '../contexts/LoadingContext';
@@ -74,9 +74,11 @@ export default function Flows() {
               key={flow.id}
               component={NavLink}
               to={`${routes.underwriting.flowList}/${flow.id}`}
-              secondaryAction={<ActionsMenu flow={flow} />}
             >
               <StyledListItemText>{flow.name}</StyledListItemText>
+              <ListItemSecondaryAction>
+                <ActionsMenu flow={flow} />
+              </ListItemSecondaryAction>
             </StyledNavListItem>
           ))}
         </StyledList>

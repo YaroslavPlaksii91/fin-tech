@@ -20,7 +20,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault();
+    event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
 
