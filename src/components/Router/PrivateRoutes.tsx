@@ -3,7 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import Cookie from 'js-cookie';
 
 import routes from '@constants/routes';
-import { cookiesKeys } from '@constants/constants';
+import { cookiesKeys } from '@constants/common';
 
 const PrivateRoutes = (props: { children: React.ReactNode }) => {
   const location = useLocation();

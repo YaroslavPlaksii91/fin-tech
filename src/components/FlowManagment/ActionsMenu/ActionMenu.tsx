@@ -1,9 +1,11 @@
 import React from 'react';
 
 import { StyledIconButton } from './styled';
+import Details from './Details';
 
 import Menu from '@components/shared/Menu/Menu';
 import { MoreVertIcon } from '@components/shared/Icons';
+import { IFlowListItem } from '@domain/flow';
 
 const options = [
   { label: 'View flow details' },
@@ -14,7 +16,7 @@ const options = [
   { label: 'Delete flow' }
 ];
 
-const ActionsMenu = () => {
+const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -35,6 +37,7 @@ const ActionsMenu = () => {
         anchorEl={anchorEl}
         handleCloseMenu={handleCloseMenu}
         options={options}
+        footer={<Details editedBy={flow.editedBy} editedOn={flow.editedOn} />}
       />
     </div>
   );

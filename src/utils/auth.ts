@@ -1,6 +1,6 @@
 import Cookie from 'js-cookie';
 
-import { cookiesKeys } from '@constants/constants';
+import { cookiesKeys } from '@constants/common';
 
 class Auth {
   static login(username: string, password: string) {

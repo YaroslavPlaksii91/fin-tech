@@ -182,8 +182,8 @@ export const theme = createTheme({
     },
     caption: {
       fontSize: '12px',
-      lineHeight: '15px',
-      fontWeight: 500
+      lineHeight: '20px',
+      fontWeight: 400
     }
   }
 });

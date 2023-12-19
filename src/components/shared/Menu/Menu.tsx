@@ -14,12 +14,14 @@ interface MenuProps extends Omit<MuiMenuProps, 'open'> {
   anchorEl: HTMLElement | null;
   handleCloseMenu: (key?: string) => void;
   options: { label: string; dataKey?: string; path?: string }[];
+  footer?: React.ReactNode;
 }
 
 const Menu: React.FC<MenuProps> = ({
   options,
   anchorEl,
   handleCloseMenu,
+  footer,
   ...props
 }) => {
   const handleClick = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
@@ -49,6 +51,7 @@ const Menu: React.FC<MenuProps> = ({
           )}
         </MenuItem>
       ))}
+      {footer}
     </StyledMenu>
   );
 };

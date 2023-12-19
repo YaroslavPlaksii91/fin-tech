@@ -4,7 +4,7 @@ import Cookie from 'js-cookie';
 import Logger from './logger';
 
 import { apiBaseUrl } from '@constants/api-urls';
-import { cookiesKeys } from '@constants/constants';
+import { cookiesKeys } from '@constants/common';
 
 const Api: AxiosInstance = axios.create({
   baseURL: apiBaseUrl,

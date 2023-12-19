@@ -75,7 +75,7 @@ export default function Flows() {
               key={flow.id}
               to={`${routes.underwriting.flowList}/${flow.id}`}
             >
-              <StyledListItem secondaryAction={<ActionsMenu />}>
+              <StyledListItem secondaryAction={<ActionsMenu flow={flow} />}>
                 <StyledListItemText>{flow.name}</StyledListItemText>
               </StyledListItem>
             </StyledListItemNavLink>
