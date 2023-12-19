@@ -14,7 +14,7 @@ interface ObjectCreationMenuProps {
 
 const options = [
   { label: 'Calculation', dataKey: ObjectType.CALCULATION },
-  { label: 'Condition', dataKey: ObjectType.CONDITION },
+  { label: 'Condition', dataKey: ObjectType.CALCULATION },
   { label: 'Champion Chalenger', dataKey: ObjectType.CHAMPION_CHALLENGER }
 ];
 

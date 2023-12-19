@@ -1,4 +1,3 @@
-import { ReactFlowProvider } from 'reactflow';
 import { Button, Divider, Stack, Typography } from '@mui/material';
 
 import { palette } from '../themeConfig';
@@ -18,42 +17,40 @@ export default function FlowDetails() {
   const { elements, data } = useInitialFlow();
   return (
     <LayoutContainer>
-      <ReactFlowProvider>
-        <SideNavContainer
-          footer={
-            <Button
-              variant="contained"
-              color="primary"
-              endIcon={<EditNoteOutlinedIcon />}
-            >
-              Edit flow
-            </Button>
-          }
-          header={<NavigateBack title="Back to flow list" />}
-        >
-          <Stack pl={2} pr={2} spacing={1}>
-            <Typography variant="h5">
-              <CroppedText>{data.data.name}</CroppedText>
+      <SideNavContainer
+        footer={
+          <Button
+            variant="contained"
+            color="primary"
+            endIcon={<EditNoteOutlinedIcon />}
+          >
+            Edit flow
+          </Button>
+        }
+        header={<NavigateBack title="Back to flow list" />}
+      >
+        <Stack pl={2} pr={2} spacing={1}>
+          <Typography variant="h5">
+            <CroppedText>{data.data.name}</CroppedText>
+          </Typography>
+          <Stack
+            display="flex"
+            direction="row"
+            alignItems="center"
+            spacing={1}
+            pb={0.5}
+          >
+            <Typography color={palette.gray} variant="body2">
+              Data dictionary
             </Typography>
-            <Stack
-              display="flex"
-              direction="row"
-              alignItems="center"
-              spacing={1}
-              pb={0.5}
-            >
-              <Typography color={palette.gray} variant="body2">
-                Data dictionary
-              </Typography>
-              <DatabaseIcon />
-            </Stack>
-            <Divider />
+            <DatabaseIcon />
           </Stack>
-        </SideNavContainer>
-        <MainContainer>
-          <FlowChart data={data} elements={elements} />
-        </MainContainer>
-      </ReactFlowProvider>
+          <Divider />
+        </Stack>
+      </SideNavContainer>
+      <MainContainer>
+        <FlowChart data={data} elements={elements} />
+      </MainContainer>
     </LayoutContainer>
   );
 }

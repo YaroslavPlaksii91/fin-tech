@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { ReactFlowProvider } from 'reactflow';
 import { ListItemSecondaryAction, Stack, Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 
@@ -83,11 +82,9 @@ export default function Flows() {
           ))}
         </StyledList>
       </SideNavContainer>
-      <ReactFlowProvider>
-        <MainContainer>
-          <FlowChart elements={elements} data={data} />
-        </MainContainer>
-      </ReactFlowProvider>
+      <MainContainer>
+        <FlowChart elements={elements} data={data} />
+      </MainContainer>
     </LayoutContainer>
   );
 }

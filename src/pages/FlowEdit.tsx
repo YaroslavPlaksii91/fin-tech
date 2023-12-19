@@ -1,5 +1,4 @@
 import { Button } from '@mui/material';
-import { ReactFlowProvider } from 'reactflow';
 
 import {
   LayoutContainer,
@@ -14,22 +13,20 @@ export default function FlowEdit() {
   const { elements, data } = useInitialFlow();
 
   return (
-    <ReactFlowProvider>
-      <LayoutContainer>
-        <SideNavContainer
-          footer={
-            <Button variant="contained" color="primary">
-              Add new object
-            </Button>
-          }
-          header={<NavigateBack title="Back to view mode" />}
-        >
-          Object list
-        </SideNavContainer>
-        <MainContainer>
-          <FlowChart isEditMode={true} elements={elements} data={data} />
-        </MainContainer>
-      </LayoutContainer>
-    </ReactFlowProvider>
+    <LayoutContainer>
+      <SideNavContainer
+        footer={
+          <Button variant="contained" color="primary">
+            Add new object
+          </Button>
+        }
+        header={<NavigateBack title="Back to view mode" />}
+      >
+        Object list
+      </SideNavContainer>
+      <MainContainer>
+        <FlowChart isEditMode={true} elements={elements} data={data} />
+      </MainContainer>
+    </LayoutContainer>
   );
 }

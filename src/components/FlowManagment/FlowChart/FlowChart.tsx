@@ -11,7 +11,8 @@ import ReactFlow, {
   ConnectionLineType,
   ReactFlowInstance,
   useReactFlow,
-  Viewport
+  Viewport,
+  ReactFlowProvider
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
@@ -36,7 +37,7 @@ interface FlowChartViewProps {
   isEditMode?: boolean;
 }
 
-const FlowChart: React.FC<FlowChartViewProps> = ({
+const FlowChartLayout: React.FC<FlowChartViewProps> = ({
   elements,
   data,
   isEditMode = false
@@ -111,5 +112,11 @@ const FlowChart: React.FC<FlowChartViewProps> = ({
     </>
   );
 };
+
+const FlowChart = (props: FlowChartViewProps) => (
+  <ReactFlowProvider>
+    <FlowChartLayout {...props} />
+  </ReactFlowProvider>
+);
 
 export default FlowChart;
