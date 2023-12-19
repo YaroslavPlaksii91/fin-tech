@@ -17,6 +17,9 @@ export const StyledListItem = styled(ListItem)(({ theme }) => ({
 export const StyledListItemText = styled(ListItemText)(({ theme }) => ({
   '.MuiTypography-root': {
     fontSize: '14px',
-    color: theme.palette.gray
+    color: theme.palette.gray,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
   }
 }));

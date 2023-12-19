@@ -3,6 +3,7 @@ import { Stack, StackProps, Typography, TypographyProps } from '@mui/material';
 import { palette } from '../../themeConfig';
 
 import { HexagonOutlinedIcon } from './Icons';
+import CroppedText from './CroppedText';
 
 interface HeaderProps extends StackProps {
   text: string;
@@ -26,7 +27,9 @@ const Header: React.FC<HeaderProps> = ({
     {...props}
   >
     {icon}
-    <Typography variant={variant}>{text}</Typography>
+    <Typography variant={variant}>
+      <CroppedText>{text}</CroppedText>
+    </Typography>
   </Stack>
 );
 
