@@ -13,13 +13,6 @@ export const StyledNavLink = styled(NormalizeLink)(({ theme }) => ({
   }
 }));
 
-export const StyledListItemNavLink = styled(NormalizeLink)(({ theme }) => ({
-  display: 'block',
-  '&.active': {
-    background: theme.palette.secondary.main
-  }
-}));
-
 export const StyledBorderNavLink = styled(NormalizeLink)(({ theme }) => ({
   display: 'block',
   '&.active': {

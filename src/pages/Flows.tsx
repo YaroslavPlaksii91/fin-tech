@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ReactFlowProvider } from 'reactflow';
 import { Stack, Typography } from '@mui/material';
+import { NavLink } from 'react-router-dom';
 
 import { useLoading } from '../contexts/LoadingContext';
 
@@ -15,13 +16,10 @@ import { AddFlow } from '@components/FlowManagment/Add/AddFlowForm';
 import Logger from '@utils/logger';
 import {
   StyledList,
-  StyledListItem,
-  StyledListItemText
+  StyledListItemText,
+  StyledNavListItem
 } from '@components/shared/List/styled';
-import {
-  StyledListItemNavLink,
-  StyledBorderNavLink
-} from '@components/shared/Link/styled';
+import { StyledBorderNavLink } from '@components/shared/Link/styled';
 import { IFlowListItem } from '@domain/flow';
 import FlowChart from '@components/FlowManagment/FlowChart/FlowChart';
 import routes from '@constants/routes';
@@ -72,14 +70,14 @@ export default function Flows() {
         <Header pb={1} text="Flow list" />
         <StyledList>
           {flowList.map((flow) => (
-            <StyledListItemNavLink
+            <StyledNavListItem
               key={flow.id}
+              component={NavLink}
               to={`${routes.underwriting.flowList}/${flow.id}`}
+              secondaryAction={<ActionsMenu flow={flow} />}
             >
-              <StyledListItem secondaryAction={<ActionsMenu flow={flow} />}>
-                <StyledListItemText>{flow.name}</StyledListItemText>
-              </StyledListItem>
-            </StyledListItemNavLink>
+              <StyledListItemText>{flow.name}</StyledListItemText>
+            </StyledNavListItem>
           ))}
         </StyledList>
       </SideNavContainer>
