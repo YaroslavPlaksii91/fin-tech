@@ -67,7 +67,7 @@ export default function Flows() {
       >
         <Header pb={1} text="Flow list" />
         <StyledList>
-          {flowList.map((flow) => (
+          {flowList?.map((flow) => (
             <StyledNavListItem
               key={flow.id}
               component={NavLink}
