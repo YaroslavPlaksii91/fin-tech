@@ -25,7 +25,8 @@
       "@utils/*": ["./utils/*"],
       "@services/*": ["./services/*"],
       "@domain/*": ["./domain/*"],
-      "@constants/*": ["./constants/*"]
+      "@constants/*": ["./constants/*"],
+      "@contexts/*": ["./contexts/*"]
     },
 
     /* Linting */

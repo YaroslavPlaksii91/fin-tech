@@ -5,3 +5,5 @@ export const cookiesKeys = {
 };
 
 export const FULL_DATE_TIME_FORMAT = 'MM/DD/YYYY hh:mm:ss A';
+
+export const PRODUCTION_FLOW_ID = 'production-flow';

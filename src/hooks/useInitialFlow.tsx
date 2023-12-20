@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Node, Edge, Viewport } from 'reactflow';
 
-import { useLoading } from '../contexts/LoadingContext';
 import { flowService } from '../services/flow-service';
 
+import { useLoading } from '@contexts/LoadingContext';
 import Logger from '@utils/logger';
 import { getUpdatedElementsAfterNodeAddition } from '@components/FlowManagment/FlowChart/utils/workflowElementsUtils';
 import { ObjectType } from '@components/FlowManagment/FlowChart/types';
 import { FlowData, IFlowData } from '@domain/flow';
+import { PRODUCTION_FLOW_ID } from '@constants/common';
 
 const defaultData = {
   id: '',
@@ -56,7 +57,7 @@ function useInitialFlow() {
       try {
         startLoading();
         let response: IFlowData;
-        if (id == 'production-flow') {
+        if (id === PRODUCTION_FLOW_ID) {
           response = await flowService.getProductionFlowDetails();
         } else {
           response = await flowService.getFlow(flowId);

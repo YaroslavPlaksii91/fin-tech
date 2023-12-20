@@ -15,7 +15,7 @@ interface ObjectCreationMenuProps {
 const options = [
   { label: 'Calculation', dataKey: ObjectType.CALCULATION },
   { label: 'Condition', dataKey: ObjectType.CALCULATION },
-  { label: 'Champion Chalenger', dataKey: ObjectType.CHAMPION_CHALLENGER }
+  { label: 'Champion Challenger', dataKey: ObjectType.CHAMPION_CHALLENGER }
 ];
 
 export const ObjectCreationMenu: React.FC<ObjectCreationMenuProps> = ({

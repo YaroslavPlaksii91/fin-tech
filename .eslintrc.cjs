@@ -36,6 +36,7 @@ module.exports = {
           '@utils': './src/utils',
           '@hooks': './src/hooks',
           '@store': './src/store',
+          '@contexts': './src/contexts',
           '@public': './public'
         },
         extensions: ['.js', '.jsx', '.ts', '.tsx']

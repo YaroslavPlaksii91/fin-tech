@@ -62,6 +62,10 @@ export default defineConfig(({ mode }) => {
         {
           find: '@hook',
           replacement: resolve(__dirname, './src/hook')
+        },
+        {
+          find: '@contexts',
+          replacement: resolve(__dirname, './src/contexts')
         }
       ]
     }

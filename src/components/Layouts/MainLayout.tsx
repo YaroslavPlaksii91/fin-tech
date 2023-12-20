@@ -1,8 +1,6 @@
 import React from 'react';
 import { Box, Divider, Stack, Typography } from '@mui/material';
 
-import { useLoading } from '../../contexts/LoadingContext';
-
 import {
   StyledDivider,
   StyledLayoutContainer,
@@ -10,6 +8,7 @@ import {
   StyledSideNavFooter
 } from './styled';
 
+import { useLoading } from '@contexts/LoadingContext';
 import LoadingFullscreen from '@components/shared/LoadingFullscreen';
 
 interface LayoutContainerProps {

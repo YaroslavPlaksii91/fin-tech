@@ -5,7 +5,7 @@ import { cloneDeep } from 'lodash';
 import { ADD_BUTTON_ON_EDGE, EdgeData, ObjectType } from '../types';
 
 import Logger from '@utils/logger';
-import { DRAWER_WIDTH, HEADER_HAEIGHT } from '@constants/themeConstants';
+import { DRAWER_WIDTH, HEADER_HEIGHT } from '@constants/themeConstants';
 
 const defaultPosition = { x: 0, y: 0 };
 
@@ -81,6 +81,6 @@ export const areOnlyStartAndEndObjects = (nodes: Node[]) => {
 
 export const centeredInitialFlowViewport = () => {
   const x = (window.innerWidth - 2 * DRAWER_WIDTH) / 2;
-  const y = (window.innerHeight - HEADER_HAEIGHT) / 2;
+  const y = (window.innerHeight - HEADER_HEIGHT) / 2;
   return { x, y, zoom: 1 };
 };

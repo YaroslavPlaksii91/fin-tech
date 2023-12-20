@@ -1,11 +1,11 @@
 import { styled } from '@mui/material/styles';
 import { Box, Divider } from '@mui/material';
 
-import { HEADER_HAEIGHT, DRAWER_WIDTH } from '@constants/themeConstants';
+import { HEADER_HEIGHT, DRAWER_WIDTH } from '@constants/themeConstants';
 
 export const StyledLayoutContainer = styled(Box)(() => ({
   display: 'flex',
-  height: `calc(100vh - ${HEADER_HAEIGHT}px)`
+  height: `calc(100vh - ${HEADER_HEIGHT}px)`
 }));
 
 export const StyledSideNavContainer = styled(Box)(({ theme }) => ({

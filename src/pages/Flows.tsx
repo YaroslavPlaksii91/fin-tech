@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { ListItemSecondaryAction, Stack, Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 
-import { useLoading } from '../contexts/LoadingContext';
-
+import { useLoading } from '@contexts/LoadingContext';
 import Header from '@components/shared/Header';
 import { flowService } from '@services/flow-service';
 import {
