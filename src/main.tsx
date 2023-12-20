@@ -11,6 +11,7 @@ import { Provider } from 'react-redux';
 import App from './App.tsx';
 import { store } from './store/store.ts';
 import { theme } from './themeConfig.ts';
+import { LoadingProvider } from './contexts/LoadingContext.tsx';
 
 import './main.css';
 
@@ -18,16 +19,18 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <SnackbarProvider
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right'
-          }}
-          autoHideDuration={3000}
-          preventDuplicate
-        >
-          <App />
-        </SnackbarProvider>
+        <LoadingProvider>
+          <SnackbarProvider
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}
+            autoHideDuration={3000}
+            preventDuplicate
+          >
+            <App />
+          </SnackbarProvider>
+        </LoadingProvider>
       </ThemeProvider>
     </Provider>
   </React.StrictMode>

@@ -1,51 +1,16 @@
-import { useState, useEffect } from 'react';
-import { Node, Edge } from 'reactflow';
 import { Button } from '@mui/material';
-
-import {
-  initialEdges,
-  initialNodes
-} from '../components/FlowManagment/FlowChart/data';
 
 import {
   LayoutContainer,
   SideNavContainer,
   MainContainer
 } from '@components/Layouts/MainLayout';
-import { getUpdatedElementsAfterNodeAddition } from '@components/FlowManagment/FlowChart/utils/workflowElementsUtils';
 import FlowChart from '@components/FlowManagment/FlowChart/FlowChart';
-import { ObjectType } from '@components/FlowManagment/FlowChart/types';
 import NavigateBack from '@components/shared/Link/NavigateBack';
+import useInitialFlow from '@hooks/useInitialFlow';
 
 export default function FlowEdit() {
-  const [elements, setElements] = useState<(Node | Edge)[]>([]);
-
-  const onAddNodeCallback = ({
-    id,
-    type
-  }: {
-    id: string;
-    type: ObjectType;
-  }) => {
-    setElements((elements) =>
-      getUpdatedElementsAfterNodeAddition({
-        elements,
-        type,
-        targetEdgeId: id,
-        onAdd: onAddNodeCallback
-      })
-    );
-  };
-
-  useEffect(() => {
-    // Add simular request to get Nodes
-    const nodes = initialNodes;
-    const edges = initialEdges.map((edge) => ({
-      ...edge,
-      data: { onAdd: onAddNodeCallback }
-    }));
-    setElements([...nodes, ...edges]);
-  }, []);
+  const { elements, data } = useInitialFlow();
 
   return (
     <LayoutContainer>
@@ -60,7 +25,7 @@ export default function FlowEdit() {
         Object list
       </SideNavContainer>
       <MainContainer>
-        <FlowChart isEditMode={true} elements={elements} />
+        <FlowChart isEditMode={true} elements={elements} data={data} />
       </MainContainer>
     </LayoutContainer>
   );

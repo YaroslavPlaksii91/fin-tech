@@ -1,16 +1,21 @@
-import { Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { NavLink } from 'react-router-dom';
 
-export const StyledNavLink = styled(NavLink)(({ theme }) => ({
+const NormalizeLink = styled(NavLink)(({ theme }) => ({
   color: theme.palette.gray,
-  textDecoration: 'none',
+  textDecoration: 'none'
+}));
+
+export const StyledNavLink = styled(NormalizeLink)(({ theme }) => ({
   '&.active': {
     color: theme.palette.gray,
     fontWeight: 'bold'
   }
 }));
 
-export const StyledNavigateNext = styled(Typography)(({ theme }) => ({
-  color: theme.palette.gray
+export const StyledBorderNavLink = styled(NormalizeLink)(({ theme }) => ({
+  display: 'block',
+  '&.active': {
+    borderLeft: `3px solid ${theme.palette.gray}`
+  }
 }));

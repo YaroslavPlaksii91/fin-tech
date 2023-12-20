@@ -5,6 +5,7 @@ import { cloneDeep } from 'lodash';
 import { ADD_BUTTON_ON_EDGE, EdgeData, ObjectType } from '../types';
 
 import Logger from '@utils/logger';
+import { DRAWER_WIDTH, HEADER_HEIGHT } from '@constants/themeConstants';
 
 const defaultPosition = { x: 0, y: 0 };
 
@@ -67,3 +68,19 @@ export const getNodes = (elements: (Node | Edge)[]): Node[] =>
 
 export const getEdges = (elements: (Node | Edge)[]): Edge[] =>
   elements.filter<Edge>((el): el is Edge => !isNode(el));
+
+export const areOnlyStartAndEndObjects = (nodes: Node[]) => {
+  for (let i = 0; i < nodes.length; i++) {
+    const nodeType = nodes[i].type;
+    if (!(nodeType === 'StartObject' || nodeType === 'EndObject')) {
+      return false;
+    }
+  }
+  return true;
+};
+
+export const centeredInitialFlowViewport = () => {
+  const x = (window.innerWidth - 2 * DRAWER_WIDTH) / 2;
+  const y = (window.innerHeight - HEADER_HEIGHT) / 2;
+  return { x, y, zoom: 1 };
+};

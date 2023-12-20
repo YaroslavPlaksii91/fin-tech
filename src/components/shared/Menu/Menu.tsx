@@ -1,41 +1,36 @@
 import React from 'react';
-import { MenuItem, ListItemIcon } from '@mui/material';
+import {
+  MenuItem,
+  ListItemIcon,
+  MenuProps as MuiMenuProps
+} from '@mui/material';
 
 import Link from '../Link/Link';
 import { HexagonOutlinedIcon } from '../Icons';
 
 import { StyledMenu } from './styled';
 
-interface MenuProps {
+interface MenuProps extends Omit<MuiMenuProps, 'open'> {
   anchorEl: HTMLElement | null;
   handleCloseMenu: (key?: string) => void;
   options: { label: string; dataKey?: string; path?: string }[];
-  anchorPositionTop?: boolean;
+  footer?: React.ReactNode;
 }
 
 const Menu: React.FC<MenuProps> = ({
   options,
   anchorEl,
   handleCloseMenu,
-  anchorPositionTop = false
+  footer,
+  ...props
 }) => {
   const handleClick = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     handleCloseMenu(event.currentTarget.dataset.key);
   };
 
-  const anchorHorizontal = anchorPositionTop ? 'center' : 'left';
-
   return (
     <StyledMenu
-      anchorPosition={{ top: 500, left: 0 }}
-      anchorOrigin={{
-        vertical: anchorPositionTop ? 'top' : 'bottom',
-        horizontal: anchorHorizontal
-      }}
-      transformOrigin={{
-        vertical: anchorPositionTop ? 'bottom' : 'top',
-        horizontal: anchorHorizontal
-      }}
+      {...props}
       anchorEl={anchorEl}
       open={Boolean(anchorEl)}
       onClose={() => handleCloseMenu()}
@@ -56,6 +51,7 @@ const Menu: React.FC<MenuProps> = ({
           )}
         </MenuItem>
       ))}
+      {footer}
     </StyledMenu>
   );
 };

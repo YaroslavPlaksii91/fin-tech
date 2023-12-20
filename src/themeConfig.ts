@@ -9,12 +9,15 @@ interface CustomPalette {
   white: string;
   dark: string;
   yellow: string;
+  secondary: string;
+  grayBorder: string;
 }
 
 export const palette = {
   lightGray: '#F8F9FB',
   gray: '#5F6D7E',
   grayLine: '#8FA5BE',
+  grayBorder: '#D1D9E2',
   pink: '#FFB4B4',
   dark: '#2E3646',
   primary: '#2E3646',
@@ -43,10 +46,10 @@ export const theme = createTheme({
       contrastText: palette.gray
     },
     background: {
-      paper: '#F8F9FB',
-      default: '#fff'
+      paper: palette.lightGray,
+      default: palette.white
     },
-    divider: '#D1D9E2'
+    divider: '#E8ECF1'
   },
   components: {
     MuiInputLabel: {
@@ -144,6 +147,12 @@ export const theme = createTheme({
       fontWeight: 600,
       color: palette.dark
     },
+    h3: {
+      fontSize: '22px',
+      lineHeight: '38px',
+      fontWeight: 600,
+      color: palette.dark
+    },
     h5: {
       fontSize: '16px',
       lineHeight: '24px',
@@ -173,8 +182,8 @@ export const theme = createTheme({
     },
     caption: {
       fontSize: '12px',
-      lineHeight: '15px',
-      fontWeight: 500
+      lineHeight: '20px',
+      fontWeight: 400
     }
   }
 });

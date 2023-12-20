@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Node, Edge, useStore, ReactFlowState } from 'reactflow';
 
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
-
 interface NodePositioningProps {
   setNodes: (nodes: Node[]) => void;
   setEdges: (edges: Edge[]) => void;

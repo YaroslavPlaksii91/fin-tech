@@ -1,5 +1,5 @@
-import { Box, Divider, Stack, Typography } from '@mui/material';
 import React from 'react';
+import { Box, Divider, Stack, Typography } from '@mui/material';
 
 import {
   StyledDivider,
@@ -8,14 +8,21 @@ import {
   StyledSideNavFooter
 } from './styled';
 
+import { useLoading } from '@contexts/LoadingContext';
+import LoadingFullscreen from '@components/shared/LoadingFullscreen';
+
 interface LayoutContainerProps {
   children: React.ReactNode;
 }
-const LayoutContainer: React.FC<LayoutContainerProps> = ({ children }) => (
-  <StyledLayoutContainer sx={{ display: 'flex' }}>
-    {children}
-  </StyledLayoutContainer>
-);
+const LayoutContainer: React.FC<LayoutContainerProps> = ({ children }) => {
+  const { loading } = useLoading();
+
+  return (
+    <StyledLayoutContainer>
+      {loading ? <LoadingFullscreen /> : children}
+    </StyledLayoutContainer>
+  );
+};
 
 interface SideNavContainerProps {
   footer: React.ReactNode;

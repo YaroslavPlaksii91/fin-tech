@@ -12,10 +12,6 @@ interface User {
   last_name: string;
 }
 
-interface GoogleAuthProps {
-  setIsError: (boolean: boolean) => void;
-}
-
 interface ImportMetaEnv {
   VITE_API_BASE: string;
   VITE_MUI_LICENSE_KEY: string;

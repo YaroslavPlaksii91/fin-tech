@@ -8,7 +8,9 @@ interface Props {
 }
 
 const Link: React.FC<Props> = ({ path, label }) => (
-  <StyledNavLink to={path}>{label}</StyledNavLink>
+  <StyledNavLink end to={path}>
+    {label}
+  </StyledNavLink>
 );
 
 export default Link;

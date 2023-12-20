@@ -14,8 +14,8 @@ interface ObjectCreationMenuProps {
 
 const options = [
   { label: 'Calculation', dataKey: ObjectType.CALCULATION },
-  { label: 'Condition', dataKey: ObjectType.CONDITION },
-  { label: 'Champion Chalenger', dataKey: ObjectType.CHAMPION_CHALLENGER }
+  { label: 'Condition', dataKey: ObjectType.CALCULATION },
+  { label: 'Champion Challenger', dataKey: ObjectType.CHAMPION_CHALLENGER }
 ];
 
 export const ObjectCreationMenu: React.FC<ObjectCreationMenuProps> = ({
@@ -41,7 +41,14 @@ export const ObjectCreationMenu: React.FC<ObjectCreationMenuProps> = ({
         <AddIcon sx={{ transform: 'rotate(45deg)' }} />
       </StyledRhombButton>
       <Menu
-        anchorPositionTop
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }}
+        transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
         anchorEl={anchorEl}
         handleCloseMenu={handleCloseMenu}
         options={options}

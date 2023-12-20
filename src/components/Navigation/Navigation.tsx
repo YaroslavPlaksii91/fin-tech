@@ -14,11 +14,11 @@ import { Logo, PersonOutlineIcon } from '@components/shared/Icons';
 const pages = [
   {
     label: 'Dashboard',
-    options: [{ label: 'Test', path: '/' }]
+    options: [{ label: 'Home', path: '/' }]
   },
   {
     label: 'Lead managemend',
-    options: [{ label: 'Test', path: '/' }]
+    options: [{ label: 'Home', path: '/' }]
   },
   {
     label: 'Underwriting',
@@ -30,7 +30,7 @@ const pages = [
   },
   {
     label: 'Lead request',
-    options: [{ label: 'Test', path: '/' }]
+    options: [{ label: 'Home', path: '/' }]
   }
 ];
 

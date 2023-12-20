@@ -2,12 +2,13 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import PrivateRoutes from '@components/Router/PrivateRoutes';
 import PrivateAuthRoute from '@components/Router/PrivateAuthRoute';
-import Login from '@pages/Login';
+import Login from '@pages/Login/Login';
 import Layout from '@components/Layouts/Layout';
 import routes from '@constants/routes';
 import Flows from '@pages/Flows';
 import FlowDetails from '@pages/FlowDetails';
 import FlowEdit from '@pages/FlowEdit';
+import Home from '@pages/Home';
 
 export const router = createBrowserRouter([
   {
@@ -17,7 +18,7 @@ export const router = createBrowserRouter([
         path: '/',
         element: (
           <PrivateRoutes>
-            <div>Home</div>
+            <Home />
           </PrivateRoutes>
         )
       },
@@ -64,7 +65,7 @@ export const router = createBrowserRouter([
     ]
   },
   {
-    path: routes.auth.login,
+    path: routes.login,
     element: (
       <PrivateAuthRoute>
         <Login />

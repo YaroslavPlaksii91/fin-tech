@@ -8,10 +8,11 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   BackgroundVariant,
-  Viewport,
   ConnectionLineType,
-  ReactFlowProvider,
-  ReactFlowInstance
+  ReactFlowInstance,
+  useReactFlow,
+  Viewport,
+  ReactFlowProvider
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
@@ -20,37 +21,55 @@ import { nodeTypes } from './Nodes';
 import { edgeTypes } from './Edges';
 import NodePositioning from './Nodes/NodePositioning';
 import ControlPanel from './ContolPanel/ControlPanel';
-import { getEdges, getNodes } from './utils/workflowElementsUtils';
+import {
+  areOnlyStartAndEndObjects,
+  centeredInitialFlowViewport,
+  getEdges,
+  getNodes
+} from './utils/workflowElementsUtils';
 import './overview.css';
 import { ADD_BUTTON_ON_EDGE } from './types';
-
-const viewport: Viewport = { x: 200, y: 300, zoom: 1 };
+import { getLayoutedElements } from './utils/workflowLayoutUtils';
 
 interface FlowChartViewProps {
   elements: (Node | Edge)[];
+  data: { viewport: Viewport; id: string };
   isEditMode?: boolean;
 }
 
-const FlowChart: React.FC<FlowChartViewProps> = ({
+const FlowChartLayout: React.FC<FlowChartViewProps> = ({
   elements,
+  data,
   isEditMode = false
 }) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>(
-    getNodes(elements)
-  );
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
 
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>(
-    getEdges(elements)
-  );
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
 
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
+  const { setViewport } = useReactFlow();
 
   useEffect(() => {
-    const nodes = getNodes(elements);
-    const edges = getEdges(elements);
-    setEdges(edges);
-    setNodes(nodes);
+    if (elements.length > 0) {
+      const nodes = getNodes(elements);
+      const edges = getEdges(elements);
+      const { nodes: layoutedNode, edges: layoutedEdge } = getLayoutedElements(
+        nodes,
+        edges
+      );
+      setEdges(layoutedEdge);
+      setNodes(layoutedNode);
+    }
   }, [elements]);
+
+  useEffect(() => {
+    if (areOnlyStartAndEndObjects(nodes)) {
+      const viewport = centeredInitialFlowViewport();
+      setViewport(viewport, { duration: 500 });
+    } else {
+      setViewport(data.viewport, { duration: 500 });
+    }
+  }, [data?.viewport, setViewport]);
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
@@ -71,7 +90,7 @@ const FlowChart: React.FC<FlowChartViewProps> = ({
   );
 
   return (
-    <ReactFlowProvider>
+    <>
       <NodePositioning edges={edges} setEdges={setEdges} setNodes={setNodes} />
       <ReactFlow
         nodes={nodes}
@@ -79,7 +98,6 @@ const FlowChart: React.FC<FlowChartViewProps> = ({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onInit={setRfInstance}
-        defaultViewport={viewport}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
@@ -87,10 +105,18 @@ const FlowChart: React.FC<FlowChartViewProps> = ({
         connectionLineType={ConnectionLineType.SmoothStep}
       >
         <Background variant={BackgroundVariant.Lines} />
-        {isEditMode && <ControlPanel rfInstance={rfInstance} />}
+        {isEditMode && (
+          <ControlPanel flowKey={data.id} rfInstance={rfInstance} />
+        )}
       </ReactFlow>
-    </ReactFlowProvider>
+    </>
   );
 };
+
+const FlowChart = (props: FlowChartViewProps) => (
+  <ReactFlowProvider>
+    <FlowChartLayout {...props} />
+  </ReactFlowProvider>
+);
 
 export default FlowChart;

@@ -1,9 +1,11 @@
-import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+
+import { CircularProgress } from './Icons';
 
 const LoadingFullscreen = () => (
   <Box
-    height="100vh"
+    height="100%"
+    width="100%"
     display="flex"
     justifyContent="center"
     alignItems="center"

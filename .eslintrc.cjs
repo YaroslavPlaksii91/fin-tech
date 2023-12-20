@@ -29,10 +29,14 @@ module.exports = {
         alias: {
           '@constants': './src/constants',
           '@components': './src/components',
+          '@hook': './src/hook',
+          '@domain': 'src/domain',
+          '@services': 'src/services',
           '@pages': './src/pages',
           '@utils': './src/utils',
           '@hooks': './src/hooks',
           '@store': './src/store',
+          '@contexts': './src/contexts',
           '@public': './public'
         },
         extensions: ['.js', '.jsx', '.ts', '.tsx']
@@ -50,6 +54,14 @@ module.exports = {
     'react/jsx-curly-brace-presence': 'error',
     'prettier/prettier': ['error', { endOfLine: 'auto' }],
     '@typescript-eslint/no-floating-promises': ['error'],
-    'react/prop-types': 'off'
+    'react/prop-types': 'off',
+    '@typescript-eslint/no-misused-promises': [
+      2,
+      {
+        checksVoidReturn: {
+          attributes: false
+        }
+      }
+    ]
   }
 };

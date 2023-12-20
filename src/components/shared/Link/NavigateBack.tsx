@@ -1,9 +1,8 @@
-import { Button, Stack } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import { KeyboardDoubleArrowLeftIcon } from '../Icons';
-
-import { StyledNavigateNext } from './styled';
+import { palette } from '../../../themeConfig';
 
 interface NavigateBackProps {
   title: string;
@@ -24,9 +23,9 @@ const NavigateBack: React.FC<NavigateBackProps> = ({ title }) => {
       >
         <KeyboardDoubleArrowLeftIcon />
       </Button>
-      <StyledNavigateNext ml={1} variant="h6">
+      <Typography color={palette.gray} ml={1} variant="h6">
         {title}
-      </StyledNavigateNext>
+      </Typography>
     </Stack>
   );
 };
