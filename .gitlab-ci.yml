@@ -1,0 +1,61 @@
+stages:
+  - build_development
+  - deploy_development
+
+.common:
+  tags:
+    - frontend
+
+.build:
+  image: node:20-bookworm-slim
+  before_script:
+    - echo VITE_API_BASE=$(eval echo \$vite_api_base_$CI_COMMIT_REF_SLUG) > .env 
+    - echo VITE_MUI_LICENSE_KEY=$(eval echo \$vite_mui_license_key_$CI_COMMIT_REF_SLUG) >> .env
+  cache:
+    key: $CI_PROJECT_NAMESPACE-$CI_COMMIT_REF_NAME
+    paths:
+      - node_modules/
+
+.deploy:
+  image: awscli/steelkiwi
+  before_script:
+    - export domain=$(eval echo $(eval echo \$public_url_$CI_COMMIT_REF_SLUG) | sed 's/http[s]\?:\/\///g')
+
+  
+###DEVELOPMENT####
+build_development:
+  extends:
+    - .common
+    - .build
+  needs: []
+  stage: build_development
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    name: "$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHORT_SHA"
+    expire_in: 1 hour
+    paths:
+      - dist/
+    public: false
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+      when: manual
+    - if: '$CI_COMMIT_BRANCH == "staging"'
+      when: manual
+
+deploy_development:
+  extends:
+    - .common
+    - .deploy
+  needs: [build_development]
+  stage: deploy_development
+  script:
+    - aws s3 sync dist/ s3://$(eval echo \$bucket_$CI_COMMIT_REF_SLUG) --delete
+    - aws cloudfront create-invalidation --distribution-id $(eval echo \$cloudfront_$CI_COMMIT_REF_SLUG) --paths \/\*
+    - curl -X POST -H "Content-type:application/json" --data "{\"text\":\"<$(eval echo \$public_url_$CI_COMMIT_REF_SLUG)|$domain> has been updated by *$GITLAB_USER_LOGIN*\", \"channel\":\"$(eval echo \$channel_name)\"}" https://hooks.slack.com/services/$slack_webhook_url
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH == "staging"'
+      when: on_success
