@@ -20,7 +20,7 @@ import FlowChart from '@components/FlowManagment/FlowChart/FlowChart';
 import routes from '@constants/routes';
 import useInitialFlow from '@hooks/useInitialFlow';
 import ActionsMenu from '@components/FlowManagment/ActionsMenu/ActionMenu';
-import { fetchFlowList } from '@store/flowList/flowList';
+import { fetchFlowList } from '@store/flowList/asyncThunk';
 import { selectFlowList } from '@store/flowList/selectors';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { useLoading } from '@contexts/LoadingContext';

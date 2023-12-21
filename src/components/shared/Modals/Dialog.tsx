@@ -8,9 +8,9 @@ import Button from '@mui/material/Button';
 interface DialogProps {
   open: boolean;
   title: string;
+  children: React.ReactNode;
   onClose?: () => void;
   onConfirm?: () => void;
-  children: React.ReactNode;
   confirmLoading?: boolean;
   confirmText?: string;
   cancelText?: string;
@@ -33,21 +33,20 @@ const Dialog: React.FC<DialogProps> = ({
   <MuiDialog open={open} onClose={onClose}>
     <DialogTitle>{title}</DialogTitle>
     <DialogContent>{children}</DialogContent>
-    {displayedCancelBtn ||
-      (displayConfirmBtn && (
-        <DialogActions>
-          {displayedCancelBtn && (
-            <Button variant="contained" color="secondary" onClick={onClose}>
-              {cancelText}
-            </Button>
-          )}
-          {displayConfirmBtn && (
-            <Button variant="contained" color="primary" onClick={onConfirm}>
-              {confirmText}
-            </Button>
-          )}
-        </DialogActions>
-      ))}
+    {(displayedCancelBtn || displayConfirmBtn) && (
+      <DialogActions>
+        {displayedCancelBtn && (
+          <Button variant="contained" color="secondary" onClick={onClose}>
+            {cancelText}
+          </Button>
+        )}
+        {displayConfirmBtn && (
+          <Button variant="contained" color="primary" onClick={onConfirm}>
+            {confirmText}
+          </Button>
+        )}
+      </DialogActions>
+    )}
   </MuiDialog>
 );
 export default Dialog;

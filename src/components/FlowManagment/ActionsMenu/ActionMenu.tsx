@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { RenameFlow } from '../RenameFlow/RenameFlow';
+import { DeleteFlow } from '../DeleteFlow/DeleteFlow';
 
 import { StyledIconButton } from './styled';
 import Details from './Details';
@@ -31,6 +32,7 @@ const options = [
 const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [modalRenameOpen, setModalRenameOpen] = useState<boolean>(false);
+  const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
@@ -43,7 +45,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         setModalRenameOpen(true);
         break;
       case ActionTypes.DELETE_FLOW:
-        Logger.info('Delete');
+        setModalDeleteOpen(true);
         break;
       case ActionTypes.DUPLICATE_FLOW:
         Logger.info('Duplicate');
@@ -84,6 +86,11 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         flow={flow}
         modalOpen={modalRenameOpen}
         setModalOpen={setModalRenameOpen}
+      />
+      <DeleteFlow
+        flow={flow}
+        modalOpen={modalDeleteOpen}
+        setModalOpen={setModalDeleteOpen}
       />
     </div>
   );

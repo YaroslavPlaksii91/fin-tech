@@ -10,7 +10,7 @@ import { InputText } from '@components/shared/Forms/InputText';
 import Logger from '@utils/logger';
 import { IFlowListItem } from '@domain/flow';
 import { useAppDispatch } from '@store/hooks';
-import { renameFlow } from '@store/flowList/flowList';
+import { renameFlow } from '@store/flowList/asyncThunk';
 
 type FormData = {
   name: string;

@@ -32,7 +32,8 @@ class FlowService {
   }
 
   async deleteFlow(id: string) {
-    return await api.delete(`/flows/${id}`);
+    const { data } = await api.delete<IFlowData>(`/flows/${id}`);
+    return data;
   }
 
   async getProductionFlow() {

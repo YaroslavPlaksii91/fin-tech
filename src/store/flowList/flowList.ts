@@ -1,28 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+
+import { fetchFlowList, renameFlow, deleteFlow } from './asyncThunk';
 
 import { IFlowListItem } from '@domain/flow';
-import { flowService } from '@services/flow-service';
-import { JSONPatchOperation } from '@domain/entity';
-
-export const fetchFlowList = createAsyncThunk('get/flowList', async () => {
-  const flowItemsData = await flowService.getFlows();
-  const productionFlowItemData = await flowService.getProductionFlow();
-  return { flowItemsData, productionFlowItemData };
-});
-
-export const renameFlow = createAsyncThunk(
-  'patch/rename-flow-item',
-  async ({
-    id,
-    operations
-  }: {
-    id: string;
-    operations: JSONPatchOperation[];
-  }) => {
-    const data = await flowService.updateFlow(id, operations);
-    return data;
-  }
-);
 
 interface initialStateInterface {
   flowList: IFlowListItem[];
@@ -53,6 +33,10 @@ export const flowListSlicer = createSlice({
           ...data
         };
       }
+    });
+    builder.addCase(deleteFlow.fulfilled, (state, action) => {
+      const { id } = action.payload;
+      state.flowList = state.flowList.filter((item) => item.id !== id);
     });
   }
 });
