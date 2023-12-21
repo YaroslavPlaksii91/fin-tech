@@ -3,7 +3,7 @@ import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { validationSchema } from './validationSchema';
+import { updateFlowDataHelper, validationSchema } from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
@@ -34,19 +34,9 @@ export const RenameFlow: React.FC<RenameFlowProps> = ({
   const dispatch = useAppDispatch();
 
   const onSubmit: SubmitHandler<FormData> = async ({ name }): Promise<void> => {
+    const reqData = updateFlowDataHelper(flow.id, name);
     try {
-      await dispatch(
-        renameFlow({
-          id: flow.id,
-          operations: [
-            {
-              value: name,
-              path: 'data/name',
-              op: 'replace'
-            }
-          ]
-        })
-      );
+      await dispatch(renameFlow(reqData));
       handleCloseModal();
     } catch (error) {
       Logger.error(error);

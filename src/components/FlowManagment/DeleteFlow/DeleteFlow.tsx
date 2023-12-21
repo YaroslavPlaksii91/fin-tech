@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import Logger from '@utils/logger';
@@ -22,12 +22,20 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const handleDeleteFlow = async () => {
     try {
       await dispatch(deleteFlow(flowId));
       handleCloseModal();
-      isEditMode && navigate(`${routes.underwriting.flowList}`);
+      if (isEditMode) {
+        navigate(`${routes.underwriting.flowList}`);
+        return;
+      }
+      if (id === flowId) {
+        navigate(`${routes.underwriting.flowList}`);
+        return;
+      }
     } catch (error) {
       Logger.error(error);
     }
