@@ -37,7 +37,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         anchorEl={anchorEl}
         handleCloseMenu={handleCloseMenu}
         options={options}
-        footer={<Details editedBy={flow.editedBy} editedOn={flow.editedOn} />}
+        footer={<Details flow={flow} />}
       />
     </div>
   );
