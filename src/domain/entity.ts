@@ -5,3 +5,10 @@ export interface IEntity {
   editedBy: string;
   editedOn: string;
 }
+
+export type JSONPatchOperation = {
+  value: string;
+  path: string;
+  op: 'add' | 'remove' | 'replace' | 'move' | 'copy';
+  from?: string;
+};

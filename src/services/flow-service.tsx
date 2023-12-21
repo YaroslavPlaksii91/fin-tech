@@ -5,6 +5,7 @@ import {
   IFlowDataCreate,
   IFlowListItem
 } from '@domain/flow';
+import { JSONPatchOperation } from '@domain/entity';
 
 class FlowService {
   async getFlows() {
@@ -21,11 +22,16 @@ class FlowService {
     return data;
   }
 
-  async updateFlow(id: string): Promise<IFlowData> {
-    return await api.put(`/flows/${id}`);
+  async updateFlow(id: string, operations: JSONPatchOperation[]) {
+    const { data } = await api.patch<IFlowData>(`/flows/${id}`, operations, {
+      headers: {
+        'Content-Type': 'application/json-patch+json'
+      }
+    });
+    return data;
   }
 
-  async deleteFlow(id: string): Promise<void> {
+  async deleteFlow(id: string) {
     return await api.delete(`/flows/${id}`);
   }
 

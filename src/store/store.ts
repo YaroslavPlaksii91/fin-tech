@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import user from './user/user';
+import flowList from './flowList/flowList';
 
 export const store = configureStore({
   reducer: {
-    user
+    flowList
   }
 });
 
