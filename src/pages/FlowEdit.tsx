@@ -8,6 +8,7 @@ import {
 import FlowChart from '@components/FlowManagment/FlowChart/FlowChart';
 import NavigateBack from '@components/shared/Link/NavigateBack';
 import useInitialFlow from '@hooks/useInitialFlow';
+import FlowHeader from '@components/FlowManagment/FlowHeader';
 
 export default function FlowEdit() {
   const { elements, data } = useInitialFlow();
@@ -22,7 +23,7 @@ export default function FlowEdit() {
         }
         header={<NavigateBack title="Back to view mode" />}
       >
-        Object list
+        <FlowHeader name={data.data.name} />
       </SideNavContainer>
       <MainContainer>
         <FlowChart isEditMode={true} elements={elements} data={data} />

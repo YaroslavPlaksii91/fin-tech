@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { ReactFlowInstance } from 'reactflow';
 import { Button, Stack, Typography } from '@mui/material';
 
@@ -10,6 +10,7 @@ import {
   DeleteOutlineIcon,
   TaskAltOutlinedIcon
 } from '@components/shared/Icons';
+import { DeleteFlow } from '@components/FlowManagment/DeleteFlow/DeleteFlow';
 
 interface ControlPanelProps {
   flowKey: string;
@@ -17,6 +18,8 @@ interface ControlPanelProps {
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({ rfInstance, flowKey }) => {
+  const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
+
   const onSave = useCallback(() => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
@@ -24,8 +27,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ rfInstance, flowKey }) => {
     }
   }, [rfInstance]);
 
-  const onRestore = useCallback(() => {
-    Logger.info('Restore flow');
+  const onDelete = useCallback(() => {
+    setModalDeleteOpen(true);
   }, []);
 
   const onPushFlow = useCallback(() => {
@@ -39,7 +42,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ rfInstance, flowKey }) => {
         <Button
           variant="contained"
           color="secondary"
-          onClick={onRestore}
+          onClick={onDelete}
           endIcon={<DeleteOutlineIcon />}
         >
           Delete Flow
@@ -60,6 +63,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ rfInstance, flowKey }) => {
           Push changes
         </Button>
       </Stack>
+      <DeleteFlow
+        isEditMode
+        flowId={flowKey}
+        modalOpen={modalDeleteOpen}
+        setModalOpen={setModalDeleteOpen}
+      />
     </StyledPanel>
   );
 };

@@ -1,28 +1,33 @@
 import { Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import Logger from '@utils/logger';
-import { IFlowListItem } from '@domain/flow';
 import { useAppDispatch } from '@store/hooks';
 import { deleteFlow } from '@store/flowList/asyncThunk';
+import routes from '@constants/routes';
 
 interface DeleteFlowProps {
-  flow: IFlowListItem;
+  flowId: string;
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
+  isEditMode?: boolean;
 }
 
 export const DeleteFlow: React.FC<DeleteFlowProps> = ({
-  flow,
+  flowId,
   modalOpen,
-  setModalOpen
+  setModalOpen,
+  isEditMode = false
 }) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleDeleteFlow = async () => {
     try {
-      await dispatch(deleteFlow(flow.id));
+      await dispatch(deleteFlow(flowId));
       handleCloseModal();
+      isEditMode && navigate(`${routes.underwriting.flowList}`);
     } catch (error) {
       Logger.error(error);
     }

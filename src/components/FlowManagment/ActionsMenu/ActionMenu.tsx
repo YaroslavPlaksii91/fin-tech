@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { RenameFlow } from '../RenameFlow/RenameFlow';
 import { DeleteFlow } from '../DeleteFlow/DeleteFlow';
@@ -10,6 +11,7 @@ import Menu from '@components/shared/Menu/Menu';
 import { MoreVertIcon } from '@components/shared/Icons';
 import { IFlowListItem } from '@domain/flow';
 import Logger from '@utils/logger';
+import routes from '@constants/routes';
 
 enum ActionTypes {
   VIEW_FLOW_DETAILS = 'viewFlowDetails',
@@ -33,6 +35,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [modalRenameOpen, setModalRenameOpen] = useState<boolean>(false);
   const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
@@ -47,11 +50,11 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
       case ActionTypes.DELETE_FLOW:
         setModalDeleteOpen(true);
         break;
+      case ActionTypes.VIEW_FLOW_DETAILS:
+        navigate(`${routes.underwriting.flowList}/details/${flow.id}`);
+        break;
       case ActionTypes.DUPLICATE_FLOW:
         Logger.info('Duplicate');
-        break;
-      case ActionTypes.VIEW_FLOW_DETAILS:
-        Logger.info('View flow details');
         break;
       case ActionTypes.VIEW_DATA_DICTIONARY:
         Logger.info('View data dictionary');
@@ -88,7 +91,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         setModalOpen={setModalRenameOpen}
       />
       <DeleteFlow
-        flow={flow}
+        flowId={flow.id}
         modalOpen={modalDeleteOpen}
         setModalOpen={setModalDeleteOpen}
       />
