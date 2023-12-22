@@ -17,16 +17,10 @@ export const renameFlow = createAsyncThunk(
   }: {
     id: string;
     operations: JSONPatchOperation[];
-  }) => {
-    const data = await flowService.updateFlow(id, operations);
-    return data;
-  }
+  }) => await flowService.updateFlow(id, operations)
 );
 
 export const deleteFlow = createAsyncThunk(
   'delete/flow',
-  async (id: string) => {
-    const data = await flowService.deleteFlow(id);
-    return data;
-  }
+  async (id: string) => await flowService.deleteFlow(id)
 );

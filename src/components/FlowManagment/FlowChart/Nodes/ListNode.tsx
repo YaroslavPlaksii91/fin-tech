@@ -16,9 +16,7 @@ export default function ListNode() {
         </div>
       </div>
       <ul className={styles['node-list-container__list']}>
-        <li>20%</li>
-        <li>30%</li>
-        <li>50%</li>
+        <li>100%</li>
       </ul>
       <Handle type="source" position={Position.Right} />
       <Handle type="source" position={Position.Right} id="a" />

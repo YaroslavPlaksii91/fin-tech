@@ -31,11 +31,7 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
       setConfirmLoading(true);
       await dispatch(deleteFlow(flowId));
       handleCloseModal();
-      if (isEditMode) {
-        navigate(`${routes.underwriting.flowList}`);
-        return;
-      }
-      if (id === flowId) {
+      if (isEditMode || id === flowId) {
         navigate(`${routes.underwriting.flowList}`);
         return;
       }
