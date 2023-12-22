@@ -1,16 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { ListItemSecondaryAction, Stack, Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 
-import { useLoading } from '@contexts/LoadingContext';
 import Header from '@components/shared/Header';
-import { flowService } from '@services/flow-service';
 import {
   LayoutContainer,
   MainContainer,
   SideNavContainer
 } from '@components/Layouts/MainLayout';
-import { AddFlow } from '@components/FlowManagment/Add/AddFlowForm';
+import { AddFlow } from '@components/FlowManagment/AddFlow/AddFlowForm';
 import Logger from '@utils/logger';
 import {
   StyledList,
@@ -18,26 +16,26 @@ import {
   StyledNavListItem
 } from '@components/shared/List/styled';
 import { StyledBorderNavLink } from '@components/shared/Link/styled';
-import { IFlowListItem } from '@domain/flow';
 import FlowChart from '@components/FlowManagment/FlowChart/FlowChart';
 import routes from '@constants/routes';
 import useInitialFlow from '@hooks/useInitialFlow';
 import ActionsMenu from '@components/FlowManagment/ActionsMenu/ActionMenu';
+import { fetchFlowList } from '@store/flowList/asyncThunk';
+import { selectFlowList } from '@store/flowList/selectors';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { useLoading } from '@contexts/LoadingContext';
 
 export default function Flows() {
-  const [flowList, setFlowList] = useState<IFlowListItem[]>([]);
-  const [productionFlow, setProductionFlow] = useState<IFlowListItem>();
   const { startLoading, stopLoading } = useLoading();
   const { elements, data } = useInitialFlow();
+  const { flowList, flowProduction } = useAppSelector(selectFlowList);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         startLoading();
-        const data = await flowService.getFlows();
-        const dataProductionFlow = await flowService.getProductionFlow();
-        setFlowList(data);
-        setProductionFlow(dataProductionFlow);
+        await dispatch(fetchFlowList());
       } catch (error) {
         Logger.error('Error fetching data:', error);
       } finally {
@@ -59,7 +57,7 @@ export default function Flows() {
               to={`${routes.underwriting.flowList}/production-flow`}
             >
               <Typography pb={1} pt={1} pl={2} variant="body2">
-                {productionFlow?.name}
+                {flowProduction?.name}
               </Typography>
             </StyledBorderNavLink>
           </Stack>
@@ -67,7 +65,7 @@ export default function Flows() {
       >
         <Header pb={1} text="Flow list" />
         <StyledList>
-          {flowList?.map((flow) => (
+          {flowList.map((flow) => (
             <StyledNavListItem
               key={flow.id}
               component={NavLink}

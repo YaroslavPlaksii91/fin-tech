@@ -15,6 +15,7 @@ import { InputText } from '@components/shared/Forms/InputText';
 import { AddIcon } from '@components/shared/Icons';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
+import LoadingButton from '@components/shared/LoadingButton';
 
 interface FormData {
   name: string;
@@ -23,7 +24,12 @@ interface FormData {
 export const AddFlow: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { handleSubmit, reset, control } = useForm<FormData>({
+  const {
+    handleSubmit,
+    reset,
+    control,
+    formState: { isSubmitting }
+  } = useForm<FormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       name: ''
@@ -82,9 +88,15 @@ export const AddFlow: React.FC = () => {
             >
               Cancel
             </Button>
-            <Button variant="contained" color="primary" type="submit">
+            <LoadingButton
+              loading={isSubmitting}
+              disabled={isSubmitting}
+              variant="contained"
+              color="primary"
+              type="submit"
+            >
               Confirm
-            </Button>
+            </LoadingButton>
           </Stack>
         </form>
       </Dialog>

@@ -5,12 +5,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 
+import LoadingButton from '../LoadingButton';
+
 interface DialogProps {
   open: boolean;
   title: string;
+  children: React.ReactNode;
   onClose?: () => void;
   onConfirm?: () => void;
-  children: React.ReactNode;
   confirmLoading?: boolean;
   confirmText?: string;
   cancelText?: string;
@@ -26,28 +28,33 @@ const Dialog: React.FC<DialogProps> = ({
   children,
   confirmText = 'Confirm',
   cancelText = 'Cancel',
-  // confirmLoading = false,
+  confirmLoading = false,
   displayedCancelBtn = true,
   displayConfirmBtn = true
 }) => (
   <MuiDialog open={open} onClose={onClose}>
     <DialogTitle>{title}</DialogTitle>
     <DialogContent>{children}</DialogContent>
-    {displayedCancelBtn ||
-      (displayConfirmBtn && (
-        <DialogActions>
-          {displayedCancelBtn && (
-            <Button variant="contained" color="secondary" onClick={onClose}>
-              {cancelText}
-            </Button>
-          )}
-          {displayConfirmBtn && (
-            <Button variant="contained" color="primary" onClick={onConfirm}>
-              {confirmText}
-            </Button>
-          )}
-        </DialogActions>
-      ))}
+    {(displayedCancelBtn || displayConfirmBtn) && (
+      <DialogActions>
+        {displayedCancelBtn && (
+          <Button variant="contained" color="secondary" onClick={onClose}>
+            {cancelText}
+          </Button>
+        )}
+        {displayConfirmBtn && (
+          <LoadingButton
+            loading={confirmLoading}
+            disabled={confirmLoading}
+            variant="contained"
+            color="primary"
+            onClick={onConfirm}
+          >
+            {confirmText}
+          </LoadingButton>
+        )}
+      </DialogActions>
+    )}
   </MuiDialog>
 );
 export default Dialog;

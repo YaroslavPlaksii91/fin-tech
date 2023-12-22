@@ -1,5 +1,5 @@
 import Typography from '@mui/material/Typography';
-import { Button, Grid, Stack } from '@mui/material';
+import { Grid, Stack } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -11,6 +11,7 @@ import { InputText } from '@components/shared/Forms/InputText';
 import api from '@utils/api';
 import { ChartIcon } from '@components/shared/Icons';
 import Auth from '@utils/auth';
+import LoadingButton from '@components/shared/LoadingButton';
 
 type FormData = {
   username: string;
@@ -90,9 +91,14 @@ function Login() {
               label="Password"
               placeholder="Enter password"
             />
-            <Button type="submit" variant="contained" disabled={isSubmitting}>
+            <LoadingButton
+              loading={isSubmitting}
+              type="submit"
+              variant="contained"
+              disabled={isSubmitting}
+            >
               Log in
-            </Button>
+            </LoadingButton>
           </Stack>
         </form>
       </Grid>
