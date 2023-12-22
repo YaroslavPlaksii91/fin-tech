@@ -11,6 +11,7 @@ import Logger from '@utils/logger';
 import { IFlowListItem } from '@domain/flow';
 import { useAppDispatch } from '@store/hooks';
 import { renameFlow } from '@store/flowList/asyncThunk';
+import LoadingButton from '@components/shared/LoadingButton';
 
 type FormData = {
   name: string;
@@ -27,7 +28,12 @@ export const RenameFlow: React.FC<RenameFlowProps> = ({
   modalOpen,
   setModalOpen
 }) => {
-  const { handleSubmit, control, setValue } = useForm<FormData>({
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    formState: { isSubmitting }
+  } = useForm<FormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: { name: flow.name }
   });
@@ -74,9 +80,15 @@ export const RenameFlow: React.FC<RenameFlowProps> = ({
           >
             Cancel
           </Button>
-          <Button variant="contained" color="primary" type="submit">
+          <LoadingButton
+            loading={isSubmitting}
+            disabled={isSubmitting}
+            variant="contained"
+            color="primary"
+            type="submit"
+          >
             Confirm
-          </Button>
+          </LoadingButton>
         </Stack>
       </form>
     </Dialog>

@@ -8,7 +8,7 @@ import {
   MainContainer,
   SideNavContainer
 } from '@components/Layouts/MainLayout';
-import { AddFlow } from '@components/FlowManagment/Add/AddFlowForm';
+import { AddFlow } from '@components/FlowManagment/AddFlow/AddFlowForm';
 import Logger from '@utils/logger';
 import {
   StyledList,

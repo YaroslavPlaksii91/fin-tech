@@ -1,5 +1,6 @@
 import { Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useState } from 'react';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import Logger from '@utils/logger';
@@ -20,12 +21,14 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
   setModalOpen,
   isEditMode = false
 }) => {
+  const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
 
   const handleDeleteFlow = async () => {
     try {
+      setConfirmLoading(true);
       await dispatch(deleteFlow(flowId));
       handleCloseModal();
       if (isEditMode) {
@@ -38,6 +41,8 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
       }
     } catch (error) {
       Logger.error(error);
+    } finally {
+      setConfirmLoading(false);
     }
   };
 
@@ -52,6 +57,7 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
       onClose={handleCloseModal}
       onConfirm={handleDeleteFlow}
       confirmText="Delete"
+      confirmLoading={confirmLoading}
     >
       <Typography width={416} variant="body2">
         Are you sure you want to delete this flow with all existing objects and

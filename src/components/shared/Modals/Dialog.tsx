@@ -5,6 +5,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 
+import LoadingButton from '../LoadingButton';
+
 interface DialogProps {
   open: boolean;
   title: string;
@@ -26,7 +28,7 @@ const Dialog: React.FC<DialogProps> = ({
   children,
   confirmText = 'Confirm',
   cancelText = 'Cancel',
-  // confirmLoading = false,
+  confirmLoading = false,
   displayedCancelBtn = true,
   displayConfirmBtn = true
 }) => (
@@ -41,9 +43,15 @@ const Dialog: React.FC<DialogProps> = ({
           </Button>
         )}
         {displayConfirmBtn && (
-          <Button variant="contained" color="primary" onClick={onConfirm}>
+          <LoadingButton
+            loading={confirmLoading}
+            disabled={confirmLoading}
+            variant="contained"
+            color="primary"
+            onClick={onConfirm}
+          >
             {confirmText}
-          </Button>
+          </LoadingButton>
         )}
       </DialogActions>
     )}
