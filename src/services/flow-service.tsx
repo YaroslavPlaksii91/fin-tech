@@ -1,10 +1,5 @@
 import api from '@utils/api';
-import {
-  FlowData,
-  IFlowData,
-  IFlowDataCreate,
-  IFlowListItem
-} from '@domain/flow';
+import { FlowData, IFlow, IFlowDataCreate, IFlowListItem } from '@domain/flow';
 import { JSONPatchOperation } from '@domain/entity';
 
 class FlowService {
@@ -13,17 +8,17 @@ class FlowService {
     return data;
   }
 
-  async createFlow(data: IFlowDataCreate): Promise<IFlowData> {
+  async createFlow(data: IFlowDataCreate): Promise<IFlow> {
     return await api.post('/flows', data);
   }
 
   async getFlow(id: string) {
-    const { data } = await api.get<IFlowData>(`/flows/${id}`);
+    const { data } = await api.get<IFlow>(`/flows/${id}`);
     return data;
   }
 
   async updateFlow(id: string, operations: JSONPatchOperation[]) {
-    const { data } = await api.patch<IFlowData>(`/flows/${id}`, operations, {
+    const { data } = await api.patch<IFlow>(`/flows/${id}`, operations, {
       headers: {
         'Content-Type': 'application/json-patch+json'
       }
@@ -32,7 +27,7 @@ class FlowService {
   }
 
   async deleteFlow(id: string) {
-    const { data } = await api.delete<IFlowData>(`/flows/${id}`);
+    const { data } = await api.delete<IFlow>(`/flows/${id}`);
     return data;
   }
 
@@ -42,7 +37,7 @@ class FlowService {
   }
 
   async getProductionFlowDetails() {
-    const { data } = await api.get<IFlowData>('/production-flow/details');
+    const { data } = await api.get<IFlow>('/production-flow/details');
     return data;
   }
 }

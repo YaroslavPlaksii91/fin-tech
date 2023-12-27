@@ -2,7 +2,7 @@ import { Edge, Node, Viewport } from '@reactflow/core';
 
 import { IEntity } from './entity';
 
-import { ObjectType } from '@components/FlowManagment/FlowChart/types';
+import { StepType } from '@components/FlowManagment/FlowChart/types';
 
 export interface IFlowListItem extends IEntity {
   name: string;
@@ -18,16 +18,16 @@ export type FlowData = {
 };
 
 type NodeData = {
-  $type: ObjectType;
-  objectId: string;
-  objectType: ObjectType;
+  $type: StepType;
+  stepId: string;
+  stepType: StepType;
   name: string;
   tag?: string;
 };
 
 export type FlowNode = Node<NodeData>;
 
-export interface IFlowData {
+export interface IFlow {
   id: string;
   nodes: FlowNode[];
   edges: Edge[];
@@ -37,6 +37,6 @@ export interface IFlowData {
 
 type FlowDataCreate = Pick<FlowData, 'name' | 'createdBy' | 'editedBy'>;
 
-export type IFlowDataCreate = Omit<IFlowData, 'id' | 'data'> & {
+export type IFlowDataCreate = Omit<IFlow, 'id' | 'data'> & {
   data: FlowDataCreate;
 };
