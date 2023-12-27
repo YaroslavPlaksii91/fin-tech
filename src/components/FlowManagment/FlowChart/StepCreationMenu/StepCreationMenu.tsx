@@ -1,24 +1,24 @@
 import { useState } from 'react';
 
-import { EdgeData, ObjectType } from '../types';
+import { EdgeData, StepType } from '../types';
 
 import { StyledRhombButton } from './styled';
 
 import { AddIcon } from '@components/shared/Icons';
 import Menu from '@components/shared/Menu/Menu';
 
-interface ObjectCreationMenuProps {
+interface StepCreationMenuProps {
   id: string;
   data?: EdgeData;
 }
 
 const options = [
-  { label: 'Calculation', dataKey: ObjectType.CALCULATION },
-  { label: 'Condition', dataKey: ObjectType.CALCULATION },
-  { label: 'Champion Challenger', dataKey: ObjectType.CHAMPION_CHALLENGER }
+  { label: 'Calculation', dataKey: StepType.CALCULATION },
+  { label: 'Condition', dataKey: StepType.CALCULATION },
+  { label: 'Champion Challenger', dataKey: StepType.CHAMPION_CHALLENGER }
 ];
 
-export const ObjectCreationMenu: React.FC<ObjectCreationMenuProps> = ({
+export const StepCreationMenu: React.FC<StepCreationMenuProps> = ({
   data,
   id
 }) => {
@@ -30,7 +30,7 @@ export const ObjectCreationMenu: React.FC<ObjectCreationMenuProps> = ({
 
   const handleCloseMenu = (key?: string) => {
     if (key) {
-      data && data.onAdd && data.onAdd({ id, type: key as ObjectType });
+      data && data.onAdd && data.onAdd({ id, type: key as StepType });
     }
     setAnchorEl(null);
   };

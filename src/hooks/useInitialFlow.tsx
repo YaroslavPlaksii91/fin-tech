@@ -7,8 +7,8 @@ import { flowService } from '../services/flow-service';
 import { useLoading } from '@contexts/LoadingContext';
 import Logger from '@utils/logger';
 import { getUpdatedElementsAfterNodeAddition } from '@components/FlowManagment/FlowChart/utils/workflowElementsUtils';
-import { ObjectType } from '@components/FlowManagment/FlowChart/types';
-import { FlowData, IFlowData } from '@domain/flow';
+import { StepType } from '@components/FlowManagment/FlowChart/types';
+import { FlowData, IFlow } from '@domain/flow';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
 
 const defaultData = {
@@ -35,13 +35,7 @@ function useInitialFlow() {
     data: FlowData;
   }>(defaultData);
 
-  const onAddNodeCallback = ({
-    id,
-    type
-  }: {
-    id: string;
-    type: ObjectType;
-  }) => {
+  const onAddNodeCallback = ({ id, type }: { id: string; type: StepType }) => {
     setElements((prevElements) =>
       getUpdatedElementsAfterNodeAddition({
         elements: prevElements,
@@ -56,7 +50,7 @@ function useInitialFlow() {
     const fetchInitialData = async (flowId: string) => {
       try {
         startLoading();
-        let response: IFlowData;
+        let response: IFlow;
         if (id === PRODUCTION_FLOW_ID) {
           response = await flowService.getProductionFlowDetails();
         } else {
@@ -79,7 +73,12 @@ function useInitialFlow() {
       }
     };
 
-    id && void fetchInitialData(id);
+    if (id) {
+      void fetchInitialData(id);
+    } else {
+      setElements([]);
+      setGeneralData(defaultData);
+    }
   }, [id]);
 
   return { elements, data: generalData };

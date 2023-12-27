@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { ADD_BUTTON_ON_EDGE, ObjectType } from '../FlowChart/types';
+import { ADD_BUTTON_ON_EDGE, StepType } from '../FlowChart/types';
 
 import { FlowNode } from '@domain/flow';
 
@@ -10,12 +10,12 @@ const endNodeId = uuidv4();
 export const createStartNodeData = () => {
   const newNode: FlowNode = {
     id: startNodeId,
-    type: ObjectType.START,
+    type: StepType.START,
     data: {
-      $type: ObjectType.START,
-      objectId: startNodeId,
-      objectType: ObjectType.START,
-      name: ObjectType.START
+      $type: StepType.START,
+      stepId: startNodeId,
+      stepType: StepType.START,
+      name: StepType.START
     },
     width: 40,
     height: 40,
@@ -27,12 +27,12 @@ export const createStartNodeData = () => {
 export const createEndNodeData = () => {
   const newNode: FlowNode = {
     id: endNodeId,
-    type: ObjectType.END,
+    type: StepType.END,
     data: {
-      $type: ObjectType.END,
-      objectId: endNodeId,
-      objectType: ObjectType.END,
-      name: ObjectType.END
+      $type: StepType.END,
+      stepId: endNodeId,
+      stepType: StepType.END,
+      name: StepType.END
     },
     width: 40,
     height: 40,

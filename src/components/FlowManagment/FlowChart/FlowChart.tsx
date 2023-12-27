@@ -50,16 +50,14 @@ const FlowChartLayout: React.FC<FlowChartViewProps> = ({
   const { setViewport } = useReactFlow();
 
   useEffect(() => {
-    if (elements.length > 0) {
-      const nodes = getNodes(elements);
-      const edges = getEdges(elements);
-      const { nodes: layoutedNode, edges: layoutedEdge } = getLayoutedElements(
-        nodes,
-        edges
-      );
-      setEdges(layoutedEdge);
-      setNodes(layoutedNode);
-    }
+    const nodes = getNodes(elements);
+    const edges = getEdges(elements);
+    const { nodes: layoutedNode, edges: layoutedEdge } = getLayoutedElements(
+      nodes,
+      edges
+    );
+    setEdges(layoutedEdge);
+    setNodes(layoutedNode);
   }, [elements]);
 
   useEffect(() => {

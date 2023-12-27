@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Node, Edge, isNode } from 'reactflow';
 import { cloneDeep } from 'lodash';
 
-import { ADD_BUTTON_ON_EDGE, EdgeData, ObjectType } from '../types';
+import { ADD_BUTTON_ON_EDGE, EdgeData, StepType } from '../types';
 
 import Logger from '@utils/logger';
 import { DRAWER_WIDTH, HEADER_HEIGHT } from '@constants/themeConstants';
@@ -12,8 +12,8 @@ const defaultPosition = { x: 0, y: 0 };
 type Elements = {
   elements: Array<Node | Edge<EdgeData>>;
   targetEdgeId: string;
-  onAdd: ({ id, type }: { id: string; type: ObjectType }) => void;
-  type: ObjectType;
+  onAdd: ({ id, type }: { id: string; type: StepType }) => void;
+  type: StepType;
   position?: { x: number; y: number };
 };
 
@@ -72,7 +72,7 @@ export const getEdges = (elements: (Node | Edge)[]): Edge[] =>
 export const areOnlyStartAndEndObjects = (nodes: Node[]) => {
   for (let i = 0; i < nodes.length; i++) {
     const nodeType = nodes[i].type;
-    if (!(nodeType === 'StartObject' || nodeType === 'EndObject')) {
+    if (!(nodeType === StepType.START || nodeType === StepType.END)) {
       return false;
     }
   }
