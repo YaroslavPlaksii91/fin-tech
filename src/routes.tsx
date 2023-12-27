@@ -31,7 +31,7 @@ export const router = createBrowserRouter([
         )
       },
       {
-        path: `${routes.underwriting.flowList}/details/:id`,
+        path: `${routes.underwriting.flowList}/:id/details`,
         element: (
           <PrivateRoutes>
             <FlowDetails />
@@ -39,7 +39,7 @@ export const router = createBrowserRouter([
         )
       },
       {
-        path: `${routes.underwriting.flowList}/edit/:id`,
+        path: `${routes.underwriting.flowList}/:id/edit`,
         element: (
           <PrivateRoutes>
             <FlowEdit />

@@ -51,7 +51,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         setModalDeleteOpen(true);
         break;
       case ActionTypes.VIEW_FLOW_DETAILS:
-        navigate(`${routes.underwriting.flowList}/details/${flow.id}`);
+        navigate(`${routes.underwriting.flowList}/${flow.id}/details`);
         break;
       case ActionTypes.DUPLICATE_FLOW:
         Logger.info('Duplicate');

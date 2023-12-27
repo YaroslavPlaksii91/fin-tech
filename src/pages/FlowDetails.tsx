@@ -19,7 +19,7 @@ export default function FlowDetails() {
     <LayoutContainer>
       <SideNavContainer
         footer={
-          <NavLink to={`${routes.underwriting.flowList}/edit/${data.id}`}>
+          <NavLink to={`${routes.underwriting.flowList}/${data.id}/edit`}>
             <Button
               variant="contained"
               color="primary"
