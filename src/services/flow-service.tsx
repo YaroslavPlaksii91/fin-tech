@@ -12,6 +12,10 @@ class FlowService {
     return await api.post('/flows', data);
   }
 
+  async updateFullFlow(data: IFlow): Promise<IFlow> {
+    return await api.put(`/flows/${data.id}`, data);
+  }
+
   async getFlow(id: string) {
     const { data } = await api.get<IFlow>(`/flows/${id}`);
     return data;

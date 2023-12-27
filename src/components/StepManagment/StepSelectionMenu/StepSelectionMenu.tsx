@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
-import { EdgeData, StepType } from '../../FlowManagment/FlowChart/types';
+import { StepType } from '../../FlowManagment/FlowChart/types';
+import { AddStep } from '../AddStep/AddStep';
 
 import { StyledRhombButton } from './styled';
 
@@ -9,7 +10,6 @@ import Menu from '@components/shared/Menu/Menu';
 
 interface StepSelectionMenuProps {
   id: string;
-  data?: EdgeData;
 }
 
 const options = [
@@ -18,11 +18,10 @@ const options = [
   { label: 'Champion Challenger', dataKey: StepType.CHAMPION_CHALLENGER }
 ];
 
-export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
-  data,
-  id
-}) => {
+export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({ id }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [addStepModalOpen, setAddStepModalOpen] = useState<boolean>(false);
+  const [stepType, setStepType] = useState<StepType>();
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -30,7 +29,8 @@ export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
 
   const handleCloseMenu = (key?: string) => {
     if (key) {
-      data && data.onAdd && data.onAdd({ id, type: key as StepType });
+      setAddStepModalOpen(true);
+      setStepType(key as StepType);
     }
     setAnchorEl(null);
   };
@@ -53,6 +53,14 @@ export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
         handleCloseMenu={handleCloseMenu}
         options={options}
       />
+      {stepType && (
+        <AddStep
+          edgeId={id}
+          stepType={stepType}
+          modalOpen={addStepModalOpen}
+          setModalOpen={setAddStepModalOpen}
+        />
+      )}
     </div>
   );
 };

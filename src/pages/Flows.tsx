@@ -27,7 +27,7 @@ import { useLoading } from '@contexts/LoadingContext';
 
 export default function Flows() {
   const { startLoading, stopLoading } = useLoading();
-  const { elements, data } = useInitialFlow();
+  const { flow } = useInitialFlow();
   const { flowList, flowProduction } = useAppSelector(selectFlowList);
   const dispatch = useAppDispatch();
 
@@ -79,9 +79,7 @@ export default function Flows() {
           ))}
         </StyledList>
       </SideNavContainer>
-      <MainContainer>
-        <FlowChart elements={elements} data={data} />
-      </MainContainer>
+      <MainContainer>{flow && <FlowChart flow={flow} />}</MainContainer>
     </LayoutContainer>
   );
 }

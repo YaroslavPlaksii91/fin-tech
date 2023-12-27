@@ -7,10 +7,10 @@ import FlowChart from '@components/FlowManagment/FlowChart/FlowChart';
 import NavigateBack from '@components/shared/Link/NavigateBack';
 import useInitialFlow from '@hooks/useInitialFlow';
 import FlowHeader from '@components/FlowManagment/FlowHeader';
-import { SelectStep } from '@components/StepManagment/SelectStep/SelectStep';
+import { SelectStep } from '@components/StepManagment/StepSelectionDialog/SelectStep';
 
 export default function FlowEdit() {
-  const { elements, data } = useInitialFlow();
+  const { flow } = useInitialFlow();
 
   return (
     <LayoutContainer>
@@ -18,10 +18,10 @@ export default function FlowEdit() {
         footer={<SelectStep />}
         header={<NavigateBack title="Back to view mode" />}
       >
-        <FlowHeader name={data.data.name} />
+        <FlowHeader name={flow?.data?.name || ''} />
       </SideNavContainer>
       <MainContainer>
-        <FlowChart isEditMode={true} elements={elements} data={data} />
+        {flow && <FlowChart isEditMode={true} flow={flow} />}
       </MainContainer>
     </LayoutContainer>
   );

@@ -14,12 +14,12 @@ import routes from '@constants/routes';
 import FlowHeader from '@components/FlowManagment/FlowHeader';
 
 export default function FlowDetails() {
-  const { elements, data } = useInitialFlow();
+  const { flow } = useInitialFlow();
   return (
     <LayoutContainer>
       <SideNavContainer
         footer={
-          <NavLink to={`${routes.underwriting.flowList}/${data.id}/edit`}>
+          <NavLink to={`${routes.underwriting.flowList}/${flow?.id}/edit`}>
             <Button
               variant="contained"
               color="primary"
@@ -32,11 +32,9 @@ export default function FlowDetails() {
         }
         header={<NavigateBack title="Back to flow list" />}
       >
-        <FlowHeader name={data.data.name} />
+        <FlowHeader name={flow?.data?.name || ''} />
       </SideNavContainer>
-      <MainContainer>
-        <FlowChart data={data} elements={elements} />
-      </MainContainer>
+      <MainContainer>{flow && <FlowChart flow={flow} />}</MainContainer>
     </LayoutContainer>
   );
 }

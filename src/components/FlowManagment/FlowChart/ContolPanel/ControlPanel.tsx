@@ -11,21 +11,40 @@ import {
   TaskAltOutlinedIcon
 } from '@components/shared/Icons';
 import { DeleteFlow } from '@components/FlowManagment/DeleteFlow/DeleteFlow';
+// import { flowService } from '@services/flow-service';
+import { IFlow } from '@domain/flow';
 
 interface ControlPanelProps {
-  flowKey: string;
+  flow: IFlow;
   rfInstance: ReactFlowInstance | undefined;
 }
 
-const ControlPanel: React.FC<ControlPanelProps> = ({ rfInstance, flowKey }) => {
+const ControlPanel: React.FC<ControlPanelProps> = ({ rfInstance, flow }) => {
   const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
 
   const onSave = useCallback(() => {
-    if (rfInstance) {
-      const flow = rfInstance.toObject();
-      localStorage.setItem(flowKey, JSON.stringify(flow));
+    if (rfInstance && flow) {
+      // const flowInstance = rfInstance.toObject();
+      // try {
+      //   // console.log('flowInstance', flowInstance);
+      //   // console.log('flow', flow);
+      //   await flowService.updateFullFlow({
+      //     ...flow,
+      //     nodes: flowInstance.nodes.map((node) => ({
+      //       ...node,
+      //       position: {
+      //         x: node.position.x.toFixed(),
+      //         y: node.position.y.toFixed()
+      //       }
+      //     })),
+      //     viewport: flowInstance.viewport
+      //   });
+      // } catch (error) {
+      //   Logger.error(error);
+      // }
+      localStorage.setItem(flow.id, JSON.stringify(flow));
     }
-  }, [rfInstance]);
+  }, [rfInstance, flow]);
 
   const onDelete = useCallback(() => {
     setModalDeleteOpen(true);
@@ -65,7 +84,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ rfInstance, flowKey }) => {
       </Stack>
       <DeleteFlow
         isEditMode
-        flowId={flowKey}
+        flowId={flow.id}
         modalOpen={modalDeleteOpen}
         setModalOpen={setModalDeleteOpen}
       />

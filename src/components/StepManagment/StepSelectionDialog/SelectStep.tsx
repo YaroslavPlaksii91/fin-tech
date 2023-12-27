@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { Button } from '@mui/material';
 
-import { AddStep } from '../AddStep/AddStep';
-
 import Dialog from '@components/shared/Modals/Dialog';
 import { AddIcon } from '@components/shared/Icons';
 
 export const SelectStep: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [addStepModalOpen, setAddStepModalOpen] = useState<boolean>(false);
+  // const [addStepModalOpen, setAddStepModalOpen] = useState<boolean>(false);
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -19,7 +17,7 @@ export const SelectStep: React.FC = () => {
 
   const createChampionChallenger = () => {
     handleCloseModal();
-    setAddStepModalOpen(true);
+    // setAddStepModalOpen(true);
   };
 
   return (
@@ -42,10 +40,12 @@ export const SelectStep: React.FC = () => {
           Champion chalenger
         </Button>
       </Dialog>
-      <AddStep
+      {/* <AddStep
+        edgeId=""
+        stepType=""
         modalOpen={addStepModalOpen}
         setModalOpen={setAddStepModalOpen}
-      />
+      /> */}
     </>
   );
 };

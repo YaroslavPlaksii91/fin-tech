@@ -11,7 +11,6 @@ import ReactFlow, {
   ConnectionLineType,
   ReactFlowInstance,
   useReactFlow,
-  Viewport,
   ReactFlowProvider
 } from 'reactflow';
 
@@ -23,23 +22,21 @@ import NodePositioning from './Nodes/NodePositioning';
 import ControlPanel from './ContolPanel/ControlPanel';
 import {
   areOnlyStartAndEndObjects,
-  centeredInitialFlowViewport,
-  getEdges,
-  getNodes
+  centeredInitialFlowViewport
 } from './utils/workflowElementsUtils';
 import './overview.css';
 import { ADD_BUTTON_ON_EDGE } from './types';
 import { getLayoutedElements } from './utils/workflowLayoutUtils';
 
+import { IFlow } from '@domain/flow';
+
 interface FlowChartViewProps {
-  elements: (Node | Edge)[];
-  data: { viewport: Viewport; id: string };
+  flow: IFlow;
   isEditMode?: boolean;
 }
 
 const FlowChartLayout: React.FC<FlowChartViewProps> = ({
-  elements,
-  data,
+  flow,
   isEditMode = false
 }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
@@ -50,24 +47,24 @@ const FlowChartLayout: React.FC<FlowChartViewProps> = ({
   const { setViewport } = useReactFlow();
 
   useEffect(() => {
-    const nodes = getNodes(elements);
-    const edges = getEdges(elements);
-    const { nodes: layoutedNode, edges: layoutedEdge } = getLayoutedElements(
-      nodes,
-      edges
-    );
-    setEdges(layoutedEdge);
-    setNodes(layoutedNode);
-  }, [elements]);
+    if (flow) {
+      const { nodes: layoutedNode, edges: layoutedEdge } = getLayoutedElements(
+        flow.nodes,
+        flow.edges
+      );
+      setEdges(layoutedEdge);
+      setNodes(layoutedNode);
+    }
+  }, [flow]);
 
   useEffect(() => {
     if (areOnlyStartAndEndObjects(nodes)) {
       const viewport = centeredInitialFlowViewport();
       setViewport(viewport, { duration: 500 });
     } else {
-      setViewport(data.viewport, { duration: 500 });
+      setViewport(flow.viewport, { duration: 500 });
     }
-  }, [data?.viewport, setViewport]);
+  }, [flow?.viewport, setViewport]);
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
@@ -103,9 +100,7 @@ const FlowChartLayout: React.FC<FlowChartViewProps> = ({
         connectionLineType={ConnectionLineType.SmoothStep}
       >
         <Background variant={BackgroundVariant.Lines} />
-        {isEditMode && (
-          <ControlPanel flowKey={data.id} rfInstance={rfInstance} />
-        )}
+        {isEditMode && <ControlPanel flow={flow} rfInstance={rfInstance} />}
       </ReactFlow>
     </>
   );

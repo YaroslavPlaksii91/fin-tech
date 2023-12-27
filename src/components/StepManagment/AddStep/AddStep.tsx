@@ -8,17 +8,24 @@ import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
 import Logger from '@utils/logger';
 import LoadingButton from '@components/shared/LoadingButton';
+import { StepType } from '@components/FlowManagment/FlowChart/types';
+import { useAppDispatch } from '@store/hooks';
+import { addNewNode } from '@store/flow/flow';
 
 type FormData = {
   name: string;
 };
 
 interface AddStepProps {
+  edgeId: string;
+  stepType: StepType;
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
 }
 
 export const AddStep: React.FC<AddStepProps> = ({
+  edgeId,
+  stepType,
   modalOpen,
   setModalOpen
 }) => {
@@ -33,9 +40,11 @@ export const AddStep: React.FC<AddStepProps> = ({
       name: 'Champion Challenger'
     }
   });
+  const dispatch = useAppDispatch();
 
   const onSubmit: SubmitHandler<FormData> = ({ name }) => {
-    Logger.info('add new step redirect to new page', name);
+    dispatch(addNewNode({ name, id: edgeId, type: stepType }));
+    Logger.info('add new step redirect to new page', name, edgeId, stepType);
   };
 
   const handleCloseModal = () => {
@@ -49,7 +58,7 @@ export const AddStep: React.FC<AddStepProps> = ({
       displayConfirmBtn={false}
       displayedCancelBtn={false}
     >
-      <form onSubmit={void handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <InputText
           fullWidth
           name="name"
