@@ -14,23 +14,6 @@ function useInitialFlow() {
   const { flow } = useAppSelector(selectFlow);
   const dispatch = useAppDispatch();
 
-  // const [generalData, setGeneralData] = useState<{
-  //   viewport: Viewport;
-  //   id: string;
-  //   data: FlowData;
-  // }>(defaultData);
-
-  // const onAddNodeCallback = ({ id, type }: { id: string; type: StepType }) => {
-  //   setElements((prevElements) =>
-  //     getUpdatedElementsAfterNodeAddition({
-  //       elements: prevElements,
-  //       type,
-  //       targetEdgeId: id,
-  //       onAdd: onAddNodeCallback
-  //     })
-  //   );
-  // };
-
   useEffect(() => {
     const fetchInitialData = async (flowId: string) => {
       try {

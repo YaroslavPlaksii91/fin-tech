@@ -32,9 +32,11 @@ export default function FlowDetails() {
         }
         header={<NavigateBack title="Back to flow list" />}
       >
-        <FlowHeader name={flow?.data?.name || ''} />
+        <FlowHeader name={flow.data.name} />
       </SideNavContainer>
-      <MainContainer>{flow && <FlowChart flow={flow} />}</MainContainer>
+      <MainContainer>
+        <FlowChart flow={flow} />
+      </MainContainer>
     </LayoutContainer>
   );
 }

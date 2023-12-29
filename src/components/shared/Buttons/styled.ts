@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles';
 import { IconButton } from '@mui/material';
 
-export const StyledIconButton = styled(IconButton)(({ theme }) => ({
+export const StyledActionMenuButton = styled(IconButton)(({ theme }) => ({
   borderRadius: '4px',
   width: '20px',
   height: '20px',

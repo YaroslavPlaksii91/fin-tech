@@ -10,6 +10,8 @@ import MuiCircularProgress, {
   CircularProgressProps
 } from '@mui/material/CircularProgress';
 import MuiMoreVertIcon from '@mui/icons-material/MoreVert';
+import MuiCloseIcon from '@mui/icons-material/Close';
+import MuiArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 
 const defaultIconSize = '18px';
@@ -99,6 +101,22 @@ export const MoreVertIcon = ({
   ...props
 }: IconPros) => (
   <MuiMoreVertIcon sx={{ width: size, height: size, ...sx }} {...props} />
+);
+
+export const CloseIcon = ({
+  size = defaultIconSize,
+  sx,
+  ...props
+}: IconPros) => (
+  <MuiCloseIcon sx={{ width: size, height: size, ...sx }} {...props} />
+);
+
+export const ArrowForwardIcon = ({
+  size = defaultIconSize,
+  sx,
+  ...props
+}: IconPros) => (
+  <MuiArrowForwardIcon sx={{ width: size, height: size, ...sx }} {...props} />
 );
 
 export const CircularProgress = ({ ...props }: CircularProgressProps) => (

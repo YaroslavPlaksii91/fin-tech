@@ -8,8 +8,9 @@ class FlowService {
     return data;
   }
 
-  async createFlow(data: IFlowDataCreate): Promise<IFlow> {
-    return await api.post('/flows', data);
+  async createFlow(createData: IFlowDataCreate) {
+    const { data } = await api.post<IFlow>('/flows', createData);
+    return data;
   }
 
   async updateFullFlow(data: IFlow): Promise<IFlow> {

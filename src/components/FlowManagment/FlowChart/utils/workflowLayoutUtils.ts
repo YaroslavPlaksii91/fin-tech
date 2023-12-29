@@ -28,13 +28,13 @@ const getLayoutedElements = (nodes: Node[], edges: Edge[]) => {
     return {
       nodes: nodes.map((node) => {
         const { x, y } = dagreGraph.node(node.id);
-
+        const calulatedPosition = {
+          x: x - (node.width || 0) / 2,
+          y: y - (node.height || 0) / 2
+        };
         return {
           ...node,
-          position: {
-            x: x - (node.width || 0) / 2,
-            y: y - (node.height || 0) / 2
-          }
+          position: calulatedPosition
         };
       }),
       edges

@@ -4,14 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { RenameFlow } from '../RenameFlow/RenameFlowForm';
 import { DeleteFlow } from '../DeleteFlow/DeleteFlow';
 
-import { StyledIconButton } from './styled';
 import Details from './Details';
 
 import Menu from '@components/shared/Menu/Menu';
-import { MoreVertIcon } from '@components/shared/Icons';
 import { IFlowListItem } from '@domain/flow';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
+import ActionMenuButton from '@components/shared/Buttons/ActionMenuButton';
 
 enum ActionTypes {
   VIEW_FLOW_DETAILS = 'viewFlowDetails',
@@ -75,10 +74,8 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
   };
 
   return (
-    <div>
-      <StyledIconButton aria-label="action-menu" onClick={handleOpenMenu}>
-        <MoreVertIcon />
-      </StyledIconButton>
+    <>
+      <ActionMenuButton handleOnClick={handleOpenMenu} />
       <Menu
         anchorEl={anchorEl}
         handleCloseMenu={handleCloseMenu}
@@ -95,7 +92,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         modalOpen={modalDeleteOpen}
         setModalOpen={setModalDeleteOpen}
       />
-    </div>
+    </>
   );
 };
 

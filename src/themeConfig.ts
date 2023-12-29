@@ -142,7 +142,7 @@ export const theme = createTheme({
       color: palette.dark
     },
     h2: {
-      fontSize: '28px',
+      fontSize: '24px',
       lineHeight: '38px',
       fontWeight: 600,
       color: palette.dark

@@ -20,10 +20,6 @@ import { nodeTypes } from './Nodes';
 import { edgeTypes } from './Edges';
 import NodePositioning from './Nodes/NodePositioning';
 import ControlPanel from './ContolPanel/ControlPanel';
-import {
-  areOnlyStartAndEndObjects,
-  centeredInitialFlowViewport
-} from './utils/workflowElementsUtils';
 import './overview.css';
 import { ADD_BUTTON_ON_EDGE } from './types';
 import { getLayoutedElements } from './utils/workflowLayoutUtils';
@@ -58,13 +54,8 @@ const FlowChartLayout: React.FC<FlowChartViewProps> = ({
   }, [flow]);
 
   useEffect(() => {
-    if (areOnlyStartAndEndObjects(nodes)) {
-      const viewport = centeredInitialFlowViewport();
-      setViewport(viewport, { duration: 500 });
-    } else {
-      setViewport(flow.viewport, { duration: 500 });
-    }
-  }, [flow?.viewport, setViewport]);
+    setViewport(flow.viewport, { duration: 500 });
+  }, [flow.viewport, setViewport]);
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
@@ -100,7 +91,11 @@ const FlowChartLayout: React.FC<FlowChartViewProps> = ({
         connectionLineType={ConnectionLineType.SmoothStep}
       >
         <Background variant={BackgroundVariant.Lines} />
-        {isEditMode && <ControlPanel flow={flow} rfInstance={rfInstance} />}
+        <ControlPanel
+          isEditMode={isEditMode}
+          flow={flow}
+          rfInstance={rfInstance}
+        />
       </ReactFlow>
     </>
   );

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,40 +11,53 @@ import Logger from '@utils/logger';
 import LoadingButton from '@components/shared/LoadingButton';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { useAppDispatch } from '@store/hooks';
-import { addNewNode } from '@store/flow/flow';
+import { addNewNodeWithEdges, addNewNode } from '@store/flow/flow';
 
 type FormData = {
   name: string;
 };
 
+const defaultValue = {
+  [StepType.CHAMPION_CHALLENGER]: 'Champion Challenger',
+  [StepType.CALCULATION]: 'Calculation',
+  [StepType.DECISION_MATRIX]: 'Decision matrix',
+  [StepType.CONDITION]: 'Condition',
+  [StepType.CASE]: 'Case',
+  [StepType.SUBFLOW]: 'Subflow'
+};
+
 interface AddStepProps {
-  edgeId: string;
-  stepType: StepType;
+  stepType: Exclude<StepType, StepType.START | StepType.END>;
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
+  edgeId?: string;
+  reopenSelectStepModal?: () => void;
 }
 
 export const AddStep: React.FC<AddStepProps> = ({
   edgeId,
   stepType,
   modalOpen,
-  setModalOpen
+  setModalOpen,
+  reopenSelectStepModal
 }) => {
-  // const navigate = useNavigate();
   const {
     handleSubmit,
     control,
+    setValue,
     formState: { isSubmitting }
   } = useForm<FormData>({
-    resolver: yupResolver(validationSchema),
-    defaultValues: {
-      name: 'Champion Challenger'
-    }
+    resolver: yupResolver(validationSchema)
   });
   const dispatch = useAppDispatch();
 
   const onSubmit: SubmitHandler<FormData> = ({ name }) => {
-    dispatch(addNewNode({ name, id: edgeId, type: stepType }));
+    if (edgeId) {
+      dispatch(addNewNodeWithEdges({ name, id: edgeId, type: stepType }));
+    } else {
+      dispatch(addNewNode({ name, type: stepType }));
+    }
+    handleCloseModal();
     Logger.info('add new step redirect to new page', name, edgeId, stepType);
   };
 
@@ -51,9 +65,18 @@ export const AddStep: React.FC<AddStepProps> = ({
     setModalOpen(false);
   };
 
+  const handleCancel = () => {
+    handleCloseModal();
+    reopenSelectStepModal?.();
+  };
+
+  useEffect(() => {
+    setValue('name', defaultValue[stepType]);
+  }, [stepType]);
+
   return (
     <Dialog
-      title="Name this Champion Challenger"
+      title={`Name this ${defaultValue[stepType]}`}
       open={modalOpen}
       displayConfirmBtn={false}
       displayedCancelBtn={false}
@@ -67,11 +90,7 @@ export const AddStep: React.FC<AddStepProps> = ({
           placeholder="Enter name"
         />
         <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleCloseModal}
-          >
+          <Button variant="contained" color="secondary" onClick={handleCancel}>
             Cancel
           </Button>
           <LoadingButton

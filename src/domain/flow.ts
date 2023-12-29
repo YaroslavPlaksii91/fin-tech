@@ -17,12 +17,13 @@ export type FlowData = {
   editedOn: string;
 };
 
-type NodeData = {
+export type NodeData = {
   $type: StepType;
   stepId: string;
   stepType: StepType;
   name: string;
   tag?: string;
+  splits?: { edgeId: string; percentage: number }[];
 };
 
 export type FlowNode = Node<NodeData>;
@@ -32,7 +33,7 @@ export interface IFlow {
   nodes: FlowNode[];
   edges: Edge[];
   viewport: Viewport;
-  data: FlowData;
+  data: Omit<FlowData, 'id'>;
 }
 
 type FlowDataCreate = Pick<FlowData, 'name' | 'createdBy' | 'editedBy'>;
