@@ -79,7 +79,9 @@ export default function Flows() {
           ))}
         </StyledList>
       </SideNavContainer>
-      <MainContainer>{flow && <FlowChart flow={flow} />}</MainContainer>
+      <MainContainer>
+        <FlowChart flow={flow} isViewMode={!!flow.id} />
+      </MainContainer>
     </LayoutContainer>
   );
 }

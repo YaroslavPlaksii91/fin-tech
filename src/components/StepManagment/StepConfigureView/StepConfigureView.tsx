@@ -16,6 +16,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({ step }) => (
       flexDirection="row"
       justifyContent="space-between"
       alignItems="flex-start"
+      sx={{ padding: '16px 24px' }}
     >
       <Stack>
         <Typography variant="h2">{step.data.name}</Typography>

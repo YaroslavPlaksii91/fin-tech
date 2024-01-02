@@ -63,6 +63,9 @@ export const flowSlicer = createSlice({
       };
 
       state.flow.nodes.push(newNode);
+    },
+    resetFlow: (state) => {
+      state.flow = initialFlow;
     }
   },
   extraReducers(builder) {
@@ -75,6 +78,7 @@ export const flowSlicer = createSlice({
   }
 });
 
-export const { addNewNodeWithEdges, addNewNode } = flowSlicer.actions;
+export const { addNewNodeWithEdges, addNewNode, resetFlow } =
+  flowSlicer.actions;
 
 export default flowSlicer.reducer;

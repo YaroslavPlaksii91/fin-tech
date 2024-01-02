@@ -29,11 +29,13 @@ import { IFlow } from '@domain/flow';
 interface FlowChartViewProps {
   flow: IFlow;
   isEditMode?: boolean;
+  isViewMode?: boolean;
 }
 
 const FlowChartLayout: React.FC<FlowChartViewProps> = ({
   flow,
-  isEditMode = false
+  isEditMode = false,
+  isViewMode = true
 }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
 
@@ -92,6 +94,7 @@ const FlowChartLayout: React.FC<FlowChartViewProps> = ({
       >
         <Background variant={BackgroundVariant.Lines} />
         <ControlPanel
+          isViewMode={isViewMode}
           isEditMode={isEditMode}
           flow={flow}
           rfInstance={rfInstance}

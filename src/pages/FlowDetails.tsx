@@ -12,9 +12,13 @@ import useInitialFlow from '@hooks/useInitialFlow';
 import { EditNoteOutlinedIcon } from '@components/shared/Icons';
 import routes from '@constants/routes';
 import FlowHeader from '@components/FlowManagment/FlowHeader';
+import { StepProvider, useStep } from '@contexts/StepContext';
+import StepList from '@components/StepManagment/StepList/StepList';
 
-export default function FlowDetails() {
+function FlowDetailsMain() {
   const { flow } = useInitialFlow();
+  const { step, setStep } = useStep();
+
   return (
     <LayoutContainer>
       <SideNavContainer
@@ -33,10 +37,19 @@ export default function FlowDetails() {
         header={<NavigateBack title="Back to flow list" />}
       >
         <FlowHeader name={flow.data.name} />
+        <StepList nodes={flow.nodes} step={step} setStep={setStep} />
       </SideNavContainer>
       <MainContainer>
-        <FlowChart flow={flow} />
+        <FlowChart isViewMode={false} flow={flow} />
       </MainContainer>
     </LayoutContainer>
   );
 }
+
+const FlowDetails = () => (
+  <StepProvider>
+    <FlowDetailsMain />
+  </StepProvider>
+);
+
+export default FlowDetails;

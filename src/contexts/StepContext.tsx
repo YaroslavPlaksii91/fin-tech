@@ -3,7 +3,7 @@ import { createContext, useContext, ReactNode, useState } from 'react';
 import { FlowNode } from '@domain/flow';
 import { MAIN_STEP_ID } from '@constants/common';
 
-type StepContextType = {
+export type StepContextType = {
   step: FlowNode | { id: typeof MAIN_STEP_ID };
   setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
 };

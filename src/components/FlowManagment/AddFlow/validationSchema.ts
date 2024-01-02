@@ -3,7 +3,8 @@ import * as yup from 'yup';
 import {
   createEdgeData,
   createEndNodeData,
-  createStartNodeData
+  createStartNodeData,
+  getViewPort
 } from './initialFlowUtils';
 
 import { IFlowDataCreate } from '@domain/flow';
@@ -22,6 +23,7 @@ export const createInitialFlowDataHelper = (name: string): IFlowDataCreate => {
   const endNodeData = createEndNodeData();
   const edgeData = createEdgeData();
   const username = Auth.getUsername();
+  const viewport = getViewPort();
 
   return {
     data: {
@@ -31,7 +33,7 @@ export const createInitialFlowDataHelper = (name: string): IFlowDataCreate => {
     },
     nodes: [startNodeData, endNodeData],
     edges: [edgeData],
-    viewport: { x: 0, y: 0, zoom: 1 }
+    viewport
   };
 };
 

@@ -7,6 +7,7 @@ import { PRODUCTION_FLOW_ID } from '@constants/common';
 import { selectFlow } from '@store/flow/selectors';
 import { useAppSelector, useAppDispatch } from '@store/hooks';
 import { fetchFlow, fetchProductionFlow } from '@store/flow/asyncThunk';
+import { resetFlow } from '@store/flow/flow';
 
 function useInitialFlow() {
   const { id } = useParams();
@@ -30,7 +31,11 @@ function useInitialFlow() {
       }
     };
 
-    id && void fetchInitialData(id);
+    if (id) {
+      void fetchInitialData(id);
+    } else {
+      dispatch(resetFlow());
+    }
   }, [id]);
 
   return { flow };

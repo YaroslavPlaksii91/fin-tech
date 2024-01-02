@@ -20,13 +20,15 @@ import routes from '@constants/routes';
 interface ControlPanelProps {
   flow: IFlow;
   isEditMode: boolean;
+  isViewMode: boolean;
   rfInstance: ReactFlowInstance | undefined;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({
   rfInstance,
   flow,
-  isEditMode
+  isEditMode,
+  isViewMode
 }) => {
   const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
 
@@ -55,9 +57,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   }, []);
 
   return (
-    <StyledPanel position="top-right">
-      {isEditMode ? (
-        <>
+    <>
+      {isEditMode && (
+        <StyledPanel position="top-right">
           <Typography variant="h2">Edit mode</Typography>
           <Stack spacing={1} direction="row" justifyContent="flex-end">
             <Button
@@ -90,19 +92,22 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             modalOpen={modalDeleteOpen}
             setModalOpen={setModalDeleteOpen}
           />
-        </>
-      ) : (
-        <Button
-          sx={{ marginLeft: 'auto' }}
-          variant="contained"
-          component={NavLink}
-          to={`${routes.underwriting.flowList}/${flow.id}/details`}
-          endIcon={<HexagonOutlinedIcon />}
-        >
-          View flow details
-        </Button>
+        </StyledPanel>
       )}
-    </StyledPanel>
+      {isViewMode && (
+        <StyledPanel position="top-right">
+          <Button
+            sx={{ marginLeft: 'auto' }}
+            variant="contained"
+            component={NavLink}
+            to={`${routes.underwriting.flowList}/${flow.id}/details`}
+            endIcon={<HexagonOutlinedIcon />}
+          >
+            View flow details
+          </Button>
+        </StyledPanel>
+      )}
+    </>
   );
 };
 
