@@ -4,14 +4,15 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { validationSchema } from './validationSchema';
+import { createNewNode, createNewNodeAndEdge } from './stepInitialUtils';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
-import Logger from '@utils/logger';
 import LoadingButton from '@components/shared/LoadingButton';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { useAppDispatch } from '@store/hooks';
 import { addNewNodeWithEdges, addNewNode } from '@store/flow/flow';
+import { useStep } from '@contexts/StepContext';
 
 type FormData = {
   name: string;
@@ -50,15 +51,19 @@ export const AddStep: React.FC<AddStepProps> = ({
     resolver: yupResolver(validationSchema)
   });
   const dispatch = useAppDispatch();
+  const { setStep } = useStep();
 
   const onSubmit: SubmitHandler<FormData> = ({ name }) => {
+    let newNode;
     if (edgeId) {
-      dispatch(addNewNodeWithEdges({ name, id: edgeId, type: stepType }));
+      newNode = createNewNode(stepType, name);
+      dispatch(addNewNodeWithEdges({ newNode, edgeId }));
     } else {
-      dispatch(addNewNode({ name, type: stepType }));
+      newNode = createNewNodeAndEdge(stepType, name);
+      dispatch(addNewNode({ newNode }));
     }
     handleCloseModal();
-    Logger.info('add new step redirect to new page', name, edgeId, stepType);
+    setStep(newNode);
   };
 
   const handleCloseModal = () => {

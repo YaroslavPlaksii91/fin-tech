@@ -35,7 +35,7 @@ export const StyledListItem = styled(ListItem)(({ theme }) => ({
     background: theme.palette.secondary.main
   },
   '&.active': {
-    background: theme.palette.secondary.main
+    borderLeft: `3px solid ${theme.palette.gray}`
   }
 }));
 

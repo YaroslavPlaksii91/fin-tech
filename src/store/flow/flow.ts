@@ -3,11 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { fetchFlow, fetchProductionFlow } from './asyncThunk';
 
-import { IFlow } from '@domain/flow';
-import {
-  ADD_BUTTON_ON_EDGE,
-  StepType
-} from '@components/FlowManagment/FlowChart/types';
+import { FlowNode, IFlow } from '@domain/flow';
+import { ADD_BUTTON_ON_EDGE } from '@components/FlowManagment/FlowChart/types';
 
 interface initialStateInterface {
   flow: IFlow;
@@ -36,40 +33,24 @@ export const flowSlicer = createSlice({
   initialState,
   reducers: {
     addNewNodeWithEdges: (state, action) => {
-      const { id, type, name } = action.payload as {
-        id: string;
-        type: StepType;
-        name: string;
+      const { newNode, edgeId } = action.payload as {
+        newNode: FlowNode;
+        edgeId: string;
       };
-      const newNodeId = uuidv4();
       const newEdgeId = uuidv4();
-      const newNode = {
-        id: newNodeId,
-        type,
-        data: {
-          $type: type,
-          stepId: newNodeId,
-          stepType: type,
-          name,
-          splits: [
-            {
-              edgeId: newEdgeId,
-              percentage: 100
-            }
-          ]
-        },
-        position: { x: 0, y: 0 }
-      };
-      const targetEdgeIndex = state.flow.edges.findIndex((x) => x.id === id);
+
+      const targetEdgeIndex = state.flow.edges.findIndex(
+        (x) => x.id === edgeId
+      );
       const targetEdge = state.flow.edges[targetEdgeIndex];
       if (targetEdge) {
         const { target: targetNodeId } = targetEdge;
-        const updatedTargetEdge = { ...targetEdge, target: newNodeId };
+        const updatedTargetEdge = { ...targetEdge, target: newNode.id };
         state.flow.edges[targetEdgeIndex] = updatedTargetEdge;
         state.flow.nodes.push(newNode);
         const newEdge = {
           id: newEdgeId,
-          source: newNodeId,
+          source: newNode.id,
           target: targetNodeId,
           type: ADD_BUTTON_ON_EDGE
         };
@@ -77,21 +58,8 @@ export const flowSlicer = createSlice({
       }
     },
     addNewNode: (state, action) => {
-      const { type, name } = action.payload as {
-        type: StepType;
-        name: string;
-      };
-      const newNodeId = uuidv4();
-      const newNode = {
-        id: newNodeId,
-        type,
-        data: {
-          $type: type,
-          stepId: newNodeId,
-          stepType: type,
-          name
-        },
-        position: { x: 100, y: -100 }
+      const { newNode } = action.payload as {
+        newNode: FlowNode;
       };
 
       state.flow.nodes.push(newNode);

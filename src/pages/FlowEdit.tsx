@@ -1,5 +1,5 @@
-import { ListItemSecondaryAction, Stack, Typography } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { ListItemSecondaryAction, Typography } from '@mui/material';
+import { useMemo } from 'react';
 
 import {
   LayoutContainer,
@@ -22,12 +22,12 @@ import StepConfigureView from '@components/StepManagment/StepConfigureView/StepC
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { MAIN_STEP_ID } from '@constants/common';
 import { FlowNode } from '@domain/flow';
+import { useStep, StepProvider } from '@contexts/StepContext';
 
-export default function FlowEdit() {
+function FlowEditMain() {
   const { flow } = useInitialFlow();
-  const [step, setStep] = useState<FlowNode | { id: string }>({
-    id: MAIN_STEP_ID
-  });
+
+  const { step, setStep } = useStep();
 
   const steps = useMemo(() => {
     const steps = flow.nodes.filter(
@@ -46,21 +46,26 @@ export default function FlowEdit() {
         <FlowHeader name={flow.data.name} />
         <StyledList>
           <StyledListItem
+            className={step.id === MAIN_STEP_ID ? 'active' : undefined}
             key={MAIN_STEP_ID}
             onClick={() => setStep({ id: MAIN_STEP_ID })}
           >
             <HexagonOutlinedIcon sx={{ paddingRight: 1 }} />
             <StyledListItemText>Main flow</StyledListItemText>
           </StyledListItem>
-          {steps.map((step) => (
-            <StyledListItem key={step.id} onClick={() => setStep(step)}>
+          {steps.map((el) => (
+            <StyledListItem
+              className={step.id === el.id ? 'active' : undefined}
+              key={el.id}
+              onClick={() => setStep(el)}
+            >
               <HexagonOutlinedIcon sx={{ paddingRight: 1 }} />
-              <Stack>
-                <Typography variant="caption">
-                  {step.data.tag || 'No tag'}
-                </Typography>
-                <StyledListItemText>{step.data.name}</StyledListItemText>
-              </Stack>
+
+              <Typography variant="caption">
+                {el.data.tag || 'No tag'}
+              </Typography>
+              <StyledListItemText>{el.data.name}</StyledListItemText>
+
               <ListItemSecondaryAction>
                 <ActionsMenu />
               </ListItemSecondaryAction>
@@ -78,3 +83,11 @@ export default function FlowEdit() {
     </LayoutContainer>
   );
 }
+
+const FlowEdit = () => (
+  <StepProvider>
+    <FlowEditMain />
+  </StepProvider>
+);
+
+export default FlowEdit;
