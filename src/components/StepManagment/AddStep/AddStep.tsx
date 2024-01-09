@@ -4,14 +4,11 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { validationSchema } from './validationSchema';
-import { createNewNode, createNewNodeAndEdge } from './stepInitialUtils';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
 import LoadingButton from '@components/shared/LoadingButton';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
-import { useAppDispatch } from '@store/hooks';
-import { addNewNodeWithEdges, addNewNode } from '@store/flow/flow';
 import { useStep } from '@contexts/StepContext';
 
 type FormData = {
@@ -31,6 +28,12 @@ interface AddStepProps {
   stepType: Exclude<StepType, StepType.START | StepType.END>;
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
+  onAdd?: (type: StepType, name: string) => void;
+  onAddNodeBetweenEdges?: (
+    type: StepType,
+    name: string,
+    edgeId: string
+  ) => void;
   edgeId?: string;
   reopenSelectStepModal?: () => void;
 }
@@ -40,7 +43,9 @@ export const AddStep: React.FC<AddStepProps> = ({
   stepType,
   modalOpen,
   setModalOpen,
-  reopenSelectStepModal
+  reopenSelectStepModal,
+  onAddNodeBetweenEdges,
+  onAdd
 }) => {
   const {
     handleSubmit,
@@ -50,20 +55,17 @@ export const AddStep: React.FC<AddStepProps> = ({
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema)
   });
-  const dispatch = useAppDispatch();
   const { setStep } = useStep();
 
   const onSubmit: SubmitHandler<FormData> = ({ name }) => {
-    let newNode;
     if (edgeId) {
-      newNode = createNewNode(stepType, name);
-      dispatch(addNewNodeWithEdges({ newNode, edgeId }));
+      const step = onAddNodeBetweenEdges?.(stepType, name, edgeId);
+      setStep(step);
     } else {
-      newNode = createNewNodeAndEdge(stepType, name);
-      dispatch(addNewNode({ newNode }));
+      const step = onAdd?.(stepType, name);
+      setStep(step);
     }
     handleCloseModal();
-    setStep(newNode);
   };
 
   const handleCloseModal = () => {

@@ -11,6 +11,10 @@ interface CustomPalette {
   yellow: string;
   secondary: string;
   grayBorder: string;
+  successBackground: string;
+  successBorder: string;
+  errorBackground: string;
+  blue: string;
 }
 
 export const palette = {
@@ -24,7 +28,11 @@ export const palette = {
   secondary: '#E6E9EC',
   lightGreen: '#ABDCB9',
   white: '#FFF',
-  yellow: '#DDCD93'
+  yellow: '#DDCD93',
+  blue: '#25314C',
+  successBackground: '#EBF9F1',
+  successBorder: '#C4D9CD',
+  errorBackground: '#FFCCCC'
 };
 
 declare module '@mui/material/styles' {
@@ -151,6 +159,12 @@ export const theme = createTheme({
       fontSize: '22px',
       lineHeight: '38px',
       fontWeight: 600,
+      color: palette.dark
+    },
+    h4: {
+      fontSize: '20px',
+      lineHeight: '30px',
+      fontWeight: 500,
       color: palette.dark
     },
     h5: {

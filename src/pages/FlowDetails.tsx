@@ -7,7 +7,7 @@ import {
   MainContainer
 } from '@components/Layouts/MainLayout';
 import NavigateBack from '@components/shared/Link/NavigateBack';
-import FlowChart from '@components/FlowManagment/FlowChart/FlowChart';
+import FlowChart from '@components/FlowManagment/FlowChart/FlowChartView';
 import useInitialFlow from '@hooks/useInitialFlow';
 import { EditNoteOutlinedIcon } from '@components/shared/Icons';
 import routes from '@constants/routes';

@@ -12,5 +12,5 @@ export enum StepType {
 export const ADD_BUTTON_ON_EDGE = 'add-button-on-edge';
 
 export type EdgeData = {
-  onAdd?: (payload: { id: string; type: StepType }) => void;
+  onAdd?: (type: StepType, name: string, id: string) => void;
 };

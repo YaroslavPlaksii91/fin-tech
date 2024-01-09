@@ -2,7 +2,7 @@ import dagre from '@dagrejs/dagre';
 import { Node, Edge } from 'reactflow';
 
 const getLayoutedElements = (nodes: Node[], edges: Edge[]) => {
-  if (nodes.length > 0 && edges.length > 0) {
+  if (nodes.length > 0) {
     const dagreGraph = new dagre.graphlib.Graph();
     dagreGraph.setDefaultEdgeLabel(() => ({}));
 

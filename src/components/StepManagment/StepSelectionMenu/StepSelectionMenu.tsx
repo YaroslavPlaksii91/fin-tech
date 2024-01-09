@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { StepType } from '../../FlowManagment/FlowChart/types';
+import { EdgeData, StepType } from '../../FlowManagment/FlowChart/types';
 import { AddStep } from '../AddStep/AddStep';
 
 import { StyledRhombButton } from './styled';
@@ -10,6 +10,7 @@ import Menu from '@components/shared/Menu/Menu';
 
 interface StepSelectionMenuProps {
   id: string;
+  data: EdgeData;
 }
 
 const options = [
@@ -18,7 +19,10 @@ const options = [
   { label: 'Champion Challenger', dataKey: StepType.CHAMPION_CHALLENGER }
 ];
 
-export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({ id }) => {
+export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
+  id,
+  data
+}) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [addStepModalOpen, setAddStepModalOpen] = useState<boolean>(false);
   const [stepType, setStepType] = useState<StepType>();
@@ -56,6 +60,7 @@ export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({ id }) => {
       {stepType && (
         <AddStep
           edgeId={id}
+          onAddNodeBetweenEdges={data.onAdd}
           stepType={stepType}
           modalOpen={addStepModalOpen}
           setModalOpen={setAddStepModalOpen}

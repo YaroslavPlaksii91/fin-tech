@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { ReactFlowInstance } from 'reactflow';
 import { Button, Stack, Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
+import { enqueueSnackbar } from 'notistack';
 
 import { StyledPanel } from './styled';
 
@@ -16,9 +17,15 @@ import { DeleteFlow } from '@components/FlowManagment/DeleteFlow/DeleteFlow';
 import { flowService } from '@services/flow-service';
 import { IFlow } from '@domain/flow';
 import routes from '@constants/routes';
+import {
+  SnackbarErrorMessage,
+  SnackbarMessage
+} from '@components/shared/Snackbar/SnackbarMessage';
+import { SNACK_TYPE } from '@constants/common';
 
 interface ControlPanelProps {
   flow: IFlow;
+  setFlow: (flow: IFlow) => void;
   isEditMode: boolean;
   isViewMode: boolean;
   rfInstance: ReactFlowInstance | undefined;
@@ -27,24 +34,47 @@ interface ControlPanelProps {
 const ControlPanel: React.FC<ControlPanelProps> = ({
   rfInstance,
   flow,
+  setFlow,
   isEditMode,
   isViewMode
 }) => {
   const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onSave = useCallback(async () => {
     if (rfInstance && flow) {
       const flowInstance = rfInstance.toObject();
       try {
-        await flowService.updateFullFlow({
+        setLoading(true);
+        const data = await flowService.updateFullFlow({
           ...flow,
+          edges: flowInstance.edges.map((edge) => ({
+            id: edge.id,
+            source: edge.source,
+            target: edge.target,
+            type: edge.type
+          })),
           nodes: flowInstance.nodes,
           viewport: flowInstance.viewport
         });
+        setFlow(data);
+        enqueueSnackbar(
+          <SnackbarMessage
+            message="Success"
+            details={`Changes for the "${flow.data.name}" flow were successfully saved.`}
+          />,
+          { variant: SNACK_TYPE.SUCCESS }
+        );
       } catch (error) {
-        Logger.error(error);
+        enqueueSnackbar(
+          <SnackbarErrorMessage message="Error" error={error} />,
+          {
+            variant: SNACK_TYPE.ERROR
+          }
+        );
+      } finally {
+        setLoading(false);
       }
-      localStorage.setItem(flow.id, JSON.stringify(flow));
     }
   }, [rfInstance, flow]);
 
@@ -75,6 +105,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
               color="secondary"
               onClick={onSave}
               endIcon={<BookmarksOutlinedIcon />}
+              disabled={loading}
             >
               Save changes
             </Button>

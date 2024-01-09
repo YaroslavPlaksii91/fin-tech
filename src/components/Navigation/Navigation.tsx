@@ -39,6 +39,7 @@ function Navigation() {
     <StyledAppBar position="static">
       <Container maxWidth="xl">
         <Toolbar variant="dense" disableGutters>
+          {/* TODO: add nav link */}
           <Typography variant="h6" noWrap component="a" href="/">
             <Logo />
           </Typography>

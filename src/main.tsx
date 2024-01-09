@@ -14,6 +14,7 @@ import { theme } from './themeConfig.ts';
 import { LoadingProvider } from './contexts/LoadingContext.tsx';
 
 import './main.css';
+import { StyledSnackbar } from '@components/shared/Snackbar/styled.ts';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -27,6 +28,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             }}
             autoHideDuration={3000}
             preventDuplicate
+            hideIconVariant
+            Components={{
+              success: StyledSnackbar,
+              error: StyledSnackbar
+            }}
           >
             <App />
           </SnackbarProvider>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import ReactFlow, {
   addEdge,
   Node,
@@ -9,7 +9,6 @@ import ReactFlow, {
   useEdgesState,
   BackgroundVariant,
   ConnectionLineType,
-  ReactFlowInstance,
   useReactFlow,
   ReactFlowProvider
 } from 'reactflow';
@@ -18,30 +17,26 @@ import 'reactflow/dist/style.css';
 
 import { nodeTypes } from './Nodes';
 import { edgeTypes } from './Edges';
-import NodePositioning from './Nodes/NodePositioning';
-import ControlPanel from './ContolPanel/ControlPanel';
 import './overview.css';
 import { ADD_BUTTON_ON_EDGE } from './types';
 import { getLayoutedElements } from './utils/workflowLayoutUtils';
+import ControlPanelView from './ContolPanel/ControlPanelView';
 
 import { IFlow } from '@domain/flow';
 
 interface FlowChartViewProps {
   flow: IFlow;
-  isEditMode?: boolean;
   isViewMode?: boolean;
 }
 
-const FlowChartLayout: React.FC<FlowChartViewProps> = ({
+const FlowChartViewLayout: React.FC<FlowChartViewProps> = ({
   flow,
-  isEditMode = false,
-  isViewMode = true
+  isViewMode = false
 }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
 
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
 
-  const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
   const { setViewport } = useReactFlow();
 
   useEffect(() => {
@@ -78,36 +73,27 @@ const FlowChartLayout: React.FC<FlowChartViewProps> = ({
   );
 
   return (
-    <>
-      <NodePositioning edges={edges} setEdges={setEdges} setNodes={setNodes} />
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onInit={setRfInstance}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        attributionPosition="bottom-left"
-        connectionLineType={ConnectionLineType.SmoothStep}
-      >
-        <Background variant={BackgroundVariant.Lines} />
-        <ControlPanel
-          isViewMode={isViewMode}
-          isEditMode={isEditMode}
-          flow={flow}
-          rfInstance={rfInstance}
-        />
-      </ReactFlow>
-    </>
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
+      attributionPosition="bottom-left"
+      connectionLineType={ConnectionLineType.SmoothStep}
+    >
+      <Background variant={BackgroundVariant.Lines} />
+      {isViewMode && <ControlPanelView flowId={flow.id} />}
+    </ReactFlow>
   );
 };
 
-const FlowChart = (props: FlowChartViewProps) => (
+const FlowChartView = (props: FlowChartViewProps) => (
   <ReactFlowProvider>
-    <FlowChartLayout {...props} />
+    <FlowChartViewLayout {...props} />
   </ReactFlowProvider>
 );
 
-export default FlowChart;
+export default FlowChartView;

@@ -3,7 +3,7 @@ import {
   SideNavContainer,
   MainContainer
 } from '@components/Layouts/MainLayout';
-import FlowChart from '@components/FlowManagment/FlowChart/FlowChart';
+import FlowChart from '@components/FlowManagment/FlowChart/FlowChartView';
 import NavigateBack from '@components/shared/Link/NavigateBack';
 import useInitialFlow from '@hooks/useInitialFlow';
 import FlowHeader from '@components/FlowManagment/FlowHeader';
@@ -28,7 +28,7 @@ function FlowEditMain() {
         <StepList nodes={flow.nodes} step={step} setStep={setStep} />
       </SideNavContainer>
       <MainContainer>
-        <FlowChart isViewMode={false} isEditMode={true} flow={flow} />
+        <FlowChart isViewMode={false} flow={flow} />
         {step.id !== MAIN_STEP_ID && (
           <StepConfigureView step={step as FlowNode} />
         )}

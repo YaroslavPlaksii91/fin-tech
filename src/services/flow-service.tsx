@@ -13,8 +13,12 @@ class FlowService {
     return data;
   }
 
-  async updateFullFlow(data: IFlow): Promise<IFlow> {
-    return await api.put(`/flows/${data.id}`, data);
+  async updateFullFlow(updateData: IFlow) {
+    const { data } = await api.put<IFlow>(
+      `/flows/${updateData.id}`,
+      updateData
+    );
+    return data;
   }
 
   async getFlow(id: string) {

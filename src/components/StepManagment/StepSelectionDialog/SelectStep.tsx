@@ -55,7 +55,11 @@ const options: {
   }
 ];
 
-export const SelectStep: React.FC = () => {
+interface SelectStepProps {
+  onAdd?: (type: StepType, name: string) => void;
+}
+
+export const SelectStep: React.FC<SelectStepProps> = ({ onAdd }) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [addStepModalOpen, setAddStepModalOpen] = useState<boolean>(false);
   const [selectedStep, setSelectedStep] =
@@ -113,6 +117,7 @@ export const SelectStep: React.FC = () => {
       </Dialog>
       {selectedStep && (
         <AddStep
+          onAdd={onAdd}
           stepType={selectedStep}
           modalOpen={addStepModalOpen}
           setModalOpen={setAddStepModalOpen}

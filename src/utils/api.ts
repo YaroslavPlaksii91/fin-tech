@@ -1,8 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import Cookie from 'js-cookie';
 
-import Logger from './logger';
-
 import { apiBaseUrl } from '@constants/api-urls';
 import { cookiesKeys } from '@constants/common';
 
@@ -27,12 +25,7 @@ Api.interceptors.request.use((config) => {
 
 Api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (axios.isAxiosError(error)) {
-      Logger.error(error);
-    }
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export default Api;
