@@ -10,6 +10,7 @@ import { InputText } from '@components/shared/Forms/InputText';
 import LoadingButton from '@components/shared/LoadingButton';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { useStep } from '@contexts/StepContext';
+import { FlowNode } from '@domain/flow';
 
 type FormData = {
   name: string;
@@ -28,12 +29,12 @@ interface AddStepProps {
   stepType: Exclude<StepType, StepType.START | StepType.END>;
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
-  onAdd?: (type: StepType, name: string) => void;
+  onAdd?: (type: StepType, name: string) => FlowNode;
   onAddNodeBetweenEdges?: (
     type: StepType,
     name: string,
     edgeId: string
-  ) => void;
+  ) => FlowNode;
   edgeId?: string;
   reopenSelectStepModal?: () => void;
 }

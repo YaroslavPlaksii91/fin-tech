@@ -7,13 +7,13 @@ import {
   MainContainer
 } from '@components/Layouts/MainLayout';
 import NavigateBack from '@components/shared/Link/NavigateBack';
-import FlowChart from '@components/FlowManagment/FlowChart/FlowChartView';
 import useInitialFlow from '@hooks/useInitialFlow';
 import { EditNoteOutlinedIcon } from '@components/shared/Icons';
 import routes from '@constants/routes';
 import FlowHeader from '@components/FlowManagment/FlowHeader';
 import { StepProvider, useStep } from '@contexts/StepContext';
 import StepList from '@components/StepManagment/StepList/StepList';
+import FlowChartReadOnlyView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyView';
 
 function FlowDetailsMain() {
   const { flow } = useInitialFlow();
@@ -40,7 +40,7 @@ function FlowDetailsMain() {
         <StepList nodes={flow.nodes} step={step} setStep={setStep} />
       </SideNavContainer>
       <MainContainer>
-        <FlowChart isViewMode={false} flow={flow} />
+        <FlowChartReadOnlyView flow={flow} />
       </MainContainer>
     </LayoutContainer>
   );

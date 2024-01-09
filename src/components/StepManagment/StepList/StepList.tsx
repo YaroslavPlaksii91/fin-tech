@@ -5,11 +5,11 @@ import { StyledStepItem, StyledStepItemText } from './styled';
 
 import { StyledList, StyledListItem } from '@components/shared/List/styled';
 import { HexagonOutlinedIcon } from '@components/shared/Icons';
-import ActionsMenu from '@components/StepManagment/ActionsMenu/ActionsMenu';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { MAIN_STEP_ID } from '@constants/common';
 import { FlowNode } from '@domain/flow';
 import { StepContextType } from '@contexts/StepContext';
+import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 
 type StepListProps = {
   nodes: FlowNode[];
@@ -48,7 +48,7 @@ const StepList: React.FC<StepListProps> = ({ nodes, setStep, step }) => {
           </StyledStepItem>
 
           <ListItemSecondaryAction>
-            <ActionsMenu />
+            <StepActionsMenu />
           </ListItemSecondaryAction>
         </StyledListItem>
       ))}

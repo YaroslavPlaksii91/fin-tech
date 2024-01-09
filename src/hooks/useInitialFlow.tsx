@@ -1,29 +1,42 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useLoading } from '@contexts/LoadingContext';
 import Logger from '@utils/logger';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
-import { selectFlow } from '@store/flow/selectors';
-import { useAppSelector, useAppDispatch } from '@store/hooks';
-import { fetchFlow, fetchProductionFlow } from '@store/flow/asyncThunk';
-import { resetFlow } from '@store/flow/flow';
+import { flowService } from '@services/flow-service';
+import { IFlow } from '@domain/flow';
+
+const initialFlow: IFlow = {
+  id: '',
+  nodes: [],
+  edges: [],
+  data: {
+    name: '',
+    createdBy: '',
+    createdOn: '',
+    editedBy: '',
+    editedOn: ''
+  },
+  viewport: { x: 0, y: 0, zoom: 1 }
+};
 
 function useInitialFlow() {
   const { id } = useParams();
+  const [flow, setFlow] = useState<IFlow>(initialFlow);
   const { startLoading, stopLoading } = useLoading();
-  const { flow } = useAppSelector(selectFlow);
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const fetchInitialData = async (flowId: string) => {
       try {
         startLoading();
+        let data;
         if (id === PRODUCTION_FLOW_ID) {
-          await dispatch(fetchProductionFlow());
+          data = await flowService.getProductionFlowDetails();
         } else {
-          await dispatch(fetchFlow(flowId));
+          data = await flowService.getFlow(flowId);
         }
+        setFlow(data);
       } catch (error) {
         Logger.error('Error fetching initial data:', error);
       } finally {
@@ -34,7 +47,7 @@ function useInitialFlow() {
     if (id) {
       void fetchInitialData(id);
     } else {
-      dispatch(resetFlow());
+      setFlow(initialFlow);
     }
   }, [id]);
 

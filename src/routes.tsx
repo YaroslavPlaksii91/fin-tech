@@ -6,10 +6,9 @@ import Login from '@pages/Login/Login';
 import Layout from '@components/Layouts/Layout';
 import routes from '@constants/routes';
 import Flows from '@pages/Flows';
-import FlowDetails from '@pages/FlowDetails';
-// import FlowEdit from '@pages/FlowEdit';
 import Home from '@pages/Home';
-import FlowEditor from '@pages/FlowEditorTest';
+import FlowEdit from '@pages/FlowEdit';
+import FlowDetails from '@pages/FlowDetails';
 
 export const router = createBrowserRouter([
   {
@@ -43,7 +42,7 @@ export const router = createBrowserRouter([
         path: `${routes.underwriting.flowList}/:id/edit`,
         element: (
           <PrivateRoutes>
-            <FlowEditor />
+            <FlowEdit />
           </PrivateRoutes>
         )
       },

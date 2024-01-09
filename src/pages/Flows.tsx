@@ -16,7 +16,7 @@ import {
   StyledNavListItem
 } from '@components/shared/List/styled';
 import { StyledBorderNavLink } from '@components/shared/Link/styled';
-import FlowChartView from '@components/FlowManagment/FlowChart/FlowChartView';
+import FlowChartView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyView';
 import routes from '@constants/routes';
 import useInitialFlow from '@hooks/useInitialFlow';
 import ActionsMenu from '@components/FlowManagment/ActionsMenu/ActionMenu';
@@ -80,7 +80,7 @@ export default function Flows() {
         </StyledList>
       </SideNavContainer>
       <MainContainer>
-        <FlowChartView flow={flow} isViewMode={!!flow.id} />
+        <FlowChartView flow={flow} showControlPanel={!!flow.id} />
       </MainContainer>
     </LayoutContainer>
   );

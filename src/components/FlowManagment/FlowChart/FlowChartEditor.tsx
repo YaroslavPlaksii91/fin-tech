@@ -18,7 +18,6 @@ import ReactFlow, {
 } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 import debounce from 'lodash/debounce';
-
 import 'reactflow/dist/style.css';
 
 import FlowHeader from '../FlowHeader';
@@ -26,10 +25,14 @@ import FlowHeader from '../FlowHeader';
 import { nodeTypes } from './Nodes';
 import { edgeTypes } from './Edges';
 import NodePositioning from './Nodes/NodePositioning';
-import ControlPanel from './ContolPanel/ControlPanel';
 import './overview.css';
 import { ADD_BUTTON_ON_EDGE, StepType } from './types';
 import { getLayoutedElements } from './utils/workflowLayoutUtils';
+import ControlPanelEdit from './ContolPanel/ControlPanelEdit';
+import {
+  createNewNode,
+  createNewNodeAndEdge
+} from './utils/workflowElementsUtils';
 
 import { FlowNode, IFlow } from '@domain/flow';
 import {
@@ -40,10 +43,6 @@ import { SelectStep } from '@components/StepManagment/StepSelectionDialog/Select
 import NavigateBack from '@components/shared/Link/NavigateBack';
 import StepList from '@components/StepManagment/StepList/StepList';
 import { useStep } from '@contexts/StepContext';
-import {
-  createNewNode,
-  createNewNodeAndEdge
-} from '@components/StepManagment/AddStep/stepInitialUtils';
 import StepConfigureView from '@components/StepManagment/StepConfigureView/StepConfigureView';
 import { MAIN_STEP_ID } from '@constants/common';
 import ConfirmationDialog from '@components/shared/Confirmation/Confirmation';
@@ -51,15 +50,11 @@ import ConfirmationDialog from '@components/shared/Confirmation/Confirmation';
 interface FlowChartViewProps {
   flow: IFlow;
   setFlow: (flow: IFlow) => void;
-  isEditMode?: boolean;
-  isViewMode?: boolean;
 }
 
 const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   flow,
-  setFlow,
-  isEditMode = true,
-  isViewMode = false
+  setFlow
 }) => {
   const [isDirty, setIsDirty] = useState<boolean>(false);
 
@@ -70,6 +65,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
+
   const { setViewport } = useReactFlow();
 
   const onAddNodeBetweenEdges = useCallback(
@@ -112,9 +108,10 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
     );
     const edges = layoutedEdges.map((edge) => ({
       ...edge,
+      type: ADD_BUTTON_ON_EDGE,
       data: { onAdd: onAddNodeBetweenEdges }
     }));
-    const nodes = layoutedNodes.map((node) => ({ ...node, deletable: false }));
+    const nodes = layoutedNodes.map((node) => ({ ...node }));
     return { edges, nodes };
   }, [flow]);
 
@@ -124,7 +121,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   }, [initialElements]);
 
   useEffect(() => {
-    setViewport(flow.viewport, { duration: 500 });
+    setViewport(flow.viewport);
   }, [flow.viewport, setViewport]);
 
   const checkIsDirty = ({
@@ -220,8 +217,8 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   return (
     <>
       <SideNavContainer
-        footer={<SelectStep onAdd={onAdd} />}
         header={<NavigateBack title="Back to view mode" />}
+        footer={<SelectStep onAdd={onAdd} />}
       >
         <FlowHeader name={flow.data.name} />
         <StepList nodes={nodes} step={step} setStep={setStep} />
@@ -246,9 +243,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           connectionLineType={ConnectionLineType.SmoothStep}
         >
           <Background variant={BackgroundVariant.Lines} />
-          <ControlPanel
-            isViewMode={isViewMode}
-            isEditMode={isEditMode}
+          <ControlPanelEdit
             flow={flow}
             setFlow={setFlow}
             rfInstance={rfInstance}

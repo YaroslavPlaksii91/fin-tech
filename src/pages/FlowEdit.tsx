@@ -1,46 +1,46 @@
-import {
-  LayoutContainer,
-  SideNavContainer,
-  MainContainer
-} from '@components/Layouts/MainLayout';
-import FlowChart from '@components/FlowManagment/FlowChart/FlowChartView';
-import NavigateBack from '@components/shared/Link/NavigateBack';
-import useInitialFlow from '@hooks/useInitialFlow';
-import FlowHeader from '@components/FlowManagment/FlowHeader';
-import { SelectStep } from '@components/StepManagment/StepSelectionDialog/SelectStep';
-import StepConfigureView from '@components/StepManagment/StepConfigureView/StepConfigureView';
-import { MAIN_STEP_ID } from '@constants/common';
-import { FlowNode } from '@domain/flow';
-import { useStep, StepProvider } from '@contexts/StepContext';
-import StepList from '@components/StepManagment/StepList/StepList';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
+import { LayoutContainer } from '@components/Layouts/MainLayout';
+import { IFlow } from '@domain/flow';
+import { StepProvider } from '@contexts/StepContext';
+import Logger from '@utils/logger';
+import { flowService } from '@services/flow-service';
+import { useLoading } from '@contexts/LoadingContext';
+import FlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEditor';
 
 function FlowEditMain() {
-  const { flow } = useInitialFlow();
-  const { step, setStep } = useStep();
+  const { id } = useParams();
+  const [flow, setFlow] = useState<IFlow | null>(null);
+  const { startLoading, stopLoading } = useLoading();
+
+  useEffect(() => {
+    const fetchInitialData = async (flowId: string) => {
+      try {
+        startLoading();
+        const flow = await flowService.getFlow(flowId);
+        setFlow(flow);
+      } catch (error) {
+        Logger.error('Error fetching flow data:', error);
+      } finally {
+        stopLoading();
+      }
+    };
+
+    id && void fetchInitialData(id);
+  }, [id]);
 
   return (
     <LayoutContainer>
-      <SideNavContainer
-        footer={<SelectStep />}
-        header={<NavigateBack title="Back to view mode" />}
-      >
-        <FlowHeader name={flow.data.name} />
-        <StepList nodes={flow.nodes} step={step} setStep={setStep} />
-      </SideNavContainer>
-      <MainContainer>
-        <FlowChart isViewMode={false} flow={flow} />
-        {step.id !== MAIN_STEP_ID && (
-          <StepConfigureView step={step as FlowNode} />
-        )}
-      </MainContainer>
+      {flow && <FlowChartEditor setFlow={setFlow} flow={flow} />}
     </LayoutContainer>
   );
 }
 
-const FlowEdit = () => (
+const FlowEditor = () => (
   <StepProvider>
     <FlowEditMain />
   </StepProvider>
 );
 
-export default FlowEdit;
+export default FlowEditor;

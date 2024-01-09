@@ -41,7 +41,7 @@ export function CustomEdge({
           }}
           className="nodrag nopan"
         >
-          <StepSelectionMenu id={id} data={data} />
+          {data && <StepSelectionMenu id={id} data={data} />}
         </div>
       </EdgeLabelRenderer>
     </>

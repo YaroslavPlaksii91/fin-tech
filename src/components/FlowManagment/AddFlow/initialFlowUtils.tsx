@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { ADD_BUTTON_ON_EDGE, StepType } from '../FlowChart/types';
+import { DEFAULT_EDGE_TYPE, StepType } from '../FlowChart/types';
 
 import { FlowNode } from '@domain/flow';
 import { DRAWER_WIDTH, HEADER_HEIGHT } from '@constants/themeConstants';
@@ -48,9 +48,9 @@ export const createEdgeData = () => {
   const newEdgeId = uuidv4();
   const newEdge = {
     id: newEdgeId,
-    type: ADD_BUTTON_ON_EDGE,
     source: startNodeId,
-    target: endNodeId
+    target: endNodeId,
+    type: DEFAULT_EDGE_TYPE
   };
 
   return newEdge;

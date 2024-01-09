@@ -1,69 +1,52 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Node, Edge, isNode } from 'reactflow';
-import { cloneDeep } from 'lodash';
 
-import { ADD_BUTTON_ON_EDGE, EdgeData, StepType } from '../types';
+import { StepType } from '../types';
 
-import Logger from '@utils/logger';
+import { FlowNode } from '@domain/flow';
 
 const defaultPosition = { x: 0, y: 0 };
 
-type Elements = {
-  elements: Array<Node | Edge<EdgeData>>;
-  targetEdgeId: string;
-  onAdd: ({ id, type }: { id: string; type: StepType }) => void;
-  type: StepType;
-  position?: { x: number; y: number };
+export const createNewNode = (type: StepType, name: string): FlowNode => {
+  const newNodeId = uuidv4();
+  const newNode = {
+    id: newNodeId,
+    type,
+    data: {
+      $type: type,
+      stepId: newNodeId,
+      stepType: type,
+      name
+    },
+    position: defaultPosition
+  };
+
+  return newNode;
 };
 
-export const getUpdatedElementsAfterNodeAddition = ({
-  elements,
-  targetEdgeId,
-  type,
-  position = defaultPosition,
-  onAdd
-}: Elements) => {
+export const createNewNodeAndEdge = (
+  type: StepType,
+  name: string
+): FlowNode => {
   const newNodeId = uuidv4();
   const newEdgeId = uuidv4();
 
   const newNode = {
     id: newNodeId,
     type,
-    data: {},
-    position
+    data: {
+      $type: type,
+      stepId: newNodeId,
+      stepType: type,
+      name,
+      splits: [
+        {
+          edgeId: newEdgeId,
+          percentage: 100
+        }
+      ]
+    },
+    position: defaultPosition
   };
-  const clonedElements = cloneDeep(elements);
 
-  const targetEdgeIndex = clonedElements.findIndex(
-    (x) => x.id === targetEdgeId
-  );
-  const targetEdge = elements[targetEdgeIndex] as Edge<EdgeData>;
-
-  if (targetEdge) {
-    const { target: targetNodeId } = targetEdge;
-    const updatedTargetEdge = { ...targetEdge, target: newNodeId };
-    clonedElements[targetEdgeIndex] = updatedTargetEdge;
-    clonedElements.push(newNode);
-
-    const newEdge = {
-      id: newEdgeId,
-      source: newNodeId,
-      target: targetNodeId,
-      type: ADD_BUTTON_ON_EDGE,
-      data: { onAdd }
-    };
-
-    clonedElements.push(newEdge);
-
-    return clonedElements;
-  } else {
-    Logger.error('Target edge is undefined.');
-    return elements;
-  }
+  return newNode;
 };
-
-export const getNodes = (elements: (Node | Edge)[]): Node[] =>
-  elements.filter<Node>((el): el is Node => !!isNode(el));
-
-export const getEdges = (elements: (Node | Edge)[]): Edge[] =>
-  elements.filter<Edge>((el): el is Edge => !isNode(el));

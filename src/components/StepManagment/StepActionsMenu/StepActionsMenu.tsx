@@ -18,13 +18,19 @@ const options = [
   { label: 'Duplicate object', dataKey: ActionTypes.DUPLICATE_OBJECT }
 ];
 
-const ActionsMenu = () => {
+const StepActionsMenu = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
+
+  // useEffect(() => {
+  //   if (menu) {
+  //     handleOpenMenu(menu);
+  //   }
+  // }, [menu]);
 
   const handleSelectedActions = (action: ActionTypes) => {
     switch (action) {
@@ -63,4 +69,4 @@ const ActionsMenu = () => {
   );
 };
 
-export default ActionsMenu;
+export default StepActionsMenu;

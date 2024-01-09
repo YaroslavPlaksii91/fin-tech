@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react';
 import { ReactFlowInstance } from 'reactflow';
 import { Button, Stack, Typography } from '@mui/material';
-import { NavLink } from 'react-router-dom';
 import { enqueueSnackbar } from 'notistack';
+
+import { DEFAULT_EDGE_TYPE } from '../types';
 
 import { StyledPanel } from './styled';
 
@@ -10,33 +11,27 @@ import Logger from '@utils/logger';
 import {
   BookmarksOutlinedIcon,
   DeleteOutlineIcon,
-  HexagonOutlinedIcon,
   TaskAltOutlinedIcon
 } from '@components/shared/Icons';
 import { DeleteFlow } from '@components/FlowManagment/DeleteFlow/DeleteFlow';
 import { flowService } from '@services/flow-service';
 import { IFlow } from '@domain/flow';
-import routes from '@constants/routes';
 import {
   SnackbarErrorMessage,
   SnackbarMessage
 } from '@components/shared/Snackbar/SnackbarMessage';
 import { SNACK_TYPE } from '@constants/common';
 
-interface ControlPanelProps {
+interface ControlPanelEditProps {
   flow: IFlow;
   setFlow: (flow: IFlow) => void;
-  isEditMode: boolean;
-  isViewMode: boolean;
   rfInstance: ReactFlowInstance | undefined;
 }
 
-const ControlPanel: React.FC<ControlPanelProps> = ({
+const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
   rfInstance,
   flow,
-  setFlow,
-  isEditMode,
-  isViewMode
+  setFlow
 }) => {
   const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -52,7 +47,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             id: edge.id,
             source: edge.source,
             target: edge.target,
-            type: edge.type
+            type: DEFAULT_EDGE_TYPE
           })),
           nodes: flowInstance.nodes,
           viewport: flowInstance.viewport
@@ -87,59 +82,42 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   }, []);
 
   return (
-    <>
-      {isEditMode && (
-        <StyledPanel position="top-right">
-          <Typography variant="h2">Edit mode</Typography>
-          <Stack spacing={1} direction="row" justifyContent="flex-end">
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={onDelete}
-              endIcon={<DeleteOutlineIcon />}
-            >
-              Delete Flow
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={onSave}
-              endIcon={<BookmarksOutlinedIcon />}
-              disabled={loading}
-            >
-              Save changes
-            </Button>
-            <Button
-              variant="contained"
-              onClick={onPushFlow}
-              endIcon={<TaskAltOutlinedIcon />}
-            >
-              Push changes
-            </Button>
-          </Stack>
-          <DeleteFlow
-            isEditMode
-            flowId={flow.id}
-            modalOpen={modalDeleteOpen}
-            setModalOpen={setModalDeleteOpen}
-          />
-        </StyledPanel>
-      )}
-      {isViewMode && (
-        <StyledPanel position="top-right">
-          <Button
-            sx={{ marginLeft: 'auto' }}
-            variant="contained"
-            component={NavLink}
-            to={`${routes.underwriting.flowList}/${flow.id}/details`}
-            endIcon={<HexagonOutlinedIcon />}
-          >
-            View flow details
-          </Button>
-        </StyledPanel>
-      )}
-    </>
+    <StyledPanel position="top-right">
+      <Typography variant="h2">Edit mode</Typography>
+      <Stack spacing={1} direction="row" justifyContent="flex-end">
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={onDelete}
+          endIcon={<DeleteOutlineIcon />}
+        >
+          Delete Flow
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={onSave}
+          endIcon={<BookmarksOutlinedIcon />}
+          disabled={loading}
+        >
+          Save changes
+        </Button>
+        <Button
+          variant="contained"
+          onClick={onPushFlow}
+          endIcon={<TaskAltOutlinedIcon />}
+        >
+          Push changes
+        </Button>
+      </Stack>
+      <DeleteFlow
+        isEditMode
+        flowId={flow.id}
+        modalOpen={modalDeleteOpen}
+        setModalOpen={setModalDeleteOpen}
+      />
+    </StyledPanel>
   );
 };
 
-export default ControlPanel;
+export default ControlPanelEdit;
