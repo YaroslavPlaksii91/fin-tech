@@ -20,16 +20,17 @@ import { v4 as uuidv4 } from 'uuid';
 import debounce from 'lodash/debounce';
 import 'reactflow/dist/style.css';
 
-import FlowHeader from '../FlowHeader';
+import FlowHeader from '../../FlowHeader';
+import { nodeTypes } from '../Nodes';
+import { edgeTypes } from '../Edges';
+import NodePositioning from '../Nodes/NodePositioning';
+import '../overview.css';
+import { ADD_BUTTON_ON_EDGE, StepType } from '../types';
+import { getLayoutedElements } from '../utils/workflowLayoutUtils';
+import ControlPanelEdit from '../ContolPanels/ControlPanelEdit';
+import { createNewNode } from '../utils/workflowElementsUtils';
 
-import { nodeTypes } from './Nodes';
-import { edgeTypes } from './Edges';
-import NodePositioning from './Nodes/NodePositioning';
-import './overview.css';
-import { ADD_BUTTON_ON_EDGE, StepType } from './types';
-import { getLayoutedElements } from './utils/workflowLayoutUtils';
-import ControlPanelEdit from './ContolPanels/ControlPanelEdit';
-import { createNewNode } from './utils/workflowElementsUtils';
+import NavigationHeader from './NavigateHeader';
 
 import { FlowNode, IFlow } from '@domain/flow';
 import {
@@ -37,7 +38,6 @@ import {
   SideNavContainer
 } from '@components/Layouts/MainLayout';
 import { SelectStep } from '@components/StepManagment/StepSelectionDialog/SelectStep';
-import NavigateBack from '@components/shared/Link/NavigateBack';
 import StepList from '@components/StepManagment/StepList/StepList';
 import { useStep } from '@contexts/StepContext';
 import StepConfigureView from '@components/StepManagment/StepConfigureView/StepConfigureView';
@@ -198,7 +198,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
     [nodes, edges]
   );
 
-  const onAdd = useCallback(
+  const onAddNode = useCallback(
     (type: StepType, name: string) => {
       const newNode = createNewNode(type, name);
       setNodes((nds) => nds.concat(newNode));
@@ -210,8 +210,8 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   return (
     <>
       <SideNavContainer
-        header={<NavigateBack title="Back to view mode" />}
-        footer={<SelectStep onAdd={onAdd} />}
+        header={<NavigationHeader />}
+        footer={<SelectStep onAddNode={onAddNode} />}
       >
         <FlowHeader name={flow.data.name} />
         <StepList nodes={nodes} step={step} setStep={setStep} />

@@ -7,7 +7,7 @@ import { StepProvider } from '@contexts/StepContext';
 import Logger from '@utils/logger';
 import { flowService } from '@services/flow-service';
 import { useLoading } from '@contexts/LoadingContext';
-import FlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEditor';
+import FlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEditor/FlowChartEditor';
 
 function FlowEditMain() {
   const { id } = useParams();

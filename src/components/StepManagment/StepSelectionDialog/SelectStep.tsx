@@ -12,17 +12,20 @@ import {
   ArrowForwardIcon,
   HexagonOutlinedIcon
 } from '@components/shared/Icons';
-import { StepType } from '@components/FlowManagment/FlowChart/types';
+import {
+  FunctionalStepType,
+  StepType
+} from '@components/FlowManagment/FlowChart/types';
+import { FlowNode } from '@domain/flow';
 
 interface SelectStepProps {
-  onAdd?: (type: StepType, name: string) => void;
+  onAddNode?: (type: StepType, name: string) => FlowNode;
 }
 
-export const SelectStep: React.FC<SelectStepProps> = ({ onAdd }) => {
+export const SelectStep: React.FC<SelectStepProps> = ({ onAddNode }) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [addStepModalOpen, setAddStepModalOpen] = useState<boolean>(false);
-  const [selectedStep, setSelectedStep] =
-    useState<Exclude<StepType, StepType.START | StepType.END>>();
+  const [selectedStep, setSelectedStep] = useState<FunctionalStepType>();
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -32,9 +35,7 @@ export const SelectStep: React.FC<SelectStepProps> = ({ onAdd }) => {
     setModalOpen(false);
   };
 
-  const openAddStepModalForm = (
-    step: Exclude<StepType, StepType.START | StepType.END>
-  ) => {
+  const openAddStepModalForm = (step: FunctionalStepType) => {
     handleCloseModal();
     setSelectedStep(step);
     setAddStepModalOpen(true);
@@ -77,7 +78,7 @@ export const SelectStep: React.FC<SelectStepProps> = ({ onAdd }) => {
       </Dialog>
       {selectedStep && (
         <AddStep
-          onAdd={onAdd}
+          onAddNode={onAddNode}
           stepType={selectedStep}
           modalOpen={addStepModalOpen}
           setModalOpen={setAddStepModalOpen}

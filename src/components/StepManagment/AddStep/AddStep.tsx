@@ -8,7 +8,10 @@ import { validationSchema } from './validationSchema';
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
 import LoadingButton from '@components/shared/LoadingButton';
-import { StepType } from '@components/FlowManagment/FlowChart/types';
+import {
+  FunctionalStepType,
+  StepType
+} from '@components/FlowManagment/FlowChart/types';
 import { useStep } from '@contexts/StepContext';
 import { FlowNode } from '@domain/flow';
 
@@ -26,10 +29,10 @@ const defaultValue = {
 };
 
 interface AddStepProps {
-  stepType: Exclude<StepType, StepType.START | StepType.END>;
+  stepType: FunctionalStepType;
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
-  onAdd?: (type: StepType, name: string) => FlowNode;
+  onAddNode?: (type: StepType, name: string) => FlowNode;
   onAddNodeBetweenEdges?: (
     type: StepType,
     name: string,
@@ -46,7 +49,7 @@ export const AddStep: React.FC<AddStepProps> = ({
   setModalOpen,
   reopenSelectStepModal,
   onAddNodeBetweenEdges,
-  onAdd
+  onAddNode
 }) => {
   const {
     handleSubmit,
@@ -59,13 +62,13 @@ export const AddStep: React.FC<AddStepProps> = ({
   const { setStep } = useStep();
 
   const onSubmit: SubmitHandler<FormData> = ({ name }) => {
+    let createdStep;
     if (edgeId) {
-      const step = onAddNodeBetweenEdges?.(stepType, name, edgeId);
-      setStep(step);
+      createdStep = onAddNodeBetweenEdges?.(stepType, name, edgeId);
     } else {
-      const step = onAdd?.(stepType, name);
-      setStep(step);
+      createdStep = onAddNode?.(stepType, name);
     }
+    createdStep && setStep(createdStep);
     handleCloseModal();
   };
 

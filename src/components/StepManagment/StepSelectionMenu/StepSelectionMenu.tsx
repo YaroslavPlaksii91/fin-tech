@@ -1,6 +1,9 @@
 import { useState } from 'react';
 
-import { EdgeData, StepType } from '../../FlowManagment/FlowChart/types';
+import {
+  EdgeData,
+  FunctionalStepType
+} from '../../FlowManagment/FlowChart/types';
 import { AddStep } from '../AddStep/AddStep';
 
 import { StyledRhombButton } from './styled';
@@ -20,7 +23,7 @@ export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [addStepModalOpen, setAddStepModalOpen] = useState<boolean>(false);
-  const [stepType, setStepType] = useState<StepType>();
+  const [stepType, setStepType] = useState<FunctionalStepType>();
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -29,7 +32,7 @@ export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
   const handleCloseMenu = (key?: string) => {
     if (key) {
       setAddStepModalOpen(true);
-      setStepType(key as StepType);
+      setStepType(key as FunctionalStepType);
     }
     setAnchorEl(null);
   };

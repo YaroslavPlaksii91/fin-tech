@@ -11,6 +11,11 @@ export enum StepType {
   END = 'End'
 }
 
+export type FunctionalStepType = Exclude<
+  StepType,
+  StepType.START | StepType.END
+>;
+
 export const ADD_BUTTON_ON_EDGE = 'add-button-on-edge';
 
 export const DEFAULT_EDGE_TYPE = 'smoothstep';

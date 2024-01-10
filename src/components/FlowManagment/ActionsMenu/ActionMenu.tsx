@@ -58,9 +58,11 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
       case ActionTypes.VIEW_DATA_DICTIONARY:
         Logger.info('View data dictionary');
         break;
-      case ActionTypes.EDIT_FLOW:
-        Logger.info('Edit flow');
+      case ActionTypes.EDIT_FLOW: {
+        const state = { from: routes.underwriting.flowList };
+        navigate(`${routes.underwriting.flowList}/${flow.id}/edit`, { state });
         break;
+      }
       default:
         Logger.info('Something went wrong');
     }

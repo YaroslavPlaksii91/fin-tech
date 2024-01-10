@@ -1,7 +1,10 @@
-import { StepType } from '@components/FlowManagment/FlowChart/types';
+import {
+  FunctionalStepType,
+  StepType
+} from '@components/FlowManagment/FlowChart/types';
 
 export const options: {
-  id: Exclude<StepType, StepType.START | StepType.END>;
+  id: FunctionalStepType;
   label: string;
   helperText: string;
   disabled?: boolean;

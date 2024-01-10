@@ -13,7 +13,12 @@ import { StyledMenu } from './styled';
 interface MenuProps extends Omit<MuiMenuProps, 'open'> {
   anchorEl: HTMLElement | null;
   handleCloseMenu: (key?: string) => void;
-  options: { label: string; dataKey?: string; path?: string }[];
+  options: {
+    label: string;
+    dataKey?: string;
+    path?: string;
+    disabled?: boolean;
+  }[];
   footer?: React.ReactNode;
 }
 
@@ -37,10 +42,10 @@ const Menu: React.FC<MenuProps> = ({
     >
       {options.map((option, index) => (
         <MenuItem
-          {...option}
           key={index}
           data-key={option?.dataKey ? option.dataKey : option.label}
           onClick={(event) => handleClick(event)}
+          disabled={option?.disabled}
         >
           <ListItemIcon>
             <HexagonOutlinedIcon size="16px" />
