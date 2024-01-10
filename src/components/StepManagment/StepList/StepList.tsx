@@ -1,5 +1,5 @@
 import { ListItemSecondaryAction, Typography } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { StyledStepItem, StyledStepItemText } from './styled';
 
@@ -16,6 +16,8 @@ type StepListProps = {
 } & StepContextType;
 
 const StepList: React.FC<StepListProps> = ({ nodes, setStep, step }) => {
+  const [menu, setMenu] = useState<HTMLElement | null>(null);
+
   const steps = useMemo(() => {
     const steps = nodes.filter(
       (node) =>
@@ -48,7 +50,11 @@ const StepList: React.FC<StepListProps> = ({ nodes, setStep, step }) => {
           </StyledStepItem>
 
           <ListItemSecondaryAction>
-            <StepActionsMenu />
+            <StepActionsMenu
+              showActionMenuButton={true}
+              anchorEl={menu}
+              setAnchorEl={setMenu}
+            />
           </ListItemSecondaryAction>
         </StyledListItem>
       ))}

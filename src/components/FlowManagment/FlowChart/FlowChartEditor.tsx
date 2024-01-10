@@ -28,7 +28,7 @@ import NodePositioning from './Nodes/NodePositioning';
 import './overview.css';
 import { ADD_BUTTON_ON_EDGE, StepType } from './types';
 import { getLayoutedElements } from './utils/workflowLayoutUtils';
-import ControlPanelEdit from './ContolPanel/ControlPanelEdit';
+import ControlPanelEdit from './ContolPanels/ControlPanelEdit';
 import {
   createNewNode,
   createNewNodeAndEdge

@@ -1,36 +1,26 @@
-import React from 'react';
-
 import Menu from '@components/shared/Menu/Menu';
 import Logger from '@utils/logger';
+import {
+  ActionTypes,
+  options
+} from '@components/StepManagment/StepActionsMenu/types';
 import ActionMenuButton from '@components/shared/Buttons/ActionMenuButton';
 
-enum ActionTypes {
-  OBJECT_TEXT_VIEW = 'ObjectTextView',
-  EDIT_OBJECT = 'EditObject',
-  RENAME_OBJECT = 'RenameObject',
-  DUPLICATE_OBJECT = 'DuplicateObject'
+interface StepActionMenuOnNode {
+  anchorEl: HTMLElement | null;
+  setAnchorEl: (el: HTMLElement | null) => void;
+  showActionMenuButton?: boolean;
 }
 
-const options = [
-  { label: 'Object text view', dataKey: ActionTypes.OBJECT_TEXT_VIEW },
-  { label: 'Edit object', dataKey: ActionTypes.EDIT_OBJECT },
-  { label: 'Rename object', dataKey: ActionTypes.RENAME_OBJECT },
-  { label: 'Duplicate object', dataKey: ActionTypes.DUPLICATE_OBJECT }
-];
-
-const StepActionsMenu = () => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
+const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
+  anchorEl,
+  setAnchorEl,
+  showActionMenuButton = false
+}) => {
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
-
-  // useEffect(() => {
-  //   if (menu) {
-  //     handleOpenMenu(menu);
-  //   }
-  // }, [menu]);
 
   const handleSelectedActions = (action: ActionTypes) => {
     switch (action) {
@@ -59,7 +49,9 @@ const StepActionsMenu = () => {
 
   return (
     <>
-      <ActionMenuButton handleOnClick={handleOpenMenu} />
+      {showActionMenuButton && (
+        <ActionMenuButton handleOnClick={handleOpenMenu} />
+      )}
       <Menu
         anchorEl={anchorEl}
         handleCloseMenu={handleCloseMenu}
@@ -69,4 +61,4 @@ const StepActionsMenu = () => {
   );
 };
 
-export default StepActionsMenu;
+export default StepActionMenu;

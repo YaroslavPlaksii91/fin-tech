@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import ReactFlow, {
   Background,
   useNodesState,
@@ -6,7 +6,6 @@ import ReactFlow, {
   BackgroundVariant,
   useReactFlow,
   ReactFlowProvider
-  // ReactFlowInstance
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
@@ -14,9 +13,10 @@ import 'reactflow/dist/style.css';
 import { nodeTypes } from './Nodes';
 import { edgeTypes } from './Edges';
 import './overview.css';
-import ControlPanelView from './ContolPanel/ControlPanelView';
+import ControlPanelView from './ContolPanels/ControlPanelView';
 
 import { IFlow } from '@domain/flow';
+import StepActionMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 
 interface FlowChartViewProps {
   flow: IFlow;
@@ -29,11 +29,9 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
 }) => {
   const [nodes, setNodes] = useNodesState(flow.nodes);
   const [edges, setEdges] = useEdgesState(flow.edges);
-  // const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
-  // const [anchorEl, setAnchorEl] = useState(null);
-  // const onPaneClick = useCallback(() => setAnchorEl(null), [setAnchorEl]);
-
   const { setViewport } = useReactFlow();
+
+  const [menu, setMenu] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     setNodes(flow.nodes);
@@ -44,10 +42,16 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
     setViewport(flow.viewport);
   }, [flow.viewport, setViewport]);
 
-  // const handleOpenMenu = (event: React.MouseEvent) => {
-  //   // event.stopPropagation();
-  //   setAnchorEl(event);
-  // };
+  const onPaneClick = useCallback(() => setMenu(null), [setMenu]);
+
+  const onNodeContextMenu = useCallback(
+    (event: React.MouseEvent) => {
+      event.preventDefault();
+      const targetElement = event.currentTarget as HTMLElement;
+      setMenu(targetElement);
+    },
+    [setMenu]
+  );
 
   return (
     <ReactFlow
@@ -56,10 +60,11 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       attributionPosition="bottom-left"
-      // onPaneClick={onPaneClick}
-      // onNodeClick={handleOpenMenu}
+      onPaneClick={onPaneClick}
+      onNodeContextMenu={onNodeContextMenu}
     >
       <Background variant={BackgroundVariant.Lines} />
+      <StepActionMenu anchorEl={menu} setAnchorEl={setMenu} />
       {showControlPanel && <ControlPanelView flowId={flow.id} />}
     </ReactFlow>
   );
