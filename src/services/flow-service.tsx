@@ -13,7 +13,7 @@ class FlowService {
     return data;
   }
 
-  async updateFullFlow(updateData: IFlow) {
+  async saveFlow(updateData: IFlow) {
     const { data } = await api.put<IFlow>(
       `/flows/${updateData.id}`,
       updateData

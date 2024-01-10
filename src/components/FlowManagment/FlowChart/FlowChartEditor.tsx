@@ -29,10 +29,7 @@ import './overview.css';
 import { ADD_BUTTON_ON_EDGE, StepType } from './types';
 import { getLayoutedElements } from './utils/workflowLayoutUtils';
 import ControlPanelEdit from './ContolPanels/ControlPanelEdit';
-import {
-  createNewNode,
-  createNewNodeAndEdge
-} from './utils/workflowElementsUtils';
+import { createNewNode } from './utils/workflowElementsUtils';
 
 import { FlowNode, IFlow } from '@domain/flow';
 import {
@@ -57,20 +54,16 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   setFlow
 }) => {
   const [isDirty, setIsDirty] = useState<boolean>(false);
-
   const { step, setStep } = useStep();
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
-
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
-
   const { setViewport } = useReactFlow();
 
   const onAddNodeBetweenEdges = useCallback(
     (type: StepType, name: string, edgeId: string) => {
-      const newNode = createNewNodeAndEdge(type, name);
+      const newNode = createNewNode(type, name);
       const newEdgeId = uuidv4();
 
       setNodes((nodes) => nodes.concat(newNode));

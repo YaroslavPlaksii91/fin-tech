@@ -4,6 +4,7 @@ import { Button, Stack, Typography } from '@mui/material';
 import { AddStep } from '../AddStep/AddStep';
 
 import { StyledButtonText, StyledSelectionButton } from './styled';
+import { options } from './options';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import {
@@ -12,48 +13,6 @@ import {
   HexagonOutlinedIcon
 } from '@components/shared/Icons';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
-
-const options: {
-  id: Exclude<StepType, StepType.START | StepType.END>;
-  label: string;
-  helperText: string;
-}[] = [
-  {
-    id: StepType.CHAMPION_CHALLENGER,
-    label: 'Champion Challenger',
-    helperText:
-      'A Champion Challenger is an object that allows you to split traffic into several groups and run experiment.'
-  },
-  {
-    id: StepType.CALCULATION,
-    label: 'Calculation',
-    helperText:
-      'Calculation is an object that allows the User to set a value for the parameter.'
-  },
-  {
-    id: StepType.DECISION_MATRIX,
-    label: 'Decision matrix',
-    helperText:
-      'A decision table is an object that allows to set expressions for columns and rows. The system will go through the table and analyze the values.'
-  },
-  {
-    id: StepType.CONDITION,
-    label: 'Condition',
-    helperText:
-      'A condition is an object that allows the User to break the flow into two mutually exclusive paths.'
-  },
-  {
-    id: StepType.CASE,
-    label: 'Case',
-    helperText:
-      'A case is an object that allows to set multiple conditions. Based on the number of conditions, it breaks the flow into the corresponding number of mutually exclusive paths.'
-  },
-  {
-    id: StepType.SUBFLOW,
-    label: 'Subflow',
-    helperText: 'Subflow'
-  }
-];
 
 interface SelectStepProps {
   onAdd?: (type: StepType, name: string) => void;
@@ -103,6 +62,7 @@ export const SelectStep: React.FC<SelectStepProps> = ({ onAdd }) => {
           {options.map((option) => (
             <StyledSelectionButton
               key={option.id}
+              disabled={option.disabled}
               onClick={() => openAddStepModalForm(option.id)}
             >
               <HexagonOutlinedIcon />

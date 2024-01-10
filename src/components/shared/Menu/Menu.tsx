@@ -37,6 +37,7 @@ const Menu: React.FC<MenuProps> = ({
     >
       {options.map((option, index) => (
         <MenuItem
+          {...option}
           key={index}
           data-key={option?.dataKey ? option.dataKey : option.label}
           onClick={(event) => handleClick(event)}

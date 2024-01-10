@@ -4,6 +4,7 @@ import { EdgeData, StepType } from '../../FlowManagment/FlowChart/types';
 import { AddStep } from '../AddStep/AddStep';
 
 import { StyledRhombButton } from './styled';
+import { options } from './options';
 
 import { AddIcon } from '@components/shared/Icons';
 import Menu from '@components/shared/Menu/Menu';
@@ -12,12 +13,6 @@ interface StepSelectionMenuProps {
   id: string;
   data: EdgeData;
 }
-
-const options = [
-  { label: 'Calculation', dataKey: StepType.CALCULATION },
-  { label: 'Condition', dataKey: StepType.CALCULATION },
-  { label: 'Champion Challenger', dataKey: StepType.CHAMPION_CHALLENGER }
-];
 
 export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
   id,

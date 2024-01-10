@@ -3,7 +3,7 @@ import { ReactFlowInstance } from 'reactflow';
 import { Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 
-import { DEFAULT_EDGE_TYPE } from '../types';
+import { formatFlowOnSave } from '../utils/formatFlowOnSave';
 
 import { StyledPanel } from './styled';
 
@@ -38,21 +38,11 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
 
   const onSave = useCallback(async () => {
     if (rfInstance && flow) {
-      const flowInstance = rfInstance.toObject();
       try {
         setLoading(true);
-        const data = await flowService.updateFullFlow({
-          ...flow,
-          edges: flowInstance.edges.map((edge) => ({
-            id: edge.id,
-            source: edge.source,
-            target: edge.target,
-            type: DEFAULT_EDGE_TYPE
-          })),
-          nodes: flowInstance.nodes,
-          viewport: flowInstance.viewport
-        });
-        setFlow(data);
+        const formattedData = formatFlowOnSave({ flow, rfInstance });
+        const updatedFlow = await flowService.saveFlow(formattedData);
+        setFlow(updatedFlow);
         enqueueSnackbar(
           <SnackbarMessage
             message="Success"
