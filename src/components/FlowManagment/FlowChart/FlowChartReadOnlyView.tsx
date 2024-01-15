@@ -65,7 +65,7 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
     >
       <Background variant={BackgroundVariant.Lines} />
       <StepActionMenu anchorEl={menu} setAnchorEl={setMenu} />
-      {showControlPanel && <ControlPanelView flowId={flow.id} />}
+      {showControlPanel && <ControlPanelView />}
     </ReactFlow>
   );
 };

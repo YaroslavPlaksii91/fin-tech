@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 
 import {
   LayoutContainer,
@@ -14,9 +14,11 @@ import { StepProvider, useStep } from '@contexts/StepContext';
 import StepList from '@components/StepManagment/StepList/StepList';
 import FlowChartReadOnlyView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyView';
 import NavigateTo from '@components/shared/Link/NavigateTo';
+import { PRODUCTION_FLOW_ID } from '@constants/common';
 
 function FlowDetailsMain() {
   const { flow } = useInitialFlow();
+  const { id } = useParams();
   const { step, setStep } = useStep();
 
   return (
@@ -33,6 +35,7 @@ function FlowDetailsMain() {
               variant="contained"
               color="primary"
               fullWidth
+              disabled={id === PRODUCTION_FLOW_ID}
               endIcon={<EditNoteOutlinedIcon />}
             >
               Edit flow
