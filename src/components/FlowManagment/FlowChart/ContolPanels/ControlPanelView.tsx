@@ -1,27 +1,26 @@
 import { Button } from '@mui/material';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 
 import { StyledPanel } from './styled';
 
 import { HexagonOutlinedIcon } from '@components/shared/Icons';
 import routes from '@constants/routes';
 
-interface ControlPanelProps {
-  flowId: string;
-}
-
-const ControlPanelView: React.FC<ControlPanelProps> = ({ flowId }) => (
-  <StyledPanel position="top-right">
-    <Button
-      sx={{ marginLeft: 'auto' }}
-      variant="contained"
-      component={NavLink}
-      to={routes.underwriting.flow.details(flowId)}
-      endIcon={<HexagonOutlinedIcon />}
-    >
-      View flow details
-    </Button>
-  </StyledPanel>
-);
+const ControlPanelView = () => {
+  const { id } = useParams();
+  return (
+    <StyledPanel position="top-right">
+      <Button
+        sx={{ marginLeft: 'auto' }}
+        variant="contained"
+        component={NavLink}
+        to={id ? routes.underwriting.flow.details(id) : '/'}
+        endIcon={<HexagonOutlinedIcon />}
+      >
+        View flow details
+      </Button>
+    </StyledPanel>
+  );
+};
 
 export default ControlPanelView;
