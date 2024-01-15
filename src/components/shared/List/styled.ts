@@ -7,18 +7,28 @@ export const StyledList = styled(List)(() => ({
   overflow: 'auto'
 }));
 
-export const StyledNavListItem = styled(ListItem)<ListItemProps & NavLinkProps>(
-  ({ theme }) => ({
-    paddingLeft: '16px',
-    '&:hover': {
-      cursor: 'pointer',
-      background: theme.palette.secondary.main
-    },
-    '&.active': {
-      background: theme.palette.secondary.main
-    }
-  })
-);
+const GeneralListItemStyle = styled(ListItem)(({ theme }) => ({
+  color: theme.palette.gray,
+  paddingLeft: '16px',
+  '&:hover': {
+    cursor: 'pointer',
+    background: theme.palette.secondary.main
+  }
+}));
+
+export const StyledNavListItem = styled(GeneralListItemStyle)<
+  ListItemProps & NavLinkProps
+>(({ theme }) => ({
+  '&.active': {
+    background: theme.palette.secondary.main
+  }
+}));
+
+export const StyledListItem = styled(GeneralListItemStyle)(({ theme }) => ({
+  '&.active': {
+    borderLeft: `3px solid ${theme.palette.gray}`
+  }
+}));
 
 export const StyledListItemText = styled(ListItemText)(({ theme }) => ({
   '.MuiTypography-root': {

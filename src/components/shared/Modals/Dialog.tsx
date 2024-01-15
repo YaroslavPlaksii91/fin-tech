@@ -4,8 +4,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
+import { IconButton } from '@mui/material';
 
 import LoadingButton from '../LoadingButton';
+import { CloseIcon } from '../Icons';
 
 interface DialogProps {
   open: boolean;
@@ -18,6 +20,7 @@ interface DialogProps {
   cancelText?: string;
   displayedCancelBtn?: boolean;
   displayConfirmBtn?: boolean;
+  isCloseButton?: boolean;
 }
 
 const Dialog: React.FC<DialogProps> = ({
@@ -30,10 +33,24 @@ const Dialog: React.FC<DialogProps> = ({
   cancelText = 'Cancel',
   confirmLoading = false,
   displayedCancelBtn = true,
-  displayConfirmBtn = true
+  displayConfirmBtn = true,
+  isCloseButton = false
 }) => (
   <MuiDialog open={open} onClose={onClose}>
     <DialogTitle>{title}</DialogTitle>
+    {isCloseButton && (
+      <IconButton
+        aria-label="close"
+        onClick={onClose}
+        sx={{
+          position: 'absolute',
+          right: 16,
+          top: 16
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+    )}
     <DialogContent>{children}</DialogContent>
     {(displayedCancelBtn || displayConfirmBtn) && (
       <DialogActions>

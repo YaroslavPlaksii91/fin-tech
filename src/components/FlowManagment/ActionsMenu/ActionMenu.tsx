@@ -4,14 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { RenameFlow } from '../RenameFlow/RenameFlowForm';
 import { DeleteFlow } from '../DeleteFlow/DeleteFlow';
 
-import { StyledIconButton } from './styled';
 import Details from './Details';
 
 import Menu from '@components/shared/Menu/Menu';
-import { MoreVertIcon } from '@components/shared/Icons';
 import { IFlowListItem } from '@domain/flow';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
+import ActionMenuButton from '@components/shared/Buttons/ActionMenuButton';
 
 enum ActionTypes {
   VIEW_FLOW_DETAILS = 'viewFlowDetails',
@@ -51,7 +50,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         setModalDeleteOpen(true);
         break;
       case ActionTypes.VIEW_FLOW_DETAILS:
-        navigate(`${routes.underwriting.flowList}/details/${flow.id}`);
+        navigate(routes.underwriting.flow.details(flow.id));
         break;
       case ActionTypes.DUPLICATE_FLOW:
         Logger.info('Duplicate');
@@ -59,9 +58,11 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
       case ActionTypes.VIEW_DATA_DICTIONARY:
         Logger.info('View data dictionary');
         break;
-      case ActionTypes.EDIT_FLOW:
-        Logger.info('Edit flow');
+      case ActionTypes.EDIT_FLOW: {
+        const state = { from: routes.underwriting.flow.list };
+        navigate(routes.underwriting.flow.edit(flow.id), { state });
         break;
+      }
       default:
         Logger.info('Something went wrong');
     }
@@ -75,10 +76,8 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
   };
 
   return (
-    <div>
-      <StyledIconButton aria-label="action-menu" onClick={handleOpenMenu}>
-        <MoreVertIcon />
-      </StyledIconButton>
+    <>
+      <ActionMenuButton handleOnClick={handleOpenMenu} />
       <Menu
         anchorEl={anchorEl}
         handleCloseMenu={handleCloseMenu}
@@ -95,7 +94,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         modalOpen={modalDeleteOpen}
         setModalOpen={setModalDeleteOpen}
       />
-    </div>
+    </>
   );
 };
 

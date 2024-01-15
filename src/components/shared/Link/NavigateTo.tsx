@@ -5,13 +5,14 @@ import { KeyboardDoubleArrowLeftIcon } from '../Icons';
 import { palette } from '../../../themeConfig';
 
 interface NavigateBackProps {
+  to: string;
   title: string;
 }
 
-const NavigateBack: React.FC<NavigateBackProps> = ({ title }) => {
+const NavigateTo: React.FC<NavigateBackProps> = ({ title, to }) => {
   const navigate = useNavigate();
 
-  const handleGoBack = () => navigate(-1);
+  const handleGoBack = () => navigate(to);
 
   return (
     <Stack direction="row" alignItems="center" pl={2} pr={2}>
@@ -30,4 +31,4 @@ const NavigateBack: React.FC<NavigateBackProps> = ({ title }) => {
   );
 };
 
-export default NavigateBack;
+export default NavigateTo;

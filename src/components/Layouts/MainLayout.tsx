@@ -59,7 +59,10 @@ interface MainContainerProps {
 }
 
 const MainContainer: React.FC<MainContainerProps> = ({ children }) => (
-  <Box sx={{ width: '100%', height: '100%' }} component="main">
+  <Box
+    sx={{ width: '100%', height: '100%', position: 'relative' }}
+    component="main"
+  >
     {children}
   </Box>
 );

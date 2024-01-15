@@ -8,8 +8,17 @@ class FlowService {
     return data;
   }
 
-  async createFlow(data: IFlowDataCreate): Promise<IFlow> {
-    return await api.post('/flows', data);
+  async createFlow(createData: IFlowDataCreate) {
+    const { data } = await api.post<IFlow>('/flows', createData);
+    return data;
+  }
+
+  async saveFlow(updateData: IFlow) {
+    const { data } = await api.put<IFlow>(
+      `/flows/${updateData.id}`,
+      updateData
+    );
+    return data;
   }
 
   async getFlow(id: string) {

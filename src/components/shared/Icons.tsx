@@ -10,6 +10,10 @@ import MuiCircularProgress, {
   CircularProgressProps
 } from '@mui/material/CircularProgress';
 import MuiMoreVertIcon from '@mui/icons-material/MoreVert';
+import MuiCloseIcon from '@mui/icons-material/Close';
+import MuiArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import MuiCheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
+import MuiErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 
 const defaultIconSize = '18px';
@@ -47,6 +51,28 @@ export const DeleteOutlineIcon = ({
   ...props
 }: IconPros) => (
   <MuiDeleteOutlineIcon sx={{ width: size, height: size, ...sx }} {...props} />
+);
+
+export const ErrorOutlineOutlinedIcon = ({
+  size = defaultIconSize,
+  sx,
+  ...props
+}: IconPros) => (
+  <MuiErrorOutlineOutlinedIcon
+    sx={{ width: size, height: size, ...sx }}
+    {...props}
+  />
+);
+
+export const CheckCircleOutlinedIcon = ({
+  size = defaultIconSize,
+  sx,
+  ...props
+}: IconPros) => (
+  <MuiCheckCircleOutlinedIcon
+    sx={{ width: size, height: size, ...sx }}
+    {...props}
+  />
 );
 
 export const BookmarksOutlinedIcon = ({
@@ -99,6 +125,22 @@ export const MoreVertIcon = ({
   ...props
 }: IconPros) => (
   <MuiMoreVertIcon sx={{ width: size, height: size, ...sx }} {...props} />
+);
+
+export const CloseIcon = ({
+  size = defaultIconSize,
+  sx,
+  ...props
+}: IconPros) => (
+  <MuiCloseIcon sx={{ width: size, height: size, ...sx }} {...props} />
+);
+
+export const ArrowForwardIcon = ({
+  size = defaultIconSize,
+  sx,
+  ...props
+}: IconPros) => (
+  <MuiArrowForwardIcon sx={{ width: size, height: size, ...sx }} {...props} />
 );
 
 export const CircularProgress = ({ ...props }: CircularProgressProps) => (

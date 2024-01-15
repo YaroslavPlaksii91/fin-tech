@@ -23,7 +23,7 @@ const pages = [
   {
     label: 'Underwriting',
     options: [
-      { label: 'Flow list', path: routes.underwriting.flowList },
+      { label: 'Flow list', path: routes.underwriting.flow.list },
       { label: 'Data Dictionary', path: routes.underwriting.dataDictionary },
       { label: 'Changes history', path: routes.underwriting.changeHistory }
     ]
@@ -39,6 +39,7 @@ function Navigation() {
     <StyledAppBar position="static">
       <Container maxWidth="xl">
         <Toolbar variant="dense" disableGutters>
+          {/* TODO: add nav link */}
           <Typography variant="h6" noWrap component="a" href="/">
             <Logo />
           </Typography>

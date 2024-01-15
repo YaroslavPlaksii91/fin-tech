@@ -6,9 +6,9 @@ import Login from '@pages/Login/Login';
 import Layout from '@components/Layouts/Layout';
 import routes from '@constants/routes';
 import Flows from '@pages/Flows';
-import FlowDetails from '@pages/FlowDetails';
-import FlowEdit from '@pages/FlowEdit';
 import Home from '@pages/Home';
+import FlowEdit from '@pages/FlowEdit';
+import FlowDetails from '@pages/FlowDetails';
 
 export const router = createBrowserRouter([
   {
@@ -23,7 +23,7 @@ export const router = createBrowserRouter([
         )
       },
       {
-        path: `${routes.underwriting.flowList}/:id?`,
+        path: `${routes.underwriting.flow.list}/:id?`,
         element: (
           <PrivateRoutes>
             <Flows />
@@ -31,7 +31,7 @@ export const router = createBrowserRouter([
         )
       },
       {
-        path: `${routes.underwriting.flowList}/details/:id`,
+        path: `${routes.underwriting.flow.details(':id')}`,
         element: (
           <PrivateRoutes>
             <FlowDetails />
@@ -39,7 +39,7 @@ export const router = createBrowserRouter([
         )
       },
       {
-        path: `${routes.underwriting.flowList}/edit/:id`,
+        path: `${routes.underwriting.flow.edit(':id')}`,
         element: (
           <PrivateRoutes>
             <FlowEdit />

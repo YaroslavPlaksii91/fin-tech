@@ -1,33 +1,46 @@
-import { Button } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-import {
-  LayoutContainer,
-  SideNavContainer,
-  MainContainer
-} from '@components/Layouts/MainLayout';
-import FlowChart from '@components/FlowManagment/FlowChart/FlowChart';
-import NavigateBack from '@components/shared/Link/NavigateBack';
-import useInitialFlow from '@hooks/useInitialFlow';
-import FlowHeader from '@components/FlowManagment/FlowHeader';
+import { LayoutContainer } from '@components/Layouts/MainLayout';
+import { IFlow } from '@domain/flow';
+import { StepProvider } from '@contexts/StepContext';
+import Logger from '@utils/logger';
+import { flowService } from '@services/flow-service';
+import { useLoading } from '@contexts/LoadingContext';
+import FlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEditor/FlowChartEditor';
 
-export default function FlowEdit() {
-  const { elements, data } = useInitialFlow();
+function FlowEditMain() {
+  const { id } = useParams();
+  const [flow, setFlow] = useState<IFlow | null>(null);
+  const { startLoading, stopLoading } = useLoading();
+
+  useEffect(() => {
+    const fetchInitialData = async (flowId: string) => {
+      try {
+        startLoading();
+        const flow = await flowService.getFlow(flowId);
+        setFlow(flow);
+      } catch (error) {
+        Logger.error('Error fetching flow data:', error);
+      } finally {
+        stopLoading();
+      }
+    };
+
+    id && void fetchInitialData(id);
+  }, [id]);
 
   return (
     <LayoutContainer>
-      <SideNavContainer
-        footer={
-          <Button variant="contained" color="primary">
-            Add new object
-          </Button>
-        }
-        header={<NavigateBack title="Back to view mode" />}
-      >
-        <FlowHeader name={data.data.name} />
-      </SideNavContainer>
-      <MainContainer>
-        <FlowChart isEditMode={true} elements={elements} data={data} />
-      </MainContainer>
+      {flow && <FlowChartEditor setFlow={setFlow} flow={flow} />}
     </LayoutContainer>
   );
 }
+
+const FlowEditor = () => (
+  <StepProvider>
+    <FlowEditMain />
+  </StepProvider>
+);
+
+export default FlowEditor;

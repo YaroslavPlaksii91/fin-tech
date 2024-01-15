@@ -16,7 +16,7 @@ import {
   StyledNavListItem
 } from '@components/shared/List/styled';
 import { StyledBorderNavLink } from '@components/shared/Link/styled';
-import FlowChart from '@components/FlowManagment/FlowChart/FlowChart';
+import FlowChartView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyView';
 import routes from '@constants/routes';
 import useInitialFlow from '@hooks/useInitialFlow';
 import ActionsMenu from '@components/FlowManagment/ActionsMenu/ActionMenu';
@@ -27,7 +27,7 @@ import { useLoading } from '@contexts/LoadingContext';
 
 export default function Flows() {
   const { startLoading, stopLoading } = useLoading();
-  const { elements, data } = useInitialFlow();
+  const { flow } = useInitialFlow();
   const { flowList, flowProduction } = useAppSelector(selectFlowList);
   const dispatch = useAppDispatch();
 
@@ -54,7 +54,7 @@ export default function Flows() {
           <Stack spacing={1}>
             <Header text="Flow on production" />
             <StyledBorderNavLink
-              to={`${routes.underwriting.flowList}/production-flow`}
+              to={`${routes.underwriting.flow.list}/production-flow`}
             >
               <Typography pb={1} pt={1} pl={2} variant="body2">
                 {flowProduction?.name}
@@ -69,7 +69,7 @@ export default function Flows() {
             <StyledNavListItem
               key={flow.id}
               component={NavLink}
-              to={`${routes.underwriting.flowList}/${flow.id}`}
+              to={`${routes.underwriting.flow.list}/${flow.id}`}
             >
               <StyledListItemText>{flow.name}</StyledListItemText>
               <ListItemSecondaryAction>
@@ -80,7 +80,7 @@ export default function Flows() {
         </StyledList>
       </SideNavContainer>
       <MainContainer>
-        <FlowChart elements={elements} data={data} />
+        <FlowChartView flow={flow} showControlPanel={!!flow.id} />
       </MainContainer>
     </LayoutContainer>
   );

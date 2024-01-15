@@ -11,7 +11,8 @@ export const StyledLayoutContainer = styled(Box)(() => ({
 export const StyledSideNavContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  width: DRAWER_WIDTH,
+  minWidth: DRAWER_WIDTH,
+  maxWidth: DRAWER_WIDTH,
   background: theme.palette.lightGray,
   borderTop: `1px solid ${theme.palette.divider}`,
   padding: '20px 0px 16px'

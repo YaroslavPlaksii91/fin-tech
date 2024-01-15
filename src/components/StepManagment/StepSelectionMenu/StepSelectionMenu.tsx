@@ -1,28 +1,29 @@
 import { useState } from 'react';
 
-import { EdgeData, StepType } from '../types';
+import {
+  EdgeData,
+  FunctionalStepType
+} from '../../FlowManagment/FlowChart/types';
+import { AddStep } from '../AddStep/AddStep';
 
 import { StyledRhombButton } from './styled';
+import { options } from './options';
 
 import { AddIcon } from '@components/shared/Icons';
 import Menu from '@components/shared/Menu/Menu';
 
-interface StepCreationMenuProps {
+interface StepSelectionMenuProps {
   id: string;
-  data?: EdgeData;
+  data: EdgeData;
 }
 
-const options = [
-  { label: 'Calculation', dataKey: StepType.CALCULATION },
-  { label: 'Condition', dataKey: StepType.CALCULATION },
-  { label: 'Champion Challenger', dataKey: StepType.CHAMPION_CHALLENGER }
-];
-
-export const StepCreationMenu: React.FC<StepCreationMenuProps> = ({
-  data,
-  id
+export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
+  id,
+  data
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [addStepModalOpen, setAddStepModalOpen] = useState<boolean>(false);
+  const [stepType, setStepType] = useState<FunctionalStepType>();
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -30,7 +31,8 @@ export const StepCreationMenu: React.FC<StepCreationMenuProps> = ({
 
   const handleCloseMenu = (key?: string) => {
     if (key) {
-      data && data.onAdd && data.onAdd({ id, type: key as StepType });
+      setAddStepModalOpen(true);
+      setStepType(key as FunctionalStepType);
     }
     setAnchorEl(null);
   };
@@ -53,6 +55,15 @@ export const StepCreationMenu: React.FC<StepCreationMenuProps> = ({
         handleCloseMenu={handleCloseMenu}
         options={options}
       />
+      {stepType && (
+        <AddStep
+          edgeId={id}
+          onAddNodeBetweenEdges={data.onAdd}
+          stepType={stepType}
+          modalOpen={addStepModalOpen}
+          setModalOpen={setAddStepModalOpen}
+        />
+      )}
     </div>
   );
 };

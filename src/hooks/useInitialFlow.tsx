@@ -1,71 +1,42 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Node, Edge, Viewport } from 'reactflow';
-
-import { flowService } from '../services/flow-service';
 
 import { useLoading } from '@contexts/LoadingContext';
 import Logger from '@utils/logger';
-import { getUpdatedElementsAfterNodeAddition } from '@components/FlowManagment/FlowChart/utils/workflowElementsUtils';
-import { StepType } from '@components/FlowManagment/FlowChart/types';
-import { FlowData, IFlow } from '@domain/flow';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
+import { flowService } from '@services/flow-service';
+import { IFlow } from '@domain/flow';
 
-const defaultData = {
+const initialFlow: IFlow = {
   id: '',
-  viewport: { x: 0, y: 0, zoom: 1 },
+  nodes: [],
+  edges: [],
   data: {
-    id: '',
     name: '',
     createdBy: '',
     createdOn: '',
     editedBy: '',
     editedOn: ''
-  }
+  },
+  viewport: { x: 0, y: 0, zoom: 1 }
 };
 
 function useInitialFlow() {
   const { id } = useParams();
-  const [elements, setElements] = useState<(Node | Edge)[]>([]);
+  const [flow, setFlow] = useState<IFlow>(initialFlow);
   const { startLoading, stopLoading } = useLoading();
-
-  const [generalData, setGeneralData] = useState<{
-    viewport: Viewport;
-    id: string;
-    data: FlowData;
-  }>(defaultData);
-
-  const onAddNodeCallback = ({ id, type }: { id: string; type: StepType }) => {
-    setElements((prevElements) =>
-      getUpdatedElementsAfterNodeAddition({
-        elements: prevElements,
-        type,
-        targetEdgeId: id,
-        onAdd: onAddNodeCallback
-      })
-    );
-  };
 
   useEffect(() => {
     const fetchInitialData = async (flowId: string) => {
       try {
         startLoading();
-        let response: IFlow;
+        let data;
         if (id === PRODUCTION_FLOW_ID) {
-          response = await flowService.getProductionFlowDetails();
+          data = await flowService.getProductionFlowDetails();
         } else {
-          response = await flowService.getFlow(flowId);
+          data = await flowService.getFlow(flowId);
         }
-        const edges = response.edges.map((edge) => ({
-          ...edge,
-          data: { onAdd: onAddNodeCallback }
-        }));
-        setElements([...response.nodes, ...edges]);
-        setGeneralData({
-          viewport: response.viewport,
-          data: response.data,
-          id: response.id
-        });
+        setFlow(data);
       } catch (error) {
         Logger.error('Error fetching initial data:', error);
       } finally {
@@ -76,12 +47,11 @@ function useInitialFlow() {
     if (id) {
       void fetchInitialData(id);
     } else {
-      setElements([]);
-      setGeneralData(defaultData);
+      setFlow(initialFlow);
     }
   }, [id]);
 
-  return { elements, data: generalData };
+  return { flow };
 }
 
 export default useInitialFlow;
