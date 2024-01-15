@@ -10,13 +10,13 @@ type LocationState = {
 const NavigationHeader = () => {
   const location = useLocation();
   let title = 'Back to flow list';
-  let to = routes.underwriting.flowList;
+  let to = routes.underwriting.flow.list;
 
   if (location.state) {
     const state = location.state as LocationState;
 
     title =
-      state.from === routes.underwriting.flowList
+      state.from === routes.underwriting.flow.list
         ? 'Back to flow list'
         : 'Back to view mode';
     to = state.from;

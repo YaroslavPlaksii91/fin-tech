@@ -32,7 +32,7 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
       await dispatch(deleteFlow(flowId));
       handleCloseModal();
       if (isEditMode || id === flowId) {
-        navigate(`${routes.underwriting.flowList}`);
+        navigate(`${routes.underwriting.flow.list}`);
         return;
       }
     } catch (error) {
@@ -56,7 +56,7 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
       confirmLoading={confirmLoading}
     >
       <Typography width={416} variant="body2">
-        Are you sure you want to delete this flow with all existing objects and
+        Are you sure you want to delete this flow with all existing steps and
         sub flows in it?
       </Typography>
     </Dialog>

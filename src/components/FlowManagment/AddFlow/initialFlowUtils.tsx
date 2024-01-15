@@ -21,7 +21,8 @@ export const createStartNodeData = () => {
     width: 40,
     height: 40,
     position: { x: 0, y: 0 },
-    deletable: false
+    deletable: false,
+    draggable: true
   };
   return newNode;
 };
@@ -39,7 +40,8 @@ export const createEndNodeData = () => {
     width: 40,
     height: 40,
     position: { x: 340, y: 0 },
-    deletable: false
+    deletable: false,
+    draggable: true
   };
   return newNode;
 };

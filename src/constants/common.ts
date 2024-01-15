@@ -14,3 +14,7 @@ export enum SNACK_TYPE {
   SUCCESS = 'success',
   ERROR = 'error'
 }
+
+export const GENERAL_SERVER_ERROR = 'Something went wrong';
+
+export const ROURER_BLOCKED_STATE = 'blocked';

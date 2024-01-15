@@ -21,8 +21,8 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({ step }) => (
       <Stack>
         <Typography variant="h2">{step.data.name}</Typography>
         <Typography variant="body2" color={palette.gray}>
-          A Champion Challenger is an object that allows you to split traffic
-          into several groups and run experiment.
+          A Champion Challenger is an step that allows you to split traffic into
+          several groups and run experiment.
         </Typography>
       </Stack>
       <Button

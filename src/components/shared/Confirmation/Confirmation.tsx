@@ -3,6 +3,7 @@ import { useBlocker, useBeforeUnload } from 'react-router-dom';
 import { Typography } from '@mui/material';
 
 import Dialog from '@components/shared/Modals/Dialog';
+import { ROURER_BLOCKED_STATE } from '@constants/common';
 
 interface ConfirmationDialogProps {
   isDirty: boolean;
@@ -22,13 +23,13 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   const blocker = useBlocker(isDirty);
 
   const handleClose = useCallback(() => {
-    if (blocker.state === 'blocked') {
+    if (blocker.state === ROURER_BLOCKED_STATE) {
       blocker.reset();
     }
   }, [blocker]);
 
   const handleConfirm = useCallback(() => {
-    if (blocker.state === 'blocked') {
+    if (blocker.state === ROURER_BLOCKED_STATE) {
       blocker.proceed();
     }
   }, [blocker]);
@@ -47,7 +48,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
 
   return (
     <Dialog
-      open={blocker.state === 'blocked'}
+      open={blocker.state === ROURER_BLOCKED_STATE}
       title={title}
       confirmText={confirmText}
       cancelText={cancelText}

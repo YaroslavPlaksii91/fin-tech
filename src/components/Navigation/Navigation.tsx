@@ -23,7 +23,7 @@ const pages = [
   {
     label: 'Underwriting',
     options: [
-      { label: 'Flow list', path: routes.underwriting.flowList },
+      { label: 'Flow list', path: routes.underwriting.flow.list },
       { label: 'Data Dictionary', path: routes.underwriting.dataDictionary },
       { label: 'Changes history', path: routes.underwriting.changeHistory }
     ]

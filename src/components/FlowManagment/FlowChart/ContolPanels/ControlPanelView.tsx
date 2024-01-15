@@ -16,7 +16,7 @@ const ControlPanelView: React.FC<ControlPanelProps> = ({ flowId }) => (
       sx={{ marginLeft: 'auto' }}
       variant="contained"
       component={NavLink}
-      to={`${routes.underwriting.flowList}/${flowId}/details`}
+      to={routes.underwriting.flow.details(flowId)}
       endIcon={<HexagonOutlinedIcon />}
     >
       View flow details

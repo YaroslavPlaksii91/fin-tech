@@ -54,7 +54,7 @@ export default function Flows() {
           <Stack spacing={1}>
             <Header text="Flow on production" />
             <StyledBorderNavLink
-              to={`${routes.underwriting.flowList}/production-flow`}
+              to={`${routes.underwriting.flow.list}/production-flow`}
             >
               <Typography pb={1} pt={1} pl={2} variant="body2">
                 {flowProduction?.name}
@@ -69,7 +69,7 @@ export default function Flows() {
             <StyledNavListItem
               key={flow.id}
               component={NavLink}
-              to={`${routes.underwriting.flowList}/${flow.id}`}
+              to={`${routes.underwriting.flow.list}/${flow.id}`}
             >
               <StyledListItemText>{flow.name}</StyledListItemText>
               <ListItemSecondaryAction>

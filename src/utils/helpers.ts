@@ -1,5 +1,7 @@
 import { AxiosError } from 'axios';
 
+import { GENERAL_SERVER_ERROR } from '@constants/common';
+
 type Errors = {
   [key: string]: string[];
 };
@@ -16,7 +18,7 @@ const parseAxiosError = (error: AxiosError) => {
       .map(([, value]) => `${value.join(', ')}`)
       .join(' ');
   } else {
-    return 'Something went wrong';
+    return GENERAL_SERVER_ERROR;
   }
 };
 
@@ -24,7 +26,7 @@ const parseErrorMessages = (error: unknown) => {
   if (error instanceof AxiosError) {
     return parseAxiosError(error);
   } else {
-    return 'Something went wrong';
+    return GENERAL_SERVER_ERROR;
   }
 };
 

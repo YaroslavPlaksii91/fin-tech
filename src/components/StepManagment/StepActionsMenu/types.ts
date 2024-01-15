@@ -1,13 +1,13 @@
 export enum ActionTypes {
-  OBJECT_TEXT_VIEW = 'ObjectTextView',
-  EDIT_OBJECT = 'EditObject',
-  RENAME_OBJECT = 'RenameObject',
-  DUPLICATE_OBJECT = 'DuplicateObject'
+  STEP_TEXT_VIEW = 'StepTextView',
+  EDIT_STEP = 'EditStep',
+  RENAME_STEP = 'RenameStep',
+  DUPLICATE_STEP = 'DuplicateStep'
 }
 
 export const options = [
-  { label: 'Object text view', dataKey: ActionTypes.OBJECT_TEXT_VIEW },
-  { label: 'Edit object', dataKey: ActionTypes.EDIT_OBJECT },
-  { label: 'Rename object', dataKey: ActionTypes.RENAME_OBJECT },
-  { label: 'Duplicate object', dataKey: ActionTypes.DUPLICATE_OBJECT }
+  { label: 'Step text view', dataKey: ActionTypes.STEP_TEXT_VIEW },
+  { label: 'Edit step', dataKey: ActionTypes.EDIT_STEP },
+  { label: 'Rename step', dataKey: ActionTypes.RENAME_STEP },
+  { label: 'Duplicate step', dataKey: ActionTypes.DUPLICATE_STEP }
 ];

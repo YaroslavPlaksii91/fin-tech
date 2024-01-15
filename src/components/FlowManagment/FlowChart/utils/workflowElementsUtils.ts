@@ -25,7 +25,8 @@ export const createNewNode = (type: StepType, name: string): FlowNode => {
       ]
     },
     position: defaultPosition,
-    deletable: true
+    deletable: true,
+    draggable: true
   };
 
   return newNode;

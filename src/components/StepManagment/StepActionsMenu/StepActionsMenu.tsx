@@ -24,17 +24,17 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
 
   const handleSelectedActions = (action: ActionTypes) => {
     switch (action) {
-      case ActionTypes.OBJECT_TEXT_VIEW:
-        Logger.info('Object text view');
+      case ActionTypes.STEP_TEXT_VIEW:
+        Logger.info('Step text view');
         break;
-      case ActionTypes.EDIT_OBJECT:
-        Logger.info('Edit object');
+      case ActionTypes.EDIT_STEP:
+        Logger.info('Edit step');
         break;
-      case ActionTypes.RENAME_OBJECT:
-        Logger.info('Rename object');
+      case ActionTypes.RENAME_STEP:
+        Logger.info('Rename step');
         break;
-      case ActionTypes.DUPLICATE_OBJECT:
-        Logger.info('Duplicate object');
+      case ActionTypes.DUPLICATE_STEP:
+        Logger.info('Duplicate step');
         break;
       default:
     }

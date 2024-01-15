@@ -50,7 +50,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         setModalDeleteOpen(true);
         break;
       case ActionTypes.VIEW_FLOW_DETAILS:
-        navigate(`${routes.underwriting.flowList}/${flow.id}/details`);
+        navigate(routes.underwriting.flow.details(flow.id));
         break;
       case ActionTypes.DUPLICATE_FLOW:
         Logger.info('Duplicate');
@@ -59,8 +59,8 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         Logger.info('View data dictionary');
         break;
       case ActionTypes.EDIT_FLOW: {
-        const state = { from: routes.underwriting.flowList };
-        navigate(`${routes.underwriting.flowList}/${flow.id}/edit`, { state });
+        const state = { from: routes.underwriting.flow.list };
+        navigate(routes.underwriting.flow.edit(flow.id), { state });
         break;
       }
       default:

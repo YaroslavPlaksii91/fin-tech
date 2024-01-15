@@ -24,9 +24,9 @@ function FlowDetailsMain() {
       <SideNavContainer
         footer={
           <NavLink
-            to={`${routes.underwriting.flowList}/${flow?.id}/edit`}
+            to={routes.underwriting.flow.edit(flow?.id)}
             state={{
-              from: `${routes.underwriting.flowList}/${flow?.id}/details`
+              from: routes.underwriting.flow.details(flow?.id)
             }}
           >
             <Button
@@ -42,7 +42,7 @@ function FlowDetailsMain() {
         header={
           <NavigateTo
             title="Back to flow list"
-            to={routes.underwriting.flowList}
+            to={routes.underwriting.flow.list}
           />
         }
       >
