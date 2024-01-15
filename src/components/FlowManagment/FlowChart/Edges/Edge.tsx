@@ -6,7 +6,9 @@ import {
 } from 'reactflow';
 
 import { StepSelectionMenu } from '../../../StepManagment/StepSelectionMenu/StepSelectionMenu';
-import { EdgeData } from '../types';
+import { ADD_BUTTON_ON_EDGE, EdgeData } from '../types';
+
+import styles from './style.module.scss';
 
 export function CustomEdge({
   id,
@@ -31,15 +33,23 @@ export function CustomEdge({
 
   return (
     <>
-      <BaseEdge id={id} style={style} path={edgePath} markerEnd={markerEnd} />
+      <BaseEdge
+        id={id}
+        style={{ ...style, color: 'red' }}
+        path={edgePath}
+        markerEnd={markerEnd}
+      />
       <EdgeLabelRenderer>
         <div
+          id={id}
+          data-edge-type={ADD_BUTTON_ON_EDGE}
           style={{
             position: 'absolute',
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-            pointerEvents: 'all'
+            pointerEvents: 'all',
+            padding: '20px 40px'
           }}
-          className="nodrag nopan"
+          className={data?.animated ? styles['edge-animation'] : ''}
         >
           {data && <StepSelectionMenu id={id} data={data} />}
         </div>

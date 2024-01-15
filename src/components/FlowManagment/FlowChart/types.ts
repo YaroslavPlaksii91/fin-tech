@@ -22,4 +22,5 @@ export const DEFAULT_EDGE_TYPE = 'smoothstep';
 
 export type EdgeData = {
   onAdd?: (type: StepType, name: string, id: string) => FlowNode;
+  animated?: boolean;
 };

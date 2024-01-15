@@ -1,0 +1,38 @@
+@mixin keyframes($name) {
+  @keyframes #{$name} {
+    @content;
+  }
+}
+
+@mixin animate($animation, $duration, $method, $times) {
+  animation: $animation $duration $method $times;
+}
+
+.edge-animation {
+  background: linear-gradient(90deg, #8FA5BE 50%, transparent 50%),
+    linear-gradient(90deg, #8FA5BE 50%, transparent 50%),
+    linear-gradient(0deg, #8FA5BE 50%, transparent 50%),
+    linear-gradient(0deg, #8FA5BE 50%, transparent 50%);
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  background-size:
+    16px 3px,
+    16px 3px,
+    3px 16px,
+    3px 16px;
+  background-position:
+    0% 0%,
+    100% 100%,
+    0% 100%,
+    100% 0px;
+  border-radius: 5px;
+  animation: dash 2s linear infinite;
+  @include keyframes(dash) {
+    to {
+      background-position:
+        100% 0%,
+        0% 100%,
+        0% 0%,
+        100% 100%;
+    }
+  }
+}
