@@ -27,7 +27,12 @@ import NodePositioning from '../Nodes/NodePositioning';
 import '../overview.css';
 import { ADD_BUTTON_ON_EDGE, EdgeData, StepType } from '../types';
 import ControlPanelEdit from '../ContolPanels/ControlPanelEdit';
-import { createNewNode, elementsOverlap } from '../utils/workflowElementsUtils';
+import {
+  checkIfNodeHasConnection,
+  checkIfNodeIsInitial,
+  createNewNode,
+  elementsOverlap
+} from '../utils/workflowElementsUtils';
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
 
 import NavigationHeader from './NavigateHeader';
@@ -55,7 +60,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 }) => {
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
-  const [startDrag, setStartDrag] = useState<boolean>(true);
+  const [startDrag, setStartDrag] = useState<boolean>(false);
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -92,33 +97,6 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
       });
 
       return newNode;
-    },
-    [setNodes, setEdges]
-  );
-
-  const connectNode = useCallback(
-    (updatedNode: Node, edgeId: string) => {
-      const newEdgeId = uuidv4();
-      setEdges((eds) => {
-        const targetEdgeIndex = eds.findIndex((ed) => ed.id === edgeId);
-        const targetEdge = eds[targetEdgeIndex];
-        const { target: targetNodeId } = targetEdge;
-
-        const updatedTargetEdge = { ...targetEdge, target: updatedNode.id };
-
-        const updatedEdges = [...eds];
-        updatedEdges[targetEdgeIndex] = updatedTargetEdge;
-
-        const newEdge = {
-          id: newEdgeId,
-          source: updatedNode.id,
-          target: targetNodeId,
-          type: ADD_BUTTON_ON_EDGE,
-          data: { onAdd: onAddNodeBetweenEdges }
-        };
-
-        return updatedEdges.concat(newEdge);
-      });
     },
     [setNodes, setEdges]
   );
@@ -236,17 +214,44 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
     [setNodes]
   );
 
+  const onConnectNode = useCallback(
+    (updatedNode: Node, edgeId: string) => {
+      const newEdgeId = uuidv4();
+      setEdges((eds) => {
+        const targetEdgeIndex = eds.findIndex((ed) => ed.id === edgeId);
+        const targetEdge = eds[targetEdgeIndex];
+        const { target: targetNodeId } = targetEdge;
+
+        const updatedTargetEdge = { ...targetEdge, target: updatedNode.id };
+
+        const updatedEdges = [...eds];
+        updatedEdges[targetEdgeIndex] = updatedTargetEdge;
+
+        const newEdge = {
+          id: newEdgeId,
+          source: updatedNode.id,
+          target: targetNodeId,
+          type: ADD_BUTTON_ON_EDGE,
+          data: { onAdd: onAddNodeBetweenEdges }
+        };
+
+        return updatedEdges.concat(newEdge);
+      });
+    },
+    [setNodes, setEdges]
+  );
+
   const onNodeDragStop = useCallback(
     (_event: React.MouseEvent, node: Node) => {
-      if (node.type === StepType.START || node.type === StepType.END) return;
+      const nodeIsInitial = checkIfNodeIsInitial(node);
+      if (nodeIsInitial) return;
 
-      const nodeHasConnection = edges.find(
-        (edge) => edge.source === node.id || edge.target === node.id
-      );
+      const nodeHasConnection = checkIfNodeHasConnection(edges, node.id);
 
       if (nodeHasConnection) return;
 
       setStartDrag(false);
+
       const sourceNode = document.getElementById(node.id);
       const edgesAddButtons = document.querySelectorAll(
         `[data-edge-type=${ADD_BUTTON_ON_EDGE}]`
@@ -257,7 +262,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           elementsOverlap(sourceNode, edge)
         );
         if (overlapedEdge?.id) {
-          connectNode(node, overlapedEdge.id);
+          onConnectNode(node, overlapedEdge.id);
         }
       }
     },
@@ -266,12 +271,13 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 
   const onNodeDragStart = useCallback(
     (_event: React.MouseEvent, node: Node) => {
-      const nodeHasConnection = edges.find(
-        (edge) => edge.source === node.id || edge.target === node.id
-      );
-      if (!nodeHasConnection) {
-        setStartDrag(true);
-      }
+      const nodeIsInitial = checkIfNodeIsInitial(node);
+      if (nodeIsInitial) return;
+
+      const nodeHasConnection = checkIfNodeHasConnection(edges, node.id);
+      if (nodeHasConnection) return;
+
+      setStartDrag(true);
     },
     [setStartDrag, startDrag, edges]
   );

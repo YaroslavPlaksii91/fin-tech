@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { Edge } from 'reactflow';
 
 import { StepType } from '../types';
 
@@ -43,3 +44,9 @@ export const elementsOverlap = (el1: HTMLElement, el2: Element) => {
     domRect1.left > domRect2.right
   );
 };
+
+export const checkIfNodeHasConnection = (edges: Edge[], nodeId: string) =>
+  !!edges.find((edge) => edge.source === nodeId || edge.target === nodeId);
+
+export const checkIfNodeIsInitial = (node: FlowNode) =>
+  node.type === StepType.START || node.type === StepType.END;
