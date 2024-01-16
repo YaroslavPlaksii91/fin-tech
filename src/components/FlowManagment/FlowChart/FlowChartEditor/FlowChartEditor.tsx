@@ -48,6 +48,8 @@ import { useStep } from '@contexts/StepContext';
 import StepConfigureView from '@components/StepManagment/StepConfigureView/StepConfigureView';
 import { MAIN_STEP_ID } from '@constants/common';
 import ConfirmationDialog from '@components/shared/Confirmation/Confirmation';
+import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
+import StepActionMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 
 interface FlowChartViewProps {
   flow: IFlow;
@@ -61,6 +63,8 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
   const [startDrag, setStartDrag] = useState<boolean>(false);
+  const { menu, setMenu, onPaneClick, onNodeContextMenu } =
+    useFlowChartContextMenu();
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -310,6 +314,8 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           nodes={nodes}
           edges={edges}
           autoPanOnNodeDrag
+          onPaneClick={onPaneClick}
+          onNodeContextMenu={onNodeContextMenu}
           onNodeDragStop={onNodeDragStop}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
@@ -333,6 +339,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           <StepConfigureView step={step as FlowNode} />
         )}
       </MainContainer>
+      <StepActionMenu anchorEl={menu} setAnchorEl={setMenu} />
       <ConfirmationDialog isDirty={isDirty} />
     </>
   );
