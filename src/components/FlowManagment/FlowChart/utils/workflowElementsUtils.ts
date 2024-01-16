@@ -1,7 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Edge } from 'reactflow';
+import some from 'lodash/some';
 
-import { StepType } from '../types';
+import { ADD_BUTTON_ON_EDGE, StepType } from '../types';
 
 import { FlowNode } from '@domain/flow';
 
@@ -50,3 +51,57 @@ export const checkIfNodeHasConnection = (edges: Edge[], nodeId: string) =>
 
 export const checkIfNodeIsInitial = (node: FlowNode) =>
   node.type === StepType.START || node.type === StepType.END;
+
+type updateEdgesParams = {
+  edges: Edge[];
+  updatableEdgeId: string;
+  newNodeId: string;
+  newEdgeId: string;
+  onAddNodeBetweenEdges: (
+    type: StepType,
+    name: string,
+    edgeId: string
+  ) => FlowNode;
+};
+
+export const updateEdges = ({
+  edges,
+  updatableEdgeId,
+  newNodeId,
+  newEdgeId,
+  onAddNodeBetweenEdges
+}: updateEdgesParams) => {
+  const targetEdgeIndex = edges.findIndex((ed) => ed.id === updatableEdgeId);
+  const targetEdge = edges[targetEdgeIndex];
+  const { target: targetNodeId } = targetEdge;
+
+  const updatedTargetEdge = { ...targetEdge, target: newNodeId };
+
+  const updatedEdges = [...edges];
+  updatedEdges[targetEdgeIndex] = updatedTargetEdge;
+
+  const newEdge = {
+    id: newEdgeId,
+    source: newNodeId,
+    target: targetNodeId,
+    type: ADD_BUTTON_ON_EDGE,
+    data: { onAdd: onAddNodeBetweenEdges }
+  };
+
+  return updatedEdges.concat(newEdge);
+};
+
+export const checkEdgeMultiplicity = (edges: Edge[]) =>
+  some(edges, (currentObject, currentIndex) =>
+    some(edges, (nextObject, nextIndex) => {
+      if (currentIndex !== nextIndex) {
+        return (
+          currentObject.source === nextObject.source ||
+          currentObject.source === nextObject.target ||
+          currentObject.target === nextObject.source ||
+          currentObject.target === nextObject.target
+        );
+      }
+      return false;
+    })
+  );

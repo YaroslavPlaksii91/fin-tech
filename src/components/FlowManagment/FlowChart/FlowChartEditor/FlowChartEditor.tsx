@@ -28,10 +28,12 @@ import '../overview.css';
 import { ADD_BUTTON_ON_EDGE, EdgeData, StepType } from '../types';
 import ControlPanelEdit from '../ContolPanels/ControlPanelEdit';
 import {
+  checkEdgeMultiplicity,
   checkIfNodeHasConnection,
   checkIfNodeIsInitial,
   createNewNode,
-  elementsOverlap
+  elementsOverlap,
+  updateEdges
 } from '../utils/workflowElementsUtils';
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
 
@@ -79,26 +81,15 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 
       setNodes((nodes) => nodes.concat(newNode));
 
-      setEdges((eds) => {
-        const targetEdgeIndex = eds.findIndex((ed) => ed.id === edgeId);
-        const targetEdge = eds[targetEdgeIndex];
-        const { target: targetNodeId } = targetEdge;
-
-        const updatedTargetEdge = { ...targetEdge, target: newNode.id };
-
-        const updatedEdges = [...eds];
-        updatedEdges[targetEdgeIndex] = updatedTargetEdge;
-
-        const newEdge = {
-          id: newEdgeId,
-          source: newNode.id,
-          target: targetNodeId,
-          type: ADD_BUTTON_ON_EDGE,
-          data: { onAdd: onAddNodeBetweenEdges }
-        };
-
-        return updatedEdges.concat(newEdge);
-      });
+      setEdges((edges) =>
+        updateEdges({
+          edges,
+          updatableEdgeId: edgeId,
+          newNodeId: newNode.id,
+          newEdgeId,
+          onAddNodeBetweenEdges
+        })
+      );
 
       return newNode;
     },
@@ -192,6 +183,12 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
             (edge) => !connectedEdges.includes(edge)
           );
 
+          const isEdgeMultiplicity = checkEdgeMultiplicity(remainingEdges);
+
+          if (isEdgeMultiplicity) {
+            return remainingEdges;
+          }
+
           const createdEdges = incomers.flatMap(({ id: source }) =>
             outgoers.map(({ id: target }) => ({
               id: uuidv4(),
@@ -221,26 +218,15 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   const onConnectNode = useCallback(
     (updatedNode: Node, edgeId: string) => {
       const newEdgeId = uuidv4();
-      setEdges((eds) => {
-        const targetEdgeIndex = eds.findIndex((ed) => ed.id === edgeId);
-        const targetEdge = eds[targetEdgeIndex];
-        const { target: targetNodeId } = targetEdge;
-
-        const updatedTargetEdge = { ...targetEdge, target: updatedNode.id };
-
-        const updatedEdges = [...eds];
-        updatedEdges[targetEdgeIndex] = updatedTargetEdge;
-
-        const newEdge = {
-          id: newEdgeId,
-          source: updatedNode.id,
-          target: targetNodeId,
-          type: ADD_BUTTON_ON_EDGE,
-          data: { onAdd: onAddNodeBetweenEdges }
-        };
-
-        return updatedEdges.concat(newEdge);
-      });
+      setEdges((edges) =>
+        updateEdges({
+          edges,
+          updatableEdgeId: edgeId,
+          newNodeId: updatedNode.id,
+          newEdgeId,
+          onAddNodeBetweenEdges
+        })
+      );
     },
     [setNodes, setEdges]
   );
