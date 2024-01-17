@@ -25,10 +25,17 @@ import { nodeTypes } from '../Nodes';
 import { edgeTypes } from '../Edges';
 import NodePositioning from '../Nodes/NodePositioning';
 import '../overview.css';
-import { ADD_BUTTON_ON_EDGE, StepType } from '../types';
-import { getLayoutedElements } from '../utils/workflowLayoutUtils';
+import { ADD_BUTTON_ON_EDGE, EdgeData, StepType } from '../types';
 import ControlPanelEdit from '../ContolPanels/ControlPanelEdit';
-import { createNewNode } from '../utils/workflowElementsUtils';
+import {
+  checkEdgeMultiplicity,
+  checkIfNodeHasConnection,
+  checkIfNodeIsInitial,
+  createNewNode,
+  elementsOverlap,
+  updateEdges
+} from '../utils/workflowElementsUtils';
+import { getLayoutedElements } from '../utils/workflowLayoutUtils';
 
 import NavigationHeader from './NavigateHeader';
 
@@ -43,6 +50,8 @@ import { useStep } from '@contexts/StepContext';
 import StepConfigureView from '@components/StepManagment/StepConfigureView/StepConfigureView';
 import { MAIN_STEP_ID } from '@constants/common';
 import ConfirmationDialog from '@components/shared/Confirmation/Confirmation';
+import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
+import StepActionMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 
 interface FlowChartViewProps {
   flow: IFlow;
@@ -54,11 +63,15 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   setFlow
 }) => {
   const [isDirty, setIsDirty] = useState<boolean>(false);
-  const { step, setStep } = useStep();
+  const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
+  const [startDrag, setStartDrag] = useState<boolean>(false);
+  const { menu, setMenu, onPaneClick, onNodeContextMenu } =
+    useFlowChartContextMenu();
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
+  const { step, setStep } = useStep();
+
   const { setViewport } = useReactFlow();
 
   const onAddNodeBetweenEdges = useCallback(
@@ -68,26 +81,15 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 
       setNodes((nodes) => nodes.concat(newNode));
 
-      setEdges((eds) => {
-        const targetEdgeIndex = eds.findIndex((ed) => ed.id === edgeId);
-        const targetEdge = eds[targetEdgeIndex];
-        const { target: targetNodeId } = targetEdge;
-
-        const updatedTargetEdge = { ...targetEdge, target: newNode.id };
-
-        const updatedEdges = [...eds];
-        updatedEdges[targetEdgeIndex] = updatedTargetEdge;
-
-        const newEdge = {
-          id: newEdgeId,
-          source: newNode.id,
-          target: targetNodeId,
-          type: ADD_BUTTON_ON_EDGE,
-          data: { onAdd: onAddNodeBetweenEdges }
-        };
-
-        return updatedEdges.concat(newEdge);
-      });
+      setEdges((edges) =>
+        updateEdges({
+          edges,
+          updatableEdgeId: edgeId,
+          newNodeId: newNode.id,
+          newEdgeId,
+          onAddNodeBetweenEdges
+        })
+      );
 
       return newNode;
     },
@@ -104,7 +106,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
       type: ADD_BUTTON_ON_EDGE,
       data: { onAdd: onAddNodeBetweenEdges }
     }));
-    const nodes = layoutedNodes.map((node) => ({ ...node }));
+    const nodes = layoutedNodes;
     return { edges, nodes };
   }, [flow]);
 
@@ -181,6 +183,12 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
             (edge) => !connectedEdges.includes(edge)
           );
 
+          const isEdgeMultiplicity = checkEdgeMultiplicity(remainingEdges);
+
+          if (isEdgeMultiplicity) {
+            return remainingEdges;
+          }
+
           const createdEdges = incomers.flatMap(({ id: source }) =>
             outgoers.map(({ id: target }) => ({
               id: uuidv4(),
@@ -207,6 +215,72 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
     [setNodes]
   );
 
+  const onConnectNode = useCallback(
+    (updatedNode: Node, edgeId: string) => {
+      const newEdgeId = uuidv4();
+      setEdges((edges) =>
+        updateEdges({
+          edges,
+          updatableEdgeId: edgeId,
+          newNodeId: updatedNode.id,
+          newEdgeId,
+          onAddNodeBetweenEdges
+        })
+      );
+    },
+    [setNodes, setEdges]
+  );
+
+  const onNodeDragStop = useCallback(
+    (_event: React.MouseEvent, node: Node) => {
+      const nodeIsInitial = checkIfNodeIsInitial(node);
+      if (nodeIsInitial) return;
+
+      const nodeHasConnection = checkIfNodeHasConnection(edges, node.id);
+
+      if (nodeHasConnection) return;
+
+      setStartDrag(false);
+
+      const sourceNode = document.getElementById(node.id);
+      const edgesAddButtons = document.querySelectorAll(
+        `[data-edge-type=${ADD_BUTTON_ON_EDGE}]`
+      );
+
+      if (sourceNode) {
+        const overlapedEdge = Array.from(edgesAddButtons).find((edge) =>
+          elementsOverlap(sourceNode, edge)
+        );
+        if (overlapedEdge?.id) {
+          onConnectNode(node, overlapedEdge.id);
+        }
+      }
+    },
+    [edges]
+  );
+
+  const onNodeDragStart = useCallback(
+    (_event: React.MouseEvent, node: Node) => {
+      const nodeIsInitial = checkIfNodeIsInitial(node);
+      if (nodeIsInitial) return;
+
+      const nodeHasConnection = checkIfNodeHasConnection(edges, node.id);
+      if (nodeHasConnection) return;
+
+      setStartDrag(true);
+    },
+    [setStartDrag, startDrag, edges]
+  );
+
+  useEffect(() => {
+    setEdges((eds: Edge<EdgeData>[]) =>
+      eds.map((edge) => ({
+        ...edge,
+        data: { ...edge.data, animated: startDrag }
+      }))
+    );
+  }, [startDrag]);
+
   return (
     <>
       <SideNavContainer
@@ -225,9 +299,14 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         <ReactFlow
           nodes={nodes}
           edges={edges}
+          autoPanOnNodeDrag
+          onPaneClick={onPaneClick}
+          onNodeContextMenu={onNodeContextMenu}
+          onNodeDragStop={onNodeDragStop}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodesDelete={onNodesDelete}
+          onNodeDragStart={onNodeDragStart}
           onInit={setRfInstance}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
@@ -246,6 +325,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           <StepConfigureView step={step as FlowNode} />
         )}
       </MainContainer>
+      <StepActionMenu anchorEl={menu} setAnchorEl={setMenu} />
       <ConfirmationDialog isDirty={isDirty} />
     </>
   );

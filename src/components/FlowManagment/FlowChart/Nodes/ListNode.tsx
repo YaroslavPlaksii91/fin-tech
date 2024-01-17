@@ -6,7 +6,7 @@ import { HexagonOutlinedIconSvg } from '@components/shared/Icons';
 import { NodeData } from '@domain/flow';
 
 const ListNode: React.FC<NodeProps<NodeData>> = ({ data }) => (
-  <div className={styles['node-list-container']}>
+  <div id={data.stepId} className={styles['node-list-container']}>
     <div className={styles['node-list-container__header']}>
       <Handle type="target" position={Position.Left} />
       <HexagonOutlinedIconSvg />

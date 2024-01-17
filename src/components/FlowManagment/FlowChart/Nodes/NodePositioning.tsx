@@ -26,7 +26,11 @@ const NodePositioning: React.FC<NodePositioningProps> = ({
         setEdges(layouted.edges);
       }
     }
-  }, [flattenedNodes?.length, flattenedNodes[lastElement]?.width]);
+  }, [
+    flattenedNodes?.length,
+    flattenedNodes[lastElement]?.width,
+    edges.length
+  ]);
 
   return null;
 };

@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect } from 'react';
 import ReactFlow, {
   Background,
   useNodesState,
@@ -17,6 +17,7 @@ import ControlPanelView from './ContolPanels/ControlPanelView';
 
 import { IFlow } from '@domain/flow';
 import StepActionMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
+import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 
 interface FlowChartViewProps {
   flow: IFlow;
@@ -30,8 +31,8 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
   const [nodes, setNodes] = useNodesState(flow.nodes);
   const [edges, setEdges] = useEdgesState(flow.edges);
   const { setViewport } = useReactFlow();
-
-  const [menu, setMenu] = useState<HTMLElement | null>(null);
+  const { menu, setMenu, onPaneClick, onNodeContextMenu } =
+    useFlowChartContextMenu();
 
   useEffect(() => {
     setNodes(flow.nodes);
@@ -41,17 +42,6 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
   useEffect(() => {
     setViewport(flow.viewport);
   }, [flow.viewport, setViewport]);
-
-  const onPaneClick = useCallback(() => setMenu(null), [setMenu]);
-
-  const onNodeContextMenu = useCallback(
-    (event: React.MouseEvent) => {
-      event.preventDefault();
-      const targetElement = event.currentTarget as HTMLElement;
-      setMenu(targetElement);
-    },
-    [setMenu]
-  );
 
   return (
     <ReactFlow

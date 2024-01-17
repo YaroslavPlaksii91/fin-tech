@@ -25,13 +25,14 @@ interface SelectStepProps {
 export const SelectStep: React.FC<SelectStepProps> = ({ onAddNode }) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [addStepModalOpen, setAddStepModalOpen] = useState<boolean>(false);
-  const [selectedStep, setSelectedStep] = useState<FunctionalStepType>();
+  const [selectedStep, setSelectedStep] = useState<FunctionalStepType | null>();
 
   const handleOpenModal = () => {
     setModalOpen(true);
   };
 
   const handleCloseModal = () => {
+    setSelectedStep(null);
     setModalOpen(false);
   };
 
@@ -80,6 +81,7 @@ export const SelectStep: React.FC<SelectStepProps> = ({ onAddNode }) => {
         <AddStep
           onAddNode={onAddNode}
           stepType={selectedStep}
+          setSelectedStep={setSelectedStep}
           modalOpen={addStepModalOpen}
           setModalOpen={setAddStepModalOpen}
           reopenSelectStepModal={handleOpenModal}
