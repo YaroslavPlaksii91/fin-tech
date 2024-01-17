@@ -30,6 +30,7 @@ const defaultValue = {
 
 interface AddStepProps {
   stepType: FunctionalStepType;
+  setSelectedStep: (value: FunctionalStepType | null) => void;
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
   onAddNode?: (type: StepType, name: string) => FlowNode;
@@ -45,6 +46,7 @@ interface AddStepProps {
 export const AddStep: React.FC<AddStepProps> = ({
   edgeId,
   stepType,
+  setSelectedStep,
   modalOpen,
   setModalOpen,
   reopenSelectStepModal,
@@ -74,6 +76,7 @@ export const AddStep: React.FC<AddStepProps> = ({
 
   const handleCloseModal = () => {
     setModalOpen(false);
+    setSelectedStep(null);
   };
 
   const handleCancel = () => {

@@ -23,7 +23,7 @@ export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [addStepModalOpen, setAddStepModalOpen] = useState<boolean>(false);
-  const [stepType, setStepType] = useState<FunctionalStepType>();
+  const [selectedStep, setSelectedStep] = useState<FunctionalStepType | null>();
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -32,7 +32,7 @@ export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
   const handleCloseMenu = (key?: string) => {
     if (key) {
       setAddStepModalOpen(true);
-      setStepType(key as FunctionalStepType);
+      setSelectedStep(key as FunctionalStepType);
     }
     setAnchorEl(null);
   };
@@ -55,11 +55,12 @@ export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
         handleCloseMenu={handleCloseMenu}
         options={options}
       />
-      {stepType && (
+      {selectedStep && (
         <AddStep
           edgeId={id}
           onAddNodeBetweenEdges={data.onAdd}
-          stepType={stepType}
+          stepType={selectedStep}
+          setSelectedStep={setSelectedStep}
           modalOpen={addStepModalOpen}
           setModalOpen={setAddStepModalOpen}
         />
