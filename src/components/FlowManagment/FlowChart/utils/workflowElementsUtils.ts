@@ -8,7 +8,11 @@ import { FlowNode } from '@domain/flow';
 
 const defaultPosition = { x: 0, y: 0 };
 
-export const createNewNode = (type: StepType, name: string): FlowNode => {
+export const createNewNode = (
+  type: StepType,
+  name: string
+  // edgeId?: string
+): FlowNode => {
   const newNodeId = uuidv4();
   const newNode = {
     id: newNodeId,
@@ -24,6 +28,10 @@ export const createNewNode = (type: StepType, name: string): FlowNode => {
     deletable: true,
     draggable: true
   };
+
+  // if (edgeId) {
+  //   newNode.data.splits = [{ edgeId, percentage: 100 }];
+  // }
 
   return newNode;
 };

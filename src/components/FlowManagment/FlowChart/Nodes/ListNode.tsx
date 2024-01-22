@@ -16,11 +16,21 @@ const ListNode: React.FC<NodeProps<NodeData>> = ({ data }) => (
       </div>
     </div>
     <ul className={styles['node-list-container__list']}>
-      {data?.splits?.map((el, idx) => <li key={idx}>{el.percentage}%</li>)}
+      {data?.splits?.map((el, idx) => (
+        <div key={idx}>
+          <li>{el.percentage}%</li>
+          <Handle
+            type="source"
+            position={Position.Right}
+            id={el.edgeId}
+            style={{ top: 70 + idx * 40 }}
+          />
+        </div>
+      ))}
     </ul>
-    <Handle type="source" position={Position.Right} />
-    <Handle type="source" position={Position.Right} id="a" />
-    <Handle type="source" position={Position.Right} id="b" />
+    {data.splits?.length === 0 && (
+      <Handle type="source" position={Position.Right} />
+    )}
   </div>
 );
 

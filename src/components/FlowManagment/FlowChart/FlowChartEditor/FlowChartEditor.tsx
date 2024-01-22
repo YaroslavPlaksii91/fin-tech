@@ -77,7 +77,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   const onAddNodeBetweenEdges = useCallback(
     (type: StepType, name: string, edgeId: string) => {
       const newEdgeId = uuidv4();
-      const newNode = createNewNode(type, name);
+      const newNode = createNewNode(type, name, newEdgeId);
 
       setNodes((nodes) => nodes.concat(newNode));
 
@@ -321,8 +321,13 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
             rfInstance={rfInstance}
           />
         </ReactFlow>
-        {step.id !== MAIN_STEP_ID && (
-          <StepConfigureView step={step as FlowNode} />
+        {rfInstance && step.id !== MAIN_STEP_ID && (
+          <StepConfigureView
+            // setNodes={setNodes}
+            // setEdges={setEdges}
+            rfInstance={rfInstance}
+            step={step as FlowNode}
+          />
         )}
       </MainContainer>
       <StepActionMenu anchorEl={menu} setAnchorEl={setMenu} />

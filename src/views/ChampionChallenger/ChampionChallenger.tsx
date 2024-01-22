@@ -11,7 +11,8 @@ import {
   TableRow
 } from '@mui/material';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { useEdges, useNodes } from 'reactflow';
+import { ReactFlowInstance } from 'reactflow';
+import { v4 as uuidv4 } from 'uuid';
 
 import { getConnectedNodesIdDFS } from './utils';
 
@@ -20,9 +21,13 @@ import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import { AddIcon, DeleteOutlineIcon } from '@components/shared/Icons';
 import NumberInput from '@components/shared/NumberInput/NumberInput';
 import SearchableSelect from '@components/shared/SearchableSelect/SearchableSelect';
+import { DEFAULT_EDGE_TYPE } from '@components/FlowManagment/FlowChart/types';
 
 interface ChampionChallengerProps {
   step: FlowNode;
+  rfInstance: ReactFlowInstance;
+  // setEdges: (edges: Edge[]) => void;
+  // setNodes: (nodes: Node[]) => void;
 }
 
 interface Column {
@@ -46,32 +51,33 @@ const columns: readonly Column[] = [
 
 interface Split {
   percentage: number;
-  edgeId: string;
+  nodeId: string;
 }
 
 interface FieldValues {
   splits: Split[];
 }
 
-// const options = [
-//   { edgeId: '1', label: 'Option One' },
-//   { edgeId: '2', label: 'Option Two' },
-//   { edgeId: '3', label: 'Option Three' },
-//   { edgeId: '4', label: 'Option Four' }
-// ];
-
-const ChampionChallenger: React.FC<ChampionChallengerProps> = ({ step }) => {
+const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
+  step,
+  rfInstance
+  // setEdges,
+  // setNodes
+}) => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const edges = useEdges();
-  const nodes = useNodes();
+  const nodes = rfInstance.getNodes();
+  const edges = rfInstance.getEdges();
+  // const nodes = useNodes();
+  // const edges = useEdges();
+
   const connectedNodeIds = getConnectedNodesIdDFS(edges, step.id);
   const options = nodes
     .filter((node) => connectedNodeIds.includes(node.id))
-    .map((node) => ({ edgeId: node.id, label: (node as FlowNode).data.name }));
+    .map((node) => ({ nodeId: node.id, label: (node as FlowNode).data.name }));
 
   const { handleSubmit, control } = useForm<FieldValues>({
     defaultValues: {
-      splits: [{ percentage: 100, edgeId: '' }]
+      splits: [{ percentage: 100, nodeId: '' }]
     }
   });
 
@@ -80,10 +86,45 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({ step }) => {
     name: 'splits'
   });
 
-  const onSubmit = () => {
-    // event.preventDefault();
-    // console.log('data', data);
+  const onSubmit = (data: FieldValues) => {
+    const targetNodesIds = data.splits.map((spl) => spl.nodeId);
+    const splitEdges = targetNodesIds.map((targetNodeId) => {
+      const newEdgeId = uuidv4();
+      return {
+        id: newEdgeId,
+        sourceHandle: newEdgeId,
+        source: step.id,
+        target: targetNodeId,
+        type: DEFAULT_EDGE_TYPE
+      };
+    });
+    const newEdges = edges
+      .filter((edg) => !targetNodesIds.includes(edg.target))
+      .concat(splitEdges);
+    rfInstance.setEdges(newEdges);
+    rfInstance.setNodes(
+      nodes.map((node: FlowNode) => {
+        if (node.id === step.id) {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              splits: splitEdges.map((splitEdge, index) => ({
+                edgeId: splitEdge.id,
+                percentage: data.splits[index].percentage
+              }))
+            }
+          };
+        }
+        return node;
+      })
+    );
   };
+
+  // useEffect(() => {
+  //   step.data.splits?.map(split => getEdge())
+  //   const edges =
+  // }, [step])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -124,7 +165,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({ step }) => {
                       <SearchableSelect
                         index={index}
                         control={control}
-                        name={`splits.${index}.edgeId`}
+                        name={`splits.${index}.nodeId`}
                         options={options}
                         selectedOptions={selectedOptions}
                         setSelectedOptions={setSelectedOptions}
@@ -133,7 +174,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({ step }) => {
                     <TableCell width={40}>
                       <Button
                         onClick={() => {
-                          const removedOption = fields[index].edgeId;
+                          const removedOption = fields[index].nodeId;
                           setSelectedOptions(
                             selectedOptions.filter(
                               (option) => option !== removedOption
@@ -154,7 +195,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({ step }) => {
         <Button
           sx={{ width: '135px' }}
           onClick={() => {
-            append({ percentage: 0, edgeId: '' });
+            append({ percentage: 0, nodeId: '' });
           }}
           startIcon={<AddIcon />}
         >

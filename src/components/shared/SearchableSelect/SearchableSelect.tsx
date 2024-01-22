@@ -30,7 +30,7 @@ interface SelectProps<
   index: number;
   selectedOptions: string[];
   setSelectedOptions: (data: string[]) => void;
-  options: { edgeId: string; label: string }[];
+  options: { nodeId: string; label: string }[];
 }
 
 const SearchableSelect = <
@@ -41,8 +41,7 @@ const SearchableSelect = <
   options,
   control,
   name,
-  selectedOptions,
-  setSelectedOptions
+  selectedOptions
 }: SelectProps<TFieldValues, TName>) => {
   const [searchText, setSearchText] = useState('');
   const displayedOptions = useMemo(
@@ -75,7 +74,7 @@ const SearchableSelect = <
               //   return updatedSelected;
               // });
               if (selectedOption) {
-                setSelectedOptions(['']);
+                // setSelectedOptions(['']);
                 onChange(selectedOption);
               } else {
                 onChange('');
@@ -118,11 +117,11 @@ const SearchableSelect = <
             {displayedOptions.map((option) => {
               // Check if the option is not selected in other selects
               if (
-                !selectedOptions.includes(option.edgeId) ||
-                selectedOptions[index] === option.edgeId
+                !selectedOptions.includes(option.nodeId) ||
+                selectedOptions[index] === option.nodeId
               ) {
                 return (
-                  <MenuItem key={option.edgeId} value={option.edgeId}>
+                  <MenuItem key={option.nodeId} value={option.nodeId}>
                     {option.label}
                   </MenuItem>
                 );
