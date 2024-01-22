@@ -1,10 +1,8 @@
-import { Button, Stack, Typography } from '@mui/material';
-
-import { palette } from '../../../themeConfig';
-
 import { StyledContainer } from './styled';
 
+import ChampionChallenger from '@views/ChampionChallenger/ChampionChallenger';
 import { FlowNode } from '@domain/flow';
+import { StepType } from '@components/FlowManagment/FlowChart/types';
 
 interface StepConfigureViewProps {
   step: FlowNode;
@@ -12,28 +10,9 @@ interface StepConfigureViewProps {
 
 const StepConfigureView: React.FC<StepConfigureViewProps> = ({ step }) => (
   <StyledContainer>
-    <Stack
-      flexDirection="row"
-      justifyContent="space-between"
-      alignItems="flex-start"
-      sx={{ padding: '16px 24px' }}
-    >
-      <Stack>
-        <Typography variant="h2">{step.data.name}</Typography>
-        <Typography variant="body2" color={palette.gray}>
-          A Champion Challenger is an step that allows you to split traffic into
-          several groups and run experiment.
-        </Typography>
-      </Stack>
-      <Button
-        sx={{ margin: '0px 8px 0 auto' }}
-        variant="contained"
-        color="secondary"
-      >
-        Discard
-      </Button>
-      <Button variant="contained">Apply changes</Button>
-    </Stack>
+    {step.type === StepType.CHAMPION_CHALLENGER && (
+      <ChampionChallenger step={step} />
+    )}
   </StyledContainer>
 );
 

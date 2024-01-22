@@ -26,7 +26,8 @@
       "@services/*": ["./services/*"],
       "@domain/*": ["./domain/*"],
       "@constants/*": ["./constants/*"],
-      "@contexts/*": ["./contexts/*"]
+      "@contexts/*": ["./contexts/*"],
+      "@views/*": ["./views/*"]
     },
 
     /* Linting */

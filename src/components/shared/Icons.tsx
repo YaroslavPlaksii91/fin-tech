@@ -14,6 +14,7 @@ import MuiCloseIcon from '@mui/icons-material/Close';
 import MuiArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MuiCheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import MuiErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import MuiRemoveIcon from '@mui/icons-material/Remove';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 
 const defaultIconSize = '18px';
@@ -32,6 +33,14 @@ export const PersonOutlineIcon = ({
 
 export const AddIcon = ({ size = defaultIconSize, sx, ...props }: IconPros) => (
   <MuiAddIcon sx={{ width: size, height: size, ...sx }} {...props} />
+);
+
+export const RemoveIcon = ({
+  size = defaultIconSize,
+  sx,
+  ...props
+}: IconPros) => (
+  <MuiRemoveIcon sx={{ width: size, height: size, ...sx }} {...props} />
 );
 
 export const HexagonOutlinedIcon = ({

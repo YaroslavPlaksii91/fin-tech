@@ -76,8 +76,8 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 
   const onAddNodeBetweenEdges = useCallback(
     (type: StepType, name: string, edgeId: string) => {
-      const newNode = createNewNode(type, name);
       const newEdgeId = uuidv4();
+      const newNode = createNewNode(type, name);
 
       setNodes((nodes) => nodes.concat(newNode));
 
