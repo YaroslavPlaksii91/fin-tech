@@ -69,7 +69,7 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
 
   const onPushFlow = useCallback(() => {
     Logger.info('Push changes');
-  }, []);
+  }, [rfInstance]);
 
   return (
     <StyledPanel position="top-right">

@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -17,27 +16,27 @@ import './main.css';
 import { StyledSnackbar } from '@components/shared/Snackbar/styled.ts';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <LoadingProvider>
-          <SnackbarProvider
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right'
-            }}
-            autoHideDuration={3000}
-            preventDuplicate
-            hideIconVariant
-            Components={{
-              success: StyledSnackbar,
-              error: StyledSnackbar
-            }}
-          >
-            <App />
-          </SnackbarProvider>
-        </LoadingProvider>
-      </ThemeProvider>
-    </Provider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <LoadingProvider>
+        <SnackbarProvider
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+          }}
+          autoHideDuration={3000}
+          preventDuplicate
+          hideIconVariant
+          Components={{
+            success: StyledSnackbar,
+            error: StyledSnackbar
+          }}
+        >
+          <App />
+        </SnackbarProvider>
+      </LoadingProvider>
+    </ThemeProvider>
+  </Provider>
+  // </React.StrictMode>
 );

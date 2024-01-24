@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Button,
   Paper,
@@ -67,6 +67,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const nodes = rfInstance.getNodes();
   const edges = rfInstance.getEdges();
+  // const updateNodeInternals = useUpdateNodeInternals();
   // const nodes = useNodes();
   // const edges = useEdges();
 
@@ -75,9 +76,26 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     .filter((node) => connectedNodeIds.includes(node.id))
     .map((node) => ({ nodeId: node.id, label: (node as FlowNode).data.name }));
 
-  const { handleSubmit, control } = useForm<FieldValues>({
+  const { handleSubmit, control, setValue, reset } = useForm<FieldValues>({
     defaultValues: {
-      splits: [{ percentage: 100, nodeId: '' }]
+      // splits: useMemo(() => {
+      //   return step.data.splits.map((split) => {
+      //     const connectedEdges = rfInstance.getEdge(split.edgeId);
+      //     const connectedNode = connectedEdges?.target || '';
+      //     return {
+      //       percentage: split.percentage,
+      //       nodeId: connectedNode
+      //     };
+      //   });
+      // }, [step])
+      // splits: step.data.splits.map((split) => {
+      //   const connectedEdges = rfInstance.getEdge(split.edgeId);
+      //   const connectedNode = connectedEdges?.target || '';
+      //   return {
+      //     percentage: split.percentage,
+      //     nodeId: connectedNode
+      //   };
+      // })
     }
   });
 
@@ -87,7 +105,11 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   });
 
   const onSubmit = (data: FieldValues) => {
+    const existingSplitEdges =
+      step.data.splits?.map(({ edgeId }) => edgeId) ?? [];
+
     const targetNodesIds = data.splits.map((spl) => spl.nodeId);
+
     const splitEdges = targetNodesIds.map((targetNodeId) => {
       const newEdgeId = uuidv4();
       return {
@@ -99,32 +121,65 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       };
     });
     const newEdges = edges
+      .filter((edg) => !existingSplitEdges.includes(edg.id))
       .filter((edg) => !targetNodesIds.includes(edg.target))
       .concat(splitEdges);
+
     rfInstance.setEdges(newEdges);
-    rfInstance.setNodes(
-      nodes.map((node: FlowNode) => {
-        if (node.id === step.id) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              splits: splitEdges.map((splitEdge, index) => ({
-                edgeId: splitEdge.id,
-                percentage: data.splits[index].percentage
-              }))
-            }
+
+    const updatedNodes = nodes.map((node: FlowNode) => {
+      if (node.id === step.id) {
+        if (node.data.splits?.length) {
+          const test = node.data.splits;
+          test.length = 0;
+          test.push(
+            ...splitEdges.map((splitEdge, index) => ({
+              edgeId: splitEdge.id,
+              percentage: data.splits[index].percentage
+            }))
+          );
+          node.data = {
+            ...node.data,
+            splits: [...test]
+          };
+          // return {
+          //   ...node,
+          //   data: {
+          //     ...node.data,
+          //     splits: test
+          //   }
+          // };
+        } else {
+          node.data = {
+            ...node.data,
+            splits: splitEdges.map((splitEdge, index) => ({
+              edgeId: splitEdge.id,
+              percentage: data.splits[index].percentage
+            }))
           };
         }
-        return node;
-      })
-    );
+      }
+      return node;
+    });
+
+    rfInstance.setNodes(updatedNodes);
+
+    // console.log(updatedNodes, newEdges);
   };
 
-  // useEffect(() => {
-  //   step.data.splits?.map(split => getEdge())
-  //   const edges =
-  // }, [step])
+  useEffect(() => {
+    setValue(
+      'splits',
+      step.data.splits.map((split) => {
+        const connectedEdges = rfInstance.getEdge(split.edgeId);
+        const connectedNode = connectedEdges?.target || '';
+        return {
+          percentage: split.percentage,
+          nodeId: connectedNode
+        };
+      })
+    );
+  }, [step.data.splits, reset]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

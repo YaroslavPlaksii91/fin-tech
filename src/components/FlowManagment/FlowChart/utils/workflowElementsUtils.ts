@@ -10,28 +10,38 @@ const defaultPosition = { x: 0, y: 0 };
 
 export const createNewNode = (
   type: StepType,
-  name: string
-  // edgeId?: string
+  name: string,
+  edgeId?: string
 ): FlowNode => {
   const newNodeId = uuidv4();
-  const newNode = {
+  const newNode: FlowNode = {
     id: newNodeId,
     type,
     data: {
       $type: type,
       stepId: newNodeId,
       stepType: type,
-      name,
-      splits: []
+      name
     },
     position: defaultPosition,
     deletable: true,
     draggable: true
   };
 
-  // if (edgeId) {
-  //   newNode.data.splits = [{ edgeId, percentage: 100 }];
-  // }
+  switch (type) {
+    case StepType.CHAMPION_CHALLENGER:
+      if (edgeId) {
+        newNode.data = {
+          ...newNode.data,
+          splits: [{ edgeId, percentage: 100 }]
+        };
+      } else {
+        newNode.data = { ...newNode.data, splits: [] };
+      }
+      break;
+    default:
+      break;
+  }
 
   return newNode;
 };

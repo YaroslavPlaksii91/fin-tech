@@ -153,14 +153,31 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
+      const edgeId = uuidv4();
       if (connection.source === connection.target) {
         return;
       }
+      // if (connection.source && rfInstance) {
+      //   const connectedNode = rfInstance.getNode(connection.source);
+      //   if (node?.type === StepType.CHAMPION_CHALLENGER) {
+      //     setNodes((nds) =>
+      //       nds.map((node) => {
+      //         if (node.id === connectedNode?.id) {
+      //           return { ...node, data: { ...node.data, splits: [{edgeId,  }] } };
+      //         }
+
+      //         return node;
+      //       })
+      //     );
+      //   }
+      //   console.log('connection', rfInstance.getNode(connection.source));
+      // }
       return setEdges((eds) =>
         addEdge(
           {
             ...connection,
-            id: uuidv4(),
+            id: edgeId,
+            // sourceHandle: edgeId,
             data: { onAdd: onAddNodeBetweenEdges },
             type: ADD_BUTTON_ON_EDGE
           },
@@ -168,7 +185,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         )
       );
     },
-    [setEdges]
+    [setEdges, rfInstance]
   );
 
   const onNodesDelete = useCallback(
@@ -281,6 +298,31 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
     );
   }, [startDrag]);
 
+  // const onEdgesDelete = useCallback(
+  //   (edges: Edge[]) => {
+  //     console.log('edge', edges);
+  //     edges.map((edge) => {
+  //       const node = rfInstance?.getNode(edge.source);
+  //       console.log('node', node);
+  //     });
+
+  //     // const node = rfInstance?.getNode(edge.source);
+  //     // console.log('node', node);
+  //   },
+  //   [rfInstance]
+  // );
+
+  // useEffect(() => {
+  //   updateNodeInternals(nodes.map((node) => node.id));
+  //   console.log(nodes);
+  // }, [nodes]);
+
+  // const onEdgeUpdate = useCallback(
+  //   (oldEdge, newConnection) =>
+  //     setEdges((els) => updateEdge(oldEdge, newConnection, els)),
+  //   []
+  // );
+
   return (
     <>
       <SideNavContainer
@@ -307,6 +349,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           onEdgesChange={onEdgesChange}
           onNodesDelete={onNodesDelete}
           onNodeDragStart={onNodeDragStart}
+          // onEdgeUpdate={onEdgeUpdate}
           onInit={setRfInstance}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
