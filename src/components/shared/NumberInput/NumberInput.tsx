@@ -19,6 +19,7 @@ interface InputProps<
 > extends UseControllerProps<TFieldValues, TName> {
   rangeMin?: number;
   rangeMax?: number;
+  onChangeCb?: (index?: number) => void;
 }
 
 const NumberInput = <
@@ -27,6 +28,7 @@ const NumberInput = <
 >({
   control,
   name,
+  onChangeCb,
   rangeMin = MIN_VALUE,
   rangeMax = MAX_VALUE
 }: InputProps<TFieldValues, TName>) => (
@@ -36,15 +38,15 @@ const NumberInput = <
     render={({ field: { onChange, value } }) => (
       <StyledTextField
         type="number"
-        value={value as number}
+        value={value}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          const value = parseInt(e.target.value, 10);
-          // if (!isNaN(value)) {
-          //   onChange(value);
-          // } else {
-          //   onChange(0);
-          // }
-          onChange(value);
+          const newValue = parseInt(e.target.value, 10);
+          if (!isNaN(newValue)) {
+            onChange(newValue);
+          } else {
+            onChange(0);
+          }
+          onChangeCb?.();
         }}
         InputProps={{
           startAdornment: (
@@ -66,7 +68,6 @@ const NumberInput = <
                 disabled={value === rangeMax}
                 onClick={() => onChange(value + 1)}
               >
-                {/* {console.log('value', value)} */}
                 <AddIcon fontSize="small" />
               </IconButton>
             </StyledInputAdornment>

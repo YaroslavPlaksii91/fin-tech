@@ -15,6 +15,8 @@ import {
   UseControllerProps
 } from 'react-hook-form';
 
+import { StyledKeyboardArrowDownIcon } from '@components/Navigation/styled';
+
 const findOption = ({
   label,
   searchText
@@ -29,8 +31,9 @@ interface SelectProps<
 > extends UseControllerProps<TFieldValues, TName> {
   index: number;
   selectedOptions: string[];
-  setSelectedOptions: (data: string[]) => void;
+  setSelectedOptions: React.Dispatch<React.SetStateAction<string[]>>;
   options: { nodeId: string; label: string }[];
+  onChangeCb?: () => void;
 }
 
 const SearchableSelect = <
@@ -41,19 +44,30 @@ const SearchableSelect = <
   options,
   control,
   name,
-  selectedOptions
+  selectedOptions,
+  setSelectedOptions,
+  onChangeCb
 }: SelectProps<TFieldValues, TName>) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchText, setSearchText] = useState('');
+
   const displayedOptions = useMemo(
     () => options.filter(({ label }) => findOption({ label, searchText })),
     [searchText]
   );
 
+  const handleOpen = () => {
+    setIsOpen(true);
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    setSearchText('');
+  };
+
   return (
     <FormControl sx={{ width: '220px' }}>
-      {/* {!selectedOption && (
-        <InputLabel id="search-select-label">Options</InputLabel>
-      )} */}
+      {/* <InputLabel id="search-select-label">Select next step</InputLabel> */}
       <Controller
         name={name}
         control={control}
@@ -62,34 +76,34 @@ const SearchableSelect = <
             {...field}
             // Disables auto focus on MenuItems and allows TextField to be in focus
             value={value}
+            open={isOpen}
+            onOpen={handleOpen}
+            onClose={handleClose}
+            variant="outlined"
+            IconComponent={() => <StyledKeyboardArrowDownIcon open={isOpen} />}
             MenuProps={{ autoFocus: false }}
             id="search-select"
             onChange={(e) => {
-              // onChange(e.target.value);
-              // console.log('e.target.value', e.target.value);
               const selectedOption = e.target.value;
-              // setSelectedOptions((prevSelected) => {
-              //   const updatedSelected = [...prevSelected];
-              //   updatedSelected[index] = selectedOption;
-              //   return updatedSelected;
-              // });
-              if (selectedOption) {
-                // setSelectedOptions(['']);
-                onChange(selectedOption);
-              } else {
-                onChange('');
-              }
+              setSelectedOptions((prevSelected) => {
+                const updatedSelected = [...prevSelected];
+                updatedSelected[index] = selectedOption;
+                return updatedSelected;
+              });
+              onChange(selectedOption);
+              onChangeCb?.();
             }}
-            onClose={() => setSearchText('')}
             // This prevents rendering empty string in Select's value
             // if search text would exclude currently selected option.
-            // renderValue={() => value}
+            renderValue={() =>
+              options.find((option) => option.nodeId === value)?.label
+            }
           >
             <ListSubheader>
               <TextField
                 size="small"
                 autoFocus
-                placeholder="Type to search..."
+                placeholder="Search by keyword"
                 fullWidth
                 InputProps={{
                   startAdornment: (
@@ -109,11 +123,6 @@ const SearchableSelect = <
                 }}
               />
             </ListSubheader>
-            {/* {displayedOptions.map(({ edgeId, label }, i) => (
-                <MenuItem key={i} value={edgeId}>
-                  {label}
-                </MenuItem>
-              ))} */}
             {displayedOptions.map((option) => {
               // Check if the option is not selected in other selects
               if (

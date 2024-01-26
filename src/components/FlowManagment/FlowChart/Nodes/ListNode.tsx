@@ -1,4 +1,5 @@
 import { Handle, NodeProps, Position, useUpdateNodeInternals } from 'reactflow';
+import { useEffect } from 'react';
 
 import styles from './style.module.scss';
 
@@ -8,21 +9,16 @@ import { NodeData, ChampionChallengerData } from '@domain/flow';
 const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
   data
 }) => {
-  useUpdateNodeInternals();
+  const updateNodeInternals = useUpdateNodeInternals();
 
-  // useEffect(() => {
-  //   console.log('update');
-  //   updateNodeInternals(data.stepId);
-  // }, [data.splits]);
+  useEffect(() => {
+    updateNodeInternals(data.stepId);
+  });
 
   return (
     <div id={data.stepId} className={styles['node-list-container']}>
       <div className={styles['node-list-container__header']}>
-        <Handle
-          type="target"
-          position={Position.Left}
-          // style={{ top: data.splits?.length !== 0 && 70 }}
-        />
+        <Handle type="target" position={Position.Left} />
         <HexagonOutlinedIconSvg />
         <div>
           <p className={styles['node-tag']}>{data?.tag || 'No tag'}</p>

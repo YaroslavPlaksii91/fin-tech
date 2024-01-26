@@ -32,7 +32,8 @@ export const palette = {
   blue: '#25314C',
   successBackground: '#EBF9F1',
   successBorder: '#C4D9CD',
-  errorBackground: '#FFCCCC'
+  errorBackground: '#FFCCCC',
+  error: '#E24A4A'
 };
 
 declare module '@mui/material/styles' {
@@ -56,6 +57,9 @@ export const theme = createTheme({
     background: {
       paper: palette.lightGray,
       default: palette.white
+    },
+    error: {
+      main: palette.error
     },
     divider: '#E8ECF1'
   },

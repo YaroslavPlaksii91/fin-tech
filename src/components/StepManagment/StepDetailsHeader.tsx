@@ -5,6 +5,7 @@ import { palette } from '../../themeConfig';
 interface StepDetailsHeaderProps {
   title: string;
   details: string;
+  disabled: boolean;
   onDiscard: () => void;
   onSave: () => void;
 }
@@ -13,7 +14,8 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
   title,
   details,
   onDiscard,
-  onSave
+  onSave,
+  disabled
 }) => (
   <Stack
     flexDirection="row"
@@ -35,7 +37,12 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
     >
       Discard
     </Button>
-    <Button variant="contained" type="submit" onClick={onSave}>
+    <Button
+      disabled={disabled}
+      variant="contained"
+      type="submit"
+      onClick={onSave}
+    >
       Apply changes
     </Button>
   </Stack>

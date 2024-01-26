@@ -23,6 +23,7 @@ export type NodeData = {
   stepType: StepType;
   name: string;
   tag?: string;
+  note?: string | null;
 };
 
 export type ChampionChallengerData = {
