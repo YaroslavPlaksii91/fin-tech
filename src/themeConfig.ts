@@ -7,6 +7,7 @@ interface CustomPalette {
   pink: string;
   lightGreen: string;
   white: string;
+  whiteSmoke: string;
   dark: string;
   yellow: string;
   secondary: string;
@@ -15,6 +16,7 @@ interface CustomPalette {
   successBorder: string;
   errorBackground: string;
   blue: string;
+  aliceBlue: string;
 }
 
 export const palette = {
@@ -28,12 +30,14 @@ export const palette = {
   secondary: '#E6E9EC',
   lightGreen: '#ABDCB9',
   white: '#FFF',
+  whiteSmoke: '#F4F4F4',
   yellow: '#DDCD93',
   blue: '#25314C',
   successBackground: '#EBF9F1',
   successBorder: '#C4D9CD',
   errorBackground: '#FFCCCC',
-  error: '#E24A4A'
+  error: '#E24A4A',
+  aliceBlue: '#F8F9FB'
 };
 
 declare module '@mui/material/styles' {
@@ -141,6 +145,31 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           padding: '0px 24px 24px 24px'
+        }
+      }
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          fontSize: '13px',
+          lineHeight: '18px',
+          padding: '12px'
+        }
+      }
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: '8px',
+          boxShadow: 'none',
+          border: `1px solid ${palette.grayBorder}`
+        }
+      }
+    },
+    MuiSelect: {
+      styleOverrides: {
+        root: {
+          fontSize: '14px'
         }
       }
     }

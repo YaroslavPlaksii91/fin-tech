@@ -5,10 +5,8 @@ import {
   Stack,
   Table,
   TableBody,
-  TableCell,
   TableContainer,
   TableHead,
-  TableRow,
   Typography
 } from '@mui/material';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -29,6 +27,10 @@ import SearchableSelect from '@components/shared/SearchableSelect/SearchableSele
 import { DEFAULT_EDGE_TYPE } from '@components/FlowManagment/FlowChart/types';
 import ErrorMessage from '@components/shared/ErrorText/ErrorText';
 import { InputText } from '@components/shared/Forms/InputText';
+import {
+  StyledTableCell,
+  StyledTableRow
+} from '@components/shared/Table/styled';
 
 interface ChampionChallengerProps {
   step: FlowNode;
@@ -172,29 +174,29 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
           <TableContainer sx={{ maxHeight: 440 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
-                <TableRow>
+                <StyledTableRow>
                   {columns.map((column) => (
-                    <TableCell
+                    <StyledTableCell
                       key={column.id}
                       align={column.align}
-                      style={{ minWidth: column.minWidth }}
+                      style={{ width: column.width }}
                     >
                       {column.label}
-                    </TableCell>
+                    </StyledTableCell>
                   ))}
-                </TableRow>
+                </StyledTableRow>
               </TableHead>
               <TableBody>
                 {fields.map((field, index) => (
-                  <TableRow key={field.id}>
-                    <TableCell>
+                  <StyledTableRow key={field.id}>
+                    <StyledTableCell sx={{ padding: '0 12px' }}>
                       <NumberInput
                         control={control}
                         name={`splits.${index}.percentage`}
                         onChangeCb={() => clearErrors()}
                       />
-                    </TableCell>
-                    <TableCell>
+                    </StyledTableCell>
+                    <StyledTableCell sx={{ padding: 0 }}>
                       <SearchableSelect
                         index={index}
                         control={control}
@@ -204,9 +206,11 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                         selectedOptions={selectedOptions}
                         setSelectedOptions={setSelectedOptions}
                       />
-                    </TableCell>
-                    <TableCell width={40}>
+                    </StyledTableCell>
+                    <StyledTableCell sx={{ padding: 0 }} width={40}>
                       <Button
+                        fullWidth
+                        sx={{ padding: '10px' }}
                         onClick={() => {
                           clearErrors();
                           const removedOption = fields[index].nodeId;
@@ -220,8 +224,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                       >
                         <DeleteOutlineIcon />
                       </Button>
-                    </TableCell>
-                  </TableRow>
+                    </StyledTableCell>
+                  </StyledTableRow>
                 ))}
               </TableBody>
             </Table>

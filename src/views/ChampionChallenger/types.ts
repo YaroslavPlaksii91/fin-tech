@@ -7,12 +7,12 @@ interface Column {
 }
 
 const columns: readonly Column[] = [
-  { id: 'split', label: 'User splits', minWidth: 170 },
-  { id: 'step', label: 'Step', minWidth: 100 },
+  { id: 'split', label: 'User splits' },
+  { id: 'step', label: 'Step' },
   {
     id: 'delete',
     label: '',
-    minWidth: 40,
+    width: 40,
     align: 'center'
   }
 ];
