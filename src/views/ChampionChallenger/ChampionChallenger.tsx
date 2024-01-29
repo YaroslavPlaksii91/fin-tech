@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Button,
   Paper,
@@ -57,6 +57,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     setValue
   } = useForm<FieldValues>({
     mode: 'onChange',
+    reValidateMode: 'onChange',
     defaultValues: { splits: [], note: '' },
     resolver: yupResolver(validationSchema)
   });
@@ -129,18 +130,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     setNodes(updatedNodes);
   };
 
-  useEffect(() => {
-    const connectedNodeIds = getConnectedNodesIdDFS(edges, step.id);
-    const formattedOptions = nodes
-      .filter((node) => connectedNodeIds.includes(node.id))
-      .map((node) => ({
-        nodeId: node.id,
-        label: (node as FlowNode).data.name
-      }));
-    setOptions(formattedOptions);
-  }, [nodes.length, edges.length, step.id]);
-
-  useEffect(() => {
+  const setInitialData = useCallback(() => {
     if (step.data.splits) {
       const defaultSelectedOptions: string[] = [];
       const defaultNote = step.data.note || '';
@@ -156,7 +146,23 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       setValue('splits', defaultSplits);
       setValue('note', defaultNote);
       setSelectedOptions(defaultSelectedOptions);
+      clearErrors();
     }
+  }, [step]);
+
+  useEffect(() => {
+    const connectedNodeIds = getConnectedNodesIdDFS(edges, step.id);
+    const formattedOptions = nodes
+      .filter((node) => connectedNodeIds.includes(node.id))
+      .map((node) => ({
+        nodeId: node.id,
+        label: (node as FlowNode).data.name
+      }));
+    setOptions(formattedOptions);
+  }, [nodes.length, edges.length, step.id]);
+
+  useEffect(() => {
+    setInitialData();
   }, [step.data]);
 
   return (
@@ -165,7 +171,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         title={step.data.name}
         details="A Champion Challenger is an step that allows you to split traffic into
    several groups and run experiment."
-        onDiscard={() => 'click'}
+        onDiscard={() => setInitialData()}
         onSave={() => {}}
         disabled={!isDirty || !isEmpty(errors)}
       />
