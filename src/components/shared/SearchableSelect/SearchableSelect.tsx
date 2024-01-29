@@ -14,7 +14,7 @@ import {
   UseControllerProps
 } from 'react-hook-form';
 
-import { StyledSelect } from './styled';
+import { StyledInputLabel, StyledSelect } from './styled';
 
 import { StyledKeyboardArrowDownIcon } from '@components/Navigation/styled';
 
@@ -67,12 +67,16 @@ const SearchableSelect = <
   };
 
   return (
-    <FormControl sx={{ width: '100%' }}>
-      {/* <InputLabel id="search-select-label">Select next step</InputLabel> */}
-      <Controller
-        name={name}
-        control={control}
-        render={({ field, field: { onChange, value } }) => (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, field: { onChange, value } }) => (
+        <FormControl sx={{ width: '100%' }}>
+          {!value && (
+            <StyledInputLabel shrink id="search-select-label">
+              Select next step
+            </StyledInputLabel>
+          )}
           <StyledSelect
             {...field}
             // Disables auto focus on MenuItems and allows TextField to be in focus
@@ -138,9 +142,9 @@ const SearchableSelect = <
               return null;
             })}
           </StyledSelect>
-        )}
-      />
-    </FormControl>
+        </FormControl>
+      )}
+    />
   );
 };
 
