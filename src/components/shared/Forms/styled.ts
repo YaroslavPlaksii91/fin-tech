@@ -1,6 +1,6 @@
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import { Typography } from '@mui/material';
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 
 export const StyledTextarea = styled(TextareaAutosize)(({ theme }) => ({
   fontFamily: 'Inter, sans-serif',
@@ -23,6 +23,6 @@ export const StyledTextarea = styled(TextareaAutosize)(({ theme }) => ({
 }));
 
 export const StyledError = styled(Typography)(({ theme }) => ({
-  color: theme.palette.errorText,
+  color: theme.palette.error.main,
   margin: '4px 14px 0 14px'
 }));

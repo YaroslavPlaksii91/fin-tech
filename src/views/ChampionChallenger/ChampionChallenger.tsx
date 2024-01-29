@@ -261,6 +261,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
           <ErrorMessage errors={errors} name="splits" />
           <Button
             sx={{ width: '135px' }}
+            disabled={fields.length === 10}
             onClick={() => {
               append({ percentage: 0, nodeId: '' });
             }}

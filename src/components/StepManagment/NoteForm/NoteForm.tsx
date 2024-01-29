@@ -42,7 +42,7 @@ export const NoteForm: React.FC<NoteFormProps> = ({
 
   return (
     <Dialog
-      title="Note for this object"
+      title="Note for this step"
       open={modalOpen}
       displayConfirmBtn={false}
       displayedCancelBtn={false}

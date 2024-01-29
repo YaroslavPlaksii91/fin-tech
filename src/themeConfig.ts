@@ -16,7 +16,6 @@ interface CustomPalette {
   successBorder: string;
   errorBackground: string;
   blue: string;
-  errorText: string;
   aliceBlue: string;
 }
 
@@ -37,7 +36,7 @@ export const palette = {
   successBackground: '#EBF9F1',
   successBorder: '#C4D9CD',
   errorBackground: '#FFCCCC',
-  errorText: '#E24A4A',
+  error: '#E24A4A',
   aliceBlue: '#F8F9FB'
 };
 
@@ -64,7 +63,7 @@ export const theme = createTheme({
       default: palette.white
     },
     error: {
-      main: palette.errorText
+      main: palette.error
     },
     divider: '#E8ECF1'
   },
