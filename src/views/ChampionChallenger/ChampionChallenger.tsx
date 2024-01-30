@@ -198,7 +198,11 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
           <Paper
             sx={{ width: '100%', overflow: 'hidden', marginBottom: '16px' }}
           >
-            <TableContainer sx={{ maxHeight: 440 }}>
+            <TableContainer
+              sx={{
+                maxHeight: `calc(100vh - 450px)`
+              }}
+            >
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <StyledTableRow>
