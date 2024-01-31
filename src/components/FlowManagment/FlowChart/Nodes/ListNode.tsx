@@ -32,7 +32,6 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
           <div key={el.edgeId}>
             <li>{el.percentage}%</li>
             <CustomHandle
-              connectionLimit={1}
               type="source"
               position={Position.Right}
               id={idx.toString()}

@@ -23,7 +23,7 @@ import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import { AddIcon, DeleteOutlineIcon } from '@components/shared/Icons';
 import NumberInput from '@components/shared/NumberInput/NumberInput';
 import SearchableSelect from '@components/shared/SearchableSelect/SearchableSelect';
-import { DEFAULT_EDGE_TYPE } from '@components/FlowManagment/FlowChart/types';
+import { ADD_BUTTON_ON_EDGE } from '@components/FlowManagment/FlowChart/types';
 import ErrorMessage from '@components/shared/ErrorText/ErrorText';
 import { InputText } from '@components/shared/Forms/InputText';
 import {
@@ -102,7 +102,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         sourceHandle: index.toString(),
         source: step.id,
         target: targetNodeId,
-        type: DEFAULT_EDGE_TYPE
+        type: ADD_BUTTON_ON_EDGE
       };
     });
     const newEdges = edges

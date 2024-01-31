@@ -15,11 +15,10 @@ const selector = (state: ReactFlowState) => ({
 });
 
 interface CustomeHandlerProps extends HandleProps {
-  connectionLimit: number;
   style?: React.CSSProperties;
 }
 
-const CustomHandle = ({ connectionLimit, ...props }: CustomeHandlerProps) => {
+const CustomHandle = ({ ...props }: CustomeHandlerProps) => {
   const { nodeInternals, edges } = useStore(selector);
   const nodeId = useNodeId();
 
@@ -31,10 +30,14 @@ const CustomHandle = ({ connectionLimit, ...props }: CustomeHandlerProps) => {
 
       const connectedEdges = getConnectedEdges([node], outputEdges);
 
-      return connectedEdges.length < connectionLimit;
+      const isConnected = connectedEdges.some(
+        (edg) => edg.sourceHandle === props.id
+      );
+
+      return !isConnected;
     }
     return true;
-  }, [nodeInternals, edges, nodeId, connectionLimit]);
+  }, [nodeInternals, edges, nodeId]);
 
   return <Handle {...props} isConnectable={isHandleConnectable}></Handle>;
 };
