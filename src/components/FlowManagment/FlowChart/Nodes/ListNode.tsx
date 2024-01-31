@@ -22,7 +22,7 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
       <div className={styles['node-list-container__header']}>
         <Handle type="target" position={Position.Left} />
         <HexagonOutlinedIconSvg />
-        <div>
+        <div className={styles['node-list-container__header__text']}>
           <p className={styles['node-tag']}>{data?.tag || 'No tag'}</p>
           <p className={styles['node-label']}>{data.name}</p>
         </div>
