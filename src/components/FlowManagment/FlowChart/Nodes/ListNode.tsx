@@ -1,6 +1,8 @@
 import { Handle, NodeProps, Position, useUpdateNodeInternals } from 'reactflow';
 import { useEffect } from 'react';
 
+import CustomHandle from '../CustomeHandler/CustomeHandler';
+
 import styles from './style.module.scss';
 
 import { HexagonOutlinedIconSvg } from '@components/shared/Icons';
@@ -14,12 +16,6 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
   useEffect(() => {
     updateNodeInternals(data.stepId);
   });
-
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     updateNodeInternals(data.stepId);
-  //   }, 0);
-  // }, [data.stepId, updateNodeInternals]);
 
   return (
     <div id={data.stepId} className={styles['node-list-container']}>
@@ -35,19 +31,18 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
         {data?.splits?.map((el, idx) => (
           <div key={el.edgeId}>
             <li>{el.percentage}%</li>
-            <Handle
+            <CustomHandle
+              connectionLimit={1}
               type="source"
               position={Position.Right}
               id={idx.toString()}
-              isConnectable
               style={{ top: 75 + idx * 45 }}
             />
           </div>
         ))}
       </ul>
-
       {data.splits?.length === 0 && (
-        <Handle type="source" isConnectable position={Position.Right} />
+        <Handle type="source" position={Position.Right} />
       )}
     </div>
   );
