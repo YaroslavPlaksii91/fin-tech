@@ -6,6 +6,7 @@ import '@fontsource/roboto/700.css';
 import { ThemeProvider } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
 import { Provider } from 'react-redux';
+import React from 'react';
 
 import App from './App.tsx';
 import { store } from './store/store.ts';
@@ -16,27 +17,27 @@ import './main.css';
 import { StyledSnackbar } from '@components/shared/Snackbar/styled.ts';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  // <React.StrictMode>
-  <Provider store={store}>
-    <ThemeProvider theme={theme}>
-      <LoadingProvider>
-        <SnackbarProvider
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right'
-          }}
-          autoHideDuration={3000}
-          preventDuplicate
-          hideIconVariant
-          Components={{
-            success: StyledSnackbar,
-            error: StyledSnackbar
-          }}
-        >
-          <App />
-        </SnackbarProvider>
-      </LoadingProvider>
-    </ThemeProvider>
-  </Provider>
-  // </React.StrictMode>
+  <React.StrictMode>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <LoadingProvider>
+          <SnackbarProvider
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}
+            autoHideDuration={3000}
+            preventDuplicate
+            hideIconVariant
+            Components={{
+              success: StyledSnackbar,
+              error: StyledSnackbar
+            }}
+          >
+            <App />
+          </SnackbarProvider>
+        </LoadingProvider>
+      </ThemeProvider>
+    </Provider>
+  </React.StrictMode>
 );

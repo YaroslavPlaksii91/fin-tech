@@ -19,7 +19,7 @@ const columns: readonly Column[] = [
 
 type Split = {
   percentage: number;
-  nodeId: string;
+  value: string;
 };
 
 type FieldValues = {

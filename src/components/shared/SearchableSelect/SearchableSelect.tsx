@@ -33,7 +33,7 @@ interface SelectProps<
   index: number;
   selectedOptions: string[];
   setSelectedOptions: React.Dispatch<React.SetStateAction<string[]>>;
-  options: { nodeId: string; label: string }[];
+  options: { value: string; label: string }[];
   onChangeCb?: () => void;
 }
 
@@ -100,7 +100,7 @@ const SearchableSelect = <
             // This prevents rendering empty string in Select's value
             // if search text would exclude currently selected option.
             renderValue={() =>
-              options.find((option) => option.nodeId === value)?.label
+              options.find((option) => option.value === value)?.label
             }
           >
             <ListSubheader>
@@ -130,11 +130,11 @@ const SearchableSelect = <
             {displayedOptions.map((option) => {
               // Check if the option is not selected in other selects
               if (
-                !selectedOptions.includes(option.nodeId) ||
-                selectedOptions[index] === option.nodeId
+                !selectedOptions.includes(option.value) ||
+                selectedOptions[index] === option.value
               ) {
                 return (
-                  <MenuItem key={option.nodeId} value={option.nodeId}>
+                  <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>
                 );

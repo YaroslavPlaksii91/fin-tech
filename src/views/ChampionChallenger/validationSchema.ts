@@ -8,7 +8,7 @@ const validationSchema = yup.object().shape({
     .of(
       yup.object().shape({
         percentage: yup.number().required('Percentage is required'),
-        nodeId: yup.string().trim().required('Node ID is required')
+        value: yup.string().trim().required('Step is required')
       })
     )
     .test(
@@ -52,7 +52,7 @@ const validationSchema = yup.object().shape({
         }
         const splits = value as unknown as Split[];
 
-        return splits.every((split) => split.nodeId.trim() !== '');
+        return splits.every((split) => split.value.trim() !== '');
       }
     )
 });

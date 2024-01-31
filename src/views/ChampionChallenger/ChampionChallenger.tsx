@@ -32,25 +32,30 @@ import {
 } from '@components/shared/Table/styled';
 import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
+import { MAIN_STEP_ID } from '@constants/common';
 
 interface ChampionChallengerProps {
   step: FlowNode;
+  setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
   rfInstance: ReactFlowInstance;
 }
 
 const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   step,
+  setStep,
   rfInstance: { getEdge, getNodes, getEdges, setNodes, setEdges }
 }) => {
-  const [options, setOptions] = useState<{ nodeId: string; label: string }[]>(
+  const [options, setOptions] = useState<{ value: string; label: string }[]>(
     []
   );
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
 
-  const nodes = getNodes();
+  const nodes: FlowNode[] = getNodes();
   const edges = getEdges();
+
+  const currentNode = nodes.find((node) => node.id === step.id)!;
 
   const {
     handleSubmit,
@@ -61,7 +66,6 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     setValue
   } = useForm<FieldValues>({
     mode: 'onChange',
-    reValidateMode: 'onChange',
     defaultValues: { splits: [], note: '' },
     resolver: yupResolver(validationSchema)
   });
@@ -87,15 +91,15 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
 
   const onSubmit = (data: FieldValues) => {
     const existingSplitEdges =
-      step.data.splits?.map(({ edgeId }) => edgeId) ?? [];
+      currentNode.data.splits?.map(({ edgeId }) => edgeId) ?? [];
 
-    const targetNodesIds = data.splits.map((spl) => spl.nodeId);
+    const targetNodesIds = data.splits.map((spl) => spl.value);
 
-    const splitEdges = targetNodesIds.map((targetNodeId) => {
+    const splitEdges = targetNodesIds.map((targetNodeId, index) => {
       const newEdgeId = uuidv4();
       return {
         id: newEdgeId,
-        sourceHandle: newEdgeId,
+        sourceHandle: index.toString(),
         source: step.id,
         target: targetNodeId,
         type: DEFAULT_EDGE_TYPE
@@ -105,8 +109,6 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       .filter((edg) => !existingSplitEdges.includes(edg.id))
       .filter((edg) => !targetNodesIds.includes(edg.target))
       .concat(splitEdges);
-
-    setEdges(newEdges);
 
     const updatedNodes = nodes.map((node: FlowNode) => {
       if (node.id === step.id) {
@@ -124,13 +126,6 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
             note: data.note,
             splits: [...test]
           };
-          // return {
-          //   ...node,
-          //   data: {
-          //     ...node.data,
-          //     splits: test
-          //   }
-          // };
         } else {
           node.data = {
             ...node.data,
@@ -146,6 +141,10 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     });
 
     setNodes(updatedNodes);
+
+    setEdges(newEdges);
+
+    setStep({ id: MAIN_STEP_ID });
   };
 
   const setInitialData = useCallback(() => {
@@ -158,7 +157,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         defaultSelectedOptions.push(connectedNode);
         return {
           percentage: split.percentage,
-          nodeId: connectedNode
+          value: connectedNode
         };
       });
       setValue('splits', defaultSplits);
@@ -173,8 +172,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     const formattedOptions = nodes
       .filter((node) => connectedNodeIds.includes(node.id))
       .map((node) => ({
-        nodeId: node.id,
-        label: (node as FlowNode).data.name
+        value: node.id,
+        label: node.data.name
       }));
     setOptions(formattedOptions);
   }, [nodes.length, edges.length, step.id]);
@@ -232,7 +231,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                           index={index}
                           control={control}
                           onChangeCb={() => clearErrors()}
-                          name={`splits.${index}.nodeId`}
+                          name={`splits.${index}.value`}
                           options={options}
                           selectedOptions={selectedOptions}
                           setSelectedOptions={setSelectedOptions}
@@ -244,7 +243,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                           sx={{ padding: '10px' }}
                           onClick={() => {
                             clearErrors();
-                            const removedOption = fields[index].nodeId;
+                            const removedOption = fields[index].value;
                             setSelectedOptions(
                               selectedOptions.filter(
                                 (option) => option !== removedOption
@@ -267,7 +266,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
             sx={{ width: '135px' }}
             disabled={fields.length === 10}
             onClick={() => {
-              append({ percentage: 0, nodeId: '' });
+              append({ percentage: 0, value: '' });
             }}
             startIcon={<AddIcon />}
           >

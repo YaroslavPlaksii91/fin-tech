@@ -14,7 +14,8 @@ import ReactFlow, {
   getIncomers,
   getOutgoers,
   getConnectedEdges,
-  Edge
+  Edge,
+  ConnectionMode
 } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 import debounce from 'lodash/debounce';
@@ -158,39 +159,47 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         return;
       }
 
-      // Update edgeId of splits Champion Challenger data
-      if (connection.source && rfInstance) {
-        const connectedNode = rfInstance.getNode(connection.source) as FlowNode;
-        if (connectedNode?.type === StepType.CHAMPION_CHALLENGER) {
-          const updatedSplits = connectedNode.data.splits?.map((split) => {
-            if (split.edgeId === connection.sourceHandle) {
-              return { ...split, edgeId };
-            }
-            return split;
-          });
-          const updatedNodes = nodes.map((node: FlowNode) => {
-            if (node.id === connectedNode?.id) {
-              delete node.data.splits;
-              node.data.splits = updatedSplits;
-            }
-            return node;
-          });
-          setNodes(updatedNodes);
-        }
-      }
+      if (rfInstance) {
+        // Update edgeId of splits Champion Challenger data
+        if (connection.source) {
+          const connectedNode = rfInstance.getNode(
+            connection.source
+          ) as FlowNode;
+          if (
+            connectedNode?.type === StepType.CHAMPION_CHALLENGER &&
+            connection.sourceHandle !== null
+          ) {
+            const updatedSplits =
+              connectedNode.data.splits?.map((split, index) => {
+                if (index === +connection.sourceHandle) {
+                  return { ...split, edgeId };
+                }
+                return split;
+              }) ?? [];
 
-      return setEdges((eds) =>
-        addEdge(
-          {
-            ...connection,
-            id: edgeId,
-            sourceHandle: edgeId,
-            data: { onAdd: onAddNodeBetweenEdges },
-            type: ADD_BUTTON_ON_EDGE
-          },
-          eds
-        )
-      );
+            const updatedNodes = rfInstance.getNodes().map((node: FlowNode) => {
+              if (node.id === connectedNode?.id) {
+                node.data.splits = [...updatedSplits];
+              }
+              return node;
+            });
+            rfInstance.setNodes(updatedNodes);
+          }
+        }
+
+        rfInstance.setEdges((eds) =>
+          addEdge(
+            {
+              ...connection,
+              id: edgeId,
+              sourceHandle: connection.sourceHandle,
+              data: { onAdd: onAddNodeBetweenEdges },
+              type: ADD_BUTTON_ON_EDGE
+            },
+            eds
+          )
+        );
+      }
     },
     [setEdges, rfInstance]
   );
@@ -336,6 +345,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           attributionPosition="bottom-left"
+          connectionMode={ConnectionMode.Loose}
           connectionLineType={ConnectionLineType.SmoothStep}
         >
           <Background variant={BackgroundVariant.Lines} />
@@ -346,7 +356,11 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           />
         </ReactFlow>
         {rfInstance && step.id !== MAIN_STEP_ID && (
-          <StepConfigureView rfInstance={rfInstance} step={step as FlowNode} />
+          <StepConfigureView
+            setStep={setStep}
+            rfInstance={rfInstance}
+            step={step as FlowNode}
+          />
         )}
       </MainContainer>
       <StepActionMenu anchorEl={menu} setAnchorEl={setMenu} />

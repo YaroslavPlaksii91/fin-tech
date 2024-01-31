@@ -15,6 +15,12 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
     updateNodeInternals(data.stepId);
   });
 
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     updateNodeInternals(data.stepId);
+  //   }, 0);
+  // }, [data.stepId, updateNodeInternals]);
+
   return (
     <div id={data.stepId} className={styles['node-list-container']}>
       <div className={styles['node-list-container__header']}>
@@ -32,15 +38,16 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
             <Handle
               type="source"
               position={Position.Right}
-              id={el.edgeId}
-              style={{ top: 70 + idx * 40 }}
+              id={idx.toString()}
+              isConnectable
+              style={{ top: 75 + idx * 45 }}
             />
           </div>
         ))}
       </ul>
 
       {data.splits?.length === 0 && (
-        <Handle type="source" position={Position.Right} />
+        <Handle type="source" isConnectable position={Position.Right} />
       )}
     </div>
   );
