@@ -113,9 +113,9 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     const updatedNodes = nodes.map((node: FlowNode) => {
       if (node.id === step.id) {
         if (node.data.splits?.length) {
-          const test = node.data.splits;
-          test.length = 0;
-          test.push(
+          const splits = node.data.splits;
+          splits.length = 0;
+          splits.push(
             ...splitEdges.map((splitEdge, index) => ({
               edgeId: splitEdge.id,
               percentage: data.splits[index].percentage
@@ -124,7 +124,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
           node.data = {
             ...node.data,
             note: data.note,
-            splits: [...test]
+            splits: [...splits]
           };
         } else {
           node.data = {
