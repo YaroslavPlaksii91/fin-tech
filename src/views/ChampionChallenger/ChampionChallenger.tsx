@@ -190,7 +190,6 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
           details="A Champion Challenger is an step that allows you to split traffic into
    several groups and run experiment."
           onDiscard={() => setInitialData()}
-          onSave={() => {}}
           disabled={!isEmpty(errors)}
         />
         <Stack pl={3} pr={3}>

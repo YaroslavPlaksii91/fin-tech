@@ -2,13 +2,13 @@ interface Column {
   id: 'split' | 'step' | 'delete';
   label: string;
   minWidth?: number;
-  width?: number;
+  width?: number | string;
   align?: 'left' | 'center';
 }
 
 const columns: readonly Column[] = [
-  { id: 'split', label: 'User splits' },
-  { id: 'step', label: 'Step' },
+  { id: 'split', label: 'User splits', width: '50%' },
+  { id: 'step', label: 'Step', width: '50%' },
   {
     id: 'delete',
     label: '',

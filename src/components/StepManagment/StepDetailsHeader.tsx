@@ -7,14 +7,12 @@ interface StepDetailsHeaderProps {
   details: string;
   disabled: boolean;
   onDiscard: () => void;
-  onSave: () => void;
 }
 
 const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
   title,
   details,
   onDiscard,
-  onSave,
   disabled
 }) => (
   <Stack
@@ -37,12 +35,7 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
     >
       Discard
     </Button>
-    <Button
-      disabled={disabled}
-      variant="contained"
-      type="submit"
-      onClick={onSave}
-    >
+    <Button disabled={disabled} variant="contained" type="submit">
       Apply changes
     </Button>
   </Stack>
