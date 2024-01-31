@@ -14,11 +14,11 @@ const selector = (state: ReactFlowState) => ({
   edges: state.edges
 });
 
-interface CustomeHandlerProps extends HandleProps {
+interface CustomHandlerProps extends HandleProps {
   style?: React.CSSProperties;
 }
 
-const CustomHandle = ({ ...props }: CustomeHandlerProps) => {
+const CustomHandler = ({ ...props }: CustomHandlerProps) => {
   const { nodeInternals, edges } = useStore(selector);
   const nodeId = useNodeId();
 
@@ -42,4 +42,4 @@ const CustomHandle = ({ ...props }: CustomeHandlerProps) => {
   return <Handle {...props} isConnectable={isHandleConnectable}></Handle>;
 };
 
-export default CustomHandle;
+export default CustomHandler;

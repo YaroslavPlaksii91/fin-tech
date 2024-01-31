@@ -1,7 +1,7 @@
 import { Handle, NodeProps, Position, useUpdateNodeInternals } from 'reactflow';
 import { useEffect } from 'react';
 
-import CustomHandle from '../CustomeHandler/CustomeHandler';
+import CustomHandler from '../CustomHandler/CustomHandler';
 
 import styles from './style.module.scss';
 
@@ -31,7 +31,7 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
         {data?.splits?.map((el, idx) => (
           <div key={el.edgeId}>
             <li>{el.percentage}%</li>
-            <CustomHandle
+            <CustomHandler
               type="source"
               position={Position.Right}
               id={idx.toString()}
