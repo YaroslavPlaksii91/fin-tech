@@ -42,6 +42,14 @@ const parseValidationError = (
       return error.root?.message as string;
     }
 
+    if (Array.isArray(error)) {
+      return error
+        .map((err: FieldErrors) =>
+          Object.values(err).map((err) => err?.message || '')
+        )
+        .join(', ');
+    }
+
     return error.message as string;
   }
 

@@ -38,18 +38,23 @@ const NumberInput = <
     render={({ field: { onChange, value } }) => (
       <StyledTextField
         type="number"
+        onKeyDown={(event) => {
+          if (event.key === '.' || event.key === '-') {
+            event.preventDefault();
+          }
+        }}
         value={value}
         inputProps={{
           min: MIN_VALUE,
           max: MAX_VALUE,
-          step: 1
+          step: 1,
+          pattern: '[0-9]*'
         }}
         onChange={(event) => {
-          let inputValue: string | number = +event.target.value;
-          inputValue =
-            !!inputValue && Math.abs(inputValue) >= 0
-              ? Math.abs(inputValue)
-              : '';
+          let inputValue: string | number = parseInt(event.target.value, 10);
+          if (isNaN(inputValue)) {
+            inputValue = '';
+          }
 
           onChange(inputValue);
           onChangeCb?.();
@@ -74,7 +79,7 @@ const NumberInput = <
               %
               <IconButton
                 aria-label="Increment"
-                disabled={+value === rangeMax}
+                disabled={!(+value < rangeMax)}
                 onClick={() => {
                   onChange(+value + 1);
                   onChangeCb?.();
