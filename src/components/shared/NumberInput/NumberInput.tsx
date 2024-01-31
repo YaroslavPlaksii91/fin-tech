@@ -39,13 +39,19 @@ const NumberInput = <
       <StyledTextField
         type="number"
         value={value}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          const newValue = parseInt(e.target.value, 10);
-          if (!isNaN(newValue)) {
-            onChange(newValue);
-          } else {
-            onChange(0);
-          }
+        inputProps={{
+          min: MIN_VALUE,
+          max: MAX_VALUE,
+          step: 1
+        }}
+        onChange={(event) => {
+          let inputValue: string | number = +event.target.value;
+          inputValue =
+            !!inputValue && Math.abs(inputValue) >= 0
+              ? Math.abs(inputValue)
+              : '';
+
+          onChange(inputValue);
           onChangeCb?.();
         }}
         InputProps={{
@@ -53,8 +59,11 @@ const NumberInput = <
             <StyledInputAdornment position="start">
               <IconButton
                 aria-label="Decrement"
-                disabled={value === rangeMin}
-                onClick={() => onChange(value - 1)}
+                disabled={+value === rangeMin}
+                onClick={() => {
+                  onChange(+value - 1);
+                  onChangeCb?.();
+                }}
               >
                 <RemoveIcon fontSize="small" />
               </IconButton>
@@ -65,8 +74,11 @@ const NumberInput = <
               %
               <IconButton
                 aria-label="Increment"
-                disabled={value === rangeMax}
-                onClick={() => onChange(value + 1)}
+                disabled={+value === rangeMax}
+                onClick={() => {
+                  onChange(+value + 1);
+                  onChangeCb?.();
+                }}
               >
                 <AddIcon fontSize="small" />
               </IconButton>
