@@ -22,7 +22,7 @@ interface InputProps<
   onChangeCb?: (index?: number) => void;
 }
 
-const NumberInput = <
+const NumberRangeInput = <
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>
 >({
@@ -47,8 +47,7 @@ const NumberInput = <
         inputProps={{
           min: MIN_VALUE,
           max: MAX_VALUE,
-          step: 1,
-          pattern: '[0-9]*'
+          step: 1
         }}
         onChange={(event) => {
           let inputValue: string | number = parseInt(event.target.value, 10);
@@ -95,4 +94,4 @@ const NumberInput = <
   />
 );
 
-export default NumberInput;
+export default NumberRangeInput;

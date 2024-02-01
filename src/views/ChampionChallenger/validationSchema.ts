@@ -11,6 +11,7 @@ const validationSchema = yup.object().shape({
           .number()
           .typeError('Percentage must be a number')
           .required('Percentage is required')
+          .min(0, 'Percentage for each split must be more than or equal to 1')
           .max(
             100,
             'Percentage for each split must be less than or equal to 100'

@@ -1,27 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
-import {
-  Button,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableContainer,
-  TableHead
-} from '@mui/material';
+import { Button, Stack, Table, TableBody, TableHead } from '@mui/material';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { ReactFlowInstance } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import isEmpty from 'lodash/isEmpty';
+import { enqueueSnackbar } from 'notistack';
 
 import { getConnectedNodesIdDFS } from './utils';
 import validationSchema from './validationSchema';
 import { FieldValues, columns } from './types';
+import { StyledPaper, StyledTableContainer } from './styled';
 
 import { FlowNode } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import { AddIcon, DeleteOutlineIcon } from '@components/shared/Icons';
-import NumberInput from '@components/shared/NumberInput/NumberInput';
+import NumberRangeInput from '@components/shared/NumberRangeInput/NumberRangeInput';
 import SearchableSelect from '@components/shared/SearchableSelect/SearchableSelect';
 import { ADD_BUTTON_ON_EDGE } from '@components/FlowManagment/FlowChart/types';
 import ErrorMessage from '@components/shared/ErrorText/ErrorText';
@@ -32,7 +26,8 @@ import {
 } from '@components/shared/Table/styled';
 import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
-import { MAIN_STEP_ID } from '@constants/common';
+import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
+import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 
 interface ChampionChallengerProps {
   step: FlowNode;
@@ -112,6 +107,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
 
     const updatedNodes = nodes.map((node: FlowNode) => {
       if (node.id === step.id) {
+        // This updates data inside the node. Since React Flow uses Zustand under the hood, it is necessary to recreate the data.
         if (node.data.splits?.length) {
           const splits = node.data.splits;
           splits.length = 0;
@@ -141,9 +137,15 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     });
 
     setNodes(updatedNodes);
-
     setEdges(newEdges);
 
+    enqueueSnackbar(
+      <SnackbarMessage
+        message="Success"
+        details={`Changes for the "${step.data.name}" step were successfully applied.`}
+      />,
+      { variant: SNACK_TYPE.SUCCESS }
+    );
     setStep({ id: MAIN_STEP_ID });
   };
 
@@ -189,18 +191,12 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
           title={step.data.name}
           details="A Champion Challenger is an step that allows you to split traffic into
    several groups and run experiment."
-          onDiscard={() => setInitialData()}
+          onDiscard={setInitialData}
           disabled={!isEmpty(errors)}
         />
         <Stack pl={3} pr={3}>
-          <Paper
-            sx={{ width: '100%', overflow: 'hidden', marginBottom: '16px' }}
-          >
-            <TableContainer
-              sx={{
-                maxHeight: `calc(100vh - 450px)`
-              }}
-            >
+          <StyledPaper>
+            <StyledTableContainer>
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <StyledTableRow>
@@ -219,7 +215,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                   {fields.map((field, index) => (
                     <StyledTableRow key={field.id}>
                       <StyledTableCell sx={{ padding: '0 12px' }}>
-                        <NumberInput
+                        <NumberRangeInput
                           control={control}
                           name={`splits.${index}.percentage`}
                           onChangeCb={() => clearErrors()}
@@ -258,8 +254,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                   ))}
                 </TableBody>
               </Table>
-            </TableContainer>
-          </Paper>
+            </StyledTableContainer>
+          </StyledPaper>
           <ErrorMessage errors={errors} name="splits" />
           <Button
             sx={{ width: '135px' }}
