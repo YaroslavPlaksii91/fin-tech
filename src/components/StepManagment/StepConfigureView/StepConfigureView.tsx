@@ -1,16 +1,17 @@
-import { ReactFlowInstance } from 'reactflow';
-
 import { StyledContainer } from './styled';
 
 import { MAIN_STEP_ID } from '@constants/common';
 import ChampionChallenger from '@views/ChampionChallenger/ChampionChallenger';
 import { FlowNode } from '@domain/flow';
-import { StepType } from '@components/FlowManagment/FlowChart/types';
+import {
+  CustomReactFlowInstance,
+  StepType
+} from '@components/FlowManagment/FlowChart/types';
 
 interface StepConfigureViewProps {
   step: FlowNode;
   setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
-  rfInstance: ReactFlowInstance;
+  rfInstance: CustomReactFlowInstance;
 }
 
 const StepConfigureView: React.FC<StepConfigureViewProps> = ({

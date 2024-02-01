@@ -1,3 +1,5 @@
+import { ReactFlowInstance } from 'reactflow';
+
 import { FlowNode } from '@domain/flow';
 
 export enum StepType {
@@ -23,4 +25,8 @@ export const DEFAULT_EDGE_TYPE = 'smoothstep';
 export type EdgeData = {
   onAdd?: (type: StepType, name: string, id: string) => FlowNode;
   animated?: boolean;
+};
+
+export type CustomReactFlowInstance = ReactFlowInstance & {
+  onAddNodeBetweenEdges: (type: StepType, name: string, edgeId: string) => void;
 };

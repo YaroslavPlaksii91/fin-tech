@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button, Stack, Table, TableBody, TableHead } from '@mui/material';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { ReactFlowInstance } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import isEmpty from 'lodash/isEmpty';
@@ -17,7 +16,10 @@ import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import { AddIcon, DeleteOutlineIcon } from '@components/shared/Icons';
 import NumberRangeInput from '@components/shared/NumberRangeInput/NumberRangeInput';
 import SearchableSelect from '@components/shared/SearchableSelect/SearchableSelect';
-import { ADD_BUTTON_ON_EDGE } from '@components/FlowManagment/FlowChart/types';
+import {
+  ADD_BUTTON_ON_EDGE,
+  CustomReactFlowInstance
+} from '@components/FlowManagment/FlowChart/types';
 import ErrorMessage from '@components/shared/ErrorText/ErrorText';
 import { InputText } from '@components/shared/Forms/InputText';
 import {
@@ -32,13 +34,20 @@ import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 interface ChampionChallengerProps {
   step: FlowNode;
   setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
-  rfInstance: ReactFlowInstance;
+  rfInstance: CustomReactFlowInstance;
 }
 
 const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   step,
   setStep,
-  rfInstance: { getEdge, getNodes, getEdges, setNodes, setEdges }
+  rfInstance: {
+    getEdge,
+    getNodes,
+    getEdges,
+    setNodes,
+    setEdges,
+    onAddNodeBetweenEdges
+  }
 }) => {
   const [options, setOptions] = useState<{ value: string; label: string }[]>(
     []
@@ -49,8 +58,6 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
 
   const nodes: FlowNode[] = getNodes();
   const edges = getEdges();
-
-  const currentNode = nodes.find((node) => node.id === step.id)!;
 
   const {
     handleSubmit,
@@ -86,7 +93,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
 
   const onSubmit = (data: FieldValues) => {
     const existingSplitEdges =
-      currentNode.data.splits?.map(({ edgeId }) => edgeId) ?? [];
+      step.data.splits?.map(({ edgeId }) => edgeId) ?? [];
 
     const targetNodesIds = data.splits.map((spl) => spl.value);
 
@@ -97,7 +104,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         sourceHandle: index.toString(),
         source: step.id,
         target: targetNodeId,
-        type: ADD_BUTTON_ON_EDGE
+        type: ADD_BUTTON_ON_EDGE,
+        data: { onAdd: onAddNodeBetweenEdges }
       };
     });
     const newEdges = edges

@@ -8,7 +8,6 @@ import ReactFlow, {
   useEdgesState,
   BackgroundVariant,
   ConnectionLineType,
-  ReactFlowInstance,
   useReactFlow,
   ReactFlowProvider,
   getIncomers,
@@ -26,7 +25,12 @@ import { nodeTypes } from '../Nodes';
 import { edgeTypes } from '../Edges';
 import NodePositioning from '../Nodes/NodePositioning';
 import '../overview.css';
-import { ADD_BUTTON_ON_EDGE, EdgeData, StepType } from '../types';
+import {
+  ADD_BUTTON_ON_EDGE,
+  CustomReactFlowInstance,
+  EdgeData,
+  StepType
+} from '../types';
 import ControlPanelEdit from '../ContolPanels/ControlPanelEdit';
 import {
   checkEdgeMultiplicity,
@@ -64,7 +68,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   setFlow
 }) => {
   const [isDirty, setIsDirty] = useState<boolean>(false);
-  const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
+  const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
   const [startDrag, setStartDrag] = useState<boolean>(false);
   const { menu, setMenu, onPaneClick, onNodeContextMenu } =
     useFlowChartContextMenu();
@@ -183,11 +187,11 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
               }
               return node;
             });
-            rfInstance.setNodes(updatedNodes);
+            setNodes(updatedNodes);
           }
         }
 
-        rfInstance.setEdges((eds) =>
+        setEdges((eds) =>
           addEdge(
             {
               ...connection,
@@ -201,7 +205,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         );
       }
     },
-    [setEdges, rfInstance]
+    [setEdges, setNodes, rfInstance]
   );
 
   const onNodesDelete = useCallback(
@@ -340,7 +344,12 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           onEdgesChange={onEdgesChange}
           onNodesDelete={onNodesDelete}
           onNodeDragStart={onNodeDragStart}
-          onInit={setRfInstance}
+          onInit={(instance) => {
+            setRfInstance({
+              ...instance,
+              onAddNodeBetweenEdges
+            });
+          }}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
