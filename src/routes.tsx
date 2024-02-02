@@ -47,10 +47,10 @@ export const router = createBrowserRouter([
         )
       },
       {
-        path: routes.underwriting.dataDictionary,
+        path: routes.underwriting.leadRequest,
         element: (
           <PrivateRoutes>
-            <div>Data dictionary</div>
+            <div>Lead Request</div>
           </PrivateRoutes>
         )
       },

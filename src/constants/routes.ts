@@ -7,8 +7,8 @@ const routes = {
       edit: (id: string) => `/flow-list/${id}/edit`,
       details: (id: string) => `/flow-list/${id}/details`
     },
-    dataDictionary: '/data-dictionary',
-    changeHistory: '/change-history'
+    changeHistory: '/change-history',
+    leadRequest: '/lead-request'
   }
 };
 
