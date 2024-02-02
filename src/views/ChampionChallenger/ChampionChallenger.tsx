@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import isEmpty from 'lodash/isEmpty';
 import { enqueueSnackbar } from 'notistack';
 
-import { getConnectedNodesIdDFS } from './utils';
+import { getConnectedNodesIdDFS, unconnectedNodes } from './utils';
 import validationSchema from './validationSchema';
 import { FieldValues, columns } from './types';
 import { StyledPaper, StyledTableContainer } from './styled';
@@ -116,30 +116,19 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     const updatedNodes = nodes.map((node: FlowNode) => {
       if (node.id === step.id) {
         // This updates data inside the node. Since React Flow uses Zustand under the hood, it is necessary to recreate the data.
-        if (node.data.splits?.length) {
-          const splits = node.data.splits;
-          splits.length = 0;
-          splits.push(
-            ...splitEdges.map((splitEdge, index) => ({
-              edgeId: splitEdge.id,
-              percentage: data.splits[index].percentage
-            }))
-          );
-          node.data = {
-            ...node.data,
-            note: data.note,
-            splits: [...splits]
-          };
-        } else {
-          node.data = {
-            ...node.data,
-            note: data.note,
-            splits: splitEdges.map((splitEdge, index) => ({
-              edgeId: splitEdge.id,
-              percentage: data.splits[index].percentage
-            }))
-          };
-        }
+        const splits = node.data.splits ?? [];
+        splits.length = 0;
+        splits.push(
+          ...splitEdges.map((splitEdge, index) => ({
+            edgeId: splitEdge.id,
+            percentage: data.splits[index].percentage
+          }))
+        );
+        node.data = {
+          ...node.data,
+          note: data.note,
+          splits: [...splits]
+        };
       }
       return node;
     });
@@ -179,8 +168,10 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
 
   useEffect(() => {
     const connectedNodeIds = getConnectedNodesIdDFS(edges, step.id);
+    const floatNodes = unconnectedNodes(nodes, edges, step.id);
     const formattedOptions = nodes
       .filter((node) => connectedNodeIds.includes(node.id))
+      .concat(floatNodes)
       .map((node) => ({
         value: node.id,
         label: node.data.name

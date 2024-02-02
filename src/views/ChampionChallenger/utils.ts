@@ -1,5 +1,7 @@
 import { Edge } from 'reactflow';
 
+import { FlowNode } from '@domain/flow';
+
 export const getConnectedNodesIdDFS = (edges: Edge[], startNodeId: string) => {
   const visited = new Set();
   const connectedNodes: string[] = [];
@@ -25,3 +27,14 @@ export const getConnectedNodesIdDFS = (edges: Edge[], startNodeId: string) => {
 
   return connectedNodes;
 };
+
+export const unconnectedNodes = (
+  nodes: FlowNode[],
+  edges: Edge[],
+  currentNodeId: string
+) =>
+  nodes.filter(
+    (node) =>
+      node.id !== currentNodeId &&
+      !edges.some((edge) => edge.source === node.id || edge.target === node.id)
+  );
