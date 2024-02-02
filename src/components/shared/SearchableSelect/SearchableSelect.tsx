@@ -17,6 +17,7 @@ import {
 import { StyledInputLabel, StyledSelect } from './styled';
 
 import { StyledKeyboardArrowDownIcon } from '@components/Navigation/styled';
+import { SPECIAL_KEY_CODES } from '@constants/common';
 
 const findOption = ({
   label,
@@ -120,7 +121,7 @@ const SearchableSelect = <
                   setSearchText(e.target.value);
                 }}
                 onKeyDown={(e) => {
-                  if (e.key !== 'Escape') {
+                  if (e.key !== SPECIAL_KEY_CODES.Escape) {
                     // Prevents autoselecting item while typing (default Select behaviour)
                     e.stopPropagation();
                   }

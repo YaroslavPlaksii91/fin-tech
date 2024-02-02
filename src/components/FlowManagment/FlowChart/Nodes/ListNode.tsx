@@ -7,6 +7,7 @@ import styles from './style.module.scss';
 
 import { HexagonOutlinedIconSvg } from '@components/shared/Icons';
 import { NodeData, ChampionChallengerData } from '@domain/flow';
+import { NO_TAG_LABEL } from '@constants/common';
 
 const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
   data
@@ -23,7 +24,7 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
         <Handle type="target" position={Position.Left} />
         <HexagonOutlinedIconSvg />
         <div className={styles['node-list-container__header__text']}>
-          <p className={styles['node-tag']}>{data?.tag || 'No tag'}</p>
+          <p className={styles['node-tag']}>{data?.tag || NO_TAG_LABEL}</p>
           <p className={styles['node-label']}>{data.name}</p>
         </div>
       </div>

@@ -6,7 +6,7 @@ import { StyledStepItem, StyledStepItemText } from './styled';
 import { StyledList, StyledListItem } from '@components/shared/List/styled';
 import { HexagonOutlinedIcon } from '@components/shared/Icons';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
-import { MAIN_STEP_ID } from '@constants/common';
+import { MAIN_STEP_ID, NO_TAG_LABEL } from '@constants/common';
 import { FlowNode } from '@domain/flow';
 import { StepContextType } from '@contexts/StepContext';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
@@ -45,7 +45,9 @@ const StepList: React.FC<StepListProps> = ({ nodes, setStep, step }) => {
           <HexagonOutlinedIcon sx={{ paddingRight: 1 }} />
 
           <StyledStepItem>
-            <Typography variant="caption">{el.data.tag || 'No tag'}</Typography>
+            <Typography variant="caption">
+              {el.data.tag || NO_TAG_LABEL}
+            </Typography>
             <StyledStepItemText>{el.data.name}</StyledStepItemText>
           </StyledStepItem>
 

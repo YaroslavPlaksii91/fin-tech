@@ -10,6 +10,8 @@ import { AddIcon, RemoveIcon } from '../Icons';
 
 import { StyledInputAdornment, StyledTextField } from './styled';
 
+import { SPECIAL_KEY_CODES } from '@constants/common';
+
 const MIN_VALUE = 0;
 const MAX_VALUE = 100;
 
@@ -39,7 +41,10 @@ const NumberRangeInput = <
       <StyledTextField
         type="number"
         onKeyDown={(event) => {
-          if (event.key === '.' || event.key === '-') {
+          if (
+            event.key === SPECIAL_KEY_CODES.Dot ||
+            event.key === SPECIAL_KEY_CODES.Minus
+          ) {
             event.preventDefault();
           }
         }}

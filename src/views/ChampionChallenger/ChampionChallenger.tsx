@@ -31,6 +31,8 @@ import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 
+const STEPS_LIMIT = 10;
+
 interface ChampionChallengerProps {
   step: FlowNode;
   setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
@@ -258,7 +260,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
           <ErrorMessage errors={errors} name="splits" />
           <Button
             sx={{ width: '135px' }}
-            disabled={fields.length === 10}
+            disabled={fields.length === STEPS_LIMIT}
             onClick={() => {
               append({ percentage: 0, value: '' });
             }}
