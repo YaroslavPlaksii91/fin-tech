@@ -12,7 +12,7 @@ import { StyledInputAdornment, StyledTextField } from './styled';
 
 import { SPECIAL_KEY_CODES } from '@constants/common';
 
-const MIN_VALUE = 0;
+const MIN_VALUE = 1;
 const MAX_VALUE = 100;
 
 interface InputProps<
@@ -68,7 +68,7 @@ const NumberRangeInput = <
             <StyledInputAdornment position="start">
               <IconButton
                 aria-label="Decrement"
-                disabled={+value === rangeMin}
+                disabled={+value <= rangeMin}
                 onClick={() => {
                   onChange(+value - 1);
                   onChangeCb?.();

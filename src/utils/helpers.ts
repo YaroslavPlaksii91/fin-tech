@@ -44,10 +44,11 @@ const parseValidationError = (
 
     if (Array.isArray(error)) {
       return error
+        .filter((err) => err)
         .map((err: FieldErrors) =>
-          Object.values(err).map((err) => err?.message || '')
+          Object.values(err).map((err) => (err && err?.message) || '')
         )
-        .join(', ');
+        .toString();
     }
 
     return error.message as string;
