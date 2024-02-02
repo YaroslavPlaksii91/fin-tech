@@ -40,6 +40,7 @@ import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import Dialog from '@components/shared/Modals/Dialog';
 
 const STEPS_LIMIT = 10;
+const DEFAULT_PERCENTAGE_SPLIT = 10;
 
 interface ChampionChallengerProps {
   step: FlowNode;
@@ -274,7 +275,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
             sx={{ width: '135px' }}
             disabled={fields.length === STEPS_LIMIT}
             onClick={() => {
-              append({ percentage: 0, value: '' });
+              append({ percentage: DEFAULT_PERCENTAGE_SPLIT, value: '' });
             }}
             startIcon={<AddIcon />}
           >
