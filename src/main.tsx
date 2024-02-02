@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -7,6 +6,7 @@ import '@fontsource/roboto/700.css';
 import { ThemeProvider } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
 import { Provider } from 'react-redux';
+import React from 'react';
 
 import App from './App.tsx';
 import { store } from './store/store.ts';

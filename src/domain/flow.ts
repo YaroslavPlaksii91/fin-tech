@@ -23,10 +23,14 @@ export type NodeData = {
   stepType: StepType;
   name: string;
   tag?: string;
+  note?: string | null;
+};
+
+export type ChampionChallengerData = {
   splits?: { edgeId: string; percentage: number }[];
 };
 
-export type FlowNode = Node<NodeData>;
+export type FlowNode = Node<NodeData & ChampionChallengerData>;
 
 export interface IFlow {
   id: string;

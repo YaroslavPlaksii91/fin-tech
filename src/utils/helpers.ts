@@ -1,4 +1,5 @@
 import { AxiosError } from 'axios';
+import { FieldErrors } from 'react-hook-form';
 
 import { GENERAL_SERVER_ERROR } from '@constants/common';
 
@@ -30,4 +31,29 @@ const parseErrorMessages = (error: unknown) => {
   }
 };
 
-export { parseErrorMessages };
+const parseValidationError = (
+  errors: FieldErrors,
+  name: string
+): string | undefined => {
+  const error = errors[name];
+
+  if (error) {
+    if ('root' in error) {
+      return error.root?.message as string;
+    }
+
+    if (Array.isArray(error)) {
+      return error
+        .map((err: FieldErrors) =>
+          Object.values(err).map((err) => err?.message || '')
+        )
+        .join(', ');
+    }
+
+    return error.message as string;
+  }
+
+  return undefined;
+};
+
+export { parseErrorMessages, parseValidationError };

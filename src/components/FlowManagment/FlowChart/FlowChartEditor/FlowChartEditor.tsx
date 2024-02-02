@@ -8,13 +8,13 @@ import ReactFlow, {
   useEdgesState,
   BackgroundVariant,
   ConnectionLineType,
-  ReactFlowInstance,
   useReactFlow,
   ReactFlowProvider,
   getIncomers,
   getOutgoers,
   getConnectedEdges,
-  Edge
+  Edge,
+  ConnectionMode
 } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 import debounce from 'lodash/debounce';
@@ -25,7 +25,12 @@ import { nodeTypes } from '../Nodes';
 import { edgeTypes } from '../Edges';
 import NodePositioning from '../Nodes/NodePositioning';
 import '../overview.css';
-import { ADD_BUTTON_ON_EDGE, EdgeData, StepType } from '../types';
+import {
+  ADD_BUTTON_ON_EDGE,
+  CustomReactFlowInstance,
+  EdgeData,
+  StepType
+} from '../types';
 import ControlPanelEdit from '../ContolPanels/ControlPanelEdit';
 import {
   checkEdgeMultiplicity,
@@ -63,7 +68,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   setFlow
 }) => {
   const [isDirty, setIsDirty] = useState<boolean>(false);
-  const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
+  const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
   const [startDrag, setStartDrag] = useState<boolean>(false);
   const { menu, setMenu, onPaneClick, onNodeContextMenu } =
     useFlowChartContextMenu();
@@ -76,8 +81,8 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 
   const onAddNodeBetweenEdges = useCallback(
     (type: StepType, name: string, edgeId: string) => {
-      const newNode = createNewNode(type, name);
       const newEdgeId = uuidv4();
+      const newNode = createNewNode(type, name, newEdgeId);
 
       setNodes((nodes) => nodes.concat(newNode));
 
@@ -153,22 +158,54 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
+      const edgeId = uuidv4();
       if (connection.source === connection.target) {
         return;
       }
-      return setEdges((eds) =>
-        addEdge(
-          {
-            ...connection,
-            id: uuidv4(),
-            data: { onAdd: onAddNodeBetweenEdges },
-            type: ADD_BUTTON_ON_EDGE
-          },
-          eds
-        )
-      );
+
+      if (rfInstance) {
+        // Update edgeId of splits Champion Challenger data
+        if (connection.source) {
+          const connectedNode = rfInstance.getNode(
+            connection.source
+          ) as FlowNode;
+          if (
+            connectedNode?.type === StepType.CHAMPION_CHALLENGER &&
+            connection.sourceHandle !== null
+          ) {
+            const updatedSplits =
+              connectedNode.data.splits?.map((split, index) => {
+                if (index === +connection.sourceHandle!) {
+                  return { ...split, edgeId };
+                }
+                return split;
+              }) ?? [];
+
+            const updatedNodes = rfInstance.getNodes().map((node: FlowNode) => {
+              if (node.id === connectedNode?.id) {
+                node.data.splits = [...updatedSplits];
+              }
+              return node;
+            });
+            setNodes(updatedNodes);
+          }
+        }
+
+        setEdges((eds) =>
+          addEdge(
+            {
+              ...connection,
+              id: edgeId,
+              sourceHandle: connection.sourceHandle,
+              data: { onAdd: onAddNodeBetweenEdges },
+              type: ADD_BUTTON_ON_EDGE
+            },
+            eds
+          )
+        );
+      }
     },
-    [setEdges]
+    [setEdges, setNodes, rfInstance]
   );
 
   const onNodesDelete = useCallback(
@@ -307,11 +344,17 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           onEdgesChange={onEdgesChange}
           onNodesDelete={onNodesDelete}
           onNodeDragStart={onNodeDragStart}
-          onInit={setRfInstance}
+          onInit={(instance) => {
+            setRfInstance({
+              ...instance,
+              onAddNodeBetweenEdges
+            });
+          }}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           attributionPosition="bottom-left"
+          connectionMode={ConnectionMode.Loose}
           connectionLineType={ConnectionLineType.SmoothStep}
         >
           <Background variant={BackgroundVariant.Lines} />
@@ -321,8 +364,12 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
             rfInstance={rfInstance}
           />
         </ReactFlow>
-        {step.id !== MAIN_STEP_ID && (
-          <StepConfigureView step={step as FlowNode} />
+        {rfInstance && step.id !== MAIN_STEP_ID && (
+          <StepConfigureView
+            setStep={setStep}
+            rfInstance={rfInstance}
+            step={step as FlowNode}
+          />
         )}
       </MainContainer>
       <StepActionMenu anchorEl={menu} setAnchorEl={setMenu} />

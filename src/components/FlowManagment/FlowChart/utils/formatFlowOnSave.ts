@@ -1,12 +1,10 @@
-import { ReactFlowInstance } from 'reactflow';
-
-import { DEFAULT_EDGE_TYPE } from '../types';
+import { CustomReactFlowInstance, DEFAULT_EDGE_TYPE } from '../types';
 
 import { IFlow } from '@domain/flow';
 
 type inputData = {
   flow: IFlow;
-  rfInstance: ReactFlowInstance;
+  rfInstance: CustomReactFlowInstance;
 };
 
 export const formatFlowOnSave = ({ flow, rfInstance }: inputData): IFlow => {

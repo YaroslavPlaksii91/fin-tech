@@ -4,8 +4,12 @@ import {
   UseControllerProps,
   useController
 } from 'react-hook-form';
-import TextField, { TextFieldProps } from '@mui/material/TextField';
 import { FormControl, InputLabel } from '@mui/material';
+
+import { StyledError, StyledTextarea } from './styled';
+
+const DEFAULT_MIN_ROWS = 8;
+
 interface InputProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>
@@ -14,9 +18,10 @@ interface InputProps<
   placeholder: string;
   fullWidth?: boolean;
   type?: string;
+  minRows?: number;
 }
 
-export const InputText = <
+export const Textarea = <
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>
 >({
@@ -24,10 +29,9 @@ export const InputText = <
   name,
   label,
   placeholder,
-  type = 'text',
   fullWidth = false,
-  ...props
-}: InputProps<TFieldValues, TName> & TextFieldProps) => {
+  minRows = DEFAULT_MIN_ROWS
+}: InputProps<TFieldValues, TName>) => {
   const { field, fieldState } = useController({ control, name });
 
   return (
@@ -35,16 +39,15 @@ export const InputText = <
       <InputLabel sx={{ position: 'static' }} shrink htmlFor={name}>
         {label}
       </InputLabel>
-      <TextField
-        placeholder={placeholder}
-        size="small"
-        error={!!fieldState?.error}
-        helperText={fieldState?.error?.message}
+      <StyledTextarea
+        minRows={minRows}
         id={name}
-        type={type}
+        placeholder={placeholder}
         {...field}
-        {...props}
       />
+      {fieldState?.error && (
+        <StyledError variant="caption">{fieldState.error.message}</StyledError>
+      )}
     </FormControl>
   );
 };

@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
-import { ReactFlowInstance } from 'reactflow';
 import { Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 
 import { formatFlowOnSave } from '../utils/formatFlowOnSave';
+import { CustomReactFlowInstance } from '../types';
 
 import { StyledPanel } from './styled';
 
@@ -25,7 +25,7 @@ import { SNACK_TYPE } from '@constants/common';
 interface ControlPanelEditProps {
   flow: IFlow;
   setFlow: (flow: IFlow) => void;
-  rfInstance: ReactFlowInstance | undefined;
+  rfInstance: CustomReactFlowInstance | undefined;
 }
 
 const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
@@ -69,7 +69,7 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
 
   const onPushFlow = useCallback(() => {
     Logger.info('Push changes');
-  }, []);
+  }, [rfInstance]);
 
   return (
     <StyledPanel position="top-right">

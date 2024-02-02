@@ -66,6 +66,10 @@ export default defineConfig(({ mode }) => {
         {
           find: '@contexts',
           replacement: resolve(__dirname, './src/contexts')
+        },
+        {
+          find: '@views',
+          replacement: resolve(__dirname, './src/views')
         }
       ]
     }

@@ -3,7 +3,7 @@ import { Node, Edge } from 'reactflow';
 
 const getLayoutedElements = (nodes: Node[], edges: Edge[]) => {
   if (nodes.length > 0) {
-    const dagreGraph = new dagre.graphlib.Graph();
+    const dagreGraph = new dagre.graphlib.Graph({ multigraph: true });
     dagreGraph.setDefaultEdgeLabel(() => ({}));
 
     dagreGraph.setGraph({
@@ -11,10 +11,12 @@ const getLayoutedElements = (nodes: Node[], edges: Edge[]) => {
       nodesep: 100,
       ranksep: 300,
       edgesep: 200,
-      ranker: 'longest-path'
+      ranker: 'tight-tree'
     });
 
-    edges.forEach((edge) => dagreGraph.setEdge(edge.source, edge.target));
+    edges.forEach((edge) =>
+      dagreGraph.setEdge(edge.source, edge.target, {}, edge.id)
+    );
 
     nodes.forEach((node) =>
       dagreGraph.setNode(node.id, {

@@ -55,6 +55,11 @@
     align-items: center;
     background-color: #0073ff;
     padding: 9px 18px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    &__text {
+      padding-left: 4px;
+    }
   }
 
   &__list {

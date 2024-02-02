@@ -10,6 +10,8 @@ export const PRODUCTION_FLOW_ID = 'production-flow';
 
 export const MAIN_STEP_ID = 'main-step';
 
+export const NO_TAG_LABEL = 'No tag';
+
 export enum SNACK_TYPE {
   SUCCESS = 'success',
   ERROR = 'error'
@@ -18,3 +20,9 @@ export enum SNACK_TYPE {
 export const GENERAL_SERVER_ERROR = 'Something went wrong';
 
 export const ROURER_BLOCKED_STATE = 'blocked';
+
+export const SPECIAL_KEY_CODES = {
+  Dot: '.',
+  Escape: 'Escape',
+  Minus: '-'
+};

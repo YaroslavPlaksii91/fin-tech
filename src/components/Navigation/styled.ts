@@ -7,7 +7,9 @@ import { SvgIconProps } from '@mui/material/SvgIcon';
 export const StyledAppBar = styled(MuiAppBar)(({ theme }) => ({
   backgroundColor: theme.palette.lightGray,
   padding: '0 8px',
-  boxShadow: 'none'
+  '&.MuiPaper-root': {
+    borderRadius: 0
+  }
 }));
 
 export const StyledKeyboardArrowDownIcon = styled(KeyboardArrowDownIcon)<
