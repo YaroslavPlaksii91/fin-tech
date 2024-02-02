@@ -71,6 +71,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   } = useForm<FieldValues>({
     mode: 'onChange',
     defaultValues: { splits: [], note: '' },
+    // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
     resolver: yupResolver(validationSchema)
   });
 

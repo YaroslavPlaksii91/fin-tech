@@ -89,7 +89,7 @@ const SearchableSelect = <
             MenuProps={{ autoFocus: false }}
             id="search-select"
             onChange={(e) => {
-              const selectedOption = e.target.value;
+              const selectedOption = e.target.value as string;
               setSelectedOptions((prevSelected) => {
                 const updatedSelected = [...prevSelected];
                 updatedSelected[index] = selectedOption;

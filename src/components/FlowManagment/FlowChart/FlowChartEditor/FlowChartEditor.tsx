@@ -175,7 +175,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           ) {
             const updatedSplits =
               connectedNode.data.splits?.map((split, index) => {
-                if (index === +connection.sourceHandle) {
+                if (index === +connection.sourceHandle!) {
                   return { ...split, edgeId };
                 }
                 return split;
