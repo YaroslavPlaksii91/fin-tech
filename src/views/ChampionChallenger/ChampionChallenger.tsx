@@ -1,5 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Button, Stack, Table, TableBody, TableHead } from '@mui/material';
+import {
+  Button,
+  Stack,
+  Table,
+  TableBody,
+  TableHead,
+  Typography
+} from '@mui/material';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -30,6 +37,7 @@ import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
+import Dialog from '@components/shared/Modals/Dialog';
 
 const STEPS_LIMIT = 10;
 
@@ -57,6 +65,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
+  const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
 
   const nodes: FlowNode[] = getNodes();
   const edges = getEdges();
@@ -93,6 +102,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     setValue('note', getValues('note'));
     setOpenNoteModal(false);
   };
+
+  const handleDiscardChanges = () => setStep({ id: MAIN_STEP_ID });
 
   const onSubmit = (data: FieldValues) => {
     const existingSplitEdges =
@@ -193,7 +204,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
           title={step.data.name}
           details="A Champion Challenger is an step that allows you to split traffic into
    several groups and run experiment."
-          onDiscard={setInitialData}
+          onDiscard={() => setOpenDiscardModal(true)}
           disabled={!isEmpty(errors)}
         />
         <Stack pl={3} pr={3}>
@@ -287,6 +298,18 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         handleSubmitNote={handleSubmitNote}
         note={getValues('note') ?? ''}
       />
+      <Dialog
+        title="Discard changes"
+        open={openDiscardModal}
+        onConfirm={handleDiscardChanges}
+        onClose={() => setOpenDiscardModal(false)}
+        confirmText="Discard changes"
+      >
+        <Typography sx={{ maxWidth: '416px' }} variant="body2">
+          Discarding changes will delete all edits in this step, this action
+          cannot be canceled. Are you sure you want to cancel the changes?
+        </Typography>
+      </Dialog>
     </>
   );
 };
