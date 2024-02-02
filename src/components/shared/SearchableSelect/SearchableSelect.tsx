@@ -14,9 +14,8 @@ import {
   UseControllerProps
 } from 'react-hook-form';
 
-import { StyledInputLabel, StyledSelect } from './styled';
+import { DownIcon, StyledInputLabel, StyledSelect } from './styled';
 
-import { StyledKeyboardArrowDownIcon } from '@components/Navigation/styled';
 import { SPECIAL_KEY_CODES } from '@constants/common';
 
 const findOption = ({
@@ -85,7 +84,7 @@ const SearchableSelect = <
             open={isOpen}
             onOpen={handleOpen}
             onClose={handleClose}
-            IconComponent={() => <StyledKeyboardArrowDownIcon open={isOpen} />}
+            IconComponent={() => <DownIcon open={isOpen} />}
             MenuProps={{ autoFocus: false }}
             id="search-select"
             onChange={(e) => {
