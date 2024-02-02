@@ -1,8 +1,6 @@
 import { styled } from '@mui/material/styles';
 import MuiAppBar from '@mui/material/AppBar';
-import Button, { ButtonProps } from '@mui/material/Button';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { SvgIconProps } from '@mui/material/SvgIcon';
+import { Typography } from '@mui/material';
 
 export const StyledAppBar = styled(MuiAppBar)(({ theme }) => ({
   backgroundColor: theme.palette.lightGray,
@@ -12,26 +10,10 @@ export const StyledAppBar = styled(MuiAppBar)(({ theme }) => ({
   }
 }));
 
-export const StyledKeyboardArrowDownIcon = styled(KeyboardArrowDownIcon)<
-  SvgIconProps & { open: boolean }
->(({ open }) => ({
-  transform: 'rotate(0deg)',
-  transition: 'transform 0.3s ease',
-  ...(open && {
-    transform: 'rotate(180deg)'
-  })
+export const StyledLinkText = styled(Typography)(({ theme }) => ({
+  display: 'flex',
+  color: theme.palette.gray,
+  lineHeight: '22px',
+  alignItems: 'center',
+  columnGap: '12px'
 }));
-
-export const StyledButton = styled(Button)<ButtonProps & { open: boolean }>(
-  ({ theme, open }) => ({
-    color: theme.palette.gray,
-    background: 'none',
-    '&:hover': {
-      backgroundColor: 'transparent'
-    },
-    ...(open && {
-      backgroundColor: theme.palette.gray,
-      color: theme.palette.primary.contrastText
-    })
-  })
-);

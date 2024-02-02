@@ -5,32 +5,25 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Stack } from '@mui/material';
 
-import { StyledAppBar } from './styled';
-import Dropdown from './Dropdown';
+import { StyledAppBar, StyledLinkText } from './styled';
 
 import routes from '@constants/routes';
-import { Logo, PersonOutlineIcon } from '@components/shared/Icons';
+import {
+  HexagonOutlinedIcon,
+  Logo,
+  PersonOutlineIcon
+} from '@components/shared/Icons';
+import { StyledNavLink } from '@components/shared/Link/styled';
 
 const pages = [
   {
-    label: 'Dashboard',
-    options: [{ label: 'Home', path: '/' }]
+    label: 'Flows List',
+    path: routes.underwriting.flow.list
   },
+  { label: 'Changes History', path: routes.underwriting.changeHistory },
   {
-    label: 'Lead managemend',
-    options: [{ label: 'Home', path: '/' }]
-  },
-  {
-    label: 'Underwriting',
-    options: [
-      { label: 'Flow list', path: routes.underwriting.flow.list },
-      { label: 'Data Dictionary', path: routes.underwriting.dataDictionary },
-      { label: 'Changes history', path: routes.underwriting.changeHistory }
-    ]
-  },
-  {
-    label: 'Lead request',
-    options: [{ label: 'Home', path: '/' }]
+    label: 'Lead Requests',
+    path: routes.underwriting.leadRequest
   }
 ];
 
@@ -47,9 +40,14 @@ function Navigation() {
             flexGrow="1"
             style={{ display: 'flex', justifyContent: 'center' }}
           >
-            <Stack direction="row" spacing={6}>
-              {pages.map(({ label, options }, key) => (
-                <Dropdown key={key} label={label} options={options} />
+            <Stack direction="row" spacing={8}>
+              {pages.map(({ path, label }, index) => (
+                <StyledNavLink key={index} to={path}>
+                  <StyledLinkText variant="h6">
+                    <HexagonOutlinedIcon />
+                    {label}
+                  </StyledLinkText>
+                </StyledNavLink>
               ))}
             </Stack>
           </Box>
