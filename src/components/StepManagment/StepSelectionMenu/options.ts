@@ -5,8 +5,7 @@ export const options = [
   { label: 'Calculation', dataKey: StepType.CALCULATION, disabled: true },
   {
     label: 'Decision matrix',
-    dataKey: StepType.DECISION_MATRIX,
-    disabled: true
+    dataKey: StepType.DECISION_MATRIX
   },
   {
     label: 'Condition',

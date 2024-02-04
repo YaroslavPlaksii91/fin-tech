@@ -5,8 +5,8 @@ import { palette } from '../../themeConfig';
 interface StepDetailsHeaderProps {
   title: string;
   details: string;
-  disabled: boolean;
-  onDiscard: () => void;
+  disabled?: boolean;
+  onDiscard?: () => void;
 }
 
 const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({

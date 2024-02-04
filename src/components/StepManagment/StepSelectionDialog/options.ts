@@ -26,8 +26,7 @@ export const options: {
     id: StepType.DECISION_MATRIX,
     label: 'Decision matrix',
     helperText:
-      'A decision table is an step that allows to set expressions for columns and rows. The system will go through the table and analyze the values.',
-    disabled: true
+      'A decision table is an step that allows to set expressions for columns and rows. The system will go through the table and analyze the values.'
   },
   {
     id: StepType.CONDITION,

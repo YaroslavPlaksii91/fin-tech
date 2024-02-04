@@ -1,19 +1,20 @@
-import { Handle, Position } from 'reactflow';
+import { Handle, Position, NodeProps } from 'reactflow';
 
 import styles from './style.module.scss';
 
 import { HexagonOutlinedIconSvg } from '@components/shared/Icons';
+import { NodeData } from '@domain/flow';
 
-export default function RectangleNode() {
-  return (
-    <div className={styles['node-rectangle']}>
-      <Handle type="source" position={Position.Right} />
-      <HexagonOutlinedIconSvg />
-      <div>
-        <p className={styles['node-tag']}>Tag</p>
-        <p className={styles['node-label']}>Calculation</p>
-      </div>
-      <Handle type="target" position={Position.Left} />
+const RectangleNode: React.FC<NodeProps<NodeData>> = ({ data }) => (
+  <div className={styles['node-rectangle']}>
+    <Handle type="source" position={Position.Right} />
+    <HexagonOutlinedIconSvg />
+    <div>
+      <p className={styles['node-tag']}>{data.tag}</p>
+      <p className={styles['node-label']}>{data.name}</p>
     </div>
-  );
-}
+    <Handle type="target" position={Position.Left} />
+  </div>
+);
+
+export default RectangleNode;
