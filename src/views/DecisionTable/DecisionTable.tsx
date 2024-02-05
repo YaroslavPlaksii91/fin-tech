@@ -14,21 +14,29 @@ import {
   TextField,
   Menu,
   MenuItem,
-  TableContainer
+  TableContainer,
+  Typography
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { palette } from '../../themeConfig';
 
-import SelectVariableValueDialog from './SelectVariableValueDialog';
+import { variablesOptions } from './constants';
+import { VariablesOptionsProps } from './types';
+import { StyledPaper, StyledTableContainer } from './styled';
+import SelectVariableValueDialog from './SelectVariableValueDialog/SelectVariableValueDialog';
 
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
-import { HexagonOutlinedIcon } from '@components/shared/Icons';
+import {
+  HexagonOutlinedIcon,
+  AddIcon,
+  DeleteOutlineIcon
+} from '@components/shared/Icons';
 
-type OptionProps = {
-  variableName: string;
-  variableType: string;
-};
+import {
+  StyledTableCell,
+  StyledTableRow
+} from '@components/shared/Table/styled';
 
 const DecisionTableStep = ({ step }) => {
   const [columnClickedId, setColumnClickedId] = useState<string>(uuidv4());
@@ -69,20 +77,26 @@ const DecisionTableStep = ({ step }) => {
     setRows([...rows, { id: newRowId }]);
   };
 
-  const options: OptionProps[] = [
-    { variableName: 'LeadSourse1', variableType: 'string' },
-    { variableName: 'LeadSourse2', variableType: 'string' },
-    { variableName: 'LeadSourse3', variableType: 'string' },
-    { variableName: 'LeadSourse4', variableType: 'string' },
-    { variableName: 'LeadSourse5', variableType: 'string' },
-    { variableName: 'LeadPrice', variableType: 'number' },
-    { variableName: 'CRA.Claritties.Score', variableType: 'number' }
-  ];
+  const handleSubmitVariableValue = (data) => {
+    console.log('handleSubmitVariableValue_in_Table', data);
+
+    setRows(
+      rows.map((row) => {
+        if (row.id === data.id) {
+          return {
+            ...row,
+            [data.variableName]: `${data.operator} ${data.variableValue}`
+          };
+        }
+        return row;
+      })
+    );
+  };
 
   const getOptions = () => {
     const columnsVariables = columns.map((column) => column.variableName);
 
-    const newOptions = options.filter(
+    const newOptions = variablesOptions.filter(
       (option) => !columnsVariables.includes(option.variableName)
     );
 
@@ -97,186 +111,199 @@ const DecisionTableStep = ({ step }) => {
         columns and rows. The system will go through the table and analyze the
         values."
       />
-
-      <TableContainer>
-        <Table sx={{ minWidth: 650 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell
-                align="center"
-                colSpan={2}
-                sx={{ backgroundColor: palette.lightGray }}
-              >
-                Condition
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              {columns.map((column, index) => (
-                <TableCell key={column.id}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <Autocomplete
-                      options={getOptions()}
-                      sx={{ width: 250 }}
-                      value={column}
-                      disableClearable={true}
-                      getOptionLabel={(option: OptionProps) =>
-                        option ? option.variableName : ''
-                      }
-                      onChange={(e, newValue: OptionProps) => {
-                        setColumns(
-                          columns.map((item) => {
-                            if (item.id === column.id) {
-                              return {
-                                ...item,
-                                variableName: newValue.variableName,
-                                variableType: newValue.variableType
-                              };
-                            } else {
-                              return item;
-                            }
-                          })
-                        );
-                      }}
-                      renderInput={(params) => (
-                        <TextField {...params} label="Choose the variable" />
-                      )}
-                    />
-                    <Box>
-                      <IconButton
-                        aria-label="more"
-                        id="long-button"
-                        aria-controls={open ? 'long-menu' : undefined}
-                        aria-expanded={open ? 'true' : undefined}
-                        aria-haspopup="true"
-                        onClick={(event: any) =>
-                          handleClickOnMenu(event, column.id)
-                        }
-                      >
-                        <MoreVertIcon />
-                      </IconButton>
-                      <Menu
-                        id="long-menu"
-                        anchorEl={anchorEl}
-                        open={open && column.id === columnClickedId}
-                        onClose={handleCloseMenu}
-                        PaperProps={{
-                          style: {
-                            width: '20ch'
-                          }
-                        }}
-                      >
-                        <Stack
-                          key="add-column-action"
-                          justifyContent="center"
-                          alignItems="flex-start"
-                          spacing={1}
-                          sx={{
-                            padding: '0 8px'
-                          }}
-                        >
-                          <Stack
-                            flexDirection="row"
-                            alignItems="center"
-                            spacing={0.5}
-                          >
-                            <HexagonOutlinedIcon size="16px" />
-
-                            <MenuItem onClick={() => handleAddNewColumn(index)}>
-                              Add Column
-                            </MenuItem>
-                          </Stack>
-                          <Stack
-                            key="delete-column-action"
-                            flexDirection="row"
-                            alignItems="center"
-                            spacing={0.5}
-                          >
-                            <HexagonOutlinedIcon size="16px" />
-
-                            <MenuItem
-                              onClick={() => {
-                                const newColumns = columns.filter(
-                                  (item) => item.id !== column.id
-                                );
-
-                                // console.log('newColumns', newColumns);
-
-                                setColumns(newColumns);
-                                handleCloseMenu();
-                              }}
-                            >
-                              Delete Column
-                            </MenuItem>
-                          </Stack>
-                        </Stack>
-                      </Menu>
-                    </Box>
-                  </Box>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow
-                key={row.id}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
+      <StyledPaper>
+        <StyledTableContainer>
+          <Table sx={{ minWidth: 650 }}>
+            <TableHead>
+              <StyledTableRow>
+                <StyledTableCell
+                  align="center"
+                  colSpan={2}
+                  sx={{ backgroundColor: palette.lightGray }}
+                >
+                  Condition
+                </StyledTableCell>
+              </StyledTableRow>
+              <StyledTableRow>
                 {columns.map((column, index) => (
-                  <TableCell key={index}>
-                    {(column.variableType === 'string' ||
-                      column.variableType === 'number') && (
-                      <TextField
-                        variant="outlined"
-                        type="text"
-                        value=""
-                        placeholder="Select value"
-                        onClick={() =>
-                          setSelectedRowData({
-                            ...row,
-                            variableName: column.variableName,
-                            variableType: column.variableType,
-                            variableValue: '',
-                            operator: ''
-                          })
+                  <StyledTableCell key={column.id}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <Autocomplete
+                        options={getOptions()}
+                        sx={{ width: 250 }}
+                        value={column}
+                        disableClearable={true}
+                        forcePopupIcon={false}
+                        getOptionLabel={(option: VariablesOptionsProps) =>
+                          option ? option.variableName : ''
                         }
-                      />
-                    )}
-                    {/* {col.type === 'select' && (
-                        <select
-                          value={row[col.key]}
-                          style={{ width: '150px' }}
-                        />
-                      )} */}
+                        onChange={(e, newValue: VariablesOptionsProps) => {
+                          setColumns(
+                            columns.map((item) => {
+                              if (item.id === column.id) {
+                                return {
+                                  ...item,
+                                  variableName: newValue.variableName,
+                                  variableType: newValue.variableType
+                                };
+                              } else {
+                                return item;
+                              }
+                            })
+                          );
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder="Choose the variable"
+                            InputProps={{
+                              ...params.InputProps,
+                              endAdornment: (
+                                <>
+                                  <IconButton
+                                    aria-label="more"
+                                    id="long-button"
+                                    aria-controls={
+                                      open ? 'long-menu' : undefined
+                                    }
+                                    aria-expanded={open ? 'true' : undefined}
+                                    aria-haspopup="true"
+                                    onClick={(event: any) =>
+                                      handleClickOnMenu(event, column.id)
+                                    }
+                                  >
+                                    <MoreVertIcon />
+                                  </IconButton>
+                                  <Menu
+                                    id="long-menu"
+                                    anchorEl={anchorEl}
+                                    open={open && column.id === columnClickedId}
+                                    onClose={handleCloseMenu}
+                                    PaperProps={{
+                                      style: {
+                                        width: '20ch'
+                                      }
+                                    }}
+                                  >
+                                    <Stack
+                                      key="add-column-action"
+                                      justifyContent="center"
+                                      alignItems="flex-start"
+                                      spacing={1}
+                                      sx={{
+                                        padding: '0 8px'
+                                      }}
+                                    >
+                                      <Stack
+                                        flexDirection="row"
+                                        alignItems="center"
+                                        spacing={0.5}
+                                      >
+                                        <HexagonOutlinedIcon size="16px" />
 
-                    {!column.variableType.length && (
-                      <TextField
-                        variant="outlined"
-                        type="text"
-                        disabled={!column.variableType.length}
-                        value=""
+                                        <MenuItem
+                                          onClick={() =>
+                                            handleAddNewColumn(index)
+                                          }
+                                        >
+                                          Add Column
+                                        </MenuItem>
+                                      </Stack>
+                                      <Stack
+                                        key="delete-column-action"
+                                        flexDirection="row"
+                                        alignItems="center"
+                                        spacing={0.5}
+                                      >
+                                        <HexagonOutlinedIcon size="16px" />
+
+                                        <MenuItem
+                                          onClick={() => {
+                                            const newColumns = columns.filter(
+                                              (item) => item.id !== column.id
+                                            );
+
+                                            setColumns(newColumns);
+                                            handleCloseMenu();
+                                          }}
+                                        >
+                                          Delete Column
+                                        </MenuItem>
+                                      </Stack>
+                                    </Stack>
+                                  </Menu>
+                                </>
+                              )
+                            }}
+                          />
+                        )}
                       />
-                    )}
-                  </TableCell>
+                    </Box>
+                  </StyledTableCell>
                 ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              </StyledTableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <StyledTableRow
+                  key={row.id}
+                  // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  {columns.map((column, index) => (
+                    <StyledTableCell key={index}>
+                      {(column.variableType === 'string' ||
+                        column.variableType === 'number') && (
+                        <Stack
+                          onClick={() =>
+                            setSelectedRowData({
+                              ...row,
+                              variableName: column.variableName,
+                              variableType: column.variableType,
+                              variableValue: '',
+                              operator: ''
+                            })
+                          }
+                          disabled={!column.variableType.length}
+                          sx={{ cursor: 'pointer' }}
+                        >
+                          {!!row[column.variableName] ? (
+                            <Stack>{row[column.variableName]}</Stack>
+                          ) : (
+                            <Typography variant="body2">
+                              Select value
+                            </Typography>
+                          )}
+                        </Stack>
+                      )}
+                    </StyledTableCell>
+                  ))}
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </StyledTableContainer>
+      </StyledPaper>
 
-      <Button onClick={() => handleAddNewLayer()}>Add new layer</Button>
+      <Button
+        sx={{ width: '135px' }}
+        onClick={() => handleAddNewLayer()}
+        startIcon={<AddIcon />}
+      >
+        <Typography variant="body2" color={palette.gray}>
+          Add new layer
+        </Typography>
+      </Button>
       {selectedRowData && (
         <SelectVariableValueDialog
           modalOpen={!!selectedRowData}
           handleClose={() => setSelectedRowData(null)}
           selectedRowData={selectedRowData}
-          handleSubmitVariableValue={() => {}}
+          handleSubmitVariableValue={handleSubmitVariableValue}
         />
       )}
     </>

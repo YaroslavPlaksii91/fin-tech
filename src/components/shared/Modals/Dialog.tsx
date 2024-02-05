@@ -21,6 +21,8 @@ interface DialogProps {
   displayedCancelBtn?: boolean;
   displayConfirmBtn?: boolean;
   isCloseButton?: boolean;
+  fullWidth?: boolean;
+  maxWidth?: string;
 }
 
 const Dialog: React.FC<DialogProps> = ({
@@ -34,9 +36,16 @@ const Dialog: React.FC<DialogProps> = ({
   confirmLoading = false,
   displayedCancelBtn = true,
   displayConfirmBtn = true,
-  isCloseButton = false
+  isCloseButton = false,
+  fullWidth = false,
+  maxWidth
 }) => (
-  <MuiDialog open={open} onClose={onClose}>
+  <MuiDialog
+    open={open}
+    onClose={onClose}
+    maxWidth={maxWidth}
+    fullWidth={fullWidth}
+  >
     <DialogTitle>{title}</DialogTitle>
     {isCloseButton && (
       <IconButton

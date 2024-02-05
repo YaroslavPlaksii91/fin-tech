@@ -5,7 +5,13 @@ import {
   useController
 } from 'react-hook-form';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
-import { FormControl, InputLabel } from '@mui/material';
+import {
+  FormControl,
+  InputLabel,
+  FilledInputProps,
+  OutlinedInputProps,
+  InputProps
+} from '@mui/material';
 interface InputProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>
@@ -14,6 +20,8 @@ interface InputProps<
   placeholder: string;
   fullWidth?: boolean;
   type?: string;
+  inputProps?: Partial<FilledInputProps> | Partial<OutlinedInputProps>;
+  styles?: string;
 }
 
 export const InputText = <
@@ -26,12 +34,14 @@ export const InputText = <
   placeholder,
   type = 'text',
   fullWidth = false,
+  inputProps,
+  styles,
   ...props
 }: InputProps<TFieldValues, TName> & TextFieldProps) => {
   const { field, fieldState } = useController({ control, name });
 
   return (
-    <FormControl fullWidth={fullWidth} variant="standard">
+    <FormControl fullWidth={fullWidth} variant="standard" disabled={true}>
       <InputLabel sx={{ position: 'static' }} shrink htmlFor={name}>
         {label}
       </InputLabel>
@@ -42,6 +52,8 @@ export const InputText = <
         helperText={fieldState?.error?.message}
         id={name}
         type={type}
+        InputProps={inputProps}
+        sx={styles}
         {...field}
         {...props}
       />
