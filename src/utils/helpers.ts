@@ -11,11 +11,9 @@ const parseAxiosError = (error: AxiosError) => {
   if (
     error.response &&
     error.response.data &&
-    typeof error.response.data === 'object' &&
-    'errors' in error.response.data
+    typeof error.response.data === 'object'
   ) {
-    const { errors } = error.response.data;
-    return Object.entries(errors as Errors)
+    return Object.entries(error.response.data as Errors)
       .map(([, value]) => `${value.join(', ')}`)
       .join(' ');
   } else {
