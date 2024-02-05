@@ -366,6 +366,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         </ReactFlow>
         {rfInstance && step.id !== MAIN_STEP_ID && (
           <StepConfigureView
+            flow={flow}
             setStep={setStep}
             rfInstance={rfInstance}
             step={step as FlowNode}

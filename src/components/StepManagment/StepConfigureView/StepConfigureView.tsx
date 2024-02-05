@@ -2,13 +2,14 @@ import { StyledContainer } from './styled';
 
 import { MAIN_STEP_ID } from '@constants/common';
 import ChampionChallenger from '@views/ChampionChallenger/ChampionChallenger';
-import { FlowNode } from '@domain/flow';
+import { FlowNode, IFlow } from '@domain/flow';
 import {
   CustomReactFlowInstance,
   StepType
 } from '@components/FlowManagment/FlowChart/types';
 
 interface StepConfigureViewProps {
+  flow: IFlow;
   step: FlowNode;
   setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
   rfInstance: CustomReactFlowInstance;
@@ -17,11 +18,13 @@ interface StepConfigureViewProps {
 const StepConfigureView: React.FC<StepConfigureViewProps> = ({
   step,
   setStep,
+  flow,
   rfInstance
 }) => (
   <StyledContainer>
     {step.type === StepType.CHAMPION_CHALLENGER && (
       <ChampionChallenger
+        flow={flow}
         rfInstance={rfInstance}
         setStep={setStep}
         step={step}
