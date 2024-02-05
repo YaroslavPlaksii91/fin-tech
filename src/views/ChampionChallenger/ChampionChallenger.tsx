@@ -13,7 +13,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import isEmpty from 'lodash/isEmpty';
 import { enqueueSnackbar } from 'notistack';
 
-import { getConnectedNodesIdDFS, unconnectedNodes } from './utils';
+import { getConnectableNodes } from './utils';
 import validationSchema from './validationSchema';
 import { FieldValues, columns } from './types';
 import { StyledPaper, StyledTableContainer } from './styled';
@@ -182,15 +182,11 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   }, [step]);
 
   useEffect(() => {
-    const connectedNodeIds = getConnectedNodesIdDFS(edges, step.id);
-    const floatNodes = unconnectedNodes(nodes, edges, step.id);
-    const formattedOptions = nodes
-      .filter((node) => connectedNodeIds.includes(node.id))
-      .concat(floatNodes)
-      .map((node) => ({
-        value: node.id,
-        label: node.data.name
-      }));
+    const connectableNodes = getConnectableNodes(nodes, step.id);
+    const formattedOptions = connectableNodes.map((node) => ({
+      value: node.id,
+      label: node.data.name
+    }));
     setOptions(formattedOptions);
   }, [nodes.length, edges.length, step.id]);
 
