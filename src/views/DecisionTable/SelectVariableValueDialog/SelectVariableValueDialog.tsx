@@ -3,7 +3,7 @@ import { Button, Stack, InputAdornment, MenuItem } from '@mui/material';
 import { useForm } from 'react-hook-form';
 
 import { palette } from '../../../themeConfig';
-import { VARIABLE_TYPE } from '../constants';
+import { VARIABLE_TYPE, OPERATORS } from '../constants';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
@@ -21,9 +21,10 @@ const SelectVariableValueDialog = ({
     control,
     reset,
     formState: { isSubmitting },
-    getValues
+    watch
   } = useForm({});
   const [operatorOptions, setOperatorOptions] = useState([]);
+  const watchOperator = watch('operator');
 
   const getOperatorOptions = (variableType) => {
     let operators;
@@ -66,8 +67,6 @@ const SelectVariableValueDialog = ({
     }
   }, []);
 
-  const values = getValues();
-  console.log('values', values);
   return (
     <Dialog
       title="Enter condition"
@@ -87,6 +86,7 @@ const SelectVariableValueDialog = ({
             fullWidth
             name="variableName"
             control={control}
+            disabled={true}
             inputProps={{
               startAdornment: (
                 <InputAdornment
@@ -103,7 +103,8 @@ const SelectVariableValueDialog = ({
                 >
                   If
                 </InputAdornment>
-              )
+              ),
+              disabled: true
             }}
             styles={{ '& .MuiOutlinedInput-root': { paddingLeft: '0' } }}
           />
@@ -112,9 +113,9 @@ const SelectVariableValueDialog = ({
             control={control}
             displayEmpty
             fullWidth
-            // doesn't work
             styles={{
-              width: '480px',
+              width: '280px',
+              minWidth: '110px',
               '& .MuiInputBase-root ': {
                 height: '40px'
               }
@@ -126,12 +127,30 @@ const SelectVariableValueDialog = ({
               </MenuItem>
             ))}
           </SingleSelect>
-          <InputText
-            fullWidth
-            name="variableValue"
-            control={control}
-            placeholder="Enter value"
-          />
+          {watchOperator === OPERATORS.Between ? (
+            <>
+              <InputText
+                fullWidth
+                name="lowestValue"
+                control={control}
+                placeholder="Enter lowest value"
+              />
+              <InputText
+                fullWidth
+                name="highestValue"
+                control={control}
+                placeholder="Enter highest value"
+              />
+            </>
+          ) : (
+            <InputText
+              fullWidth
+              name="variableValue"
+              control={control}
+              placeholder="Enter value"
+              inputProps={{ disabled: watchOperator === OPERATORS.Any }}
+            />
+          )}
         </Stack>
 
         <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">

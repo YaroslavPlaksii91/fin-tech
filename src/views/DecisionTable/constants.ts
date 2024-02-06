@@ -15,15 +15,28 @@ export const OPERATORS = {
   In: 'in',
   MoreEqual: '>=',
   LessEqual: '<=',
-  Between: 'between'
+  Between: 'between',
+  Any: 'any'
 };
 
-export const variablesOptions: VariablesOptionsProps[] = [
-  { variableName: 'LeadSourse1', variableType: 'string' },
-  { variableName: 'LeadSourse2', variableType: 'string' },
-  { variableName: 'LeadSourse3', variableType: 'string' },
-  { variableName: 'LeadSourse4', variableType: 'string' },
-  { variableName: 'LeadSourse5', variableType: 'string' },
+export const inputVariablesOptions: VariablesOptionsProps[] = [
+  { variableName: 'LeadSourсe1', variableType: 'string' },
+  { variableName: 'LeadSource2', variableType: 'string' },
+  { variableName: 'LeadSource3', variableType: 'string' },
+  { variableName: 'LeadSource4', variableType: 'string' },
+  { variableName: 'LeadSoursce5', variableType: 'string' },
   { variableName: 'LeadPrice', variableType: 'number' },
   { variableName: 'CRA.Claritties.Score', variableType: 'number' }
 ];
+
+export const outputVariablesOptions: VariablesOptionsProps[] = [
+  { variableName: 'Decision', variableType: 'enum' },
+  { variableName: 'MaxLoanAmount', variableType: 'number' },
+  { variableName: 'MinLoanAmount', variableType: 'number' }
+];
+
+export const CATEGORIES = {
+  Condition: 'condition',
+  Output: 'output',
+  OtherwiseCondition: 'otherwise_condition'
+};

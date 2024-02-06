@@ -41,7 +41,7 @@ export const InputText = <
   const { field, fieldState } = useController({ control, name });
 
   return (
-    <FormControl fullWidth={fullWidth} variant="standard" disabled={true}>
+    <FormControl fullWidth={fullWidth} variant="standard">
       <InputLabel sx={{ position: 'static' }} shrink htmlFor={name}>
         {label}
       </InputLabel>
