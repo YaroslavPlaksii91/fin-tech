@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import isEmpty from 'lodash/isEmpty';
 import { enqueueSnackbar } from 'notistack';
+import { cloneDeep } from 'lodash';
 
 import { getConnectableNodes } from './utils';
 import validationSchema from './validationSchema';
@@ -129,12 +130,16 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         data: { onAdd: onAddNodeBetweenEdges }
       };
     });
-    const newEdges = edges
+
+    const storedNodes = cloneDeep(nodes);
+    const storedEdges = cloneDeep(edges);
+
+    const newEdges = storedEdges
       .filter((edg) => !existingSplitEdges.includes(edg.id))
       .filter((edg) => !targetNodesIds.includes(edg.target))
       .concat(splitEdges);
 
-    const updatedNodes = nodes.map((node: FlowNode) => {
+    const updatedNodes = storedNodes.map((node: FlowNode) => {
       if (node.id === step.id) {
         // This updates data inside the node. Since React Flow uses Zustand under the hood, it is necessary to recreate the data.
         const splits = node.data.splits ?? [];
@@ -155,8 +160,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     });
 
     try {
-      // TODO add validation endpoint
-      await flowService.saveFlow({
+      await flowService.validateFlow({
         ...flow,
         nodes: updatedNodes,
         edges: newEdges
