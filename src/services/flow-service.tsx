@@ -49,6 +49,14 @@ class FlowService {
     const { data } = await api.get<IFlow>('/production-flow/details');
     return data;
   }
+
+  async validateFlow(flow: IFlow) {
+    const res = await api.post(
+      '/flows/validate-is-directed-acyclic-graph',
+      flow
+    );
+    return res;
+  }
 }
 
 export const flowService = new FlowService();

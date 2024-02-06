@@ -2,10 +2,13 @@ import { Button, Stack, Typography } from '@mui/material';
 
 import { palette } from '../../themeConfig';
 
+import LoadingButton from '@components/shared/LoadingButton';
+
 interface StepDetailsHeaderProps {
   title: string;
   details: string;
   disabled: boolean;
+  isSubmitting: boolean;
   onDiscard: () => void;
 }
 
@@ -13,6 +16,7 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
   title,
   details,
   onDiscard,
+  isSubmitting,
   disabled
 }) => (
   <Stack
@@ -35,9 +39,14 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
     >
       Discard
     </Button>
-    <Button disabled={disabled} variant="contained" type="submit">
+    <LoadingButton
+      disabled={disabled}
+      loading={isSubmitting}
+      type="submit"
+      variant="contained"
+    >
       Apply changes
-    </Button>
+    </LoadingButton>
   </Stack>
 );
 
