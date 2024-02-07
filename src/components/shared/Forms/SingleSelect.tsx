@@ -4,7 +4,6 @@ import {
   UseControllerProps,
   useController
 } from 'react-hook-form';
-
 import { FormControl, InputProps, Select } from '@mui/material';
 
 import { StyledError } from './styled';
@@ -35,11 +34,7 @@ export const SingleSelect = <
   const { field, fieldState } = useController({ control, name });
 
   return (
-    <FormControl
-      error={!!fieldState?.error}
-      sx={styles}
-      fullWidth={fullWidth}
-    >
+    <FormControl error={!!fieldState?.error} sx={styles} fullWidth={fullWidth}>
       <Select {...field} displayEmpty={displayEmpty}>
         {children}
       </Select>

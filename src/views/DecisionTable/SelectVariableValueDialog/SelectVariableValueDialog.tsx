@@ -1,34 +1,50 @@
 import { useEffect, useState } from 'react';
 import { Button, Stack, InputAdornment, MenuItem } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import { palette } from '../../../themeConfig';
 import { VARIABLE_TYPE, OPERATORS } from '../constants';
+import { SelectedRowDataProps } from '../types';
+
+import validationSchema from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';
 import { SingleSelect } from '@components/shared/Forms/SingleSelect';
 
+type SelectVariableValueDialogProps = {
+  modalOpen: boolean;
+  handleClose: () => void;
+  selectedRowData: SelectedRowDataProps;
+  handleSubmitVariableValue: (data: SelectedRowDataProps) => void;
+};
+
 const SelectVariableValueDialog = ({
   modalOpen,
   handleClose,
   selectedRowData,
   handleSubmitVariableValue
-}) => {
+}: SelectVariableValueDialogProps) => {
   const {
     handleSubmit,
     control,
     reset,
     formState: { isSubmitting },
     watch
-  } = useForm({});
-  const [operatorOptions, setOperatorOptions] = useState([]);
+  } = useForm({
+    resolver: yupResolver(validationSchema)
+  });
+
+  const [operatorOptions, setOperatorOptions] = useState<
+    Record<string, string> | never[]
+  >([]);
   const watchOperator = watch('operator');
 
   // TODO: make method more reusable and presentable
 
-  const getOperatorOptions = (variableType) => {
+  const getOperatorOptions = (variableType: string) => {
     let operators;
     if (variableType === VARIABLE_TYPE.String) {
       operators = [
@@ -55,7 +71,7 @@ const SelectVariableValueDialog = ({
     setOperatorOptions(operators);
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: SelectedRowDataProps) => {
     handleSubmitVariableValue(data);
   };
 
@@ -120,7 +136,7 @@ const SelectVariableValueDialog = ({
               }
             }}
           >
-            {operatorOptions.map((option) => (
+            {operatorOptions.map((option: Record<string, string>) => (
               <MenuItem key={option.key} value={option.value}>
                 {option.value}
               </MenuItem>
@@ -144,7 +160,7 @@ const SelectVariableValueDialog = ({
           ) : (
             <InputText
               fullWidth
-              name="variableValue"
+              name="value"
               control={control}
               placeholder="Enter value"
               inputProps={{ disabled: watchOperator === OPERATORS.Any }}

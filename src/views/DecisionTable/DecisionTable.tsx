@@ -10,7 +10,6 @@ import {
   outputVariablesOptions,
   CATEGORIES
 } from './constants';
-
 import {
   StyledPaper,
   StyledTableContainer,
@@ -19,6 +18,7 @@ import {
 } from './styled';
 import TableSkeleton from './TableSkeleton/TableSkeleton';
 
+import { FlowNode } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
@@ -29,7 +29,11 @@ import {
   StyledTableRow
 } from '@components/shared/Table/styled';
 
-const DecisionTableStep = ({ step }) => {
+type DecisionTableStepProps = {
+  step: FlowNode;
+};
+
+const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
   // define states for condition obj
   const [inputColumnClickedId, setInputColumnClickedId] =
     useState<string>(uuidv4());
@@ -133,7 +137,7 @@ const DecisionTableStep = ({ step }) => {
         </Typography>
       </Button>
       <StepDetailsHeader
-        title={'Otherwise condition'}
+        title="Otherwise condition"
         details="A condition used when no rule from previous table was not executed."
         isActionContainerVisible={false}
       />
@@ -186,7 +190,7 @@ const DecisionTableStep = ({ step }) => {
           modalOpen={!!openNoteModal}
           handleClose={() => setOpenNoteModal(false)}
           handleSubmitNote={() => setOpenNoteModal(false)}
-          note={''}
+          note=""
         />
       )}
     </>

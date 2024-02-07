@@ -18,7 +18,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { StyledTable } from './styled';
 import { OPERATORS, CATEGORIES, VARIABLE_TYPE } from '../constants';
-import { VariablesOptionsProps } from '../types';
+import { VariablesOptionsProps, SelectedRowDataProps } from '../types';
 
 import SelectVariableValueDialog from '../SelectVariableValueDialog/SelectVariableValueDialog';
 
@@ -44,7 +44,8 @@ const TableSkeleton = ({
   handleDeleteRow
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedRowData, setSelectedRowData] = useState(null);
+  const [selectedRowData, setSelectedRowData] =
+    useState<SelectedRowDataProps | null>(null);
   const open = Boolean(anchorEl);
 
   const handleClickOnMenu = (
@@ -70,16 +71,10 @@ const TableSkeleton = ({
     handleCloseMenu();
   };
 
-  const handleSubmitVariableValue = (data) => {
+  const handleSubmitVariableValue = (data: SelectedRowDataProps) => {
     console.log('handleSubmitVariableValue_in_Table', data);
-    const {
-      id,
-      variableName,
-      operator,
-      variableValue,
-      lowestValue,
-      highestValue
-    } = data;
+    const { id, variableName, operator, value, lowestValue, highestValue } =
+      data;
 
     setRows(
       rows.map((row) => {
@@ -89,7 +84,7 @@ const TableSkeleton = ({
             [variableName]:
               operator === OPERATORS.Between
                 ? `${operator} ${lowestValue} and ${highestValue}`
-                : `${operator} ${variableValue}`
+                : `${operator} ${value}`
           };
         }
         return row;
@@ -252,7 +247,7 @@ const TableSkeleton = ({
                           ...row,
                           variableName: column.variableName,
                           variableType: column.variableType,
-                          variableValue: '',
+                          value: '',
                           operator: '',
                           lowestValue: '',
                           highestValue: ''
