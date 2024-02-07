@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { palette } from '../../../themeConfig';
 import { VARIABLE_TYPE, OPERATORS } from '../constants';
-import { SelectedRowDataProps } from '../types';
+import { RowDataProps } from '../types';
 
 import validationSchema from './validationSchema';
 
@@ -17,8 +17,8 @@ import { SingleSelect } from '@components/shared/Forms/SingleSelect';
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
   handleClose: () => void;
-  selectedRowData: SelectedRowDataProps;
-  handleSubmitVariableValue: (data: SelectedRowDataProps) => void;
+  selectedRowData: RowDataProps;
+  handleSubmitVariableValue: (data: RowDataProps) => void;
 };
 
 const SelectVariableValueDialog = ({
@@ -71,7 +71,7 @@ const SelectVariableValueDialog = ({
     setOperatorOptions(operators);
   };
 
-  const onSubmit = (data: SelectedRowDataProps) => {
+  const onSubmit = (data: RowDataProps) => {
     handleSubmitVariableValue(data);
   };
 

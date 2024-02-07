@@ -17,7 +17,11 @@ import TextField, { TextFieldProps } from '@mui/material/TextField';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { OPERATORS, CATEGORIES, VARIABLE_TYPE } from '../constants';
-import { VariablesOptionsProps, SelectedRowDataProps } from '../types';
+import {
+  VariablesOptionsProps,
+  RowDataProps,
+  VariablesDataProps
+} from '../types';
 import SelectVariableValueDialog from '../SelectVariableValueDialog/SelectVariableValueDialog';
 
 import { StyledTable } from './styled';
@@ -31,6 +35,18 @@ import {
   StyledTableRow
 } from '@components/shared/Table/styled';
 
+type TableSkeletonProps = {
+  columns: VariablesDataProps[];
+  setColumns: React.Dispatch<React.SetStateAction<VariablesDataProps[]>>;
+  rows: RowDataProps[];
+  setRows: React.Dispatch<React.SetStateAction<RowDataProps[]>>;
+  variablesOptions: VariablesOptionsProps[];
+  columnClickedId: string;
+  setColumnClickedId: React.Dispatch<React.SetStateAction<string>>;
+  category: string;
+  handleDeleteRow: (id: string) => void;
+};
+
 const TableSkeleton = ({
   columns,
   setColumns,
@@ -41,10 +57,11 @@ const TableSkeleton = ({
   setColumnClickedId,
   category,
   handleDeleteRow
-}) => {
+}: TableSkeletonProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedRowData, setSelectedRowData] =
-    useState<SelectedRowDataProps | null>(null);
+  const [selectedRowData, setSelectedRowData] = useState<RowDataProps | null>(
+    null
+  );
   const open = Boolean(anchorEl);
 
   const handleClickOnMenu = (
@@ -70,13 +87,14 @@ const TableSkeleton = ({
     handleCloseMenu();
   };
 
-  const handleSubmitVariableValue = (data: SelectedRowDataProps) => {
-    console.log('handleSubmitVariableValue_in_Table', data);
+  const handleSubmitVariableValue = (data: RowDataProps) => {
+    // TODO: delete this after refactoring
+    // console.log('handleSubmitVariableValue_in_Table', data);
     const { id, variableName, operator, value, lowestValue, highestValue } =
       data;
 
     setRows(
-      rows.map((row) => {
+      rows.map((row: RowDataProps) => {
         if (row.id === id) {
           return {
             ...row,
@@ -95,7 +113,7 @@ const TableSkeleton = ({
   const getOptions = () => {
     const columnsVariables = columns.map((column) => column.variableName);
 
-    const newOptions = variablesOptions.filter(
+    const newOptions: VariablesOptionsProps[] = variablesOptions.filter(
       (option: VariablesOptionsProps) =>
         !columnsVariables.includes(option.variableName)
     );
@@ -108,7 +126,7 @@ const TableSkeleton = ({
       <StyledTable sx={{ minWidth: 650 }}>
         <TableHead>
           <StyledTableRow>
-            {columns.map((column, index) => (
+            {columns.map((column: VariablesDataProps, index: number) => (
               <StyledTableCell key={column.id}>
                 <Box
                   sx={{
@@ -131,20 +149,24 @@ const TableSkeleton = ({
                     getOptionLabel={(option: VariablesOptionsProps) =>
                       option ? option.variableName : ''
                     }
-                    onChange={(e, newValue: VariablesOptionsProps) => {
-                      setColumns(
-                        columns.map((item) => {
-                          if (item.id === column.id) {
-                            return {
-                              ...item,
-                              variableName: newValue.variableName,
-                              variableType: newValue.variableType
-                            };
-                          } else {
-                            return item;
-                          }
-                        })
-                      );
+                    onChange={(
+                      event: Event,
+                      newValue: VariablesOptionsProps
+                    ) => {
+                      event &&
+                        setColumns(
+                          columns.map((item) => {
+                            if (item.id === column.id) {
+                              return {
+                                ...item,
+                                variableName: newValue.variableName,
+                                variableType: newValue.variableType
+                              };
+                            } else {
+                              return item;
+                            }
+                          })
+                        );
                     }}
                     renderInput={(params: TextFieldProps) => (
                       <TextField
@@ -160,9 +182,12 @@ const TableSkeleton = ({
                                 aria-controls={open ? 'long-menu' : undefined}
                                 aria-expanded={open ? 'true' : undefined}
                                 aria-haspopup="true"
-                                onClick={(event: any) =>
-                                  handleClickOnMenu(event, column.id)
-                                }
+                                onClick={(
+                                  event: React.MouseEvent<
+                                    HTMLButtonElement,
+                                    MouseEvent
+                                  >
+                                ) => handleClickOnMenu(event, column.id)}
                               >
                                 <MoreVertIcon />
                               </IconButton>
@@ -234,7 +259,7 @@ const TableSkeleton = ({
           </StyledTableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {rows.map((row: RowDataProps) => (
             <StyledTableRow key={row.id} sx={{ height: '62px' }}>
               {columns.map((column, index) => (
                 <StyledTableCell key={index}>
