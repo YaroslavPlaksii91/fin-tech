@@ -93,9 +93,12 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
       />
       <StyledPaper>
         <StyledTableContainer>
-          <Stack sx={{}}>
+          <Stack sx={{ width: 'inherit' }}>
             <StyledStack
-              sx={{ borderRight: '1px solid rgba(209, 217, 226, 0.4)' }}
+              sx={{
+                borderRight: '1px solid rgba(209, 217, 226, 0.4)',
+                borderBottom: '2px solid rgba(209, 217, 226, 0.4)'
+              }}
             >
               Condition
             </StyledStack>
@@ -111,8 +114,12 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
               handleDeleteRow={handleDeleteLayer}
             />
           </Stack>
-          <Stack sx={{}}>
-            <StyledStack>Output</StyledStack>
+          <Stack>
+            <StyledStack
+              sx={{ borderBottom: '2px solid rgba(209, 217, 226, 0.4)' }}
+            >
+              Output
+            </StyledStack>
             <TableSkeleton
               columns={outputColumns}
               setColumns={setOutputColumns}

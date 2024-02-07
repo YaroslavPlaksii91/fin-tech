@@ -16,17 +16,16 @@ import {
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-import { StyledTable } from './styled';
 import { OPERATORS, CATEGORIES, VARIABLE_TYPE } from '../constants';
 import { VariablesOptionsProps, SelectedRowDataProps } from '../types';
-
 import SelectVariableValueDialog from '../SelectVariableValueDialog/SelectVariableValueDialog';
+
+import { StyledTable } from './styled';
 
 import {
   HexagonOutlinedIcon,
   DeleteOutlineIcon
 } from '@components/shared/Icons';
-
 import {
   StyledTableCell,
   StyledTableRow
@@ -256,7 +255,7 @@ const TableSkeleton = ({
                       disabled={!column.variableType.length}
                       sx={{ cursor: 'pointer' }}
                     >
-                      {!!row[column.variableName] ? (
+                      {row[column.variableName] ? (
                         <Stack>{row[column.variableName]}</Stack>
                       ) : (
                         <Typography variant="body2">Select value</Typography>

@@ -7,7 +7,19 @@ export const validationSchema = yup.object().shape({
   value: yup
     .string()
     .when('operator', ([operator], schema) =>
-      operator === OPERATORS.Any ? schema.notRequired() : schema.required()
+      operator === OPERATORS.Any || OPERATORS.Between
+        ? schema.notRequired()
+        : schema.required()
+    ),
+  lowestValue: yup
+    .string()
+    .when('operator', ([operator], schema) =>
+      operator === OPERATORS.Between ? schema.required() : schema.nullable()
+    ),
+  highestValue: yup
+    .string()
+    .when('operator', ([operator], schema) =>
+      operator === OPERATORS.Between ? schema.required() : schema.nullable()
     )
 });
 
