@@ -7,7 +7,7 @@ export enum ENUM_TYPE {
 export const VARIABLE_TYPE = {
   Number: 'number',
   String: 'string',
-  Enum: ENUM_TYPE
+  Enum: 'enum'
 };
 
 export const OPERATORS = {

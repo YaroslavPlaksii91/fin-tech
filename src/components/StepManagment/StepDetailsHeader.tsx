@@ -7,13 +7,15 @@ interface StepDetailsHeaderProps {
   details: string;
   disabled?: boolean;
   onDiscard?: () => void;
+  isActionContainerVisible?: boolean;
 }
 
 const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
   title,
   details,
   onDiscard,
-  disabled
+  disabled,
+  isActionContainerVisible = true
 }) => (
   <Stack
     flexDirection="row"
@@ -27,17 +29,21 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
         {details}
       </Typography>
     </Stack>
-    <Button
-      sx={{ margin: '0px 8px 0 auto' }}
-      variant="contained"
-      color="secondary"
-      onClick={onDiscard}
-    >
-      Discard
-    </Button>
-    <Button disabled={disabled} variant="contained" type="submit">
-      Apply changes
-    </Button>
+    {isActionContainerVisible && (
+      <>
+        <Button
+          sx={{ margin: '0px 8px 0 auto' }}
+          variant="contained"
+          color="secondary"
+          onClick={onDiscard}
+        >
+          Discard
+        </Button>
+        <Button disabled={disabled} variant="contained" type="submit">
+          Apply changes
+        </Button>
+      </>
+    )}
   </Stack>
 );
 

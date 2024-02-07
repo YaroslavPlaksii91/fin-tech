@@ -26,6 +26,8 @@ const SelectVariableValueDialog = ({
   const [operatorOptions, setOperatorOptions] = useState([]);
   const watchOperator = watch('operator');
 
+  // TODO: make method more reusable and presentable
+
   const getOperatorOptions = (variableType) => {
     let operators;
     if (variableType === VARIABLE_TYPE.String) {
@@ -54,13 +56,10 @@ const SelectVariableValueDialog = ({
   };
 
   const onSubmit = (data) => {
-    //console.log('onSubmit_data', data);
     handleSubmitVariableValue(data);
   };
 
   useEffect(() => {
-    // console.log('SelectVariableValueDialog_ selectedRowData', selectedRowData);
-
     if (selectedRowData) {
       reset(selectedRowData);
       getOperatorOptions(selectedRowData.variableType);

@@ -10,13 +10,14 @@ import {
   Autocomplete,
   Menu,
   MenuItem,
-  Typography
+  Typography,
+  Select
 } from '@mui/material';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { StyledTable } from './styled';
-import { OPERATORS, CATEGORIES } from '../constants';
+import { OPERATORS, CATEGORIES, VARIABLE_TYPE } from '../constants';
 import { VariablesOptionsProps } from '../types';
 
 import SelectVariableValueDialog from '../SelectVariableValueDialog/SelectVariableValueDialog';
@@ -123,7 +124,13 @@ const TableSkeleton = ({
                 >
                   <Autocomplete
                     options={getOptions()}
-                    sx={{ width: 250 }}
+                    sx={{
+                      width: '100%',
+                      minWidth: 250,
+                      '& .MuiInputBase-root': {
+                        height: '50px'
+                      }
+                    }}
                     value={column}
                     disableClearable={true}
                     forcePopupIcon={false}
@@ -234,14 +241,11 @@ const TableSkeleton = ({
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <StyledTableRow
-              key={row.id}
-              // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
+            <StyledTableRow key={row.id} sx={{ height: '62px' }}>
               {columns.map((column, index) => (
                 <StyledTableCell key={index}>
-                  {(column.variableType === 'string' ||
-                    column.variableType === 'number') && (
+                  {(column.variableType === VARIABLE_TYPE.String ||
+                    column.variableType === VARIABLE_TYPE.Number) && (
                     <Stack
                       onClick={() =>
                         setSelectedRowData({
@@ -264,9 +268,20 @@ const TableSkeleton = ({
                       )}
                     </Stack>
                   )}
+                  {/* mock only for dicision type */}
+                  {column.variableType === VARIABLE_TYPE.Enum && (
+                    <Select fullWidth size="small">
+                      <MenuItem key="accept-action" value="Accept">
+                        Accept
+                      </MenuItem>
+                      <MenuItem key="accept-denied" value="Denied">
+                        Denied
+                      </MenuItem>
+                    </Select>
+                  )}
                 </StyledTableCell>
               ))}
-              {category === CATEGORIES.Output && (
+              {category === CATEGORIES.Output && !!rows.length && (
                 <StyledTableCell sx={{ padding: 0 }} width={40}>
                   <Button
                     fullWidth
