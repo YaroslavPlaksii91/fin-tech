@@ -36,9 +36,9 @@ export const outputVariablesOptions: VariablesOptionsProps[] = [
 ];
 
 export const CATEGORIES = {
-  Condition: 'condition',
-  Output: 'output',
-  OtherwiseCondition: 'otherwise_condition'
+  Conditions: 'conditions',
+  Actions: 'actions',
+  ElseActions: 'elseActions'
 };
 
 export const DECISION_OPTIONS = [

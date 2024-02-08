@@ -16,6 +16,7 @@ import {
   outputVariablesOptions,
   CATEGORIES
 } from './constants';
+import { VariablesOptionsProps } from './types';
 import {
   StyledPaper,
   StyledTableContainer,
@@ -39,50 +40,153 @@ type DecisionTableStepProps = {
 };
 
 const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
-  // define states for condition obj
-  const [inputColumnClickedId, setInputColumnClickedId] =
-    useState<string>(uuidv4());
-  const [inputColumns, setInputColumns] = useState([
-    { id: inputColumnClickedId, variableName: '', variableType: '' }
-  ]);
-  const [inputRows, setInputRows] = useState([]);
+  const firstConditionsColumnId = uuidv4();
+  const firstActionsColumnId = uuidv4();
 
-  // define states for output obj
-  const [outputColumnClickedId, setOutputColumnClickedId] =
-    useState<string>(uuidv4());
-  const [outputColumns, setOutputColumns] = useState([
-    { id: outputColumnClickedId, variableName: '', variableType: '' }
-  ]);
-  const [outputRows, setOutputRows] = useState([]);
-
-  // define states for otherwise obj
-  const [otherwiseObjColumnClickedId, setOtherwiseObjColumnClickedId] =
-    useState<string>(uuidv4());
-  const [otherwiseObjColumns, setOtherwiseObjColumns] = useState([
-    { id: otherwiseObjColumnClickedId, variableName: '', variableType: '' }
-  ]);
-  const [otherwiseObjRows, setOtherwiseObjRows] = useState([
-    {
-      id: uuidv4()
+  const [selectedCaseEntries, setSelectedCaseEntries] = useState({
+    conditions: {
+      columnClickedId: firstConditionsColumnId,
+      columns: [
+        { id: firstConditionsColumnId, variableName: '', variableType: '' }
+      ],
+      rows: []
+    },
+    actions: {
+      columnClickedId: firstActionsColumnId,
+      columns: [
+        { id: firstActionsColumnId, variableName: '', variableType: '' }
+      ],
+      rows: []
     }
-  ]);
+  });
 
   const [openNoteModal, setOpenNoteModal] = useState(false);
 
   const handleAddNewLayer = () => {
     const newRowId = uuidv4();
-    setInputRows([...inputRows, { id: newRowId }]);
-    setOutputRows([...outputRows, { id: newRowId }]);
+
+    setSelectedCaseEntries({
+      ...selectedCaseEntries,
+      conditions: {
+        ...selectedCaseEntries.conditions,
+        rows: [...selectedCaseEntries.conditions.rows, { id: newRowId }]
+      },
+      actions: {
+        ...selectedCaseEntries.actions,
+        rows: [...selectedCaseEntries.actions.rows, { id: newRowId }]
+      }
+    });
   };
 
   const handleDeleteLayer = (id: string) => {
-    const newOutputRows = outputRows.filter((item) => item.id !== id);
-    const newInputRows = inputRows.filter((item) => item.id !== id);
+    const { conditions, actions } = selectedCaseEntries;
 
-    setInputRows(newInputRows);
-    setOutputRows(newOutputRows);
+    const newConditionsRows = conditions.rows.filter((item) => item.id !== id);
+    const newActionsRows = actions.rows.filter((item) => item.id !== id);
+
+    setSelectedCaseEntries({
+      ...selectedCaseEntries,
+      conditions: {
+        ...selectedCaseEntries.conditions,
+        rows: newConditionsRows
+      },
+      actions: {
+        ...selectedCaseEntries.actions,
+        rows: newActionsRows
+      }
+    });
   };
 
+  const handleChangeColumnClickedId = (
+    newColumnId: string,
+    category: string
+  ) => {
+    setSelectedCaseEntries({
+      ...selectedCaseEntries,
+      [category]: {
+        ...selectedCaseEntries[category],
+        columnClickedId: newColumnId
+      }
+    });
+  };
+
+  const handleInsertingColumn = ({
+    columnClickedIndex,
+    category
+  }: {
+    columnClickedIndex: number;
+    category: string;
+  }) => {
+    const newColumns = [...selectedCaseEntries[category].columns];
+
+    newColumns.splice(columnClickedIndex + 1, 0, {
+      id: uuidv4(),
+      variableName: '',
+      variableType: ''
+    });
+
+    setSelectedCaseEntries({
+      ...selectedCaseEntries,
+      [category]: {
+        ...selectedCaseEntries[category],
+        columns: newColumns
+      }
+    });
+  };
+
+  const handleDeleteCategoryColumn = ({
+    columnId,
+    category
+  }: {
+    columnId: string;
+    category: string;
+  }) => {
+    const newColumns = [...selectedCaseEntries[category].columns].filter(
+      (item) => item.id !== columnId
+    );
+
+    setSelectedCaseEntries({
+      ...selectedCaseEntries,
+      [category]: {
+        ...selectedCaseEntries[category],
+        columns: newColumns
+      }
+    });
+  };
+
+  const handleChangeVariable = ({
+    columnId,
+    newVariable,
+    category
+  }: {
+    columnId: string;
+    newVariable: VariablesOptionsProps;
+    category: string;
+  }) => {
+    const updatedColumns = selectedCaseEntries[category].columns.map((item) => {
+      if (item.id === columnId) {
+        return {
+          ...item,
+          variableName: newVariable.variableName,
+          variableType: newVariable.variableType
+        };
+      } else {
+        return item;
+      }
+    });
+
+    setSelectedCaseEntries({
+      ...selectedCaseEntries,
+      [category]: {
+        ...selectedCaseEntries[category],
+        columns: updatedColumns
+      }
+    });
+  };
+
+  // console.log('selectedCaseEntries', selectedCaseEntries);
+
+  const { conditions, actions } = selectedCaseEntries;
   return (
     <>
       <StepDetailsHeader
@@ -103,15 +207,16 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
               Condition
             </StyledStack>
             <TableSkeleton
-              columns={inputColumns}
-              setColumns={setInputColumns}
-              rows={inputRows}
-              setRows={setInputRows}
+              columns={conditions.columns}
+              rows={conditions.rows}
               variablesOptions={inputVariablesOptions}
-              columnClickedId={inputColumnClickedId}
-              setColumnClickedId={setInputColumnClickedId}
-              category={CATEGORIES.Condition}
+              columnClickedId={conditions.columnClickedId}
+              category={CATEGORIES.Conditions}
               handleDeleteRow={handleDeleteLayer}
+              handleChangeColumnClickedId={handleChangeColumnClickedId}
+              handleInsertingColumn={handleInsertingColumn}
+              handleDeleteCategoryColumn={handleDeleteCategoryColumn}
+              handleChangeVariable={handleChangeVariable}
             />
           </Stack>
           <Stack>
@@ -121,15 +226,16 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
               Output
             </StyledStack>
             <TableSkeleton
-              columns={outputColumns}
-              setColumns={setOutputColumns}
-              rows={outputRows}
-              setRows={setOutputRows}
+              columns={actions.columns}
+              rows={actions.rows}
               variablesOptions={outputVariablesOptions}
-              columnClickedId={outputColumnClickedId}
-              setColumnClickedId={setOutputColumnClickedId}
-              category={CATEGORIES.Output}
+              columnClickedId={actions.columnClickedId}
+              category={CATEGORIES.Actions}
               handleDeleteRow={handleDeleteLayer}
+              handleChangeColumnClickedId={handleChangeColumnClickedId}
+              handleInsertingColumn={handleInsertingColumn}
+              handleDeleteCategoryColumn={handleDeleteCategoryColumn}
+              handleChangeVariable={handleChangeVariable}
             />
           </Stack>
         </StyledTableContainer>
@@ -150,10 +256,16 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
       />
       {/* Otherwise table */}
       <StyledPaper>
-        <StyledTableContainer>
+        <StyledTableContainer
+          sx={{
+            '& .MuiTableCell-root': {
+              height: '46px'
+            }
+          }}
+        >
           <StyledTable>
             <TableHead>
-              <StyledTableRow sx={{ height: '74px' }}>
+              <StyledTableRow>
                 <StyledTableCell> Otherwise Condition</StyledTableCell>
               </StyledTableRow>
             </TableHead>
@@ -164,19 +276,14 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
             </TableBody>
           </StyledTable>
           <TableSkeleton
-            columns={otherwiseObjColumns}
-            setColumns={setOtherwiseObjColumns}
-            rows={otherwiseObjRows}
-            setRows={setOtherwiseObjRows}
+            columns={actions.columns}
+            rows={[{ id: uuidv4() }]}
             variablesOptions={outputVariablesOptions}
-            columnClickedId={otherwiseObjColumnClickedId}
-            setColumnClickedId={setOtherwiseObjColumnClickedId}
-            category={CATEGORIES.OtherwiseCondition}
-            handleDeleteRow={() => {}}
+            category={CATEGORIES.ElseActions}
           />
         </StyledTableContainer>
       </StyledPaper>
-      {/* TODO: submition of note during integration */}
+
       <Stack sx={{ margin: '16px' }}>
         <NoteSection handleOpenNoteModal={() => setOpenNoteModal(true)}>
           <TextField fullWidth label="Enter note here" disabled size="small" />

@@ -1,68 +1,45 @@
 import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import {
   Button,
   Stack,
   Box,
-  IconButton,
   TableBody,
   TableHead,
   Autocomplete,
-  Menu,
-  MenuItem,
   Typography
 } from '@mui/material';
-import TextField, { TextFieldProps } from '@mui/material/TextField';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { TextFieldProps } from '@mui/material/TextField';
 
-import {
-  OPERATORS,
-  CATEGORIES,
-  VARIABLE_TYPE,
-  DECISION_OPTIONS
-} from '../constants';
+import { CATEGORIES, VARIABLE_TYPE, DECISION_OPTIONS } from '../constants';
 import {
   VariablesOptionsProps,
   RowDataProps,
   VariablesDataProps
 } from '../types';
 import SelectVariableValueDialog from '../SelectVariableValueDialog/SelectVariableValueDialog';
+import { AutocompleteInput } from '../AutocompleteInput/AutocompleteInput';
 
 import { StyledTable } from './styled';
 
-import {
-  HexagonOutlinedIcon,
-  DeleteOutlineIcon
-} from '@components/shared/Icons';
+import { DeleteOutlineIcon } from '@components/shared/Icons';
 import {
   StyledTableCell,
   StyledTableRow
 } from '@components/shared/Table/styled';
 import SelectComponent from '@components/shared/SelectComponent/SelectComponent';
 
-type TableSkeletonProps = {
-  columns: VariablesDataProps[];
-  setColumns: React.Dispatch<React.SetStateAction<VariablesDataProps[]>>;
-  rows: RowDataProps[];
-  setRows: React.Dispatch<React.SetStateAction<RowDataProps[]>>;
-  variablesOptions: VariablesOptionsProps[];
-  columnClickedId: string;
-  setColumnClickedId: React.Dispatch<React.SetStateAction<string>>;
-  category: string;
-  handleDeleteRow: (id: string) => void;
-};
-
 const TableSkeleton = ({
   columns,
-  setColumns,
   rows,
-  setRows,
   variablesOptions,
   columnClickedId,
-  setColumnClickedId,
   category,
-  handleDeleteRow
-}: TableSkeletonProps) => {
+  handleDeleteRow,
+  handleChangeColumnClickedId,
+  handleInsertingColumn,
+  handleDeleteCategoryColumn,
+  handleChangeVariable
+}) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedRowData, setSelectedRowData] = useState<RowDataProps | null>(
     null
@@ -78,7 +55,8 @@ const TableSkeleton = ({
     columnClickedIdNew: string
   ) => {
     setAnchorEl(event.currentTarget);
-    setColumnClickedId(columnClickedIdNew);
+
+    handleChangeColumnClickedId(columnClickedIdNew, category);
   };
 
   const handleCloseMenu = () => {
@@ -86,13 +64,12 @@ const TableSkeleton = ({
   };
 
   const handleAddNewColumn = (columnClickedIndex: number) => {
-    const newColumns = [...columns];
-    newColumns.splice(columnClickedIndex + 1, 0, {
-      id: uuidv4(),
-      variableName: '',
-      variableType: ''
-    });
-    setColumns(newColumns);
+    handleInsertingColumn({ columnClickedIndex, category });
+    handleCloseMenu();
+  };
+
+  const handleDeleteColumn = (columnId: string) => {
+    handleDeleteCategoryColumn({ columnId, category });
     handleCloseMenu();
   };
 
@@ -102,20 +79,20 @@ const TableSkeleton = ({
     const { id, variableName, operator, value, lowestValue, highestValue } =
       data;
 
-    setRows(
-      rows.map((row: RowDataProps) => {
-        if (row.id === id) {
-          return {
-            ...row,
-            [variableName]:
-              operator === OPERATORS.Between
-                ? `${operator} ${lowestValue} and ${highestValue}`
-                : `${operator} ${value}`
-          };
-        }
-        return row;
-      })
-    );
+    // setRows(
+    //   rows.map((row: RowDataProps) => {
+    //     if (row.id === id) {
+    //       return {
+    //         ...row,
+    //         [variableName]:
+    //           operator === OPERATORS.Between
+    //             ? `${operator} ${lowestValue} and ${highestValue}`
+    //             : `${operator} ${value}`
+    //       };
+    //     }
+    //     return row;
+    //   })
+    // );
     setSelectedRowData(null);
   };
 
@@ -154,14 +131,13 @@ const TableSkeleton = ({
                     options={getOptions()}
                     sx={{
                       width: '100%',
-                      minWidth: 250,
-                      '& .MuiInputBase-root': {
-                        height: '50px'
-                      }
+                      minWidth: 250
                     }}
+                    size="small"
                     value={column}
                     disableClearable={true}
                     forcePopupIcon={false}
+                    disabled={category === CATEGORIES.ElseActions}
                     getOptionLabel={(option: VariablesOptionsProps) =>
                       option ? option.variableName : ''
                     }
@@ -170,102 +146,25 @@ const TableSkeleton = ({
                       newValue: VariablesOptionsProps
                     ) => {
                       event &&
-                        setColumns(
-                          columns.map((item) => {
-                            if (item.id === column.id) {
-                              return {
-                                ...item,
-                                variableName: newValue.variableName,
-                                variableType: newValue.variableType
-                              };
-                            } else {
-                              return item;
-                            }
-                          })
-                        );
+                        handleChangeVariable({
+                          columnId: column.id,
+                          newVariable: newValue,
+                          category
+                        });
                     }}
                     renderInput={(params: TextFieldProps) => (
-                      <TextField
+                      <AutocompleteInput
                         {...params}
-                        placeholder="Choose the variable"
-                        InputProps={{
-                          ...params.InputProps,
-                          endAdornment: (
-                            <>
-                              <IconButton
-                                aria-label="more"
-                                id="long-button"
-                                aria-controls={open ? 'long-menu' : undefined}
-                                aria-expanded={open ? 'true' : undefined}
-                                aria-haspopup="true"
-                                onClick={(
-                                  event: React.MouseEvent<
-                                    HTMLButtonElement,
-                                    MouseEvent
-                                  >
-                                ) => handleClickOnMenu(event, column.id)}
-                              >
-                                <MoreVertIcon />
-                              </IconButton>
-                              <Menu
-                                id="long-menu"
-                                anchorEl={anchorEl}
-                                open={open && column.id === columnClickedId}
-                                onClose={handleCloseMenu}
-                                PaperProps={{
-                                  style: {
-                                    width: '20ch'
-                                  }
-                                }}
-                              >
-                                <Stack
-                                  key="add-column-action"
-                                  justifyContent="center"
-                                  alignItems="flex-start"
-                                  spacing={1}
-                                  sx={{
-                                    padding: '0 8px'
-                                  }}
-                                >
-                                  <Stack
-                                    flexDirection="row"
-                                    alignItems="center"
-                                    spacing={0.5}
-                                  >
-                                    <HexagonOutlinedIcon size="16px" />
-
-                                    <MenuItem
-                                      onClick={() => handleAddNewColumn(index)}
-                                    >
-                                      Add Column
-                                    </MenuItem>
-                                  </Stack>
-                                  <Stack
-                                    key="delete-column-action"
-                                    flexDirection="row"
-                                    alignItems="center"
-                                    spacing={0.5}
-                                  >
-                                    <HexagonOutlinedIcon size="16px" />
-
-                                    <MenuItem
-                                      onClick={() => {
-                                        const newColumns = columns.filter(
-                                          (item) => item.id !== column.id
-                                        );
-
-                                        setColumns(newColumns);
-                                        handleCloseMenu();
-                                      }}
-                                    >
-                                      Delete Column
-                                    </MenuItem>
-                                  </Stack>
-                                </Stack>
-                              </Menu>
-                            </>
-                          )
-                        }}
+                        open={open}
+                        columnId={column.id}
+                        columnClickedId={columnClickedId}
+                        anchorEl={anchorEl}
+                        index={index}
+                        category={category}
+                        handleAddNewColumn={handleAddNewColumn}
+                        handleDeleteColumn={handleDeleteColumn}
+                        handleClickOnMenu={handleClickOnMenu}
+                        handleCloseMenu={handleCloseMenu}
                       />
                     )}
                   />
@@ -316,7 +215,7 @@ const TableSkeleton = ({
                   )}
                 </StyledTableCell>
               ))}
-              {category === CATEGORIES.Output && !!rows.length && (
+              {category === CATEGORIES.Actions && !!rows.length && (
                 <StyledTableCell sx={{ padding: 0 }} width={40}>
                   <Button
                     fullWidth
