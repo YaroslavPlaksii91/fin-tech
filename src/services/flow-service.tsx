@@ -45,6 +45,11 @@ class FlowService {
     return data;
   }
 
+  async pushProductionFlow(flow: IFlow) {
+    const { data } = await api.post<FlowData>('/production-flow', flow);
+    return data;
+  }
+
   async getProductionFlowDetails() {
     const { data } = await api.get<IFlow>('/production-flow/details');
     return data;

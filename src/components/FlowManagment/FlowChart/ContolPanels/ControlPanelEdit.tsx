@@ -7,7 +7,6 @@ import { CustomReactFlowInstance } from '../types';
 
 import { StyledPanel } from './styled';
 
-import Logger from '@utils/logger';
 import {
   BookmarksOutlinedIcon,
   DeleteOutlineIcon,
@@ -67,9 +66,31 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
     setModalDeleteOpen(true);
   }, []);
 
-  const onPushFlow = useCallback(() => {
-    Logger.info('Push changes');
-  }, [rfInstance]);
+  const onPushFlow = useCallback(async () => {
+    if (rfInstance && flow) {
+      try {
+        setLoading(true);
+        const formattedData = formatFlowOnSave({ flow, rfInstance });
+        await flowService.pushProductionFlow(formattedData);
+        enqueueSnackbar(
+          <SnackbarMessage
+            message="Success"
+            details={`Changes for the "${flow.data.name}" flow were successfully saved.`}
+          />,
+          { variant: SNACK_TYPE.SUCCESS }
+        );
+      } catch (error) {
+        enqueueSnackbar(
+          <SnackbarErrorMessage message="Error" error={error} />,
+          {
+            variant: SNACK_TYPE.ERROR
+          }
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+  }, [rfInstance, flow]);
 
   return (
     <StyledPanel position="top-right">
