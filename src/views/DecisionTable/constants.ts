@@ -40,3 +40,11 @@ export const CATEGORIES = {
   Output: 'output',
   OtherwiseCondition: 'otherwise_condition'
 };
+
+export const DECISION_OPTIONS = [
+  {
+    value: 'accept',
+    label: 'Accept'
+  },
+  { value: 'denied', label: 'Denied' }
+];

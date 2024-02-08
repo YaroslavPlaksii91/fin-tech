@@ -1,7 +1,13 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
-import { Button, Typography, Stack, TableHead, TableBody } from '@mui/material';
+import {
+  Button,
+  Typography,
+  Stack,
+  TableHead,
+  TableBody,
+  TextField
+} from '@mui/material';
 
 import { palette } from '../../themeConfig';
 
@@ -23,7 +29,6 @@ import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
 import { AddIcon } from '@components/shared/Icons';
-import { InputText } from '@components/shared/Forms/InputText';
 import {
   StyledTableCell,
   StyledTableRow
@@ -64,8 +69,6 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
 
   const [openNoteModal, setOpenNoteModal] = useState(false);
 
-  const { handleSubmit, control } = useForm();
-
   const handleAddNewLayer = () => {
     const newRowId = uuidv4();
     setInputRows([...inputRows, { id: newRowId }]);
@@ -79,9 +82,6 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     setInputRows(newInputRows);
     setOutputRows(newOutputRows);
   };
-
-  /* TODO: submition of note during integration */
-  const onSubmitNoteValue = () => {};
 
   return (
     <>
@@ -178,20 +178,12 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
       </StyledPaper>
       {/* TODO: submition of note during integration */}
       <Stack sx={{ margin: '16px' }}>
-        <form onSubmit={handleSubmit(onSubmitNoteValue)}>
-          <NoteSection handleOpenNoteModal={() => setOpenNoteModal(true)}>
-            <InputText
-              fullWidth
-              name="note"
-              label="Note"
-              disabled
-              placeholder="Enter note here"
-              control={control}
-            />
-          </NoteSection>
-        </form>
+        <NoteSection handleOpenNoteModal={() => setOpenNoteModal(true)}>
+          <TextField fullWidth label="Enter note here" disabled size="small" />
+        </NoteSection>
       </Stack>
 
+      {/* TODO: submition of note during integration */}
       {openNoteModal && (
         <NoteForm
           modalOpen={!!openNoteModal}

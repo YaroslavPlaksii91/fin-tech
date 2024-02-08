@@ -10,13 +10,17 @@ import {
   Autocomplete,
   Menu,
   MenuItem,
-  Typography,
-  Select
+  Typography
 } from '@mui/material';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-import { OPERATORS, CATEGORIES, VARIABLE_TYPE } from '../constants';
+import {
+  OPERATORS,
+  CATEGORIES,
+  VARIABLE_TYPE,
+  DECISION_OPTIONS
+} from '../constants';
 import {
   VariablesOptionsProps,
   RowDataProps,
@@ -34,6 +38,7 @@ import {
   StyledTableCell,
   StyledTableRow
 } from '@components/shared/Table/styled';
+import SelectComponent from '@components/shared/SelectComponent/SelectComponent';
 
 type TableSkeletonProps = {
   columns: VariablesDataProps[];
@@ -62,6 +67,10 @@ const TableSkeleton = ({
   const [selectedRowData, setSelectedRowData] = useState<RowDataProps | null>(
     null
   );
+
+  const [selectedEnumOptions, setSelectedEnumOptions] = useState({
+    decision: ''
+  });
   const open = Boolean(anchorEl);
 
   const handleClickOnMenu = (
@@ -108,6 +117,13 @@ const TableSkeleton = ({
       })
     );
     setSelectedRowData(null);
+  };
+
+  const handleChangeOptionForEnum = (category: string, value: string) => {
+    setSelectedEnumOptions((current) => ({
+      ...current,
+      [category]: value
+    }));
   };
 
   const getOptions = () => {
@@ -288,15 +304,15 @@ const TableSkeleton = ({
                     </Stack>
                   )}
                   {/* mock only for dicision type */}
+
                   {column.variableType === VARIABLE_TYPE.Enum && (
-                    <Select fullWidth size="small">
-                      <MenuItem key="accept-action" value="Accept">
-                        Accept
-                      </MenuItem>
-                      <MenuItem key="accept-denied" value="Denied">
-                        Denied
-                      </MenuItem>
-                    </Select>
+                    <SelectComponent
+                      value={selectedEnumOptions.decision}
+                      onChange={handleChangeOptionForEnum}
+                      options={DECISION_OPTIONS}
+                      name="decision"
+                      fullWidth
+                    />
                   )}
                 </StyledTableCell>
               ))}
