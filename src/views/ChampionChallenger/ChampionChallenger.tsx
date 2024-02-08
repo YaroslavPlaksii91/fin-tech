@@ -134,12 +134,11 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     const storedNodes = cloneDeep(nodes);
     const storedEdges = cloneDeep(edges);
 
-    const newEdges = storedEdges
+    const newEdges = edges
       .filter((edg) => !existingSplitEdges.includes(edg.id))
-      .filter((edg) => !targetNodesIds.includes(edg.target))
       .concat(splitEdges);
 
-    const updatedNodes = storedNodes.map((node: FlowNode) => {
+    const updatedNodes = nodes.map((node: FlowNode) => {
       if (node.id === step.id) {
         // This updates data inside the node. Since React Flow uses Zustand under the hood, it is necessary to recreate the data.
         const splits = node.data.splits ?? [];
@@ -176,6 +175,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       );
       setStep({ id: MAIN_STEP_ID });
     } catch (error) {
+      setNodes(storedNodes);
+      setEdges(storedEdges);
       enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
         variant: SNACK_TYPE.ERROR
       });
