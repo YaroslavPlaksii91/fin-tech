@@ -38,7 +38,8 @@ const TableSkeleton = ({
   handleChangeColumnClickedId,
   handleInsertingColumn,
   handleDeleteCategoryColumn,
-  handleChangeVariable
+  handleChangeColumnVariable,
+  handleSubmitVariableValue
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedRowData, setSelectedRowData] = useState<RowDataProps | null>(
@@ -73,26 +74,8 @@ const TableSkeleton = ({
     handleCloseMenu();
   };
 
-  const handleSubmitVariableValue = (data: RowDataProps) => {
-    // TODO: delete this after refactoring
-    // console.log('handleSubmitVariableValue_in_Table', data);
-    const { id, variableName, operator, value, lowestValue, highestValue } =
-      data;
-
-    // setRows(
-    //   rows.map((row: RowDataProps) => {
-    //     if (row.id === id) {
-    //       return {
-    //         ...row,
-    //         [variableName]:
-    //           operator === OPERATORS.Between
-    //             ? `${operator} ${lowestValue} and ${highestValue}`
-    //             : `${operator} ${value}`
-    //       };
-    //     }
-    //     return row;
-    //   })
-    // );
+  const handleSubmitSelectedRowData = (data: RowDataProps) => {
+    handleSubmitVariableValue({ newVariableValue: data, category });
     setSelectedRowData(null);
   };
 
@@ -146,7 +129,7 @@ const TableSkeleton = ({
                       newValue: VariablesOptionsProps
                     ) => {
                       event &&
-                        handleChangeVariable({
+                        handleChangeColumnVariable({
                           columnId: column.id,
                           newVariable: newValue,
                           category
@@ -236,7 +219,7 @@ const TableSkeleton = ({
           modalOpen={!!selectedRowData}
           handleClose={() => setSelectedRowData(null)}
           selectedRowData={selectedRowData}
-          handleSubmitVariableValue={handleSubmitVariableValue}
+          handleSubmitVariableValue={handleSubmitSelectedRowData}
         />
       )}
     </>

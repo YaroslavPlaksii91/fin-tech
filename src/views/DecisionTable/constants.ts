@@ -20,11 +20,8 @@ export const OPERATORS = {
 };
 
 export const inputVariablesOptions: VariablesOptionsProps[] = [
-  { variableName: 'LeadSourсe1', variableType: 'string' },
-  { variableName: 'LeadSource2', variableType: 'string' },
-  { variableName: 'LeadSource3', variableType: 'string' },
-  { variableName: 'LeadSource4', variableType: 'string' },
-  { variableName: 'LeadSoursce5', variableType: 'string' },
+  { variableName: 'LeadSourсe', variableType: 'string' },
+  { variableName: 'NextPayDate', variableType: 'string' },
   { variableName: 'LeadPrice', variableType: 'number' },
   { variableName: 'CRA.Claritties.Score', variableType: 'number' }
 ];

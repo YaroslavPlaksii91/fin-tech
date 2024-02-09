@@ -4,8 +4,9 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { palette } from '../../../themeConfig';
-import { VARIABLE_TYPE, OPERATORS } from '../constants';
+import { OPERATORS } from '../constants';
 import { RowDataProps } from '../types';
+import { getOperatorOptions } from '../utils';
 
 import validationSchema from './validationSchema';
 
@@ -37,39 +38,9 @@ const SelectVariableValueDialog = ({
     resolver: yupResolver(validationSchema)
   });
 
-  const [operatorOptions, setOperatorOptions] = useState<
-    Record<string, string> | never[]
-  >([]);
+  const operatorOptions = getOperatorOptions(selectedRowData.variableType);
+
   const watchOperator = watch('operator');
-
-  // TODO: make method more reusable and presentable
-
-  const getOperatorOptions = (variableType: string) => {
-    let operators;
-    if (variableType === VARIABLE_TYPE.String) {
-      operators = [
-        {
-          key: 'in',
-          value: 'in'
-        },
-        { key: 'equal', value: '=' },
-        { key: 'any', value: 'any' }
-      ];
-    }
-    if (variableType === VARIABLE_TYPE.Number) {
-      operators = [
-        { key: 'equal', value: '=' },
-        {
-          key: 'moreEqual',
-          value: '>='
-        },
-        { key: 'lessEqual', value: '<=' },
-        { key: 'between', value: 'between' }
-      ];
-    }
-
-    setOperatorOptions(operators);
-  };
 
   const onSubmit = (data: RowDataProps) => {
     handleSubmitVariableValue(data);
@@ -78,7 +49,6 @@ const SelectVariableValueDialog = ({
   useEffect(() => {
     if (selectedRowData) {
       reset(selectedRowData);
-      getOperatorOptions(selectedRowData.variableType);
     }
   }, []);
 
@@ -148,13 +118,13 @@ const SelectVariableValueDialog = ({
                 fullWidth
                 name="lowestValue"
                 control={control}
-                placeholder="Enter lowest value"
+                placeholder="Enter lower bound"
               />
               <InputText
                 fullWidth
                 name="highestValue"
                 control={control}
-                placeholder="Enter highest value"
+                placeholder="Enter upper bound"
               />
             </>
           ) : (

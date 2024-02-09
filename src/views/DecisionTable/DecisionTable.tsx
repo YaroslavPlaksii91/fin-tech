@@ -14,9 +14,10 @@ import { palette } from '../../themeConfig';
 import {
   inputVariablesOptions,
   outputVariablesOptions,
-  CATEGORIES
+  CATEGORIES,
+  OPERATORS
 } from './constants';
-import { VariablesOptionsProps } from './types';
+import { VariablesOptionsProps, RowDataProps } from './types';
 import {
   StyledPaper,
   StyledTableContainer,
@@ -57,6 +58,9 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
         { id: firstActionsColumnId, variableName: '', variableType: '' }
       ],
       rows: []
+    },
+    elseActions: {
+      rows: [{ id: uuidv4() }]
     }
   });
 
@@ -154,7 +158,7 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     });
   };
 
-  const handleChangeVariable = ({
+  const handleChangeColumnVariable = ({
     columnId,
     newVariable,
     category
@@ -184,9 +188,42 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     });
   };
 
-  // console.log('selectedCaseEntries', selectedCaseEntries);
+  const handleSubmitVariableValue = ({
+    newVariableValue,
+    category
+  }: {
+    newVariableValue: RowDataProps;
+    category: string;
+  }) => {
+    // TODO: delete this after refactoring
+    // console.log('handleSubmitVariableValue_in_Table', data);
+    const { id, variableName, operator, value, lowestValue, highestValue } =
+      newVariableValue;
 
-  const { conditions, actions } = selectedCaseEntries;
+    const updatedRows = selectedCaseEntries[category].rows.map((row) => {
+      if (row.id === id) {
+        return {
+          ...row,
+          [variableName]:
+            operator === OPERATORS.Between
+              ? `${operator} ${lowestValue} and ${highestValue}`
+              : `${operator} ${value}`
+        };
+      } else {
+        return row;
+      }
+    });
+
+    setSelectedCaseEntries({
+      ...selectedCaseEntries,
+      [category]: {
+        ...selectedCaseEntries[category],
+        rows: updatedRows
+      }
+    });
+  };
+
+  const { conditions, actions, elseActions } = selectedCaseEntries;
   return (
     <>
       <StepDetailsHeader
@@ -216,7 +253,8 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
               handleChangeColumnClickedId={handleChangeColumnClickedId}
               handleInsertingColumn={handleInsertingColumn}
               handleDeleteCategoryColumn={handleDeleteCategoryColumn}
-              handleChangeVariable={handleChangeVariable}
+              handleChangeColumnVariable={handleChangeColumnVariable}
+              handleSubmitVariableValue={handleSubmitVariableValue}
             />
           </Stack>
           <Stack>
@@ -235,7 +273,8 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
               handleChangeColumnClickedId={handleChangeColumnClickedId}
               handleInsertingColumn={handleInsertingColumn}
               handleDeleteCategoryColumn={handleDeleteCategoryColumn}
-              handleChangeVariable={handleChangeVariable}
+              handleChangeColumnVariable={handleChangeColumnVariable}
+              handleSubmitVariableValue={handleSubmitVariableValue}
             />
           </Stack>
         </StyledTableContainer>
@@ -277,9 +316,10 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
           </StyledTable>
           <TableSkeleton
             columns={actions.columns}
-            rows={[{ id: uuidv4() }]}
+            rows={elseActions.rows}
             variablesOptions={outputVariablesOptions}
             category={CATEGORIES.ElseActions}
+            handleSubmitVariableValue={handleSubmitVariableValue}
           />
         </StyledTableContainer>
       </StyledPaper>
