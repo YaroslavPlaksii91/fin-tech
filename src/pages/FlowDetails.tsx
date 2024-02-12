@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { NavLink, useParams } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import {
   LayoutContainer,
@@ -14,33 +14,31 @@ import { StepProvider, useStep } from '@contexts/StepContext';
 import StepList from '@components/StepManagment/StepList/StepList';
 import FlowChartReadOnlyView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyView';
 import NavigateTo from '@components/shared/Link/NavigateTo';
-import { PRODUCTION_FLOW_ID } from '@constants/common';
+import { checkIsProductionFlow } from '@utils/helpers';
 
 function FlowDetailsMain() {
   const { flow } = useInitialFlow();
-  const { id } = useParams();
   const { step, setStep } = useStep();
+  const isProductionFlow = checkIsProductionFlow();
 
   return (
     <LayoutContainer>
       <SideNavContainer
         footer={
-          <NavLink
-            to={routes.underwriting.flow.edit(flow?.id)}
+          <Button
+            component={NavLink}
             state={{
               from: routes.underwriting.flow.details(flow?.id)
             }}
+            to={routes.underwriting.flow.edit(flow?.id)}
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={isProductionFlow}
+            endIcon={<EditNoteOutlinedIcon />}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              disabled={id === PRODUCTION_FLOW_ID}
-              endIcon={<EditNoteOutlinedIcon />}
-            >
-              Edit flow
-            </Button>
-          </NavLink>
+            Edit flow
+          </Button>
         }
         header={
           <NavigateTo
@@ -50,10 +48,18 @@ function FlowDetailsMain() {
         }
       >
         <FlowHeader name={flow.data.name} />
-        <StepList nodes={flow.nodes} step={step} setStep={setStep} />
+        <StepList
+          isProductionFlow={isProductionFlow}
+          nodes={flow.nodes}
+          step={step}
+          setStep={setStep}
+        />
       </SideNavContainer>
       <MainContainer>
-        <FlowChartReadOnlyView flow={flow} />
+        <FlowChartReadOnlyView
+          isProductionFlow={isProductionFlow}
+          flow={flow}
+        />
       </MainContainer>
     </LayoutContainer>
   );
