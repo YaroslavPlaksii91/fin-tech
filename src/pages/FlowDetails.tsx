@@ -25,22 +25,20 @@ function FlowDetailsMain() {
     <LayoutContainer>
       <SideNavContainer
         footer={
-          <NavLink
-            to={routes.underwriting.flow.edit(flow?.id)}
+          <Button
+            component={NavLink}
             state={{
               from: routes.underwriting.flow.details(flow?.id)
             }}
+            to={routes.underwriting.flow.edit(flow?.id)}
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={id === PRODUCTION_FLOW_ID}
+            endIcon={<EditNoteOutlinedIcon />}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              disabled={id === PRODUCTION_FLOW_ID}
-              endIcon={<EditNoteOutlinedIcon />}
-            >
-              Edit flow
-            </Button>
-          </NavLink>
+            Edit flow
+          </Button>
         }
         header={
           <NavigateTo
