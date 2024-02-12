@@ -13,9 +13,15 @@ import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActio
 
 type StepListProps = {
   nodes: FlowNode[];
+  isProductionFlow?: boolean;
 } & StepContextType;
 
-const StepList: React.FC<StepListProps> = ({ nodes, setStep, step }) => {
+const StepList: React.FC<StepListProps> = ({
+  nodes,
+  setStep,
+  step,
+  isProductionFlow = false
+}) => {
   const [menu, setMenu] = useState<HTMLElement | null>(null);
 
   const steps = useMemo(() => {
@@ -50,14 +56,15 @@ const StepList: React.FC<StepListProps> = ({ nodes, setStep, step }) => {
             </Typography>
             <StyledStepItemText>{el.data.name}</StyledStepItemText>
           </StyledStepItem>
-
-          <ListItemSecondaryAction>
-            <StepActionsMenu
-              showActionMenuButton={true}
-              anchorEl={menu}
-              setAnchorEl={setMenu}
-            />
-          </ListItemSecondaryAction>
+          {!isProductionFlow && (
+            <ListItemSecondaryAction>
+              <StepActionsMenu
+                showActionMenuButton={true}
+                anchorEl={menu}
+                setAnchorEl={setMenu}
+              />
+            </ListItemSecondaryAction>
+          )}
         </StyledListItem>
       ))}
     </StyledList>

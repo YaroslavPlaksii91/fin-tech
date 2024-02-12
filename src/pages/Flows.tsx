@@ -24,12 +24,14 @@ import { fetchFlowList } from '@store/flowList/asyncThunk';
 import { selectFlowList } from '@store/flowList/selectors';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { useLoading } from '@contexts/LoadingContext';
+import { checkIsProductionFlow } from '@utils/helpers';
 
 export default function Flows() {
   const { startLoading, stopLoading } = useLoading();
   const { flow } = useInitialFlow();
   const { flowList, flowProduction } = useAppSelector(selectFlowList);
   const dispatch = useAppDispatch();
+  const isProductionFlow = checkIsProductionFlow();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,7 +82,11 @@ export default function Flows() {
         </StyledList>
       </SideNavContainer>
       <MainContainer>
-        <FlowChartView flow={flow} showControlPanel={!!flow.id} />
+        <FlowChartView
+          isProductionFlow={isProductionFlow}
+          flow={flow}
+          showControlPanel={!!flow.id}
+        />
       </MainContainer>
     </LayoutContainer>
   );

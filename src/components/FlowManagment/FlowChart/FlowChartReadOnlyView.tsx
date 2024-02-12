@@ -21,11 +21,13 @@ import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 
 interface FlowChartViewProps {
   flow: IFlow;
+  isProductionFlow: boolean;
   showControlPanel?: boolean;
 }
 
 const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
   flow,
+  isProductionFlow,
   showControlPanel = false
 }) => {
   const [nodes, setNodes] = useNodesState(flow.nodes);
@@ -51,7 +53,7 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
       edgeTypes={edgeTypes}
       attributionPosition="bottom-left"
       onPaneClick={onPaneClick}
-      onNodeContextMenu={onNodeContextMenu}
+      onNodeContextMenu={isProductionFlow ? undefined : onNodeContextMenu}
     >
       <Background variant={BackgroundVariant.Lines} />
       <StepActionMenu anchorEl={menu} setAnchorEl={setMenu} />
