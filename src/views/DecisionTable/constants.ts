@@ -59,11 +59,11 @@ export const outputVariablesOptions: VariablesOptionsProps[] = [
   { variableName: 'MinLoanAmount', variableType: 'number' }
 ];
 
-export const CATEGORIES = {
-  Conditions: 'conditions',
-  Actions: 'actions',
-  ElseActions: 'elseActions'
-};
+export enum CATEGORIES {
+  Conditions = 'conditions',
+  Actions = 'actions',
+  ElseActions = 'elseActions'
+}
 
 export const DECISION_OPTIONS = [
   {

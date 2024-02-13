@@ -3,6 +3,7 @@ import * as yup from 'yup';
 import { OPERATORS } from '../constants';
 
 export const validationSchema = yup.object().shape({
+  variableName: yup.string().required(),
   operator: yup.string().required(),
   value: yup
     .string()
@@ -11,13 +12,13 @@ export const validationSchema = yup.object().shape({
         ? schema.notRequired()
         : schema.required()
     ),
-  lowestValue: yup
-    .string()
+  lowerBound: yup
+    .number()
     .when('operator', ([operator], schema) =>
       operator === OPERATORS.Between ? schema.required() : schema.nullable()
     ),
-  highestValue: yup
-    .string()
+  upperBound: yup
+    .number()
     .when('operator', ([operator], schema) =>
       operator === OPERATORS.Between ? schema.required() : schema.nullable()
     )

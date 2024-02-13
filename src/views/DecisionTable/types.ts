@@ -6,12 +6,12 @@ export type VariablesOptionsProps = {
 
 export type VariableValueDataProps = {
   id: string;
-  variableName: string | undefined;
-  variableType: string | undefined;
+  variableName: string;
+  variableType: string;
   value?: string | undefined;
-  operator: string | undefined;
-  lowestValue?: string | undefined;
-  highestValue?: string | undefined;
+  operator?: string | undefined;
+  lowerBound?: number | null | undefined;
+  upperBound?: number | null | undefined;
 };
 
 export type VariableTypeDataProps = {

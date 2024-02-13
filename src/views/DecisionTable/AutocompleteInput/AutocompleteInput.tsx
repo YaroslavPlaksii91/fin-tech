@@ -9,12 +9,12 @@ import { HexagonOutlinedIcon } from '@components/shared/Icons';
 type AutocompleteInputProps = {
   open: boolean;
   columnId: string;
-  columnClickedId: string;
+  columnClickedId?: string;
   anchorEl: HTMLElement | null;
   index: number;
-  category: string;
-  handleAddNewColumn: (index: number) => void;
-  handleDeleteColumn: (columnId: string) => void;
+  category: CATEGORIES;
+  handleAddNewColumn?: (index: number) => void;
+  handleDeleteColumn?: (columnId: string) => void;
   handleClickOnMenu: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     columnId: string
@@ -78,7 +78,7 @@ export const AutocompleteInput = ({
               <Stack flexDirection="row" alignItems="center" spacing={0.5}>
                 <HexagonOutlinedIcon size="16px" />
 
-                <MenuItem onClick={() => handleAddNewColumn(index)}>
+                <MenuItem onClick={() => handleAddNewColumn?.(index)}>
                   Add Column
                 </MenuItem>
               </Stack>
@@ -90,7 +90,7 @@ export const AutocompleteInput = ({
               >
                 <HexagonOutlinedIcon size="16px" />
 
-                <MenuItem onClick={() => handleDeleteColumn(columnId)}>
+                <MenuItem onClick={() => handleDeleteColumn?.(columnId)}>
                   Delete Column
                 </MenuItem>
               </Stack>

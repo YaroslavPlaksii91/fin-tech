@@ -15,12 +15,22 @@ import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';
 import { SingleSelect } from '@components/shared/Forms/SingleSelect';
 
+type FormFieldsProps = {
+  variableName: string;
+  operator?: string | undefined;
+  value?: string | undefined;
+  lowerBound?: number | null | undefined;
+  upperBound?: number | null | undefined;
+};
+
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
   handleClose: () => void;
   selectedRowData: VariableValueDataProps;
-  category: string;
-  handleSubmitVariableValue: (data: VariableValueDataProps) => void;
+  category: CATEGORIES;
+  handleSubmitVariableValue: (
+    data: VariableValueDataProps & FormFieldsProps
+  ) => void;
 };
 
 const SelectVariableValueDialog = ({
@@ -57,8 +67,8 @@ const SelectVariableValueDialog = ({
     }
   }, []);
 
-  const onSubmit = (data: VariableValueDataProps) => {
-    handleSubmitVariableValue(data);
+  const onSubmit = (data: FormFieldsProps) => {
+    handleSubmitVariableValue({ ...selectedRowData, ...data });
   };
 
   return (
@@ -82,7 +92,7 @@ const SelectVariableValueDialog = ({
             fullWidth
             name="variableName"
             control={control}
-            inputProps={{
+            InputProps={{
               startAdornment: category === CATEGORIES.Conditions && (
                 <InputAdornment
                   position="start"
@@ -127,13 +137,13 @@ const SelectVariableValueDialog = ({
             <>
               <InputText
                 fullWidth
-                name="lowestValue"
+                name="lowerBound"
                 control={control}
                 placeholder="Enter lower bound"
               />
               <InputText
                 fullWidth
-                name="highestValue"
+                name="upperBound"
                 control={control}
                 placeholder="Enter upper bound"
               />
@@ -144,7 +154,7 @@ const SelectVariableValueDialog = ({
               name="value"
               control={control}
               placeholder="Enter value"
-              inputProps={{ disabled: watchOperator === OPERATORS.Any }}
+              InputProps={{ disabled: watchOperator === OPERATORS.Any }}
             />
           )}
         </Stack>

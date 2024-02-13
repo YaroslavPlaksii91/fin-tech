@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, SyntheticEvent } from 'react';
 import {
   Button,
   Stack,
@@ -19,7 +19,7 @@ import {
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import { AutocompleteInput } from '../AutocompleteInput/AutocompleteInput';
 
-import { StyledTable } from './styled';
+import { StyledTable, StyledStack } from './styled';
 
 import { DeleteOutlineIcon } from '@components/shared/Icons';
 import {
@@ -32,41 +32,58 @@ type TableSkeletonProps = {
   columns: VariableTypeDataProps[];
   rows: VariableValueDataProps[];
   variablesOptions: VariablesOptionsProps[];
-  columnClickedId: string;
-  category: string;
-  handleDeleteRow: (id: string) => void;
-  handleChangeColumnClickedId: (id: string, category: string) => void;
-  handleInsertingColumn: ({
+  columnClickedId?: string;
+  category: Exclude<CATEGORIES, CATEGORIES.ElseActions>;
+  handleDeleteRow?: (id: string) => void;
+  handleChangeColumnClickedId?: (
+    id: string,
+    category: Exclude<CATEGORIES, CATEGORIES.ElseActions>
+  ) => void;
+  handleInsertingColumn?: ({
     columnClickedIndex,
     category
   }: {
     columnClickedIndex: number;
-    category: string;
+    category: Exclude<CATEGORIES, CATEGORIES.ElseActions>;
   }) => void;
-  handleDeleteCategoryColumn: ({
+  handleDeleteCategoryColumn?: ({
     columnId,
     category
   }: {
     columnId: string;
-    category: string;
+    category: Exclude<CATEGORIES, CATEGORIES.ElseActions>;
   }) => void;
-  handleChangeColumnVariable: ({
+  handleChangeColumnVariable?: ({
     columnId,
     newVariable,
     category
   }: {
     columnId: string;
     newVariable: VariablesOptionsProps;
-    category: string;
+    category: Exclude<CATEGORIES, CATEGORIES.ElseActions>;
   }) => void;
   handleSubmitVariableValue: ({
     newVariableValue,
     category
   }: {
     newVariableValue: VariableValueDataProps;
-    category: string;
+    category: CATEGORIES;
   }) => void;
 };
+
+// type TableSkeletonElseActionProps = {
+//   columns: VariableTypeDataProps[];
+//   rows: VariableValueDataProps[];
+//   variablesOptions: VariablesOptionsProps[];
+//   category: CATEGORIES.ElseActions;
+//   handleSubmitVariableValue: ({
+//     newVariableValue,
+//     category
+//   }: {
+//     newVariableValue: VariableValueDataProps;
+//     category: CATEGORIES;
+//   }) => void;
+// };
 
 const TableSkeleton = ({
   columns,
@@ -80,7 +97,17 @@ const TableSkeleton = ({
   handleDeleteCategoryColumn,
   handleChangeColumnVariable,
   handleSubmitVariableValue
-}: TableSkeletonProps) => {
+}:
+  | TableSkeletonProps
+  | Exclude<
+      TableSkeletonProps,
+      | 'columnClickedId'
+      | 'handleDeleteRow'
+      | 'handleChangeColumnClickedId'
+      | 'handleInsertingColumn'
+      | 'handleDeleteCategoryColumn'
+      | 'handleChangeColumnVariable'
+    >) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedRowData, setSelectedRowData] =
     useState<VariableValueDataProps | null>(null);
@@ -96,7 +123,7 @@ const TableSkeleton = ({
   ) => {
     setAnchorEl(event.currentTarget);
 
-    handleChangeColumnClickedId(columnClickedIdNew, category);
+    handleChangeColumnClickedId?.(columnClickedIdNew, category);
   };
 
   const handleCloseMenu = () => {
@@ -104,12 +131,12 @@ const TableSkeleton = ({
   };
 
   const handleAddNewColumn = (columnClickedIndex: number) => {
-    handleInsertingColumn({ columnClickedIndex, category });
+    handleInsertingColumn?.({ columnClickedIndex, category });
     handleCloseMenu();
   };
 
   const handleDeleteColumn = (columnId: string) => {
-    handleDeleteCategoryColumn({ columnId, category });
+    handleDeleteCategoryColumn?.({ columnId, category });
     handleCloseMenu();
   };
 
@@ -166,11 +193,11 @@ const TableSkeleton = ({
                       option ? option.variableName : ''
                     }
                     onChange={(
-                      event: Event,
+                      event: SyntheticEvent<Element, Event>,
                       newValue: VariablesOptionsProps
                     ) => {
                       event &&
-                        handleChangeColumnVariable({
+                        handleChangeColumnVariable?.({
                           columnId: column.id,
                           newVariable: newValue,
                           category
@@ -204,7 +231,7 @@ const TableSkeleton = ({
                 <StyledTableCell key={index}>
                   {(column.variableType === VARIABLE_TYPE.String ||
                     column.variableType === VARIABLE_TYPE.Number) && (
-                    <Stack
+                    <StyledStack
                       onClick={() =>
                         setSelectedRowData({
                           ...row,
@@ -212,19 +239,27 @@ const TableSkeleton = ({
                           variableType: column.variableType,
                           value: '',
                           operator: '',
-                          lowestValue: '',
-                          highestValue: ''
+                          lowerBound: null,
+                          upperBound: null
                         })
                       }
                       disabled={!column.variableType.length}
                       sx={{ cursor: 'pointer' }}
                     >
-                      {row[column.variableName] ? (
-                        <Stack>{row[column.variableName]}</Stack>
+                      {row[
+                        column.variableName as keyof VariableValueDataProps
+                      ] ? (
+                        <Stack>
+                          {
+                            row[
+                              column.variableName as keyof VariableValueDataProps
+                            ]
+                          }
+                        </Stack>
                       ) : (
                         <Typography variant="body2">Select value</Typography>
                       )}
-                    </Stack>
+                    </StyledStack>
                   )}
                   {/* mock only for dicision type */}
 
@@ -244,7 +279,7 @@ const TableSkeleton = ({
                   <Button
                     fullWidth
                     sx={{ padding: '10px' }}
-                    onClick={() => handleDeleteRow(row.id)}
+                    onClick={() => handleDeleteRow?.(row.id)}
                   >
                     <DeleteOutlineIcon />
                   </Button>

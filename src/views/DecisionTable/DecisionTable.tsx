@@ -66,7 +66,7 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
         rows: []
       },
       elseActions: {
-        rows: [{ id: uuidv4() }]
+        rows: [{ id: uuidv4(), variableName: '', variableType: '' }]
       }
     });
 
@@ -79,11 +79,17 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
       ...selectedCaseEntries,
       conditions: {
         ...selectedCaseEntries.conditions,
-        rows: [...selectedCaseEntries.conditions.rows, { id: newRowId }]
+        rows: [
+          ...selectedCaseEntries.conditions.rows,
+          { id: newRowId, variableName: '', variableType: '' }
+        ]
       },
       actions: {
         ...selectedCaseEntries.actions,
-        rows: [...selectedCaseEntries.actions.rows, { id: newRowId }]
+        rows: [
+          ...selectedCaseEntries.actions.rows,
+          { id: newRowId, variableName: '', variableType: '' }
+        ]
       }
     });
   };
@@ -109,7 +115,7 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
 
   const handleChangeColumnClickedId = (
     newColumnId: string,
-    category: string
+    category: CATEGORIES
   ) => {
     setSelectedCaseEntries({
       ...selectedCaseEntries,
@@ -125,7 +131,7 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     category
   }: {
     columnClickedIndex: number;
-    category: string;
+    category: Exclude<CATEGORIES, CATEGORIES.ElseActions>;
   }) => {
     const newColumns = [...selectedCaseEntries[category].columns];
 
@@ -149,7 +155,7 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     category
   }: {
     columnId: string;
-    category: string;
+    category: Exclude<CATEGORIES, CATEGORIES.ElseActions>;
   }) => {
     const newColumns = [...selectedCaseEntries[category].columns].filter(
       (item) => item.id !== columnId
@@ -171,7 +177,7 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
   }: {
     columnId: string;
     newVariable: VariablesOptionsProps;
-    category: string;
+    category: Exclude<CATEGORIES, CATEGORIES.ElseActions>;
   }) => {
     const updatedColumns = selectedCaseEntries[category].columns.map(
       (item: VariableTypeDataProps) => {
@@ -201,11 +207,9 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     category
   }: {
     newVariableValue: VariableValueDataProps;
-    category: string;
+    category: CATEGORIES;
   }) => {
-    // TODO: delete this after refactoring
-    // console.log('handleSubmitVariableValue_in_Table', data);
-    const { id, variableName, operator, value, lowestValue, highestValue } =
+    const { id, variableName, operator, value, lowerBound, upperBound } =
       newVariableValue;
 
     const updatedRows = selectedCaseEntries[category].rows.map(
@@ -213,9 +217,9 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
         if (row.id === id) {
           return {
             ...row,
-            [variableName]:
+            [variableName as keyof VariableValueDataProps]:
               operator === OPERATORS.Between
-                ? `${operator} ${lowestValue} and ${highestValue}`
+                ? `${operator} ${lowerBound} and ${upperBound}`
                 : `${operator} ${value}`
           };
         } else {
