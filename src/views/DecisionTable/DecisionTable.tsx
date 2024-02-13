@@ -217,6 +217,10 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
         if (row.id === id) {
           return {
             ...row,
+            operator,
+            value,
+            lowerBound,
+            upperBound,
             [variableName as keyof VariableValueDataProps]:
               operator === OPERATORS.Between
                 ? `${operator} ${lowerBound} and ${upperBound}`

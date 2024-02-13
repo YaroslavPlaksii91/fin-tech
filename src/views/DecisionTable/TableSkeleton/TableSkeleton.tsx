@@ -292,7 +292,7 @@ const TableSkeleton = ({
           handleClose={() => setSelectedRowData(null)}
           selectedRowData={selectedRowData}
           category={category}
-          handleSubmitVariableValue={handleSubmitSelectedRowData}
+          handleSubmitSelectedRowData={handleSubmitSelectedRowData}
         />
       )}
     </>
