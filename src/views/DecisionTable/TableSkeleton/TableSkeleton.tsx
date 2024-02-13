@@ -236,11 +236,7 @@ const TableSkeleton = ({
                         setSelectedRowData({
                           ...row,
                           variableName: column.variableName,
-                          variableType: column.variableType,
-                          value: '',
-                          operator: '',
-                          lowerBound: null,
-                          upperBound: null
+                          variableType: column.variableType
                         })
                       }
                       disabled={!column.variableType.length}

@@ -43,23 +43,23 @@ const SelectVariableValueDialog = ({
   const {
     handleSubmit,
     control,
-    reset,
     formState: { isSubmitting },
     watch,
     setValue
   } = useForm({
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      variableName: selectedRowData.variableName,
+      operator: selectedRowData?.operator ?? '',
+      value: selectedRowData?.operator ?? '',
+      lowerBound: selectedRowData?.lowerBound ?? null,
+      upperBound: selectedRowData?.upperBound ?? null
+    }
   });
 
   const operatorOptions = getOperatorOptions(selectedRowData.variableType);
 
   const watchOperator = watch('operator');
-
-  useEffect(() => {
-    if (selectedRowData) {
-      reset(selectedRowData);
-    }
-  }, []);
 
   useEffect(() => {
     if (category !== CATEGORIES.Conditions) {
