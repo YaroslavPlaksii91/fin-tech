@@ -65,18 +65,15 @@ export enum CATEGORIES {
   ElseActions = 'elseActions'
 }
 
+export type CATEGORIES_WITHOUT_ELSE_ACTIONS = Exclude<
+  CATEGORIES,
+  CATEGORIES.ElseActions
+>;
+
 export const DECISION_OPTIONS = [
   {
     value: 'accept',
     label: 'Accept'
   },
   { value: 'denied', label: 'Denied' }
-];
-
-export const BOOLEAN_OPTIONS = [
-  {
-    value: 'true',
-    label: 'True'
-  },
-  { value: 'false', label: 'False' }
 ];

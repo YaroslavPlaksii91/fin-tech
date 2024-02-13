@@ -33,25 +33,22 @@ type TableSkeletonProps = {
   rows: VariableValueDataProps[];
   variablesOptions: VariablesOptionsProps[];
   columnClickedId?: string;
-  category: Exclude<CATEGORIES, CATEGORIES.ElseActions>;
+  category: CATEGORIES;
   handleDeleteRow?: (id: string) => void;
-  handleChangeColumnClickedId?: (
-    id: string,
-    category: Exclude<CATEGORIES, CATEGORIES.ElseActions>
-  ) => void;
+  handleChangeColumnClickedId?: (id: string, category: CATEGORIES) => void;
   handleInsertingColumn?: ({
     columnClickedIndex,
     category
   }: {
     columnClickedIndex: number;
-    category: Exclude<CATEGORIES, CATEGORIES.ElseActions>;
+    category: CATEGORIES;
   }) => void;
   handleDeleteCategoryColumn?: ({
     columnId,
     category
   }: {
     columnId: string;
-    category: Exclude<CATEGORIES, CATEGORIES.ElseActions>;
+    category: CATEGORIES;
   }) => void;
   handleChangeColumnVariable?: ({
     columnId,
@@ -60,7 +57,7 @@ type TableSkeletonProps = {
   }: {
     columnId: string;
     newVariable: VariablesOptionsProps;
-    category: Exclude<CATEGORIES, CATEGORIES.ElseActions>;
+    category: CATEGORIES;
   }) => void;
   handleSubmitVariableValue: ({
     newVariableValue,
@@ -70,20 +67,6 @@ type TableSkeletonProps = {
     category: CATEGORIES;
   }) => void;
 };
-
-// type TableSkeletonElseActionProps = {
-//   columns: VariableTypeDataProps[];
-//   rows: VariableValueDataProps[];
-//   variablesOptions: VariablesOptionsProps[];
-//   category: CATEGORIES.ElseActions;
-//   handleSubmitVariableValue: ({
-//     newVariableValue,
-//     category
-//   }: {
-//     newVariableValue: VariableValueDataProps;
-//     category: CATEGORIES;
-//   }) => void;
-// };
 
 const TableSkeleton = ({
   columns,
@@ -97,17 +80,7 @@ const TableSkeleton = ({
   handleDeleteCategoryColumn,
   handleChangeColumnVariable,
   handleSubmitVariableValue
-}:
-  | TableSkeletonProps
-  | Exclude<
-      TableSkeletonProps,
-      | 'columnClickedId'
-      | 'handleDeleteRow'
-      | 'handleChangeColumnClickedId'
-      | 'handleInsertingColumn'
-      | 'handleDeleteCategoryColumn'
-      | 'handleChangeColumnVariable'
-    >) => {
+}: TableSkeletonProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedRowData, setSelectedRowData] =
     useState<VariableValueDataProps | null>(null);

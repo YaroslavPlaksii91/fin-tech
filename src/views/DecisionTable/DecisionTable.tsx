@@ -15,7 +15,8 @@ import {
   inputVariablesOptions,
   outputVariablesOptions,
   CATEGORIES,
-  OPERATORS
+  OPERATORS,
+  CATEGORIES_WITHOUT_ELSE_ACTIONS
 } from './constants';
 import {
   VariablesOptionsProps,
@@ -131,9 +132,12 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     category
   }: {
     columnClickedIndex: number;
-    category: Exclude<CATEGORIES, CATEGORIES.ElseActions>;
+    category: CATEGORIES;
   }) => {
-    const newColumns = [...selectedCaseEntries[category].columns];
+    const newColumns = [
+      ...selectedCaseEntries[category as CATEGORIES_WITHOUT_ELSE_ACTIONS]
+        .columns
+    ];
 
     newColumns.splice(columnClickedIndex + 1, 0, {
       id: uuidv4(),
@@ -155,11 +159,12 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     category
   }: {
     columnId: string;
-    category: Exclude<CATEGORIES, CATEGORIES.ElseActions>;
+    category: CATEGORIES;
   }) => {
-    const newColumns = [...selectedCaseEntries[category].columns].filter(
-      (item) => item.id !== columnId
-    );
+    const newColumns = [
+      ...selectedCaseEntries[category as CATEGORIES_WITHOUT_ELSE_ACTIONS]
+        .columns
+    ].filter((item) => item.id !== columnId);
 
     setSelectedCaseEntries({
       ...selectedCaseEntries,
@@ -177,21 +182,21 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
   }: {
     columnId: string;
     newVariable: VariablesOptionsProps;
-    category: Exclude<CATEGORIES, CATEGORIES.ElseActions>;
+    category: CATEGORIES;
   }) => {
-    const updatedColumns = selectedCaseEntries[category].columns.map(
-      (item: VariableTypeDataProps) => {
-        if (item.id === columnId) {
-          return {
-            ...item,
-            variableName: newVariable.variableName,
-            variableType: newVariable.variableType
-          };
-        } else {
-          return item;
-        }
+    const updatedColumns = selectedCaseEntries[
+      category as CATEGORIES_WITHOUT_ELSE_ACTIONS
+    ].columns.map((item: VariableTypeDataProps) => {
+      if (item.id === columnId) {
+        return {
+          ...item,
+          variableName: newVariable.variableName,
+          variableType: newVariable.variableType
+        };
+      } else {
+        return item;
       }
-    );
+    });
 
     setSelectedCaseEntries({
       ...selectedCaseEntries,
