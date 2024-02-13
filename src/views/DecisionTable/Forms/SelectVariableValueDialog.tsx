@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Button, Stack, InputAdornment, MenuItem } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { palette } from '../../../themeConfig';
-import { OPERATORS } from '../constants';
-import { RowDataProps } from '../types';
+import { OPERATORS, CATEGORIES } from '../constants';
+import { VariableValueDataProps } from '../types';
 import { getOperatorOptions } from '../utils';
 
 import validationSchema from './validationSchema';
@@ -18,14 +18,16 @@ import { SingleSelect } from '@components/shared/Forms/SingleSelect';
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
   handleClose: () => void;
-  selectedRowData: RowDataProps;
-  handleSubmitVariableValue: (data: RowDataProps) => void;
+  selectedRowData: VariableValueDataProps;
+  category: string;
+  handleSubmitVariableValue: (data: VariableValueDataProps) => void;
 };
 
 const SelectVariableValueDialog = ({
   modalOpen,
   handleClose,
   selectedRowData,
+  category,
   handleSubmitVariableValue
 }: SelectVariableValueDialogProps) => {
   const {
@@ -33,7 +35,8 @@ const SelectVariableValueDialog = ({
     control,
     reset,
     formState: { isSubmitting },
-    watch
+    watch,
+    setValue
   } = useForm({
     resolver: yupResolver(validationSchema)
   });
@@ -42,19 +45,27 @@ const SelectVariableValueDialog = ({
 
   const watchOperator = watch('operator');
 
-  const onSubmit = (data: RowDataProps) => {
-    handleSubmitVariableValue(data);
-  };
-
   useEffect(() => {
     if (selectedRowData) {
       reset(selectedRowData);
     }
   }, []);
 
+  useEffect(() => {
+    if (category !== CATEGORIES.Conditions) {
+      setValue('operator', '=');
+    }
+  }, []);
+
+  const onSubmit = (data: VariableValueDataProps) => {
+    handleSubmitVariableValue(data);
+  };
+
   return (
     <Dialog
-      title="Enter condition"
+      title={
+        category !== CATEGORIES.Conditions ? 'Enter output' : 'Enter condition'
+      }
       open={modalOpen}
       displayConfirmBtn={false}
       displayedCancelBtn={false}
@@ -71,9 +82,8 @@ const SelectVariableValueDialog = ({
             fullWidth
             name="variableName"
             control={control}
-            disabled={true}
             inputProps={{
-              startAdornment: (
+              startAdornment: category === CATEGORIES.Conditions && (
                 <InputAdornment
                   position="start"
                   sx={{
@@ -91,14 +101,15 @@ const SelectVariableValueDialog = ({
               ),
               disabled: true
             }}
-            styles={{ '& .MuiOutlinedInput-root': { paddingLeft: '0' } }}
+            sx={{ '& .MuiOutlinedInput-root': { paddingLeft: '0' } }}
           />
           <SingleSelect
             name="operator"
             control={control}
             displayEmpty
             fullWidth
-            styles={{
+            disabled={category !== CATEGORIES.Conditions}
+            sx={{
               width: '280px',
               minWidth: '110px',
               '& .MuiInputBase-root ': {

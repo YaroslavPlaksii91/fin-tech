@@ -13,10 +13,10 @@ import { TextFieldProps } from '@mui/material/TextField';
 import { CATEGORIES, VARIABLE_TYPE, DECISION_OPTIONS } from '../constants';
 import {
   VariablesOptionsProps,
-  RowDataProps,
-  VariablesDataProps
+  VariableValueDataProps,
+  VariableTypeDataProps
 } from '../types';
-import SelectVariableValueDialog from '../SelectVariableValueDialog/SelectVariableValueDialog';
+import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import { AutocompleteInput } from '../AutocompleteInput/AutocompleteInput';
 
 import { StyledTable } from './styled';
@@ -27,6 +27,46 @@ import {
   StyledTableRow
 } from '@components/shared/Table/styled';
 import SelectComponent from '@components/shared/SelectComponent/SelectComponent';
+
+type TableSkeletonProps = {
+  columns: VariableTypeDataProps[];
+  rows: VariableValueDataProps[];
+  variablesOptions: VariablesOptionsProps[];
+  columnClickedId: string;
+  category: string;
+  handleDeleteRow: (id: string) => void;
+  handleChangeColumnClickedId: (id: string, category: string) => void;
+  handleInsertingColumn: ({
+    columnClickedIndex,
+    category
+  }: {
+    columnClickedIndex: number;
+    category: string;
+  }) => void;
+  handleDeleteCategoryColumn: ({
+    columnId,
+    category
+  }: {
+    columnId: string;
+    category: string;
+  }) => void;
+  handleChangeColumnVariable: ({
+    columnId,
+    newVariable,
+    category
+  }: {
+    columnId: string;
+    newVariable: VariablesOptionsProps;
+    category: string;
+  }) => void;
+  handleSubmitVariableValue: ({
+    newVariableValue,
+    category
+  }: {
+    newVariableValue: VariableValueDataProps;
+    category: string;
+  }) => void;
+};
 
 const TableSkeleton = ({
   columns,
@@ -40,11 +80,10 @@ const TableSkeleton = ({
   handleDeleteCategoryColumn,
   handleChangeColumnVariable,
   handleSubmitVariableValue
-}) => {
+}: TableSkeletonProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedRowData, setSelectedRowData] = useState<RowDataProps | null>(
-    null
-  );
+  const [selectedRowData, setSelectedRowData] =
+    useState<VariableValueDataProps | null>(null);
 
   const [selectedEnumOptions, setSelectedEnumOptions] = useState({
     decision: ''
@@ -74,7 +113,7 @@ const TableSkeleton = ({
     handleCloseMenu();
   };
 
-  const handleSubmitSelectedRowData = (data: RowDataProps) => {
+  const handleSubmitSelectedRowData = (data: VariableValueDataProps) => {
     handleSubmitVariableValue({ newVariableValue: data, category });
     setSelectedRowData(null);
   };
@@ -87,7 +126,9 @@ const TableSkeleton = ({
   };
 
   const getOptions = () => {
-    const columnsVariables = columns.map((column) => column.variableName);
+    const columnsVariables = columns.map(
+      (column: VariableTypeDataProps) => column.variableName
+    );
 
     const newOptions: VariablesOptionsProps[] = variablesOptions.filter(
       (option: VariablesOptionsProps) =>
@@ -102,7 +143,7 @@ const TableSkeleton = ({
       <StyledTable sx={{ minWidth: 650 }}>
         <TableHead>
           <StyledTableRow>
-            {columns.map((column: VariablesDataProps, index: number) => (
+            {columns.map((column: VariableTypeDataProps, index: number) => (
               <StyledTableCell key={column.id}>
                 <Box
                   sx={{
@@ -157,9 +198,9 @@ const TableSkeleton = ({
           </StyledTableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row: RowDataProps) => (
+          {rows.map((row: VariableValueDataProps) => (
             <StyledTableRow key={row.id} sx={{ height: '62px' }}>
-              {columns.map((column, index) => (
+              {columns.map((column: VariableTypeDataProps, index: number) => (
                 <StyledTableCell key={index}>
                   {(column.variableType === VARIABLE_TYPE.String ||
                     column.variableType === VARIABLE_TYPE.Number) && (
@@ -219,6 +260,7 @@ const TableSkeleton = ({
           modalOpen={!!selectedRowData}
           handleClose={() => setSelectedRowData(null)}
           selectedRowData={selectedRowData}
+          category={category}
           handleSubmitVariableValue={handleSubmitSelectedRowData}
         />
       )}

@@ -1,22 +1,49 @@
 import { VariablesOptionsProps } from './types';
 
-export enum ENUM_TYPE {
-  Accept = 'Accept',
-  Decline = 'Decline'
-}
 export const VARIABLE_TYPE = {
   Number: 'number',
   String: 'string',
-  Enum: 'enum'
+  Enum: 'enum',
+  Boolean: 'boolean'
 };
 
 export const OPERATORS = {
   Equal: '=',
   In: 'in',
-  MoreEqual: '>=',
-  LessEqual: '<=',
+  GreaterAndEqual: '>=',
+  LessAndEqual: '<=',
   Between: 'between',
   Any: 'any'
+};
+
+export const EQUAL_OPERATOR = {
+  key: 'equal-operator',
+  value: '='
+};
+
+export const IN_OPERATOR = {
+  key: 'in-operator',
+  value: 'in'
+};
+
+export const GREATER_AND_EQUAL_OPERATOR = {
+  key: 'greater-and-equal-operator',
+  value: '>='
+};
+
+export const LESS_AND_EQUAL_OPERATOR = {
+  key: 'less-and-equal-operator',
+  value: '<='
+};
+
+export const BETWEEN_OPERATOR = {
+  key: 'between-operator',
+  value: 'between'
+};
+
+export const ANY_OPERATOR = {
+  key: 'any-operator',
+  value: 'any'
 };
 
 export const inputVariablesOptions: VariablesOptionsProps[] = [
@@ -44,4 +71,12 @@ export const DECISION_OPTIONS = [
     label: 'Accept'
   },
   { value: 'denied', label: 'Denied' }
+];
+
+export const BOOLEAN_OPTIONS = [
+  {
+    value: 'true',
+    label: 'True'
+  },
+  { value: 'false', label: 'False' }
 ];

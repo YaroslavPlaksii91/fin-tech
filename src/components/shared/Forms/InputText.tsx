@@ -12,16 +12,18 @@ import {
   OutlinedInputProps,
   InputProps
 } from '@mui/material';
+import { SxProps } from '@mui/system';
+import { Theme } from '@mui/material/styles';
 interface InputProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>
 > extends UseControllerProps<TFieldValues, TName> {
-  label: string;
+  label?: string;
   placeholder: string;
   fullWidth?: boolean;
   type?: string;
   inputProps?: Partial<FilledInputProps> | Partial<OutlinedInputProps>;
-  styles?: string;
+  sx?: SxProps<Theme>;
 }
 
 export const InputText = <
@@ -35,7 +37,7 @@ export const InputText = <
   type = 'text',
   fullWidth = false,
   inputProps,
-  styles,
+  sx,
   ...props
 }: InputProps<TFieldValues, TName> & TextFieldProps) => {
   const { field, fieldState } = useController({ control, name });
@@ -53,7 +55,7 @@ export const InputText = <
         id={name}
         type={type}
         InputProps={inputProps}
-        sx={styles}
+        sx={sx}
         {...field}
         {...props}
       />

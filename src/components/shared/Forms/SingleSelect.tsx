@@ -5,6 +5,8 @@ import {
   useController
 } from 'react-hook-form';
 import { FormControl, InputProps, Select } from '@mui/material';
+import { SxProps } from '@mui/system';
+import { Theme } from '@mui/material/styles';
 
 import { StyledError } from './styled';
 
@@ -17,7 +19,8 @@ interface InputProps<
   fullWidth?: boolean;
   children: React.ReactNode;
   displayEmpty?: boolean;
-  styles?: string;
+  sx?: SxProps<Theme> | undefined;
+  disabled: boolean;
 }
 
 export const SingleSelect = <
@@ -28,13 +31,19 @@ export const SingleSelect = <
   name,
   displayEmpty = false,
   children,
-  styles,
-  fullWidth = false
+  sx,
+  fullWidth = false,
+  disabled = false
 }: InputProps<TFieldValues, TName>) => {
   const { field, fieldState } = useController({ control, name });
 
   return (
-    <FormControl error={!!fieldState?.error} sx={styles} fullWidth={fullWidth}>
+    <FormControl
+      error={!!fieldState?.error}
+      sx={sx}
+      fullWidth={fullWidth}
+      disabled={disabled}
+    >
       <Select {...field} displayEmpty={displayEmpty}>
         {children}
       </Select>

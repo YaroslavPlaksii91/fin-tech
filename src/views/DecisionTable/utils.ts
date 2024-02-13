@@ -1,30 +1,35 @@
-import { VARIABLE_TYPE } from './constants';
-
-// TODO: make method more reusable and presentable
+import {
+  VARIABLE_TYPE,
+  EQUAL_OPERATOR,
+  BETWEEN_OPERATOR,
+  GREATER_AND_EQUAL_OPERATOR,
+  ANY_OPERATOR,
+  LESS_AND_EQUAL_OPERATOR,
+  IN_OPERATOR
+} from './constants';
 
 export const getOperatorOptions = (variableType: string) => {
-  let operators = [];
-  if (variableType === VARIABLE_TYPE.String) {
-    operators = [
-      {
-        key: 'in',
-        value: 'in'
-      },
-      { key: 'equal', value: '=' },
-      { key: 'any', value: 'any' }
-    ];
-  }
-  if (variableType === VARIABLE_TYPE.Number) {
-    operators = [
-      { key: 'equal', value: '=' },
-      {
-        key: 'moreEqual',
-        value: '>='
-      },
-      { key: 'lessEqual', value: '<=' },
-      { key: 'between', value: 'between' },
-      { key: 'any', value: 'any' }
-    ];
+  let operators: Record<string, string>[] = [];
+
+  switch (variableType) {
+    case VARIABLE_TYPE.String:
+      operators = [IN_OPERATOR, EQUAL_OPERATOR, ANY_OPERATOR];
+      break;
+    case VARIABLE_TYPE.Number:
+      operators = [
+        EQUAL_OPERATOR,
+        GREATER_AND_EQUAL_OPERATOR,
+        LESS_AND_EQUAL_OPERATOR,
+        BETWEEN_OPERATOR,
+        ANY_OPERATOR
+      ];
+      break;
+    case VARIABLE_TYPE.Boolean:
+      operators = [EQUAL_OPERATOR, ANY_OPERATOR];
+      break;
+
+    default:
+      operators = [EQUAL_OPERATOR];
   }
 
   return operators;

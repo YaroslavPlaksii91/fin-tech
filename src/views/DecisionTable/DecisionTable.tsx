@@ -17,7 +17,12 @@ import {
   CATEGORIES,
   OPERATORS
 } from './constants';
-import { VariablesOptionsProps, RowDataProps } from './types';
+import {
+  VariablesOptionsProps,
+  VariableValueDataProps,
+  SelectedCaseEntriesProps,
+  VariableTypeDataProps
+} from './types';
 import {
   StyledPaper,
   StyledTableContainer,
@@ -44,25 +49,26 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
   const firstConditionsColumnId = uuidv4();
   const firstActionsColumnId = uuidv4();
 
-  const [selectedCaseEntries, setSelectedCaseEntries] = useState({
-    conditions: {
-      columnClickedId: firstConditionsColumnId,
-      columns: [
-        { id: firstConditionsColumnId, variableName: '', variableType: '' }
-      ],
-      rows: []
-    },
-    actions: {
-      columnClickedId: firstActionsColumnId,
-      columns: [
-        { id: firstActionsColumnId, variableName: '', variableType: '' }
-      ],
-      rows: []
-    },
-    elseActions: {
-      rows: [{ id: uuidv4() }]
-    }
-  });
+  const [selectedCaseEntries, setSelectedCaseEntries] =
+    useState<SelectedCaseEntriesProps>({
+      conditions: {
+        columnClickedId: firstConditionsColumnId,
+        columns: [
+          { id: firstConditionsColumnId, variableName: '', variableType: '' }
+        ],
+        rows: []
+      },
+      actions: {
+        columnClickedId: firstActionsColumnId,
+        columns: [
+          { id: firstActionsColumnId, variableName: '', variableType: '' }
+        ],
+        rows: []
+      },
+      elseActions: {
+        rows: [{ id: uuidv4() }]
+      }
+    });
 
   const [openNoteModal, setOpenNoteModal] = useState(false);
 
@@ -167,17 +173,19 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     newVariable: VariablesOptionsProps;
     category: string;
   }) => {
-    const updatedColumns = selectedCaseEntries[category].columns.map((item) => {
-      if (item.id === columnId) {
-        return {
-          ...item,
-          variableName: newVariable.variableName,
-          variableType: newVariable.variableType
-        };
-      } else {
-        return item;
+    const updatedColumns = selectedCaseEntries[category].columns.map(
+      (item: VariableTypeDataProps) => {
+        if (item.id === columnId) {
+          return {
+            ...item,
+            variableName: newVariable.variableName,
+            variableType: newVariable.variableType
+          };
+        } else {
+          return item;
+        }
       }
-    });
+    );
 
     setSelectedCaseEntries({
       ...selectedCaseEntries,
@@ -192,7 +200,7 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     newVariableValue,
     category
   }: {
-    newVariableValue: RowDataProps;
+    newVariableValue: VariableValueDataProps;
     category: string;
   }) => {
     // TODO: delete this after refactoring
@@ -200,19 +208,21 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     const { id, variableName, operator, value, lowestValue, highestValue } =
       newVariableValue;
 
-    const updatedRows = selectedCaseEntries[category].rows.map((row) => {
-      if (row.id === id) {
-        return {
-          ...row,
-          [variableName]:
-            operator === OPERATORS.Between
-              ? `${operator} ${lowestValue} and ${highestValue}`
-              : `${operator} ${value}`
-        };
-      } else {
-        return row;
+    const updatedRows = selectedCaseEntries[category].rows.map(
+      (row: VariableValueDataProps) => {
+        if (row.id === id) {
+          return {
+            ...row,
+            [variableName]:
+              operator === OPERATORS.Between
+                ? `${operator} ${lowestValue} and ${highestValue}`
+                : `${operator} ${value}`
+          };
+        } else {
+          return row;
+        }
       }
-    });
+    );
 
     setSelectedCaseEntries({
       ...selectedCaseEntries,

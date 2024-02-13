@@ -4,18 +4,32 @@ export type VariablesOptionsProps = {
   variableType: string;
 };
 
-export type RowDataProps = {
+export type VariableValueDataProps = {
   id: string;
-  variableName: string;
-  variableType: string;
-  value: string;
-  operator: string;
-  lowestValue?: string;
-  highestValue?: string;
+  variableName: string | undefined;
+  variableType: string | undefined;
+  value?: string | undefined;
+  operator: string | undefined;
+  lowestValue?: string | undefined;
+  highestValue?: string | undefined;
 };
 
-export type VariablesDataProps = {
+export type VariableTypeDataProps = {
   id: string;
   variableName: string;
   variableType: string;
+};
+
+type EntriesProps = {
+  columnClickedId: string;
+  columns: VariableTypeDataProps[];
+  rows: VariableValueDataProps[];
+};
+
+export type SelectedCaseEntriesProps = {
+  conditions: EntriesProps;
+  actions: EntriesProps;
+  elseActions: {
+    rows: VariableValueDataProps[];
+  };
 };
