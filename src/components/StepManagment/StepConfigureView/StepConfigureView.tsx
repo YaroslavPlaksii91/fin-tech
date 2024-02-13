@@ -28,9 +28,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
         step={step}
       />
     )}
-    {step.type === StepType.DECISION_MATRIX && (
-      <DecisionTableStep step={step} />
-    )}
+    {step.type === StepType.DECISION_TABLE && <DecisionTableStep step={step} />}
   </StyledContainer>
 );
 

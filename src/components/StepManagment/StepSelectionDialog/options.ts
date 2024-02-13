@@ -23,10 +23,10 @@ export const options: {
     disabled: true
   },
   {
-    id: StepType.DECISION_MATRIX,
-    label: 'Decision matrix',
+    id: StepType.DECISION_TABLE,
+    label: 'Decision table',
     helperText:
-      'A decision table is an step that allows to set expressions for columns and rows. The system will go through the table and analyze the values.'
+      'A decision table is a step that allows to set expressions for columns and rows. The system will go through the table and analyze the values.'
   },
   {
     id: StepType.CONDITION,

@@ -17,10 +17,10 @@ import { SingleSelect } from '@components/shared/Forms/SingleSelect';
 
 type FormFieldsProps = {
   variableName: string;
-  operator?: string | undefined;
-  value?: string | undefined;
-  lowerBound?: number | null | undefined;
-  upperBound?: number | null | undefined;
+  operator: string;
+  value: string;
+  lowerBound: number | null;
+  upperBound: number | null;
 };
 
 type SelectVariableValueDialogProps = {

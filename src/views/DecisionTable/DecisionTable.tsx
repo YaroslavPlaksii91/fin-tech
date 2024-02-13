@@ -242,7 +242,7 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     <>
       <StepDetailsHeader
         title={step.data.name}
-        details="A decision table is an object that allows to set expressions for
+        details="A decision table is a step that allows to set expressions for
         columns and rows. The system will go through the table and analyze the
         values."
       />

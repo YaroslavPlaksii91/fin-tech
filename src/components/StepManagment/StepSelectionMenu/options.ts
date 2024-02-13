@@ -4,8 +4,8 @@ export const options = [
   { label: 'Champion Challenger', dataKey: StepType.CHAMPION_CHALLENGER },
   { label: 'Calculation', dataKey: StepType.CALCULATION, disabled: true },
   {
-    label: 'Decision matrix',
-    dataKey: StepType.DECISION_MATRIX
+    label: 'Decision table',
+    dataKey: StepType.DECISION_TABLE
   },
   {
     label: 'Condition',

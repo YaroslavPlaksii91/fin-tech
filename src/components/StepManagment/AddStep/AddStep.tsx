@@ -22,7 +22,7 @@ type FormData = {
 const defaultValue = {
   [StepType.CHAMPION_CHALLENGER]: 'Champion Challenger',
   [StepType.CALCULATION]: 'Calculation',
-  [StepType.DECISION_MATRIX]: 'Decision matrix',
+  [StepType.DECISION_TABLE]: 'Decision table',
   [StepType.CONDITION]: 'Condition',
   [StepType.CASE]: 'Case',
   [StepType.SUBFLOW]: 'Subflow'
