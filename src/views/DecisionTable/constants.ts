@@ -48,7 +48,7 @@ export const ANY_OPERATOR = {
 
 export const inputVariablesOptions: VariablesOptionsProps[] = [
   { variableName: 'LeadSourсe', variableType: 'string' },
-  { variableName: 'NextPayDate', variableType: 'string' },
+  { variableName: 'RequestLoanAmount', variableType: 'number' },
   { variableName: 'LeadPrice', variableType: 'number' },
   { variableName: 'CRA.Claritties.Score', variableType: 'number' }
 ];
