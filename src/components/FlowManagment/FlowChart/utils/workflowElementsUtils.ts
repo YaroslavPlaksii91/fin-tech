@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Edge, Node } from 'reactflow';
-import some from 'lodash/some';
 import pick from 'lodash/pick';
 
 import { ADD_BUTTON_ON_EDGE, StepType } from '../types';
@@ -104,21 +103,6 @@ export const updateEdges = ({
 
   return updatedEdges.concat(newEdge);
 };
-
-export const checkEdgeMultiplicity = (edges: Edge[]) =>
-  some(edges, (currentObject, currentIndex) =>
-    some(edges, (nextObject, nextIndex) => {
-      if (currentIndex !== nextIndex) {
-        return (
-          currentObject.source === nextObject.source ||
-          currentObject.source === nextObject.target ||
-          currentObject.target === nextObject.source ||
-          currentObject.target === nextObject.target
-        );
-      }
-      return false;
-    })
-  );
 
 export const checkIfFlowIsEdit = ({
   initialNodes,

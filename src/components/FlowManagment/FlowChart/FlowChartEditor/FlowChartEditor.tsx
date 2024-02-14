@@ -209,41 +209,6 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
     [setEdges, setNodes, rfInstance]
   );
 
-  // const onNodesDelete = useCallback(
-  //   (deleted: Node[]) => {
-  //     setEdges(
-  //       deleted.reduce((acc, node) => {
-  //         const incomers = getIncomers(node, nodes, edges);
-  //         const outgoers = getOutgoers(node, nodes, edges);
-  //         const connectedEdges = getConnectedEdges([node], edges);
-
-  //         const remainingEdges = acc.filter(
-  //           (edge) => !connectedEdges.includes(edge)
-  //         );
-
-  //         const isEdgeMultiplicity = checkEdgeMultiplicity(remainingEdges);
-
-  //         if (isEdgeMultiplicity) {
-  //           return remainingEdges;
-  //         }
-
-  //         const createdEdges = incomers.flatMap(({ id: source }) =>
-  //           outgoers.map(({ id: target }) => ({
-  //             id: uuidv4(),
-  //             source,
-  //             target,
-  //             data: { onAdd: onAddNodeBetweenEdges },
-  //             type: ADD_BUTTON_ON_EDGE
-  //           }))
-  //         );
-
-  //         return [...remainingEdges, ...createdEdges];
-  //       }, edges)
-  //     );
-  //   },
-  //   [nodes, edges]
-  // );
-
   const onAddNode = useCallback(
     (type: StepType, name: string) => {
       const newNode = createNewNode(type, name);

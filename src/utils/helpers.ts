@@ -7,26 +7,6 @@ type Errors = {
   [key: string]: string[];
 };
 
-// const parseAxiosError = (error: AxiosError) => {
-//   if (
-//     error.response &&
-//     error.response.data &&
-//     typeof error.response.data === 'object' &&
-//     'errors' in error.response.data
-//   ) {
-//     console.log('error.response.data', error.response.data);
-//     const { errors } = error.response.data;
-//     return Object.entries(errors as Errors)
-//       .map(([, value]) => {
-//         console.log('value', value);
-//         return `${value.join(', ')}`;
-//       })
-//       .join(' ');
-//   } else {
-//     return GENERAL_SERVER_ERROR;
-//   }
-// };
-
 const parseAxiosError = (error: AxiosError) => {
   if (
     error.response &&
