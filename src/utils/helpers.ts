@@ -13,13 +13,13 @@ const parseAxiosError = (error: AxiosError) => {
     error.response.data &&
     typeof error.response.data === 'object'
   ) {
-    let res = error.response.data;
+    let data: unknown = error.response.data;
     if ('errors' in error.response.data) {
       const { errors } = error.response.data;
-      res = errors;
+      data = errors;
     }
 
-    const errorsArray = Object.entries(res as Errors).map(
+    const errorsArray = Object.entries(data as Errors).map(
       ([, value]) => `${value.toString()}`
     );
 

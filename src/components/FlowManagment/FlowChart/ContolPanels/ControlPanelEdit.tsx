@@ -79,7 +79,7 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
         enqueueSnackbar(
           <SnackbarMessage
             message="Success"
-            details={`Changes for the "${flow.data.name}" flow were successfully saved.`}
+            details={`"${flow.data.name}" flow is published into the production successfully.`}
           />,
           { variant: SNACK_TYPE.SUCCESS }
         );
