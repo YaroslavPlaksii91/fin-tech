@@ -10,9 +10,6 @@ import ReactFlow, {
   ConnectionLineType,
   useReactFlow,
   ReactFlowProvider,
-  getIncomers,
-  getOutgoers,
-  getConnectedEdges,
   Edge,
   ConnectionMode
 } from 'reactflow';
@@ -33,7 +30,6 @@ import {
 } from '../types';
 import ControlPanelEdit from '../ContolPanels/ControlPanelEdit';
 import {
-  checkEdgeMultiplicity,
   checkIfNodeHasConnection,
   checkIfNodeIsInitial,
   createNewNode,
@@ -208,40 +204,40 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
     [setEdges, setNodes, rfInstance]
   );
 
-  const onNodesDelete = useCallback(
-    (deleted: Node[]) => {
-      setEdges(
-        deleted.reduce((acc, node) => {
-          const incomers = getIncomers(node, nodes, edges);
-          const outgoers = getOutgoers(node, nodes, edges);
-          const connectedEdges = getConnectedEdges([node], edges);
+  // const onNodesDelete = useCallback(
+  //   (deleted: Node[]) => {
+  //     setEdges(
+  //       deleted.reduce((acc, node) => {
+  //         const incomers = getIncomers(node, nodes, edges);
+  //         const outgoers = getOutgoers(node, nodes, edges);
+  //         const connectedEdges = getConnectedEdges([node], edges);
 
-          const remainingEdges = acc.filter(
-            (edge) => !connectedEdges.includes(edge)
-          );
+  //         const remainingEdges = acc.filter(
+  //           (edge) => !connectedEdges.includes(edge)
+  //         );
 
-          const isEdgeMultiplicity = checkEdgeMultiplicity(remainingEdges);
+  //         const isEdgeMultiplicity = checkEdgeMultiplicity(remainingEdges);
 
-          if (isEdgeMultiplicity) {
-            return remainingEdges;
-          }
+  //         if (isEdgeMultiplicity) {
+  //           return remainingEdges;
+  //         }
 
-          const createdEdges = incomers.flatMap(({ id: source }) =>
-            outgoers.map(({ id: target }) => ({
-              id: uuidv4(),
-              source,
-              target,
-              data: { onAdd: onAddNodeBetweenEdges },
-              type: ADD_BUTTON_ON_EDGE
-            }))
-          );
+  //         const createdEdges = incomers.flatMap(({ id: source }) =>
+  //           outgoers.map(({ id: target }) => ({
+  //             id: uuidv4(),
+  //             source,
+  //             target,
+  //             data: { onAdd: onAddNodeBetweenEdges },
+  //             type: ADD_BUTTON_ON_EDGE
+  //           }))
+  //         );
 
-          return [...remainingEdges, ...createdEdges];
-        }, edges)
-      );
-    },
-    [nodes, edges]
-  );
+  //         return [...remainingEdges, ...createdEdges];
+  //       }, edges)
+  //     );
+  //   },
+  //   [nodes, edges]
+  // );
 
   const onAddNode = useCallback(
     (type: StepType, name: string) => {
@@ -253,8 +249,25 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   );
 
   const onConnectNode = useCallback(
-    (updatedNode: Node, edgeId: string) => {
+    (updatedNode: FlowNode, edgeId: string) => {
       const newEdgeId = uuidv4();
+      if (updatedNode.type === StepType.CHAMPION_CHALLENGER && rfInstance) {
+        const updatedSplits =
+          updatedNode.data.splits?.map((split, index) => {
+            if (index === 0) {
+              return { ...split, edgeId: newEdgeId };
+            }
+            return split;
+          }) ?? [];
+
+        const updatedNodes = rfInstance.getNodes().map((node: FlowNode) => {
+          if (node.id === updatedNode?.id) {
+            node.data.splits = [...updatedSplits];
+          }
+          return node;
+        });
+        setNodes(updatedNodes);
+      }
       setEdges((edges) =>
         updateEdges({
           edges,
@@ -265,7 +278,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         })
       );
     },
-    [setNodes, setEdges]
+    [setNodes, setEdges, rfInstance]
   );
 
   const onNodeDragStop = useCallback(
@@ -309,6 +322,38 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
     [setStartDrag, startDrag, edges]
   );
 
+  const onEdgesDelete = useCallback(
+    (edges: Edge[]) => {
+      const deletedEdge = edges[0];
+      const updatedNode: FlowNode | undefined = rfInstance?.getNode(
+        deletedEdge.source
+      );
+      if (
+        updatedNode &&
+        updatedNode.type === StepType.CHAMPION_CHALLENGER &&
+        rfInstance &&
+        deletedEdge.sourceHandle
+      ) {
+        const updatedSplits =
+          updatedNode.data.splits?.map((split, index) => {
+            if (index === +deletedEdge.sourceHandle!) {
+              return { ...split, edgeId: null };
+            }
+            return split;
+          }) ?? [];
+
+        const updatedNodes = rfInstance.getNodes().map((node: FlowNode) => {
+          if (node.id === updatedNode?.id) {
+            node.data.splits = [...updatedSplits];
+          }
+          return node;
+        });
+        setNodes(updatedNodes);
+      }
+    },
+    [rfInstance, nodes]
+  );
+
   useEffect(() => {
     setEdges((eds: Edge<EdgeData>[]) =>
       eds.map((edge) => ({
@@ -342,7 +387,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           onNodeDragStop={onNodeDragStop}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
-          onNodesDelete={onNodesDelete}
+          onEdgesDelete={onEdgesDelete}
           onNodeDragStart={onNodeDragStart}
           onInit={(instance) => {
             setRfInstance({
@@ -360,6 +405,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           <Background variant={BackgroundVariant.Lines} />
           <ControlPanelEdit
             flow={flow}
+            isDirty={isDirty}
             setFlow={setFlow}
             rfInstance={rfInstance}
           />

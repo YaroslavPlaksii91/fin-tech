@@ -23,6 +23,7 @@ import { SNACK_TYPE } from '@constants/common';
 
 interface ControlPanelEditProps {
   flow: IFlow;
+  isDirty: boolean;
   setFlow: (flow: IFlow) => void;
   rfInstance: CustomReactFlowInstance | undefined;
 }
@@ -30,6 +31,7 @@ interface ControlPanelEditProps {
 const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
   rfInstance,
   flow,
+  isDirty,
   setFlow
 }) => {
   const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
@@ -71,7 +73,9 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
       try {
         setLoading(true);
         const formattedData = formatFlowOnSave({ flow, rfInstance });
+
         await flowService.pushProductionFlow(formattedData);
+
         enqueueSnackbar(
           <SnackbarMessage
             message="Success"
@@ -115,6 +119,7 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
         </Button>
         <Button
           variant="contained"
+          disabled={isDirty}
           onClick={onPushFlow}
           endIcon={<TaskAltOutlinedIcon />}
         >

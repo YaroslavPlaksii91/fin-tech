@@ -95,6 +95,7 @@ export const updateEdges = ({
   const newEdge = {
     id: newEdgeId,
     source: newNodeId,
+    sourceHandle: '0',
     target: targetNodeId,
     type: ADD_BUTTON_ON_EDGE,
     data: { onAdd: onAddNodeBetweenEdges }

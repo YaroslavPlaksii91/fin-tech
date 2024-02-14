@@ -38,21 +38,31 @@ const SnackbarMessage: React.FC<SnackbarMessageProps> = ({
 const SnackbarErrorMessage: React.FC<SnackbarErrorMessageProps> = ({
   message,
   error
-}) => (
-  <Stack>
-    <Typography
-      sx={{ display: 'flex', alignItems: 'center' }}
-      pb={1}
-      variant="h4"
-      color={palette.blue}
-    >
-      <ErrorOutlineOutlinedIcon sx={{ marginRight: 1 }} size="21px" />
-      {message}
-    </Typography>
-    <Typography variant="h6" fontWeight={400} color={palette.gray}>
-      {parseErrorMessages(error)}
-    </Typography>
-  </Stack>
-);
+}) => {
+  const errors = parseErrorMessages(error);
+  return (
+    <Stack>
+      <Typography
+        sx={{ display: 'flex', alignItems: 'center' }}
+        pb={1}
+        variant="h4"
+        color={palette.blue}
+      >
+        <ErrorOutlineOutlinedIcon sx={{ marginRight: 1 }} size="21px" />
+        {message}
+      </Typography>
 
+      {errors.map((err, idx) => (
+        <Typography
+          key={idx}
+          variant="h6"
+          fontWeight={400}
+          color={palette.gray}
+        >
+          {err}
+        </Typography>
+      ))}
+    </Stack>
+  );
+};
 export { SnackbarMessage, SnackbarErrorMessage };

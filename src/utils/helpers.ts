@@ -7,17 +7,45 @@ type Errors = {
   [key: string]: string[];
 };
 
+// const parseAxiosError = (error: AxiosError) => {
+//   if (
+//     error.response &&
+//     error.response.data &&
+//     typeof error.response.data === 'object' &&
+//     'errors' in error.response.data
+//   ) {
+//     console.log('error.response.data', error.response.data);
+//     const { errors } = error.response.data;
+//     return Object.entries(errors as Errors)
+//       .map(([, value]) => {
+//         console.log('value', value);
+//         return `${value.join(', ')}`;
+//       })
+//       .join(' ');
+//   } else {
+//     return GENERAL_SERVER_ERROR;
+//   }
+// };
+
 const parseAxiosError = (error: AxiosError) => {
   if (
     error.response &&
     error.response.data &&
     typeof error.response.data === 'object'
   ) {
-    return Object.entries(error.response.data as Errors)
-      .map(([, value]) => `${value.join(', ')}`)
-      .join(' ');
+    let res = error.response.data;
+    if ('errors' in error.response.data) {
+      const { errors } = error.response.data;
+      res = errors;
+    }
+
+    const errorsArray = Object.entries(res as Errors).map(
+      ([, value]) => `${value.toString()}`
+    );
+
+    return errorsArray;
   } else {
-    return GENERAL_SERVER_ERROR;
+    return [GENERAL_SERVER_ERROR];
   }
 };
 
@@ -25,7 +53,7 @@ const parseErrorMessages = (error: unknown) => {
   if (error instanceof AxiosError) {
     return parseAxiosError(error);
   } else {
-    return GENERAL_SERVER_ERROR;
+    return [GENERAL_SERVER_ERROR];
   }
 };
 
