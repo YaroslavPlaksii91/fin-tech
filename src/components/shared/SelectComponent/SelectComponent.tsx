@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   FormControl,
   MenuItem,
@@ -11,8 +12,6 @@ type OptionProps = {
 };
 
 type SelectComponentProps = {
-  value: string;
-  onChange: (name: string, value: string) => void;
   options: OptionProps[];
   name?: string;
   isMultiSelect?: boolean;
@@ -20,21 +19,21 @@ type SelectComponentProps = {
 };
 
 const SelectComponent = ({
-  value,
-  onChange,
   name,
   options,
   isMultiSelect = false,
   fullWidth = false
 }: SelectComponentProps) => {
+  const [selectedEnumOptions, setSelectedEnumOptions] = useState('');
+
   const handleOnSelectChange = (event: SelectChangeEvent<string>) => {
-    onChange(event.target.name, event.target.value);
+    setSelectedEnumOptions(event.target.value);
   };
 
   return (
     <FormControl fullWidth={fullWidth} size="small">
       <Select
-        value={value}
+        value={selectedEnumOptions}
         onChange={handleOnSelectChange}
         multiple={isMultiSelect}
         sx={{ minWidth: 200 }}

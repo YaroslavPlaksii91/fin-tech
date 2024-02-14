@@ -4,7 +4,7 @@ export type VariablesOptionsProps = {
   variableType: string;
 };
 
-export type VariableValueDataProps = {
+export type VariableRowData = {
   id: string;
   variableName: string;
   variableType: string;
@@ -14,22 +14,22 @@ export type VariableValueDataProps = {
   upperBound?: number;
 };
 
-export type VariableTypeDataProps = {
+export type VariableHeaderData = {
   id: string;
   variableName: string;
   variableType: string;
 };
 
-type EntriesProps = {
+type CategoryEntries = {
   columnClickedId: string;
-  columns: VariableTypeDataProps[];
-  rows: VariableValueDataProps[];
+  columns: VariableHeaderData[];
+  rows: VariableRowData[];
 };
 
-export type SelectedCaseEntriesProps = {
-  conditions: EntriesProps;
-  actions: EntriesProps;
+export type SelectedCategoriesEntries = {
+  conditions: CategoryEntries;
+  actions: CategoryEntries;
   elseActions: {
-    rows: VariableValueDataProps[];
+    rows: VariableRowData[];
   };
 };

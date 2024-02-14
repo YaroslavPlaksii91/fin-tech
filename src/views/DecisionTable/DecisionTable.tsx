@@ -20,9 +20,9 @@ import {
 } from './constants';
 import {
   VariablesOptionsProps,
-  VariableValueDataProps,
-  SelectedCaseEntriesProps,
-  VariableTypeDataProps
+  VariableRowData,
+  SelectedCategoriesEntries,
+  VariableHeaderData
 } from './types';
 import {
   StyledPaper,
@@ -50,8 +50,8 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
   const firstConditionsColumnId = uuidv4();
   const firstActionsColumnId = uuidv4();
 
-  const [selectedCaseEntries, setSelectedCaseEntries] =
-    useState<SelectedCaseEntriesProps>({
+  const [selectedCategoriesEntries, setSelectedCategoriesEntries] =
+    useState<SelectedCategoriesEntries>({
       conditions: {
         columnClickedId: firstConditionsColumnId,
         columns: [
@@ -83,12 +83,12 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
   const handleAddNewLayer = () => {
     const newRowId = uuidv4();
 
-    setSelectedCaseEntries({
-      ...selectedCaseEntries,
+    setSelectedCategoriesEntries({
+      ...selectedCategoriesEntries,
       conditions: {
-        ...selectedCaseEntries.conditions,
+        ...selectedCategoriesEntries.conditions,
         rows: [
-          ...selectedCaseEntries.conditions.rows,
+          ...selectedCategoriesEntries.conditions.rows,
           {
             id: newRowId,
             variableName: '',
@@ -98,9 +98,9 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
         ]
       },
       actions: {
-        ...selectedCaseEntries.actions,
+        ...selectedCategoriesEntries.actions,
         rows: [
-          ...selectedCaseEntries.actions.rows,
+          ...selectedCategoriesEntries.actions.rows,
           {
             id: newRowId,
             variableName: '',
@@ -113,19 +113,19 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
   };
 
   const handleDeleteLayer = (id: string) => {
-    const { conditions, actions } = selectedCaseEntries;
+    const { conditions, actions } = selectedCategoriesEntries;
 
     const newConditionsRows = conditions.rows.filter((item) => item.id !== id);
     const newActionsRows = actions.rows.filter((item) => item.id !== id);
 
-    setSelectedCaseEntries({
-      ...selectedCaseEntries,
+    setSelectedCategoriesEntries({
+      ...selectedCategoriesEntries,
       conditions: {
-        ...selectedCaseEntries.conditions,
+        ...selectedCategoriesEntries.conditions,
         rows: newConditionsRows
       },
       actions: {
-        ...selectedCaseEntries.actions,
+        ...selectedCategoriesEntries.actions,
         rows: newActionsRows
       }
     });
@@ -135,10 +135,10 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     newColumnId: string,
     category: CATEGORIES
   ) => {
-    setSelectedCaseEntries({
-      ...selectedCaseEntries,
+    setSelectedCategoriesEntries({
+      ...selectedCategoriesEntries,
       [category]: {
-        ...selectedCaseEntries[category],
+        ...selectedCategoriesEntries[category],
         columnClickedId: newColumnId
       }
     });
@@ -152,7 +152,7 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     category: CATEGORIES;
   }) => {
     const newColumns = [
-      ...selectedCaseEntries[category as CATEGORIES_WITHOUT_ELSE_ACTIONS]
+      ...selectedCategoriesEntries[category as CATEGORIES_WITHOUT_ELSE_ACTIONS]
         .columns
     ];
 
@@ -162,10 +162,10 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
       variableType: ''
     });
 
-    setSelectedCaseEntries({
-      ...selectedCaseEntries,
+    setSelectedCategoriesEntries({
+      ...selectedCategoriesEntries,
       [category]: {
-        ...selectedCaseEntries[category],
+        ...selectedCategoriesEntries[category],
         columns: newColumns
       }
     });
@@ -179,14 +179,14 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     category: CATEGORIES;
   }) => {
     const newColumns = [
-      ...selectedCaseEntries[category as CATEGORIES_WITHOUT_ELSE_ACTIONS]
+      ...selectedCategoriesEntries[category as CATEGORIES_WITHOUT_ELSE_ACTIONS]
         .columns
     ].filter((item) => item.id !== columnId);
 
-    setSelectedCaseEntries({
-      ...selectedCaseEntries,
+    setSelectedCategoriesEntries({
+      ...selectedCategoriesEntries,
       [category]: {
-        ...selectedCaseEntries[category],
+        ...selectedCategoriesEntries[category],
         columns: newColumns
       }
     });
@@ -201,9 +201,9 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     newVariable: VariablesOptionsProps;
     category: CATEGORIES;
   }) => {
-    const updatedColumns = selectedCaseEntries[
+    const updatedColumns = selectedCategoriesEntries[
       category as CATEGORIES_WITHOUT_ELSE_ACTIONS
-    ].columns.map((item: VariableTypeDataProps) => {
+    ].columns.map((item: VariableHeaderData) => {
       if (item.id === columnId) {
         return {
           ...item,
@@ -215,10 +215,10 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
       }
     });
 
-    setSelectedCaseEntries({
-      ...selectedCaseEntries,
+    setSelectedCategoriesEntries({
+      ...selectedCategoriesEntries,
       [category]: {
-        ...selectedCaseEntries[category],
+        ...selectedCategoriesEntries[category],
         columns: updatedColumns
       }
     });
@@ -228,17 +228,17 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     newVariableValue,
     category
   }: {
-    newVariableValue: VariableValueDataProps;
+    newVariableValue: VariableRowData;
     category: CATEGORIES;
   }) => {
     const { id, variableName, operator } = newVariableValue;
 
-    const updatedRows = selectedCaseEntries[category].rows.map(
-      (row: VariableValueDataProps) => {
+    const updatedRows = selectedCategoriesEntries[category].rows.map(
+      (row: VariableRowData) => {
         if (row.id === id) {
           return {
             ...row,
-            [variableName as keyof VariableValueDataProps]:
+            [variableName as keyof VariableRowData]:
               operator === OPERATORS.Between
                 ? `${operator} ${newVariableValue.lowerBound} and ${newVariableValue.upperBound}`
                 : `${operator} ${newVariableValue.value}`
@@ -249,16 +249,16 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
       }
     );
 
-    setSelectedCaseEntries({
-      ...selectedCaseEntries,
+    setSelectedCategoriesEntries({
+      ...selectedCategoriesEntries,
       [category]: {
-        ...selectedCaseEntries[category],
+        ...selectedCategoriesEntries[category],
         rows: updatedRows
       }
     });
   };
 
-  const { conditions, actions, elseActions } = selectedCaseEntries;
+  const { conditions, actions, elseActions } = selectedCategoriesEntries;
   return (
     <>
       <StepDetailsHeader

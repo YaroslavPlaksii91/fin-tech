@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { palette } from '../../../themeConfig';
 import { OPERATORS, CATEGORIES } from '../constants';
-import { VariableValueDataProps } from '../types';
+import { VariableRowData } from '../types';
 import { getOperatorOptions } from '../utils';
 
 import validationSchema from './validationSchema';
@@ -18,17 +18,17 @@ import { SingleSelect } from '@components/shared/Forms/SingleSelect';
 type FormFieldsProps = {
   variableName: string;
   operator: string;
-  value: string;
-  lowerBound: number | null;
-  upperBound: number | null;
+  value?: string;
+  lowerBound?: number;
+  upperBound?: number;
 };
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
   handleClose: () => void;
-  selectedRowData: VariableValueDataProps;
+  selectedRowData: VariableRowData;
   category: CATEGORIES;
-  handleSubmitSelectedRowData: (data: VariableValueDataProps) => void;
+  handleSubmitSelectedRowData: (data: VariableRowData) => void;
 };
 
 const SelectVariableValueDialog = ({
@@ -50,8 +50,8 @@ const SelectVariableValueDialog = ({
       variableName: selectedRowData.variableName,
       operator: selectedRowData?.operator ?? '',
       value: selectedRowData?.value ?? '',
-      lowerBound: selectedRowData?.lowerBound ?? null,
-      upperBound: selectedRowData?.upperBound ?? null
+      lowerBound: selectedRowData?.lowerBound,
+      upperBound: selectedRowData?.upperBound
     }
   });
 

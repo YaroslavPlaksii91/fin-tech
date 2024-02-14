@@ -1,4 +1,4 @@
-import { Stack, IconButton, Menu, MenuItem } from '@mui/material';
+import { IconButton, Menu, MenuItem, ListItemIcon } from '@mui/material';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
@@ -20,6 +20,7 @@ type AutocompleteInputProps = {
     columnId: string
   ) => void;
   handleCloseMenu: () => void;
+  isTheLastCategoryColumn: boolean;
 };
 
 export const AutocompleteInput = ({
@@ -33,6 +34,7 @@ export const AutocompleteInput = ({
   handleDeleteColumn,
   handleClickOnMenu,
   handleCloseMenu,
+  isTheLastCategoryColumn,
   ...rest
 }: AutocompleteInputProps & TextFieldProps) => (
   <TextField
@@ -60,41 +62,27 @@ export const AutocompleteInput = ({
             anchorEl={anchorEl}
             open={open && columnId === columnClickedId}
             onClose={handleCloseMenu}
-            PaperProps={{
-              style: {
-                width: '20ch'
-              }
-            }}
           >
-            <Stack
+            <MenuItem
               key="add-column-action"
-              justifyContent="center"
-              alignItems="flex-start"
-              spacing={1}
-              sx={{
-                padding: '0 8px'
-              }}
+              onClick={() => handleAddNewColumn?.(index)}
             >
-              <Stack flexDirection="row" alignItems="center" spacing={0.5}>
+              <ListItemIcon>
                 <HexagonOutlinedIcon size="16px" />
+              </ListItemIcon>
+              Add Column
+            </MenuItem>
 
-                <MenuItem onClick={() => handleAddNewColumn?.(index)}>
-                  Add Column
-                </MenuItem>
-              </Stack>
-              <Stack
-                key="delete-column-action"
-                flexDirection="row"
-                alignItems="center"
-                spacing={0.5}
-              >
+            <MenuItem
+              key="delete-column-action"
+              onClick={() => handleDeleteColumn?.(columnId)}
+              disabled={isTheLastCategoryColumn}
+            >
+              <ListItemIcon>
                 <HexagonOutlinedIcon size="16px" />
-
-                <MenuItem onClick={() => handleDeleteColumn?.(columnId)}>
-                  Delete Column
-                </MenuItem>
-              </Stack>
-            </Stack>
+              </ListItemIcon>
+              Delete Column
+            </MenuItem>
           </Menu>
         </>
       )

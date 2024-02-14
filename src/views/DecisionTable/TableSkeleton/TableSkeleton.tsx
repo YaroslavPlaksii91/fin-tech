@@ -13,8 +13,8 @@ import { TextFieldProps } from '@mui/material/TextField';
 import { CATEGORIES, VARIABLE_TYPE, DECISION_OPTIONS } from '../constants';
 import {
   VariablesOptionsProps,
-  VariableValueDataProps,
-  VariableTypeDataProps
+  VariableRowData,
+  VariableHeaderData
 } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import { AutocompleteInput } from '../AutocompleteInput/AutocompleteInput';
@@ -29,8 +29,8 @@ import {
 import SelectComponent from '@components/shared/SelectComponent/SelectComponent';
 
 type TableSkeletonProps = {
-  columns: VariableTypeDataProps[];
-  rows: VariableValueDataProps[];
+  columns: VariableHeaderData[];
+  rows: VariableRowData[];
   variablesOptions: VariablesOptionsProps[];
   columnClickedId?: string;
   category: CATEGORIES;
@@ -63,7 +63,7 @@ type TableSkeletonProps = {
     newVariableValue,
     category
   }: {
-    newVariableValue: VariableValueDataProps;
+    newVariableValue: VariableRowData;
     category: CATEGORIES;
   }) => void;
 };
@@ -83,12 +83,10 @@ const TableSkeleton = ({
 }: TableSkeletonProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedRowData, setSelectedRowData] =
-    useState<VariableValueDataProps | null>(null);
+    useState<VariableRowData | null>(null);
 
-  const [selectedEnumOptions, setSelectedEnumOptions] = useState({
-    decision: ''
-  });
   const open = Boolean(anchorEl);
+  const isTheLastCategoryColumn = columns.length <= 1;
 
   const handleClickOnMenu = (
     event: React.MouseEvent<HTMLElement>,
@@ -113,21 +111,14 @@ const TableSkeleton = ({
     handleCloseMenu();
   };
 
-  const handleSubmitSelectedRowData = (data: VariableValueDataProps) => {
+  const handleSubmitSelectedRowData = (data: VariableRowData) => {
     handleSubmitVariableValue({ newVariableValue: data, category });
     setSelectedRowData(null);
   };
 
-  const handleChangeOptionForEnum = (category: string, value: string) => {
-    setSelectedEnumOptions((current) => ({
-      ...current,
-      [category]: value
-    }));
-  };
-
   const getOptions = () => {
     const columnsVariables = columns.map(
-      (column: VariableTypeDataProps) => column.variableName
+      (column: VariableHeaderData) => column.variableName
     );
 
     const newOptions: VariablesOptionsProps[] = variablesOptions.filter(
@@ -143,7 +134,7 @@ const TableSkeleton = ({
       <StyledTable sx={{ minWidth: 650 }}>
         <TableHead>
           <StyledTableRow>
-            {columns.map((column: VariableTypeDataProps, index: number) => (
+            {columns.map((column: VariableHeaderData, index: number) => (
               <StyledTableCell key={column.id}>
                 <Box
                   sx={{
@@ -189,6 +180,7 @@ const TableSkeleton = ({
                         handleDeleteColumn={handleDeleteColumn}
                         handleClickOnMenu={handleClickOnMenu}
                         handleCloseMenu={handleCloseMenu}
+                        isTheLastCategoryColumn={isTheLastCategoryColumn}
                       />
                     )}
                   />
@@ -198,9 +190,9 @@ const TableSkeleton = ({
           </StyledTableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row: VariableValueDataProps) => (
+          {rows.map((row: VariableRowData) => (
             <StyledTableRow key={row.id} sx={{ height: '62px' }}>
-              {columns.map((column: VariableTypeDataProps, index: number) => (
+              {columns.map((column: VariableHeaderData, index: number) => (
                 <StyledTableCell key={index}>
                   {(column.variableType === VARIABLE_TYPE.String ||
                     column.variableType === VARIABLE_TYPE.Number) && (
@@ -215,15 +207,9 @@ const TableSkeleton = ({
                       disabled={!column.variableType.length}
                       sx={{ cursor: 'pointer' }}
                     >
-                      {row[
-                        column.variableName as keyof VariableValueDataProps
-                      ] ? (
+                      {row[column.variableName as keyof VariableRowData] ? (
                         <Stack>
-                          {
-                            row[
-                              column.variableName as keyof VariableValueDataProps
-                            ]
-                          }
+                          {row[column.variableName as keyof VariableRowData]}
                         </Stack>
                       ) : (
                         <Typography variant="body2">Select value</Typography>
@@ -234,8 +220,6 @@ const TableSkeleton = ({
 
                   {column.variableType === VARIABLE_TYPE.Enum && (
                     <SelectComponent
-                      value={selectedEnumOptions.decision}
-                      onChange={handleChangeOptionForEnum}
                       options={DECISION_OPTIONS}
                       name="decision"
                       fullWidth
