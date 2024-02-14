@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Edge } from 'reactflow';
+import { Edge, Node } from 'reactflow';
 import some from 'lodash/some';
+import pick from 'lodash/pick';
 
 import { ADD_BUTTON_ON_EDGE, StepType } from '../types';
 
@@ -118,3 +119,35 @@ export const checkEdgeMultiplicity = (edges: Edge[]) =>
       return false;
     })
   );
+
+export const checkIfFlowIsEdit = ({
+  initialNodes,
+  initialEdges,
+  nodes,
+  edges
+}: {
+  initialNodes: Node[];
+  initialEdges: Edge[];
+  nodes: Node[];
+  edges: Edge[];
+}) => {
+  const formattedInitialEdges = initialEdges.map((edg) =>
+    pick(edg, ['source', 'target', 'sourceHandle'])
+  );
+  const formattedOutputEdges = edges.map((edg) =>
+    pick(edg, ['source', 'target', 'sourceHandle'])
+  );
+  const isEditEdges =
+    JSON.stringify(formattedInitialEdges) !==
+    JSON.stringify(formattedOutputEdges);
+
+  const formattedInitialNodes = initialNodes.map((node) =>
+    pick(node, ['data'])
+  );
+  const formatteOutputdNodes = nodes.map((node) => pick(node, ['data']));
+  const isEditNodes =
+    JSON.stringify(formattedInitialNodes) !==
+    JSON.stringify(formatteOutputdNodes);
+
+  return isEditEdges || isEditNodes;
+};

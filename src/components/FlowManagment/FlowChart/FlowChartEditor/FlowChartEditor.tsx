@@ -30,6 +30,7 @@ import {
 } from '../types';
 import ControlPanelEdit from '../ContolPanels/ControlPanelEdit';
 import {
+  checkIfFlowIsEdit,
   checkIfNodeHasConnection,
   checkIfNodeIsInitial,
   createNewNode,
@@ -131,10 +132,14 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
     nodes: Node[];
     edges: Edge[];
   }) => {
-    if (
-      initialEdges.length !== edges.length ||
-      initialNodes.length !== nodes.length
-    ) {
+    const isFlowEdit = checkIfFlowIsEdit({
+      initialNodes,
+      initialEdges,
+      nodes,
+      edges
+    });
+
+    if (isFlowEdit) {
       setIsDirty(true);
     } else {
       setIsDirty(false);
