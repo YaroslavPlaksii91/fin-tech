@@ -67,7 +67,14 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
         rows: []
       },
       elseActions: {
-        rows: [{ id: uuidv4(), variableName: '', variableType: '' }]
+        rows: [
+          {
+            id: uuidv4(),
+            variableName: '',
+            variableType: '',
+            operator: ''
+          }
+        ]
       }
     });
 
@@ -82,14 +89,24 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
         ...selectedCaseEntries.conditions,
         rows: [
           ...selectedCaseEntries.conditions.rows,
-          { id: newRowId, variableName: '', variableType: '' }
+          {
+            id: newRowId,
+            variableName: '',
+            variableType: '',
+            operator: ''
+          }
         ]
       },
       actions: {
         ...selectedCaseEntries.actions,
         rows: [
           ...selectedCaseEntries.actions.rows,
-          { id: newRowId, variableName: '', variableType: '' }
+          {
+            id: newRowId,
+            variableName: '',
+            variableType: '',
+            operator: ''
+          }
         ]
       }
     });
@@ -214,22 +231,17 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     newVariableValue: VariableValueDataProps;
     category: CATEGORIES;
   }) => {
-    const { id, variableName, operator, value, lowerBound, upperBound } =
-      newVariableValue;
+    const { id, variableName, operator } = newVariableValue;
 
     const updatedRows = selectedCaseEntries[category].rows.map(
       (row: VariableValueDataProps) => {
         if (row.id === id) {
           return {
             ...row,
-            operator,
-            value,
-            lowerBound,
-            upperBound,
             [variableName as keyof VariableValueDataProps]:
               operator === OPERATORS.Between
-                ? `${operator} ${lowerBound} and ${upperBound}`
-                : `${operator} ${value}`
+                ? `${operator} ${newVariableValue.lowerBound} and ${newVariableValue.upperBound}`
+                : `${operator} ${newVariableValue.value}`
           };
         } else {
           return row;

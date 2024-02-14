@@ -28,9 +28,7 @@ type SelectVariableValueDialogProps = {
   handleClose: () => void;
   selectedRowData: VariableValueDataProps;
   category: CATEGORIES;
-  handleSubmitSelectedRowData: (
-    data: VariableValueDataProps & FormFieldsProps
-  ) => void;
+  handleSubmitSelectedRowData: (data: VariableValueDataProps) => void;
 };
 
 const SelectVariableValueDialog = ({
@@ -68,7 +66,20 @@ const SelectVariableValueDialog = ({
   }, []);
 
   const onSubmit = (data: FormFieldsProps) => {
-    handleSubmitSelectedRowData({ ...selectedRowData, ...data });
+    if (watchOperator !== OPERATORS.Between) {
+      const { operator, value } = data;
+
+      handleSubmitSelectedRowData({ ...selectedRowData, operator, value });
+    } else {
+      const { operator, lowerBound, upperBound } = data;
+
+      handleSubmitSelectedRowData({
+        ...selectedRowData,
+        operator,
+        lowerBound,
+        upperBound
+      });
+    }
   };
 
   return (

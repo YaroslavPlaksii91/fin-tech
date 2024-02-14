@@ -8,10 +8,10 @@ export type VariableValueDataProps = {
   id: string;
   variableName: string;
   variableType: string;
-  value?: string | undefined;
-  operator?: string | undefined;
-  lowerBound?: number | undefined | null;
-  upperBound?: number | undefined | null;
+  value?: string;
+  operator: string;
+  lowerBound?: number;
+  upperBound?: number;
 };
 
 export type VariableTypeDataProps = {
