@@ -1,7 +1,8 @@
 import { AxiosError } from 'axios';
 import { FieldErrors } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
 
-import { GENERAL_SERVER_ERROR } from '@constants/common';
+import { GENERAL_SERVER_ERROR, PRODUCTION_FLOW_ID } from '@constants/common';
 
 type Errors = {
   [key: string]: string[];
@@ -11,11 +12,9 @@ const parseAxiosError = (error: AxiosError) => {
   if (
     error.response &&
     error.response.data &&
-    typeof error.response.data === 'object' &&
-    'errors' in error.response.data
+    typeof error.response.data === 'object'
   ) {
-    const { errors } = error.response.data;
-    return Object.entries(errors as Errors)
+    return Object.entries(error.response.data as Errors)
       .map(([, value]) => `${value.join(', ')}`)
       .join(' ');
   } else {
@@ -57,4 +56,9 @@ const parseValidationError = (
   return undefined;
 };
 
-export { parseErrorMessages, parseValidationError };
+const checkIsProductionFlow = () => {
+  const { id } = useParams();
+  return id === PRODUCTION_FLOW_ID;
+};
+
+export { parseErrorMessages, parseValidationError, checkIsProductionFlow };

@@ -266,6 +266,9 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
         details="A decision table is a step that allows to set expressions for
         columns and rows. The system will go through the table and analyze the
         values."
+        onDiscard={() => {}}
+        disabled={false}
+        isSubmitting={false}
       />
       <StyledPaper>
         <StyledTableContainer>
@@ -327,6 +330,9 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
         title="Otherwise condition"
         details="A condition used when no rule from previous table was not executed."
         isActionContainerVisible={false}
+        onDiscard={() => {}}
+        disabled={false}
+        isSubmitting={false}
       />
       {/* Otherwise table */}
       <StyledPaper>

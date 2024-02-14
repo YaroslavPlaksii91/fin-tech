@@ -12,13 +12,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import isEmpty from 'lodash/isEmpty';
 import { enqueueSnackbar } from 'notistack';
+import { cloneDeep } from 'lodash';
 
-import { getConnectedNodesIdDFS, unconnectedNodes } from './utils';
+import { getConnectableNodes } from './utils';
 import validationSchema from './validationSchema';
 import { FieldValues, columns } from './types';
 import { StyledPaper, StyledTableContainer } from './styled';
 
-import { FlowNode } from '@domain/flow';
+import { FlowNode, IFlow } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import { AddIcon, DeleteOutlineIcon } from '@components/shared/Icons';
 import NumberRangeInput from '@components/shared/NumberRangeInput/NumberRangeInput';
@@ -36,8 +37,12 @@ import {
 import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
-import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
+import {
+  SnackbarErrorMessage,
+  SnackbarMessage
+} from '@components/shared/Snackbar/SnackbarMessage';
 import Dialog from '@components/shared/Modals/Dialog';
+import { flowService } from '@services/flow-service';
 
 const STEPS_LIMIT = 10;
 const DEFAULT_PERCENTAGE_SPLIT = 10;
@@ -46,11 +51,13 @@ interface ChampionChallengerProps {
   step: FlowNode;
   setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
   rfInstance: CustomReactFlowInstance;
+  flow: IFlow;
 }
 
 const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   step,
   setStep,
+  flow,
   rfInstance: {
     getEdge,
     getNodes,
@@ -76,7 +83,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     control,
     clearErrors,
     getValues,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     setValue
   } = useForm<FieldValues>({
     mode: 'onChange',
@@ -106,7 +113,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
 
   const handleDiscardChanges = () => setStep({ id: MAIN_STEP_ID });
 
-  const onSubmit = (data: FieldValues) => {
+  const onSubmit = async (data: FieldValues) => {
     const existingSplitEdges =
       step.data.splits?.map(({ edgeId }) => edgeId) ?? [];
 
@@ -123,6 +130,10 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         data: { onAdd: onAddNodeBetweenEdges }
       };
     });
+
+    const storedNodes = cloneDeep(nodes);
+    const storedEdges = cloneDeep(edges);
+
     const newEdges = edges
       .filter((edg) => !existingSplitEdges.includes(edg.id))
       .filter((edg) => !targetNodesIds.includes(edg.target))
@@ -148,17 +159,29 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       return node;
     });
 
-    setNodes(updatedNodes);
-    setEdges(newEdges);
-
-    enqueueSnackbar(
-      <SnackbarMessage
-        message="Success"
-        details={`Changes for the "${step.data.name}" step were successfully applied.`}
-      />,
-      { variant: SNACK_TYPE.SUCCESS }
-    );
-    setStep({ id: MAIN_STEP_ID });
+    try {
+      await flowService.validateFlow({
+        ...flow,
+        nodes: updatedNodes,
+        edges: newEdges
+      });
+      setNodes(updatedNodes);
+      setEdges(newEdges);
+      enqueueSnackbar(
+        <SnackbarMessage
+          message="Success"
+          details={`Changes for the "${step.data.name}" step were successfully applied.`}
+        />,
+        { variant: SNACK_TYPE.SUCCESS }
+      );
+      setStep({ id: MAIN_STEP_ID });
+    } catch (error) {
+      setNodes(storedNodes);
+      setEdges(storedEdges);
+      enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
+        variant: SNACK_TYPE.ERROR
+      });
+    }
   };
 
   const setInitialData = useCallback(() => {
@@ -182,15 +205,11 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   }, [step]);
 
   useEffect(() => {
-    const connectedNodeIds = getConnectedNodesIdDFS(edges, step.id);
-    const floatNodes = unconnectedNodes(nodes, edges, step.id);
-    const formattedOptions = nodes
-      .filter((node) => connectedNodeIds.includes(node.id))
-      .concat(floatNodes)
-      .map((node) => ({
-        value: node.id,
-        label: node.data.name
-      }));
+    const connectableNodes = getConnectableNodes(nodes, step.id);
+    const formattedOptions = connectableNodes.map((node) => ({
+      value: node.id,
+      label: node.data.name
+    }));
     setOptions(formattedOptions);
   }, [nodes.length, edges.length, step.id]);
 
@@ -206,7 +225,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
           details="A Champion Challenger is an step that allows you to split traffic into
    several groups and run experiment."
           onDiscard={() => setOpenDiscardModal(true)}
-          disabled={!isEmpty(errors)}
+          disabled={!isEmpty(errors) || isSubmitting}
+          isSubmitting={isSubmitting}
         />
         <Stack pl={3} pr={3}>
           <StyledPaper>
