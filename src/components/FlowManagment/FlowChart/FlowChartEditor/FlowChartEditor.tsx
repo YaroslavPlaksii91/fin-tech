@@ -35,7 +35,7 @@ import {
   checkIfNodeIsInitial,
   createNewNode,
   elementsOverlap,
-  getUpdatedChampionChallengerNode,
+  getUpdatedChampionChallengerNodes,
   updateEdges
 } from '../utils/workflowElementsUtils';
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
@@ -173,7 +173,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           updatedNode?.type === StepType.CHAMPION_CHALLENGER &&
           connection.sourceHandle !== null
         ) {
-          const updatedNodes = getUpdatedChampionChallengerNode({
+          const updatedNodes = getUpdatedChampionChallengerNodes({
             nodes,
             updatedNode,
             newEdgeId,
@@ -215,7 +215,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
       // Update edgeId of splits Champion Challenger data
       if (updatedNode.type === StepType.CHAMPION_CHALLENGER && rfInstance) {
         sourceHandle = DEFAULT_SOURCE_HANDLE;
-        const updatedNodes = getUpdatedChampionChallengerNode({
+        const updatedNodes = getUpdatedChampionChallengerNodes({
           nodes,
           updatedNode,
           newEdgeId: edgeId,
@@ -291,7 +291,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         rfInstance &&
         deletedEdge.sourceHandle
       ) {
-        const updatedNodes = getUpdatedChampionChallengerNode({
+        const updatedNodes = getUpdatedChampionChallengerNodes({
           nodes,
           updatedNode,
           newEdgeId: null,

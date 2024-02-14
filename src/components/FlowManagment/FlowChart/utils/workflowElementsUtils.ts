@@ -138,7 +138,7 @@ export const checkIfFlowIsEdit = ({
   return isEditEdges || isEditNodes;
 };
 
-export const getUpdatedChampionChallengerNode = ({
+export const getUpdatedChampionChallengerNodes = ({
   nodes,
   updatedNode,
   newEdgeId,
