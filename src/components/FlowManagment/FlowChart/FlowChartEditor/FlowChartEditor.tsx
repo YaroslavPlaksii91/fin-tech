@@ -35,9 +35,11 @@ import {
   checkIfNodeIsInitial,
   createNewNode,
   elementsOverlap,
+  getUpdatedChampionChallengerNode,
   updateEdges
 } from '../utils/workflowElementsUtils';
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
+import { DEFAULT_SOURCE_HANDLE } from '../constants';
 
 import NavigationHeader from './NavigateHeader';
 
@@ -159,44 +161,32 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
-      const edgeId = uuidv4();
+      const newEdgeId = uuidv4();
       if (connection.source === connection.target) {
         return;
       }
 
-      if (rfInstance) {
-        // Update edgeId of splits Champion Challenger data
-        if (connection.source) {
-          const connectedNode = rfInstance.getNode(
-            connection.source
-          ) as FlowNode;
-          if (
-            connectedNode?.type === StepType.CHAMPION_CHALLENGER &&
-            connection.sourceHandle !== null
-          ) {
-            const updatedSplits =
-              connectedNode.data.splits?.map((split, index) => {
-                if (index === +connection.sourceHandle!) {
-                  return { ...split, edgeId };
-                }
-                return split;
-              }) ?? [];
-
-            const updatedNodes = rfInstance.getNodes().map((node: FlowNode) => {
-              if (node.id === connectedNode?.id) {
-                node.data.splits = [...updatedSplits];
-              }
-              return node;
-            });
-            setNodes(updatedNodes);
-          }
+      // Update edgeId of splits Champion Challenger data
+      if (rfInstance && connection.source) {
+        const updatedNode = rfInstance.getNode(connection.source) as FlowNode;
+        if (
+          updatedNode?.type === StepType.CHAMPION_CHALLENGER &&
+          connection.sourceHandle !== null
+        ) {
+          const updatedNodes = getUpdatedChampionChallengerNode({
+            nodes,
+            updatedNode,
+            newEdgeId,
+            sourceHandle: connection.sourceHandle
+          });
+          setNodes(updatedNodes);
         }
 
         setEdges((eds) =>
           addEdge(
             {
               ...connection,
-              id: edgeId,
+              id: newEdgeId,
               sourceHandle: connection.sourceHandle,
               data: { onAdd: onAddNodeBetweenEdges },
               type: ADD_BUTTON_ON_EDGE
@@ -206,7 +196,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         );
       }
     },
-    [setEdges, setNodes, rfInstance]
+    [setEdges, setNodes, rfInstance, nodes]
   );
 
   const onAddNode = useCallback(
@@ -221,25 +211,21 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   const onConnectNode = useCallback(
     (updatedNode: FlowNode, edgeId: string) => {
       const newEdgeId = uuidv4();
+      let sourceHandle: string | null = null;
+      // Update edgeId of splits Champion Challenger data
       if (updatedNode.type === StepType.CHAMPION_CHALLENGER && rfInstance) {
-        const updatedSplits =
-          updatedNode.data.splits?.map((split, index) => {
-            if (index === 0) {
-              return { ...split, edgeId: newEdgeId };
-            }
-            return split;
-          }) ?? [];
-
-        const updatedNodes = rfInstance.getNodes().map((node: FlowNode) => {
-          if (node.id === updatedNode?.id) {
-            node.data.splits = [...updatedSplits];
-          }
-          return node;
+        sourceHandle = DEFAULT_SOURCE_HANDLE;
+        const updatedNodes = getUpdatedChampionChallengerNode({
+          nodes,
+          updatedNode,
+          newEdgeId: edgeId,
+          sourceHandle
         });
         setNodes(updatedNodes);
       }
       setEdges((edges) =>
         updateEdges({
+          sourceHandle,
           edges,
           updatableEdgeId: edgeId,
           newNodeId: updatedNode.id,
@@ -248,7 +234,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         })
       );
     },
-    [setNodes, setEdges, rfInstance]
+    [setNodes, setEdges, rfInstance, nodes]
   );
 
   const onNodeDragStop = useCallback(
@@ -298,25 +284,18 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
       const updatedNode: FlowNode | undefined = rfInstance?.getNode(
         deletedEdge.source
       );
+      // Update edgeId of splits Champion Challenger data
       if (
         updatedNode &&
         updatedNode.type === StepType.CHAMPION_CHALLENGER &&
         rfInstance &&
         deletedEdge.sourceHandle
       ) {
-        const updatedSplits =
-          updatedNode.data.splits?.map((split, index) => {
-            if (index === +deletedEdge.sourceHandle!) {
-              return { ...split, edgeId: null };
-            }
-            return split;
-          }) ?? [];
-
-        const updatedNodes = rfInstance.getNodes().map((node: FlowNode) => {
-          if (node.id === updatedNode?.id) {
-            node.data.splits = [...updatedSplits];
-          }
-          return node;
+        const updatedNodes = getUpdatedChampionChallengerNode({
+          nodes,
+          updatedNode,
+          newEdgeId: null,
+          sourceHandle: deletedEdge.sourceHandle
         });
         setNodes(updatedNodes);
       }

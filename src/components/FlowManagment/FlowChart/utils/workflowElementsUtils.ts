@@ -69,6 +69,7 @@ type updateEdgesParams = {
   updatableEdgeId: string;
   newNodeId: string;
   newEdgeId: string;
+  sourceHandle?: string | null;
   onAddNodeBetweenEdges: (
     type: StepType,
     name: string,
@@ -81,6 +82,7 @@ export const updateEdges = ({
   updatableEdgeId,
   newNodeId,
   newEdgeId,
+  sourceHandle = null,
   onAddNodeBetweenEdges
 }: updateEdgesParams) => {
   const targetEdgeIndex = edges.findIndex((ed) => ed.id === updatableEdgeId);
@@ -95,7 +97,7 @@ export const updateEdges = ({
   const newEdge = {
     id: newEdgeId,
     source: newNodeId,
-    sourceHandle: '0',
+    sourceHandle,
     target: targetNodeId,
     type: ADD_BUTTON_ON_EDGE,
     data: { onAdd: onAddNodeBetweenEdges }
@@ -134,4 +136,33 @@ export const checkIfFlowIsEdit = ({
     JSON.stringify(formatteOutputdNodes);
 
   return isEditEdges || isEditNodes;
+};
+
+export const getUpdatedChampionChallengerNode = ({
+  nodes,
+  updatedNode,
+  newEdgeId,
+  sourceHandle
+}: {
+  nodes: FlowNode[];
+  updatedNode: FlowNode;
+  newEdgeId: string | null;
+  sourceHandle: string;
+}) => {
+  const updatedSplits =
+    updatedNode.data.splits?.map((split, index) => {
+      if (index === +sourceHandle) {
+        return { ...split, edgeId: newEdgeId };
+      }
+      return split;
+    }) ?? [];
+
+  const updatedNodes = nodes.map((node: FlowNode) => {
+    if (node.id === updatedNode?.id) {
+      node.data.splits = [...updatedSplits];
+    }
+    return node;
+  });
+
+  return updatedNodes;
 };
