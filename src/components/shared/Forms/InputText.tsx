@@ -6,12 +6,13 @@ import {
 } from 'react-hook-form';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import { FormControl, InputLabel } from '@mui/material';
+
 interface InputProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>
 > extends UseControllerProps<TFieldValues, TName> {
-  label: string;
-  placeholder: string;
+  label?: string;
+  placeholder?: string;
   fullWidth?: boolean;
   type?: string;
 }

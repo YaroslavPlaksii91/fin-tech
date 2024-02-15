@@ -7,6 +7,7 @@ import LoadingButton from '@components/shared/LoadingButton';
 interface StepDetailsHeaderProps {
   title: string;
   details: string;
+  isActionContainerVisible?: boolean;
   disabled: boolean;
   isSubmitting: boolean;
   onDiscard: () => void;
@@ -16,8 +17,9 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
   title,
   details,
   onDiscard,
-  isSubmitting,
-  disabled
+  disabled,
+  isActionContainerVisible = true,
+  isSubmitting
 }) => (
   <Stack
     flexDirection="row"
@@ -31,22 +33,26 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
         {details}
       </Typography>
     </Stack>
-    <Button
-      sx={{ margin: '0px 8px 0 auto' }}
-      variant="contained"
-      color="secondary"
-      onClick={onDiscard}
-    >
-      Discard
-    </Button>
-    <LoadingButton
-      disabled={disabled}
-      loading={isSubmitting}
-      type="submit"
-      variant="contained"
-    >
-      Apply changes
-    </LoadingButton>
+    {isActionContainerVisible && (
+      <>
+        <Button
+          sx={{ margin: '0px 8px 0 auto' }}
+          variant="contained"
+          color="secondary"
+          onClick={onDiscard}
+        >
+          Discard
+        </Button>
+        <LoadingButton
+          disabled={disabled}
+          loading={isSubmitting}
+          type="submit"
+          variant="contained"
+        >
+          Apply changes
+        </LoadingButton>
+      </>
+    )}
   </Stack>
 );
 

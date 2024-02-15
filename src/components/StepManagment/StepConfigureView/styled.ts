@@ -9,5 +9,6 @@ export const StyledContainer = styled(Box)(({ theme }) => ({
   height: '100%',
   overflow: 'hidden',
   zIndex: 1,
-  background: theme.palette.white
+  background: theme.palette.white,
+  overflowY: 'scroll'
 }));

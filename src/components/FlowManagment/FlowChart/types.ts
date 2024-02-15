@@ -4,7 +4,7 @@ import { FlowNode } from '@domain/flow';
 
 export enum StepType {
   CALCULATION = 'calculation',
-  DECISION_MATRIX = 'desicion-matrix',
+  DECISION_TABLE = 'desicion-table',
   CONDITION = 'condition',
   CASE = 'case',
   CHAMPION_CHALLENGER = 'ChampionChallenger',

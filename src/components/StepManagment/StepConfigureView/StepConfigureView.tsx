@@ -2,6 +2,7 @@ import { StyledContainer } from './styled';
 
 import { MAIN_STEP_ID } from '@constants/common';
 import ChampionChallenger from '@views/ChampionChallenger/ChampionChallenger';
+import DecisionTableStep from '@views/DecisionTable/DecisionTable';
 import { FlowNode, IFlow } from '@domain/flow';
 import {
   CustomReactFlowInstance,
@@ -30,6 +31,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
         step={step}
       />
     )}
+    {step.type === StepType.DECISION_TABLE && <DecisionTableStep step={step} />}
   </StyledContainer>
 );
 

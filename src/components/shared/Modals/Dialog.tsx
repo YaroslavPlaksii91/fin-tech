@@ -5,6 +5,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import { IconButton } from '@mui/material';
+import { Breakpoint } from '@mui/system';
 
 import LoadingButton from '../LoadingButton';
 import { CloseIcon } from '../Icons';
@@ -21,6 +22,8 @@ interface DialogProps {
   displayedCancelBtn?: boolean;
   displayConfirmBtn?: boolean;
   isCloseButton?: boolean;
+  fullWidth?: boolean;
+  maxWidth?: Breakpoint | false;
 }
 
 const Dialog: React.FC<DialogProps> = ({
@@ -34,9 +37,16 @@ const Dialog: React.FC<DialogProps> = ({
   confirmLoading = false,
   displayedCancelBtn = true,
   displayConfirmBtn = true,
-  isCloseButton = false
+  isCloseButton = false,
+  fullWidth = false,
+  maxWidth
 }) => (
-  <MuiDialog open={open} onClose={onClose}>
+  <MuiDialog
+    open={open}
+    onClose={onClose}
+    maxWidth={maxWidth}
+    fullWidth={fullWidth}
+  >
     <DialogTitle>{title}</DialogTitle>
     {isCloseButton && (
       <IconButton
