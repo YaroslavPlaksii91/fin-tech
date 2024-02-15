@@ -189,7 +189,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       const defaultSelectedOptions: string[] = [];
       const defaultNote = step.data.note || '';
       const defaultSplits = step.data.splits.map((split) => {
-        const connectedEdges = getEdge(split.edgeId);
+        const edgeId = split.edgeId || '';
+        const connectedEdges = getEdge(edgeId);
         const connectedNode = connectedEdges?.target || '';
         defaultSelectedOptions.push(connectedNode);
         return {
