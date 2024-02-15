@@ -30,7 +30,7 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
       </div>
       <ul className={styles['node-list-container__list']}>
         {data?.splits?.map((el, idx) => (
-          <div key={el.edgeId}>
+          <div key={`${el.edgeId}+${idx}`}>
             <li>{el.percentage}%</li>
             <CustomHandler
               type="source"

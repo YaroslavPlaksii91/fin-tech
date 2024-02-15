@@ -14,11 +14,19 @@ const parseAxiosError = (error: AxiosError) => {
     error.response.data &&
     typeof error.response.data === 'object'
   ) {
-    return Object.entries(error.response.data as Errors)
-      .map(([, value]) => `${value.join(', ')}`)
-      .join(' ');
+    let data: unknown = error.response.data;
+    if ('errors' in error.response.data) {
+      const { errors } = error.response.data;
+      data = errors;
+    }
+
+    const errorsArray = Object.entries(data as Errors).map(
+      ([, value]) => `${value.toString()}`
+    );
+
+    return errorsArray;
   } else {
-    return GENERAL_SERVER_ERROR;
+    return [GENERAL_SERVER_ERROR];
   }
 };
 
@@ -26,7 +34,7 @@ const parseErrorMessages = (error: unknown) => {
   if (error instanceof AxiosError) {
     return parseAxiosError(error);
   } else {
-    return GENERAL_SERVER_ERROR;
+    return [GENERAL_SERVER_ERROR];
   }
 };
 

@@ -7,7 +7,6 @@ import { CustomReactFlowInstance } from '../types';
 
 import { StyledPanel } from './styled';
 
-import Logger from '@utils/logger';
 import {
   BookmarksOutlinedIcon,
   DeleteOutlineIcon,
@@ -24,6 +23,7 @@ import { SNACK_TYPE } from '@constants/common';
 
 interface ControlPanelEditProps {
   flow: IFlow;
+  isDirty: boolean;
   setFlow: (flow: IFlow) => void;
   rfInstance: CustomReactFlowInstance | undefined;
 }
@@ -31,6 +31,7 @@ interface ControlPanelEditProps {
 const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
   rfInstance,
   flow,
+  isDirty,
   setFlow
 }) => {
   const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
@@ -67,9 +68,33 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
     setModalDeleteOpen(true);
   }, []);
 
-  const onPushFlow = useCallback(() => {
-    Logger.info('Push changes');
-  }, [rfInstance]);
+  const onPushFlow = useCallback(async () => {
+    if (rfInstance && flow) {
+      try {
+        setLoading(true);
+        const formattedData = formatFlowOnSave({ flow, rfInstance });
+
+        await flowService.pushProductionFlow(formattedData);
+
+        enqueueSnackbar(
+          <SnackbarMessage
+            message="Success"
+            details={`"${flow.data.name}" flow is published into the production successfully.`}
+          />,
+          { variant: SNACK_TYPE.SUCCESS }
+        );
+      } catch (error) {
+        enqueueSnackbar(
+          <SnackbarErrorMessage message="Error" error={error} />,
+          {
+            variant: SNACK_TYPE.ERROR
+          }
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+  }, [rfInstance, flow]);
 
   return (
     <StyledPanel position="top-right">
@@ -94,6 +119,7 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
         </Button>
         <Button
           variant="contained"
+          disabled={isDirty}
           onClick={onPushFlow}
           endIcon={<TaskAltOutlinedIcon />}
         >

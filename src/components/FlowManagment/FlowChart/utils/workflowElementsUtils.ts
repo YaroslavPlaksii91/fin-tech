@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Edge } from 'reactflow';
-import some from 'lodash/some';
+import { Edge, Node } from 'reactflow';
+import pick from 'lodash/pick';
 
 import { ADD_BUTTON_ON_EDGE, StepType } from '../types';
 
@@ -69,6 +69,7 @@ type updateEdgesParams = {
   updatableEdgeId: string;
   newNodeId: string;
   newEdgeId: string;
+  sourceHandle?: string | null;
   onAddNodeBetweenEdges: (
     type: StepType,
     name: string,
@@ -81,6 +82,7 @@ export const updateEdges = ({
   updatableEdgeId,
   newNodeId,
   newEdgeId,
+  sourceHandle = null,
   onAddNodeBetweenEdges
 }: updateEdgesParams) => {
   const targetEdgeIndex = edges.findIndex((ed) => ed.id === updatableEdgeId);
@@ -95,6 +97,7 @@ export const updateEdges = ({
   const newEdge = {
     id: newEdgeId,
     source: newNodeId,
+    sourceHandle,
     target: targetNodeId,
     type: ADD_BUTTON_ON_EDGE,
     data: { onAdd: onAddNodeBetweenEdges }
@@ -103,17 +106,63 @@ export const updateEdges = ({
   return updatedEdges.concat(newEdge);
 };
 
-export const checkEdgeMultiplicity = (edges: Edge[]) =>
-  some(edges, (currentObject, currentIndex) =>
-    some(edges, (nextObject, nextIndex) => {
-      if (currentIndex !== nextIndex) {
-        return (
-          currentObject.source === nextObject.source ||
-          currentObject.source === nextObject.target ||
-          currentObject.target === nextObject.source ||
-          currentObject.target === nextObject.target
-        );
-      }
-      return false;
-    })
+export const checkIfFlowIsEdit = ({
+  initialNodes,
+  initialEdges,
+  nodes,
+  edges
+}: {
+  initialNodes: Node[];
+  initialEdges: Edge[];
+  nodes: Node[];
+  edges: Edge[];
+}) => {
+  const formattedInitialEdges = initialEdges.map((edg) =>
+    pick(edg, ['source', 'target', 'sourceHandle'])
   );
+  const formattedOutputEdges = edges.map((edg) =>
+    pick(edg, ['source', 'target', 'sourceHandle'])
+  );
+  const isEditEdges =
+    JSON.stringify(formattedInitialEdges) !==
+    JSON.stringify(formattedOutputEdges);
+
+  const formattedInitialNodes = initialNodes.map((node) =>
+    pick(node, ['data'])
+  );
+  const formatteOutputdNodes = nodes.map((node) => pick(node, ['data']));
+  const isEditNodes =
+    JSON.stringify(formattedInitialNodes) !==
+    JSON.stringify(formatteOutputdNodes);
+
+  return isEditEdges || isEditNodes;
+};
+
+export const getUpdatedChampionChallengerNodes = ({
+  nodes,
+  updatedNode,
+  newEdgeId,
+  sourceHandle
+}: {
+  nodes: FlowNode[];
+  updatedNode: FlowNode;
+  newEdgeId: string | null;
+  sourceHandle: string;
+}) => {
+  const updatedSplits =
+    updatedNode.data.splits?.map((split, index) => {
+      if (index === +sourceHandle) {
+        return { ...split, edgeId: newEdgeId };
+      }
+      return split;
+    }) ?? [];
+
+  const updatedNodes = nodes.map((node: FlowNode) => {
+    if (node.id === updatedNode?.id) {
+      node.data.splits = [...updatedSplits];
+    }
+    return node;
+  });
+
+  return updatedNodes;
+};
