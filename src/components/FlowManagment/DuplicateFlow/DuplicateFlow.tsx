@@ -30,11 +30,11 @@ export const DuplicateFlow: React.FC<DuplicateFlowProps> = ({
       const flowDetails = await flowService.getFlow(flow.id);
       const flowDuplicateData = createDuplicateFlowData(flowDetails);
       const { id } = await flowService.createFlow(flowDuplicateData);
-      handleCloseModal();
       navigate(routes.underwriting.flow.details(id));
     } catch (error) {
       Logger.error(error);
     } finally {
+      handleCloseModal();
       setConfirmLoading(false);
     }
   };
