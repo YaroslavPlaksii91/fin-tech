@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { RenameFlow } from '../RenameFlow/RenameFlowForm';
 import { DeleteFlow } from '../DeleteFlow/DeleteFlow';
+import { DuplicateFlow } from '../DuplicateFlow/DuplicateFlow';
 
 import Details from './Details';
 
@@ -34,6 +35,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [modalRenameOpen, setModalRenameOpen] = useState<boolean>(false);
   const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
+  const [modalDuplicateOpen, setModalDuplicateOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -53,7 +55,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         navigate(routes.underwriting.flow.details(flow.id));
         break;
       case ActionTypes.DUPLICATE_FLOW:
-        Logger.info('Duplicate');
+        setModalDuplicateOpen(true);
         break;
       case ActionTypes.VIEW_DATA_DICTIONARY:
         Logger.info('View data dictionary');
@@ -93,6 +95,11 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         flowId={flow.id}
         modalOpen={modalDeleteOpen}
         setModalOpen={setModalDeleteOpen}
+      />
+      <DuplicateFlow
+        flow={flow}
+        modalOpen={modalDuplicateOpen}
+        setModalOpen={setModalDuplicateOpen}
       />
     </>
   );
