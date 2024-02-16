@@ -1,5 +1,6 @@
 import { Typography } from '@mui/material';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { createDuplicateFlowData } from './createDuplicateFlowData';
 
@@ -7,8 +8,7 @@ import Dialog from '@components/shared/Modals/Dialog';
 import Logger from '@utils/logger';
 import { IFlowListItem } from '@domain/flow';
 import { flowService } from '@services/flow-service';
-import { duplicateFlow } from '@store/flowList/asyncThunk';
-import { useAppDispatch } from '@store/hooks';
+import routes from '@constants/routes';
 
 interface DuplicateFlowProps {
   flow: IFlowListItem;
@@ -21,16 +21,17 @@ export const DuplicateFlow: React.FC<DuplicateFlowProps> = ({
   modalOpen,
   setModalOpen
 }) => {
-  const dispatch = useAppDispatch();
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleDuplicateFlow = async () => {
     try {
       setConfirmLoading(true);
       const flowDetails = await flowService.getFlow(flow.id);
       const flowDuplicateData = createDuplicateFlowData(flowDetails);
-      await dispatch(duplicateFlow(flowDuplicateData));
+      const { id } = await flowService.createFlow(flowDuplicateData);
       handleCloseModal();
+      navigate(routes.underwriting.flow.details(id));
     } catch (error) {
       Logger.error(error);
     } finally {

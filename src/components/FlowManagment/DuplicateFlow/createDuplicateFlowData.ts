@@ -10,7 +10,7 @@ export const createDuplicateFlowData = (flow: IFlow) => {
   return {
     ...omitFlowData,
     data: {
-      name: `${flow.data.name} (Copy)`,
+      name: `Copy of (${flow.data.name})`,
       createdBy: username,
       editedBy: username
     }
