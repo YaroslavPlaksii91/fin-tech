@@ -30,7 +30,13 @@ export type ChampionChallengerData = {
   splits?: { edgeId: string | null; percentage: number }[];
 };
 
-export type FlowNode = Node<NodeData & ChampionChallengerData>;
+export type CalculationData = {
+  expressions: [];
+};
+
+export type FlowNode = Node<
+  NodeData & ChampionChallengerData & CalculationData
+>;
 
 export interface IFlow {
   id: string;

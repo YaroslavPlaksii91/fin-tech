@@ -3,7 +3,7 @@ import { ReactFlowInstance } from 'reactflow';
 import { FlowNode } from '@domain/flow';
 
 export enum StepType {
-  CALCULATION = 'calculation',
+  CALCULATION = 'Calculation',
   DECISION_TABLE = 'desicion-table',
   CONDITION = 'condition',
   CASE = 'case',
