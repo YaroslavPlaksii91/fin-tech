@@ -1,9 +1,12 @@
-export enum VARIABLE_TYPES {
+export enum DATA_TYPES {
   Integer = 'Integer',
   Decimal = 'Decimal',
   String = 'String',
   Enum = 'Enum',
-  Boolean = 'Boolean'
+  Boolean = 'Boolean',
+  DateTime = 'DateTime',
+  StringArray = 'StringArray',
+  Object = 'Object'
 }
 
 export interface DataDictionaryVariable {
@@ -11,7 +14,7 @@ export interface DataDictionaryVariable {
   source?: string;
   destination?: string;
   variableType: string;
-  dataType: VARIABLE_TYPES;
+  dataType: DATA_TYPES;
   defaultValue: string;
   isRequired: boolean;
   usageMode: string;
