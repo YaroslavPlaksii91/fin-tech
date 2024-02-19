@@ -1,9 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 
-import {
-  getDataDictionaryVariables,
-  getUserDefinedVariables
-} from '@services/data-dictionary';
+import { dataDictionaryService } from '@services/data-dictionary';
 import { DataDictionaryVariable } from '@domain/dataDictionary';
 
 enum PROMISE_TYPES {
@@ -25,8 +22,8 @@ const useDataDictionaryVariables = () => {
     setIsLoadingData(true);
 
     const results = await Promise.allSettled([
-      getDataDictionaryVariables(),
-      getUserDefinedVariables()
+      dataDictionaryService.getDataDictionaryVariables(),
+      dataDictionaryService.getUserDefinedVariables()
     ]);
 
     const fulfilledValues = results.filter(isFulfilled).map((p) => p.value);
@@ -44,7 +41,7 @@ const useDataDictionaryVariables = () => {
   }, []);
 
   useEffect(() => {
-    getVariables();
+    void getVariables();
   }, [getVariables]);
 
   return { isLoadingData, variables };

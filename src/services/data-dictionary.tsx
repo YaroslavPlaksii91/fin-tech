@@ -2,14 +2,19 @@ import api from '@utils/api';
 import { DataDictionaryVariable } from '@domain/dataDictionary';
 import { userDefinedData } from '@constants/mocks';
 
-export const getDataDictionaryVariables = async () => {
-  const { data } = await api.get<DataDictionaryVariable[]>(
-    '/expression-builder/data-dictionary-variables'
-  );
-  return data;
-};
+class DataDictionaryService {
+  async getDataDictionaryVariables() {
+    const { data } = await api.get<DataDictionaryVariable[]>(
+      '/expression-builder/data-dictionary-variables'
+    );
+    return data;
+  }
 
-export const getUserDefinedVariables = () =>
-  new Promise((resolve) => {
-    resolve(userDefinedData);
-  });
+  getUserDefinedVariables() {
+    return new Promise((resolve) => {
+      resolve(userDefinedData);
+    });
+  }
+}
+
+export const dataDictionaryService = new DataDictionaryService();
