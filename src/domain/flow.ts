@@ -3,6 +3,7 @@ import { Edge, Node, Viewport } from '@reactflow/core';
 import { IEntity } from './entity';
 
 import { StepType } from '@components/FlowManagment/FlowChart/types';
+import { Expression } from '@views/Calculation/types';
 
 export interface IFlowListItem extends IEntity {
   name: string;
@@ -31,7 +32,7 @@ export type ChampionChallengerData = {
 };
 
 export type CalculationData = {
-  expressions: [];
+  expressions: Expression[];
 };
 
 export type FlowNode = Node<

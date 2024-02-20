@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Button,
   Stack,
@@ -7,10 +7,9 @@ import {
   TableHead,
   Typography
 } from '@mui/material';
+import { useFieldArray, useForm } from 'react-hook-form';
 
-// import { StyledPaper, StyledTableContainer } from './styled';
-
-import { columns } from './types';
+import { Expression, FieldValues, columns } from './types';
 
 import { FlowNode, IFlow } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
@@ -28,9 +27,7 @@ import {
   DeleteOutlineIcon,
   EditNoteOutlinedIcon
 } from '@components/shared/Icons';
-
-// const STEPS_LIMIT = 10;
-
+import { ExpressionEditor } from '@components/ExpressionEditor/ExpressionEditor';
 interface CalculationProps {
   step: FlowNode;
   setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
@@ -40,12 +37,23 @@ interface CalculationProps {
 
 const Calculation: React.FC<CalculationProps> = ({
   step,
-  setStep
-  //   flow,
-  // rfInstance,
+  setStep,
+  rfInstance: { getNodes, setNodes }
 }) => {
+  const nodes: FlowNode[] = getNodes();
   //   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
+  const [openExpEditorModal, setOpenExpEditorModal] = useState<boolean>(false);
+  const [initialValue, setInitialValue] = useState<Expression | undefined>(
+    undefined
+  );
+
+  const { handleSubmit, control, setValue } = useForm<FieldValues>();
+
+  const { fields, append, remove } = useFieldArray({
+    name: 'expressions',
+    control
+  });
 
   //   const handleOpenNoteModal = () => {
   //     setOpenNoteModal(true);
@@ -63,8 +71,29 @@ const Calculation: React.FC<CalculationProps> = ({
 
   const handleDiscardChanges = () => setStep({ id: MAIN_STEP_ID });
 
+  const onSubmit = (data: FieldValues) => {
+    const updatedNodes = nodes.map((node: FlowNode) => {
+      if (node.id === step.id) {
+        node.data = {
+          ...node.data,
+          expressions: data.expressions
+        };
+      }
+      return node;
+    });
+    setNodes(updatedNodes);
+  };
+
+  useEffect(() => {
+    setValue('expressions', step.data.expressions);
+  }, [step.data]);
+
+  const handleAddNewBussinesRule = (data: Expression) => {
+    append(data);
+  };
+
   return (
-    <>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <StepDetailsHeader
         title={step.data.name}
         details="Calculation is a step that allows the User to set a value for the parameter."
@@ -90,32 +119,40 @@ const Calculation: React.FC<CalculationProps> = ({
                 </StyledTableRow>
               </TableHead>
               <TableBody>
-                <StyledTableRow>
-                  <StyledTableCell></StyledTableCell>
-                  <StyledTableCell></StyledTableCell>
-                  <StyledTableCell sx={{ padding: 0 }} width={40}>
-                    <Stack direction="row">
-                      <Button
-                        fullWidth
-                        sx={{ padding: '10px' }}
-                        onClick={() => {
-                          // console.log('edit');
-                        }}
-                      >
-                        <EditNoteOutlinedIcon />
-                      </Button>
-                      <Button
-                        fullWidth
-                        sx={{ padding: '10px' }}
-                        onClick={() => {
-                          // console.log('remove');
-                        }}
-                      >
-                        <DeleteOutlineIcon />
-                      </Button>
-                    </Stack>
-                  </StyledTableCell>
-                </StyledTableRow>
+                {fields.map((expression, index) => (
+                  <StyledTableRow key={index}>
+                    <StyledTableCell>
+                      {expression.outputVariableName}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {' '}
+                      {expression.expressionString}
+                    </StyledTableCell>
+                    <StyledTableCell sx={{ padding: 0 }} width={40}>
+                      <Stack direction="row">
+                        <Button
+                          fullWidth
+                          sx={{ padding: '10px' }}
+                          onClick={() => {
+                            setInitialValue(expression);
+                            setOpenExpEditorModal(true);
+                          }}
+                        >
+                          <EditNoteOutlinedIcon />
+                        </Button>
+                        <Button
+                          fullWidth
+                          sx={{ padding: '10px' }}
+                          onClick={() => {
+                            remove(index);
+                          }}
+                        >
+                          <DeleteOutlineIcon />
+                        </Button>
+                      </Stack>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
               </TableBody>
             </Table>
           </StyledTableContainer>
@@ -123,13 +160,20 @@ const Calculation: React.FC<CalculationProps> = ({
         <Button
           sx={{ width: '190px' }}
           onClick={() => {
-            // console.log('add new row');
+            setOpenExpEditorModal(true);
           }}
           startIcon={<AddIcon />}
         >
           Add new business rule
         </Button>
       </Stack>
+
+      <ExpressionEditor
+        initialValues={initialValue}
+        handleAddNewBussinesRule={handleAddNewBussinesRule}
+        modalOpen={openExpEditorModal}
+        setModalOpen={setOpenExpEditorModal}
+      />
 
       <Dialog
         title="Discard changes"
@@ -143,7 +187,7 @@ const Calculation: React.FC<CalculationProps> = ({
           cannot be canceled. Are you sure you want to cancel the changes?
         </Typography>
       </Dialog>
-    </>
+    </form>
   );
 };
 
