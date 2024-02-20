@@ -32,7 +32,7 @@ export class ExpressionEditorCore {
       return null;
     }
 
-    return nearestOperator ? nearestOperator.operator : null;
+    return nearestOperator ? nearestOperator : null;
   }
 
   extractExpressionLastPart(value: string) {
