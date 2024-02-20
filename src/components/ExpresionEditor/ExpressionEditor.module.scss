@@ -1,0 +1,16 @@
+.root {
+  max-width: 400px;
+  padding: 24px;
+
+  .textarea {
+    width: 100%;
+    resize: none;
+  }
+
+  .suggestBox {
+    width: 400px;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}
