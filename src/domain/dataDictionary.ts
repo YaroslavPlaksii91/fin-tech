@@ -1,20 +1,34 @@
-export enum DATA_TYPES {
+export enum DATA_TYPE_WITH_ENUM_PREFIX {
+  Gender = 'Enum:Gender',
+  ContactTime = 'Enum:ContactTime',
+  ResidenceType = 'Enum:ResidenceType',
+  IncomeType = 'Enum:IncomeType',
+  PaymentType = 'Enum:PaymentType',
+  EmploymentType = 'Enum:EmploymentType',
+  WorkShift = 'Enum:WorkShift',
+  PayFrequency = 'Enum:PayFrequency',
+  BankAccountType = 'Enum:BankAccountType',
+  ReferenceRelationship = 'Enum:ReferenceRelationship'
+}
+
+export enum DATA_TYPE_WITHOUT_ENUM {
   Integer = 'Integer',
   Decimal = 'Decimal',
   String = 'String',
-  Enum = 'Enum',
   Boolean = 'Boolean',
   DateTime = 'DateTime',
   StringArray = 'StringArray',
   Object = 'Object'
 }
 
+export type DATA_TYPE = DATA_TYPE_WITHOUT_ENUM | DATA_TYPE_WITH_ENUM_PREFIX;
+
 export interface DataDictionaryVariable {
   variableName: string;
   source?: string;
   destination?: string;
   variableType: string;
-  dataType: DATA_TYPES;
+  dataType: DATA_TYPE;
   defaultValue: string;
   isRequired: boolean;
   usageMode: string;

@@ -2,7 +2,7 @@ export const userDefinedData = [
   {
     variableName: 'Promocode',
     source: 'LaPMS',
-    variableType: 'input',
+    variableType: 'Input',
     dataType: 'enum',
     defaultValue: '',
     isRequired: false,
@@ -41,7 +41,7 @@ export const userDefinedData = [
   {
     variableName: 'LoyaltyTier',
     source: 'LMS',
-    variableType: 'output',
+    variableType: 'Output',
     dataType: 'enum:LoyaltyTier',
     defaultValue: 'LoyaltyTier.New',
     isRequired: true,
@@ -56,48 +56,9 @@ export const userDefinedData = [
       'Loyalty Tier the user assigned depending on his loyalty to our brand'
   },
   {
-    variableName: 'Promocode',
-    source: 'LaPMS',
-    variableType: 'input',
-    dataType: 'enum',
-    defaultValue: '',
-    isRequired: false,
-    usageMode: 'ReadOnly',
-    allowedValues: [
-      'Push',
-      'Test',
-      'HIS10YOURS',
-      'SAVE25',
-      'EARNED35',
-      'HERETAKE50',
-      'FIRSTOFF75',
-      'OrganicDir',
-      'OrganicLCDir',
-      'BUYOUT',
-      'PUMPKIN',
-      'TURKEY',
-      'XMAS',
-      'BFCM',
-      'NEWYEAR',
-      'VIPS',
-      'LOVE',
-      'EGGS',
-      'MOBILE',
-      'SCHOOL75',
-      'FACEBOOK',
-      'TIKTOK',
-      'YOUTUBE',
-      'GIFT15',
-      'Bing',
-      'Google'
-    ],
-    description: 'Promocode the lead specified in application form'
-  },
-
-  {
     variableName: 'AvgNetMonthlyIncome',
     source: 'LaPMS',
-    variableType: 'input',
+    variableType: 'Input',
     dataType: 'Decimal',
     defaultValue: '',
     isRequired: true,
@@ -109,7 +70,7 @@ export const userDefinedData = [
   {
     variableName: 'Phonenumber',
     source: 'LaPMS',
-    variableType: 'input',
+    variableType: 'Input',
     dataType: 'String',
     defaultValue: '',
     isRequired: true,
@@ -120,7 +81,7 @@ export const userDefinedData = [
   {
     variableName: 'PhonenumberPrefix',
     source: 'UserDefined',
-    variableType: 'temporaryVariable',
+    variableType: 'TemporaryVariable',
     dataType: 'String',
     defaultValue: '',
     isRequired: false,
@@ -131,7 +92,7 @@ export const userDefinedData = [
   {
     variableName: 'EmailExtension',
     source: 'UserDefined',
-    variableType: 'temporaryVariable',
+    variableType: 'TemporaryVariable',
     dataType: 'String',
     defaultValue: '',
     isRequired: false,
@@ -142,7 +103,7 @@ export const userDefinedData = [
   {
     variableName: 'PreCalculatedMaxLoanAmount',
     source: 'UserDefined',
-    variableType: 'temporaryVariable',
+    variableType: 'TemporaryVariable',
     dataType: 'Decimal',
     defaultValue: '',
     isRequired: false,
@@ -153,7 +114,7 @@ export const userDefinedData = [
   {
     variableName: 'CalculatedLoanAmountMultiplier',
     source: 'UserDefined',
-    variableType: 'temporaryVariable',
+    variableType: 'TemporaryVariable',
     dataType: 'Decimal',
     defaultValue: '',
     isRequired: false,
@@ -164,7 +125,7 @@ export const userDefinedData = [
   {
     variableName: 'MaxLoanAmount',
     source: 'UserDefined',
-    variableType: 'temporaryVariable',
+    variableType: 'TemporaryVariable',
     dataType: 'Decimal',
     defaultValue: '',
     isRequired: false,
@@ -175,7 +136,7 @@ export const userDefinedData = [
   {
     variableName: 'RequestedLoanAmount',
     source: 'LaPMS',
-    variableType: 'input',
+    variableType: 'Input',
     dataType: 'Decimal',
     defaultValue: '',
     isRequired: true,
@@ -186,7 +147,7 @@ export const userDefinedData = [
   {
     variableName: 'FinalLoanAmount',
     destination: 'LMS',
-    variableType: 'output',
+    variableType: 'Output',
     dataType: 'Decimal',
     defaultValue: '',
     isRequired: true,
@@ -198,7 +159,7 @@ export const userDefinedData = [
   {
     variableName: 'Store',
     source: 'LMS',
-    variableType: 'output',
+    variableType: 'Output',
     dataType: 'enum:Store',
     defaultValue: '',
     isRequired: true,
