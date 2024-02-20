@@ -11,6 +11,8 @@ import {
   VariableDestinationType,
   VariableSourceType
 } from '@views/Calculation/types';
+import AddVariable from '@components/AddVariable/AddVariable';
+import AddFunction from '@components/AddFunction/AddFunction';
 
 const DEFAULT_MOCK = {
   outputVariableName: 'temp2',
@@ -71,6 +73,8 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
   return (
     <Dialog
       title="Add new business rule"
+      fullWidth
+      maxWidth="md"
       open={modalOpen}
       displayConfirmBtn={false}
       displayedCancelBtn={false}
@@ -78,6 +82,7 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack direction="row" spacing={1}>
           <InputText
+            disabled
             fullWidth
             name="outputVariableName"
             control={control}
@@ -86,11 +91,16 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
           />
           <InputText
             fullWidth
+            disabled
             name="expressionString"
             control={control}
             label="Expression"
             placeholder="Enter expression"
           />
+        </Stack>
+        <Stack spacing={2} direction="row" pt={2}>
+          <AddVariable />
+          <AddFunction />
         </Stack>
         <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
           <Button

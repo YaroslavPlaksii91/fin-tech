@@ -8,13 +8,14 @@ import {
   Typography
 } from '@mui/material';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { enqueueSnackbar } from 'notistack';
 
 import { Expression, FieldValues, columns } from './types';
 
 import { FlowNode, IFlow } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
-import { MAIN_STEP_ID } from '@constants/common';
+import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
 import Dialog from '@components/shared/Modals/Dialog';
 import {
   StyledTableRow,
@@ -28,6 +29,7 @@ import {
   EditNoteOutlinedIcon
 } from '@components/shared/Icons';
 import { ExpressionEditor } from '@components/ExpressionEditor/ExpressionEditor';
+import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 interface CalculationProps {
   step: FlowNode;
   setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
@@ -82,6 +84,14 @@ const Calculation: React.FC<CalculationProps> = ({
       return node;
     });
     setNodes(updatedNodes);
+    enqueueSnackbar(
+      <SnackbarMessage
+        message="Success"
+        details={`Changes for the "${step.data.name}" step were successfully applied.`}
+      />,
+      { variant: SNACK_TYPE.SUCCESS }
+    );
+    setStep({ id: MAIN_STEP_ID });
   };
 
   useEffect(() => {
@@ -93,101 +103,101 @@ const Calculation: React.FC<CalculationProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <StepDetailsHeader
-        title={step.data.name}
-        details="Calculation is a step that allows the User to set a value for the parameter."
-        onDiscard={() => setOpenDiscardModal(true)}
-        disabled={false}
-        isSubmitting={false}
-      />
-      <Stack pl={3} pr={3}>
-        <StyledPaper>
-          <StyledTableContainer>
-            <Table stickyHeader aria-label="sticky table">
-              <TableHead>
-                <StyledTableRow>
-                  {columns.map((column) => (
-                    <StyledTableCell
-                      key={column.id}
-                      align={column.align}
-                      style={{ width: column.width }}
-                    >
-                      {column.label}
-                    </StyledTableCell>
-                  ))}
-                </StyledTableRow>
-              </TableHead>
-              <TableBody>
-                {fields.map((expression, index) => (
-                  <StyledTableRow key={index}>
-                    <StyledTableCell>
-                      {expression.outputVariableName}
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      {' '}
-                      {expression.expressionString}
-                    </StyledTableCell>
-                    <StyledTableCell sx={{ padding: 0 }} width={40}>
-                      <Stack direction="row">
-                        <Button
-                          fullWidth
-                          sx={{ padding: '10px' }}
-                          onClick={() => {
-                            setInitialValue(expression);
-                            setOpenExpEditorModal(true);
-                          }}
-                        >
-                          <EditNoteOutlinedIcon />
-                        </Button>
-                        <Button
-                          fullWidth
-                          sx={{ padding: '10px' }}
-                          onClick={() => {
-                            remove(index);
-                          }}
-                        >
-                          <DeleteOutlineIcon />
-                        </Button>
-                      </Stack>
-                    </StyledTableCell>
+    <>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <StepDetailsHeader
+          title={step.data.name}
+          details="Calculation is a step that allows the User to set a value for the parameter."
+          onDiscard={() => setOpenDiscardModal(true)}
+          disabled={false}
+          isSubmitting={false}
+        />
+        <Stack pl={3} pr={3}>
+          <StyledPaper>
+            <StyledTableContainer>
+              <Table stickyHeader aria-label="sticky table">
+                <TableHead>
+                  <StyledTableRow>
+                    {columns.map((column) => (
+                      <StyledTableCell
+                        key={column.id}
+                        align={column.align}
+                        style={{ width: column.width }}
+                      >
+                        {column.label}
+                      </StyledTableCell>
+                    ))}
                   </StyledTableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </StyledTableContainer>
-        </StyledPaper>
-        <Button
-          sx={{ width: '190px' }}
-          onClick={() => {
-            setOpenExpEditorModal(true);
-          }}
-          startIcon={<AddIcon />}
+                </TableHead>
+                <TableBody>
+                  {fields.map((expression, index) => (
+                    <StyledTableRow key={index}>
+                      <StyledTableCell>
+                        {expression.outputVariableName}
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {' '}
+                        {expression.expressionString}
+                      </StyledTableCell>
+                      <StyledTableCell sx={{ padding: 0 }} width={40}>
+                        <Stack direction="row">
+                          <Button
+                            fullWidth
+                            sx={{ padding: '10px' }}
+                            onClick={() => {
+                              setInitialValue(expression);
+                              setOpenExpEditorModal(true);
+                            }}
+                          >
+                            <EditNoteOutlinedIcon />
+                          </Button>
+                          <Button
+                            fullWidth
+                            sx={{ padding: '10px' }}
+                            onClick={() => {
+                              remove(index);
+                            }}
+                          >
+                            <DeleteOutlineIcon />
+                          </Button>
+                        </Stack>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </StyledTableContainer>
+          </StyledPaper>
+          <Button
+            sx={{ width: '190px' }}
+            onClick={() => {
+              setOpenExpEditorModal(true);
+            }}
+            startIcon={<AddIcon />}
+          >
+            Add new business rule
+          </Button>
+        </Stack>
+        <Dialog
+          title="Discard changes"
+          open={openDiscardModal}
+          onConfirm={handleDiscardChanges}
+          onClose={() => setOpenDiscardModal(false)}
+          confirmText="Discard changes"
         >
-          Add new business rule
-        </Button>
-      </Stack>
-
+          <Typography sx={{ maxWidth: '416px' }} variant="body2">
+            Discarding changes will delete all edits in this step, this action
+            cannot be canceled. Are you sure you want to cancel the changes?
+          </Typography>
+        </Dialog>
+      </form>
       <ExpressionEditor
         initialValues={initialValue}
         handleAddNewBussinesRule={handleAddNewBussinesRule}
         modalOpen={openExpEditorModal}
         setModalOpen={setOpenExpEditorModal}
       />
-
-      <Dialog
-        title="Discard changes"
-        open={openDiscardModal}
-        onConfirm={handleDiscardChanges}
-        onClose={() => setOpenDiscardModal(false)}
-        confirmText="Discard changes"
-      >
-        <Typography sx={{ maxWidth: '416px' }} variant="body2">
-          Discarding changes will delete all edits in this step, this action
-          cannot be canceled. Are you sure you want to cancel the changes?
-        </Typography>
-      </Dialog>
-    </form>
+    </>
   );
 };
 
