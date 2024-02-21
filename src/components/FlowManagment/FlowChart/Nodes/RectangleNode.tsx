@@ -11,7 +11,7 @@ const RectangleNode: React.FC<NodeProps<NodeData & DecisionTableData>> = ({
   <div className={styles['node-rectangle']}>
     <Handle type="source" position={Position.Right} />
     <HexagonOutlinedIconSvg />
-    <div>
+    <div className={styles['node-header']}>
       <p className={styles['node-tag']}>{data.tag}</p>
       <p className={styles['node-label']}>{data.name}</p>
     </div>

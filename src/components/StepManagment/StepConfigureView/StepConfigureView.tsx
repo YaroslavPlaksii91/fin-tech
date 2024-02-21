@@ -8,6 +8,7 @@ import {
   CustomReactFlowInstance,
   StepType
 } from '@components/FlowManagment/FlowChart/types';
+import Calculation from '@views/Calculation/Calculation';
 
 interface StepConfigureViewProps {
   flow: IFlow;
@@ -36,6 +37,14 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
         step={step}
         setStep={setStep}
         rfInstance={rfInstance}
+      />
+    )}
+    {step.type === StepType.CALCULATION && (
+      <Calculation
+        flow={flow}
+        rfInstance={rfInstance}
+        setStep={setStep}
+        step={step}
       />
     )}
   </StyledContainer>

@@ -47,6 +47,9 @@ export const createNewNode = (
         variableSources: []
       };
       break;
+    case StepType.CALCULATION:
+      newNode.data = { ...newNode.data, expressions: [] };
+      break;
     default:
       break;
   }

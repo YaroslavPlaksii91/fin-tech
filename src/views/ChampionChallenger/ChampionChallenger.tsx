@@ -17,7 +17,6 @@ import { cloneDeep } from 'lodash';
 import { getConnectableNodes } from './utils';
 import validationSchema from './validationSchema';
 import { FieldValues, columns } from './types';
-import { StyledPaper, StyledTableContainer } from './styled';
 
 import { FlowNode, IFlow } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
@@ -31,7 +30,9 @@ import {
 import ErrorMessage from '@components/shared/ErrorText/ErrorText';
 import { InputText } from '@components/shared/Forms/InputText';
 import {
+  StyledPaper,
   StyledTableCell,
+  StyledTableContainer,
   StyledTableRow
 } from '@components/shared/Table/styled';
 import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';

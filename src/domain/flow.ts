@@ -1,6 +1,11 @@
 import { Edge, Node, Viewport } from '@reactflow/core';
 
 import { IEntity } from './entity';
+import {
+  DATA_TYPE,
+  VARIABLE_DESTINATION_TYPE,
+  VARIABLE_SOURCE_TYPE
+} from './dataDictionary';
 
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 
@@ -36,8 +41,23 @@ export type DecisionTableData = {
   variableSources?: [];
 };
 
+export type Expression = {
+  outputVariableName: string;
+  expressionString: string;
+  destinationType: VARIABLE_DESTINATION_TYPE;
+  destinationDataType: DATA_TYPE;
+  inputVariables: {
+    variableName: string;
+    sourceType: VARIABLE_SOURCE_TYPE;
+  }[];
+};
+
+export type CalculationData = {
+  expressions?: Expression[];
+};
+
 export type FlowNode = Node<
-  NodeData & ChampionChallengerData & DecisionTableData
+  NodeData & ChampionChallengerData & CalculationData & DecisionTableData
 >;
 
 export interface IFlow {

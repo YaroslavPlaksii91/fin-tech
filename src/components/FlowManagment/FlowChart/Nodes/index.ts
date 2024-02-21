@@ -10,5 +10,6 @@ export const nodeTypes: NodeTypes = {
   [StepType.START]: InitialNodes.StartNode,
   [StepType.END]: InitialNodes.EndNode,
   [StepType.DECISION_TABLE]: RectangleNode,
-  [StepType.CHAMPION_CHALLENGER]: ListNode
+  [StepType.CHAMPION_CHALLENGER]: ListNode,
+  [StepType.CALCULATION]: RectangleNode
 };

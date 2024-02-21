@@ -19,8 +19,7 @@ export const options: {
     id: StepType.CALCULATION,
     label: 'Calculation',
     helperText:
-      'Calculation is an step that allows the User to set a value for the parameter.',
-    disabled: true
+      'Calculation is a step that allows the User to set a value for the parameter.'
   },
   {
     id: StepType.DECISION_TABLE,

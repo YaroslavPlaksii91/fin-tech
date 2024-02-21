@@ -1,4 +1,4 @@
-import { TableRow } from '@mui/material';
+import { Paper, TableContainer, TableRow } from '@mui/material';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material/styles';
 
@@ -21,4 +21,14 @@ export const StyledTableRow = styled(TableRow)(() => ({
   '& th:last-child': {
     borderRight: 'none'
   }
+}));
+
+export const StyledTableContainer = styled(TableContainer)(() => ({
+  maxHeight: `calc(100vh - 450px)`
+}));
+
+export const StyledPaper = styled(Paper)(() => ({
+  width: '100%',
+  overflow: 'hidden',
+  marginBottom: '16px'
 }));
