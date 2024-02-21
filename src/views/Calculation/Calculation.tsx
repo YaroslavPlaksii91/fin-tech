@@ -49,9 +49,9 @@ const Calculation: React.FC<CalculationProps> = ({
   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
   const [openExpEditorModal, setOpenExpEditorModal] = useState<boolean>(false);
-  const [initialValue, setInitialValue] = useState<Expression | undefined>(
-    undefined
-  );
+  const [initialValue, setInitialValue] = useState<
+    (Expression & { id: number }) | undefined
+  >(undefined);
 
   const {
     handleSubmit,
@@ -59,9 +59,9 @@ const Calculation: React.FC<CalculationProps> = ({
     setValue,
     getValues,
     formState: { isSubmitting }
-  } = useForm<FieldValues>();
+  } = useForm<FieldValues>({ defaultValues: { expressions: [], note: '' } });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     name: 'expressions',
     control
   });
@@ -109,8 +109,18 @@ const Calculation: React.FC<CalculationProps> = ({
     setValue('note', step.data.note || '');
   }, [step.data]);
 
-  const handleAddNewBussinesRule = (data: Expression) => {
-    append(data);
+  const handleAddNewBussinesRule = ({
+    data,
+    id
+  }: {
+    data: Expression;
+    id?: number;
+  }) => {
+    if (id !== undefined) {
+      update(id, data);
+    } else {
+      append(data);
+    }
   };
 
   return (
@@ -155,7 +165,10 @@ const Calculation: React.FC<CalculationProps> = ({
                             fullWidth
                             sx={{ padding: '10px' }}
                             onClick={() => {
-                              setInitialValue(expression);
+                              setInitialValue({
+                                ...expression,
+                                id: index
+                              });
                               setOpenExpEditorModal(true);
                             }}
                           >

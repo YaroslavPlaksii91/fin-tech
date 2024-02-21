@@ -28,8 +28,14 @@ const DEFAULT_MOCK = {
 };
 
 interface ExpressionEditorProps {
-  initialValues?: Expression;
-  handleAddNewBussinesRule: (data: Expression) => void;
+  initialValues?: Expression & { id: number };
+  handleAddNewBussinesRule: ({
+    data,
+    id
+  }: {
+    data: Expression;
+    id?: number;
+  }) => void;
   modalOpen: boolean;
   setModalOpen: (value: boolean) => void;
 }
@@ -53,7 +59,7 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
   });
 
   const onSubmit: SubmitHandler<Expression> = (data) => {
-    handleAddNewBussinesRule(data);
+    handleAddNewBussinesRule({ data, id: initialValues?.id });
     handleCloseModal();
   };
 
