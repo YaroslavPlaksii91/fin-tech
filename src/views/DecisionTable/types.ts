@@ -1,3 +1,4 @@
+import { DATA_TYPE } from '@domain/dataDictionary';
 // TODO: should be the same model as from data dictionary
 export type VariablesOptionsProps = {
   variableName: string;
@@ -17,7 +18,8 @@ export type VariableRowData = {
 export type VariableHeaderData = {
   id: string;
   variableName: string;
-  variableType: string;
+  dataType: DATA_TYPE | string;
+  allowedValues: string | string[];
 };
 
 type CategoryEntries = {

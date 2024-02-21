@@ -10,12 +10,8 @@ import {
 } from '@mui/material';
 import { TextFieldProps } from '@mui/material/TextField';
 
-import { CATEGORIES, VARIABLE_TYPE, DECISION_OPTIONS } from '../constants';
-import {
-  VariablesOptionsProps,
-  VariableRowData,
-  VariableHeaderData
-} from '../types';
+import { CATEGORIES } from '../constants';
+import { VariableRowData, VariableHeaderData } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import { AutocompleteInput } from '../AutocompleteInput/AutocompleteInput';
 
@@ -27,11 +23,16 @@ import {
   StyledTableRow
 } from '@components/shared/Table/styled';
 import SelectComponent from '@components/shared/SelectComponent/SelectComponent';
+import {
+  DataDictionaryVariable,
+  DATA_TYPE_WITHOUT_ENUM,
+  DATA_TYPE_WITH_ENUM_PREFIX
+} from '@domain/dataDictionary';
 
 type TableSkeletonProps = {
   columns: VariableHeaderData[];
   rows: VariableRowData[];
-  variablesOptions: VariablesOptionsProps[];
+  variablesOptions: DataDictionaryVariable[];
   columnClickedId?: string;
   category: CATEGORIES;
   handleDeleteRow?: (id: string) => void;
@@ -56,7 +57,10 @@ type TableSkeletonProps = {
     category
   }: {
     columnId: string;
-    newVariable: VariablesOptionsProps;
+    newVariable: Omit<
+      DataDictionaryVariable,
+      'defaultValue' | 'isRequired' | 'usageMode' | 'description'
+    >;
     category: CATEGORIES;
   }) => void;
   handleSubmitVariableValue: ({
@@ -121,8 +125,8 @@ const TableSkeleton = ({
       (column: VariableHeaderData) => column.variableName
     );
 
-    const newOptions: VariablesOptionsProps[] = variablesOptions.filter(
-      (option: VariablesOptionsProps) =>
+    const newOptions: DataDictionaryVariable[] = variablesOptions.filter(
+      (option: DataDictionaryVariable) =>
         !columnsVariables.includes(option.variableName)
     );
 
@@ -153,12 +157,24 @@ const TableSkeleton = ({
                     disableClearable={true}
                     forcePopupIcon={false}
                     disabled={category === CATEGORIES.ElseActions}
-                    getOptionLabel={(option: VariablesOptionsProps) =>
-                      option ? option.variableName : ''
-                    }
+                    getOptionLabel={(
+                      option: Omit<
+                        DataDictionaryVariable,
+                        | 'defaultValue'
+                        | 'isRequired'
+                        | 'usageMode'
+                        | 'description'
+                      >
+                    ) => (option ? option.variableName : '')}
                     onChange={(
                       event: SyntheticEvent<Element, Event>,
-                      newValue: VariablesOptionsProps
+                      newValue: Omit<
+                        DataDictionaryVariable,
+                        | 'defaultValue'
+                        | 'isRequired'
+                        | 'usageMode'
+                        | 'description'
+                      >
                     ) => {
                       event &&
                         handleChangeColumnVariable?.({
@@ -194,17 +210,18 @@ const TableSkeleton = ({
             <StyledTableRow key={row.id} sx={{ height: '62px' }}>
               {columns.map((column: VariableHeaderData, index: number) => (
                 <StyledTableCell key={index}>
-                  {(column.variableType === VARIABLE_TYPE.String ||
-                    column.variableType === VARIABLE_TYPE.Number) && (
+                  {Object.values(DATA_TYPE_WITHOUT_ENUM).includes(
+                    column.dataType as DATA_TYPE_WITHOUT_ENUM
+                  ) && (
                     <StyledStack
                       onClick={() =>
                         setSelectedRowData({
                           ...row,
                           variableName: column.variableName,
-                          variableType: column.variableType
+                          variableType: column.dataType
                         })
                       }
-                      disabled={!column.variableType.length}
+                      disabled={!column.dataType.length}
                       sx={{ cursor: 'pointer' }}
                     >
                       {row[column.variableName as keyof VariableRowData] ? (
@@ -216,11 +233,12 @@ const TableSkeleton = ({
                       )}
                     </StyledStack>
                   )}
-                  {/* mock only for dicision type */}
 
-                  {column.variableType === VARIABLE_TYPE.Enum && (
+                  {Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
+                    column.dataType as DATA_TYPE_WITH_ENUM_PREFIX
+                  ) && (
                     <SelectComponent
-                      options={DECISION_OPTIONS}
+                      options={column.allowedValues}
                       name="decision"
                       fullWidth
                     />

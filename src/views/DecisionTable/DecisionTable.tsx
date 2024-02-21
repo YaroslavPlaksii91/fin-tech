@@ -12,7 +12,6 @@ import {
   USAGE_MODE
 } from './constants';
 import {
-  VariablesOptionsProps,
   VariableRowData,
   SelectedCategoriesEntries,
   VariableHeaderData
@@ -26,7 +25,6 @@ import {
 import TableSkeleton from './TableSkeleton/TableSkeleton';
 import StepNoteSection from './StepNoteSection/StepNoteSection';
 
-import { FlowNode } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import { AddIcon } from '@components/shared/Icons';
 import {
@@ -37,6 +35,8 @@ import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/typ
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
+import { DataDictionaryVariable } from '@domain/dataDictionary';
+import { FlowNode } from '@domain/flow';
 
 type DecisionTableStepProps = {
   step: FlowNode;
@@ -57,14 +57,24 @@ const DecisionTableStep = ({
       conditions: {
         columnClickedId: firstConditionsColumnId,
         columns: [
-          { id: firstConditionsColumnId, variableName: '', variableType: '' }
+          {
+            id: firstConditionsColumnId,
+            variableName: '',
+            dataType: '',
+            allowedValues: ''
+          }
         ],
         rows: []
       },
       actions: {
         columnClickedId: firstActionsColumnId,
         columns: [
-          { id: firstActionsColumnId, variableName: '', variableType: '' }
+          {
+            id: firstActionsColumnId,
+            variableName: '',
+            dataType: '',
+            allowedValues: ''
+          }
         ],
         rows: []
       },
@@ -193,7 +203,8 @@ const DecisionTableStep = ({
     newColumns.splice(columnClickedIndex + 1, 0, {
       id: uuidv4(),
       variableName: '',
-      variableType: ''
+      dataType: '',
+      allowedValues: ''
     });
 
     setSelectedCategoriesEntries({
@@ -232,7 +243,10 @@ const DecisionTableStep = ({
     category
   }: {
     columnId: string;
-    newVariable: VariablesOptionsProps;
+    newVariable: Omit<
+      DataDictionaryVariable,
+      'defaultValue' | 'isRequired' | 'usageMode' | 'description'
+    >;
     category: CATEGORIES;
   }) => {
     const updatedColumns = selectedCategoriesEntries[
@@ -242,7 +256,8 @@ const DecisionTableStep = ({
         return {
           ...item,
           variableName: newVariable.variableName,
-          variableType: newVariable.variableType
+          dataType: newVariable.dataType,
+          allowedValues: newVariable.allowedValues
         };
       } else {
         return item;

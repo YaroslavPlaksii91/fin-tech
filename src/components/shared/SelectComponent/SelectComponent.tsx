@@ -6,13 +6,8 @@ import {
   SelectChangeEvent
 } from '@mui/material';
 
-type OptionProps = {
-  value: string;
-  label: string;
-};
-
 type SelectComponentProps = {
-  options: OptionProps[];
+  options: string[] | string;
   name?: string;
   isMultiSelect?: boolean;
   fullWidth: boolean;
@@ -30,6 +25,14 @@ const SelectComponent = ({
     setSelectedEnumOptions(event.target.value);
   };
 
+  const getFormatedOptions = () => {
+    // in case API returns array in string "[ContactTime.Morning,ContactTime.Afternoon]"
+    if (typeof options === 'string') {
+      return options.replace(/\[|\]/g, '').split(',');
+    }
+
+    return options;
+  };
   return (
     <FormControl fullWidth={fullWidth} size="small">
       <Select
@@ -39,9 +42,9 @@ const SelectComponent = ({
         sx={{ minWidth: 200 }}
         name={name}
       >
-        {options.map((option: OptionProps) => (
-          <MenuItem value={option.value} key={option.label}>
-            {option.label}
+        {getFormatedOptions().map((option: string) => (
+          <MenuItem value={option} key={option}>
+            {option}
           </MenuItem>
         ))}
       </Select>

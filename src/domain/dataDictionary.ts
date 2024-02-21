@@ -8,7 +8,11 @@ export enum DATA_TYPE_WITH_ENUM_PREFIX {
   WorkShift = 'Enum:WorkShift',
   PayFrequency = 'Enum:PayFrequency',
   BankAccountType = 'Enum:BankAccountType',
-  ReferenceRelationship = 'Enum:ReferenceRelationship'
+  ReferenceRelationship = 'Enum:ReferenceRelationship',
+  /*for mocked data*/
+  Store = 'Enum:Store',
+  LoyaltyTier = 'Enum:LoyaltyTier',
+  Promocode = 'Enum:Promocode'
 }
 
 export enum DATA_TYPE_WITHOUT_ENUM {
@@ -27,8 +31,8 @@ export interface DataDictionaryVariable {
   variableName: string;
   source?: string;
   destination?: string;
-  variableType: string;
-  dataType: DATA_TYPE;
+  variableType?: string;
+  dataType: DATA_TYPE | string;
   defaultValue: string;
   isRequired: boolean;
   usageMode: string;
