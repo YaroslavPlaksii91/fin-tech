@@ -1,13 +1,6 @@
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  Button,
-  Typography,
-  Stack,
-  TableHead,
-  TableBody,
-  TextField
-} from '@mui/material';
+import { Button, Typography, Stack, TableHead, TableBody } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 
 import { palette } from '../../themeConfig';
@@ -31,11 +24,10 @@ import {
   StyledTable
 } from './styled';
 import TableSkeleton from './TableSkeleton/TableSkeleton';
+import StepNoteSection from './StepNoteSection/StepNoteSection';
 
 import { FlowNode } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
-import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
-import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
 import { AddIcon } from '@components/shared/Icons';
 import {
   StyledTableCell,
@@ -88,14 +80,11 @@ const DecisionTableStep = ({
       }
     });
 
-  const [openNoteModal, setOpenNoteModal] = useState(false);
   const [noteValue, setNoteValue] = useState('');
 
   const { variables } = useDataDictionaryVariables();
 
   const nodes: FlowNode[] = getNodes();
-
-  // console.log('TABLE_STEP', step.data);
 
   useEffect(() => {
     const { data } = step;
@@ -418,29 +407,7 @@ const DecisionTableStep = ({
         </StyledTableContainer>
       </StyledPaper>
 
-      <Stack sx={{ margin: '16px' }}>
-        <NoteSection handleOpenNoteModal={() => setOpenNoteModal(true)}>
-          <TextField
-            fullWidth
-            placeholder="Enter note here"
-            disabled
-            size="small"
-            value={noteValue}
-          />
-        </NoteSection>
-      </Stack>
-
-      {openNoteModal && (
-        <NoteForm
-          modalOpen={!!openNoteModal}
-          handleClose={() => setOpenNoteModal(false)}
-          handleSubmitNote={(data) => {
-            setNoteValue(data);
-            setOpenNoteModal(false);
-          }}
-          note={noteValue ?? ''}
-        />
-      )}
+      <StepNoteSection noteValue={noteValue} setNoteValue={setNoteValue} />
     </>
   );
 };
