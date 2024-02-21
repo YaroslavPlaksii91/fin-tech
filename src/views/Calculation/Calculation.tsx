@@ -30,6 +30,9 @@ import {
 } from '@components/shared/Icons';
 import { ExpressionEditor } from '@components/ExpressionEditor/ExpressionEditor';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
+import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
+import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
+import { InputText } from '@components/shared/Forms/InputText';
 interface CalculationProps {
   step: FlowNode;
   setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
@@ -43,33 +46,33 @@ const Calculation: React.FC<CalculationProps> = ({
   rfInstance: { getNodes, setNodes }
 }) => {
   const nodes: FlowNode[] = getNodes();
-  //   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
+  const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
   const [openExpEditorModal, setOpenExpEditorModal] = useState<boolean>(false);
   const [initialValue, setInitialValue] = useState<Expression | undefined>(
     undefined
   );
 
-  const { handleSubmit, control, setValue } = useForm<FieldValues>();
+  const { handleSubmit, control, setValue, getValues } = useForm<FieldValues>();
 
   const { fields, append, remove } = useFieldArray({
     name: 'expressions',
     control
   });
 
-  //   const handleOpenNoteModal = () => {
-  //     setOpenNoteModal(true);
-  //   };
+  const handleOpenNoteModal = () => {
+    setOpenNoteModal(true);
+  };
 
-  //   const handleSubmitNote = (note: string) => {
-  //     setValue('note', note);
-  //     setOpenNoteModal(false);
-  //   };
+  const handleSubmitNote = (note: string) => {
+    setValue('note', note);
+    setOpenNoteModal(false);
+  };
 
-  //   const handleCloseNoteModal = () => {
-  //     setValue('note', getValues('note'));
-  //     setOpenNoteModal(false);
-  //   };
+  const handleCloseNoteModal = () => {
+    setValue('note', getValues('note'));
+    setOpenNoteModal(false);
+  };
 
   const handleDiscardChanges = () => setStep({ id: MAIN_STEP_ID });
 
@@ -78,6 +81,7 @@ const Calculation: React.FC<CalculationProps> = ({
       if (node.id === step.id) {
         node.data = {
           ...node.data,
+          note: data.note,
           expressions: data.expressions
         };
       }
@@ -96,6 +100,7 @@ const Calculation: React.FC<CalculationProps> = ({
 
   useEffect(() => {
     setValue('expressions', step.data.expressions);
+    setValue('note', step.data.note || '');
   }, [step.data]);
 
   const handleAddNewBussinesRule = (data: Expression) => {
@@ -177,20 +182,36 @@ const Calculation: React.FC<CalculationProps> = ({
           >
             Add new business rule
           </Button>
+          <NoteSection handleOpenNoteModal={handleOpenNoteModal}>
+            <InputText
+              fullWidth
+              name="note"
+              control={control}
+              label="Note"
+              disabled
+              placeholder="Enter note here"
+            />
+          </NoteSection>
         </Stack>
-        <Dialog
-          title="Discard changes"
-          open={openDiscardModal}
-          onConfirm={handleDiscardChanges}
-          onClose={() => setOpenDiscardModal(false)}
-          confirmText="Discard changes"
-        >
-          <Typography sx={{ maxWidth: '416px' }} variant="body2">
-            Discarding changes will delete all edits in this step, this action
-            cannot be canceled. Are you sure you want to cancel the changes?
-          </Typography>
-        </Dialog>
       </form>
+      <Dialog
+        title="Discard changes"
+        open={openDiscardModal}
+        onConfirm={handleDiscardChanges}
+        onClose={() => setOpenDiscardModal(false)}
+        confirmText="Discard changes"
+      >
+        <Typography sx={{ maxWidth: '416px' }} variant="body2">
+          Discarding changes will delete all edits in this step, this action
+          cannot be canceled. Are you sure you want to cancel the changes?
+        </Typography>
+      </Dialog>
+      <NoteForm
+        modalOpen={openNoteModal}
+        handleClose={handleCloseNoteModal}
+        handleSubmitNote={handleSubmitNote}
+        note={getValues('note') ?? ''}
+      />
       <ExpressionEditor
         initialValues={initialValue}
         handleAddNewBussinesRule={handleAddNewBussinesRule}

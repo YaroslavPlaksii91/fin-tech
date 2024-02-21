@@ -47,7 +47,7 @@ type Expression = {
 
 type FieldValues = {
   expressions: Expression[];
-  // note: string | null;
+  note: string | null;
 };
 
 export { columns, DataType, VariableSourceType, VariableDestinationType };
