@@ -53,7 +53,13 @@ const Calculation: React.FC<CalculationProps> = ({
     undefined
   );
 
-  const { handleSubmit, control, setValue, getValues } = useForm<FieldValues>();
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    getValues,
+    formState: { isSubmitting }
+  } = useForm<FieldValues>();
 
   const { fields, append, remove } = useFieldArray({
     name: 'expressions',
@@ -99,7 +105,7 @@ const Calculation: React.FC<CalculationProps> = ({
   };
 
   useEffect(() => {
-    setValue('expressions', step.data.expressions);
+    setValue('expressions', step.data.expressions || []);
     setValue('note', step.data.note || '');
   }, [step.data]);
 
@@ -114,8 +120,8 @@ const Calculation: React.FC<CalculationProps> = ({
           title={step.data.name}
           details="Calculation is a step that allows the User to set a value for the parameter."
           onDiscard={() => setOpenDiscardModal(true)}
-          disabled={false}
-          isSubmitting={false}
+          disabled={isSubmitting}
+          isSubmitting={isSubmitting}
         />
         <Stack pl={3} pr={3}>
           <StyledPaper>
@@ -141,7 +147,6 @@ const Calculation: React.FC<CalculationProps> = ({
                         {expression.outputVariableName}
                       </StyledTableCell>
                       <StyledTableCell>
-                        {' '}
                         {expression.expressionString}
                       </StyledTableCell>
                       <StyledTableCell sx={{ padding: 0 }} width={40}>

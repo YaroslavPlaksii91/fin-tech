@@ -5,24 +5,24 @@ import { useEffect } from 'react';
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
 import LoadingButton from '@components/shared/LoadingButton';
-import {
-  DataType,
-  Expression,
-  VariableDestinationType,
-  VariableSourceType
-} from '@views/Calculation/types';
+import { Expression } from '@views/Calculation/types';
 import AddVariable from '@components/AddVariable/AddVariable';
 import AddFunction from '@components/AddFunction/AddFunction';
+import {
+  DATA_TYPE_WITHOUT_ENUM,
+  VARIABLE_DESTINATION_TYPE,
+  VARIABLE_SOURCE_TYPE
+} from '@domain/dataDictionary';
 
 const DEFAULT_MOCK = {
   outputVariableName: 'temp2',
-  expressionString: '"Max(perm2,3,1) == 4"',
-  destinationType: VariableDestinationType.temporaryVariable,
-  destinationDataType: DataType.boolean,
+  expressionString: 'Max(perm2,3,1) == 4',
+  destinationType: VARIABLE_DESTINATION_TYPE.TemporaryVariable,
+  destinationDataType: DATA_TYPE_WITHOUT_ENUM.Boolean,
   inputVariables: [
     {
       variableName: 'perm2',
-      sourceType: VariableSourceType.permanentVariable
+      sourceType: VARIABLE_SOURCE_TYPE.PermanentVariable
     }
   ]
 };

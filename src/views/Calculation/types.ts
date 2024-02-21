@@ -1,3 +1,5 @@
+import { Expression } from '@domain/flow';
+
 interface Column {
   id: 'variable' | 'expression' | 'delete/edit';
   label: string;
@@ -17,38 +19,10 @@ const columns: readonly Column[] = [
   }
 ];
 
-enum DataType {
-  boolean = 'Boolean'
-}
-
-enum VariableDestinationType {
-  permanentVariable = 'PermanentVariable',
-  temporaryVariable = 'TemporaryVariable',
-  Output = 'Output'
-}
-
-enum VariableSourceType {
-  input = 'Input',
-  globalConstant = 'GlobalConstant',
-  permanentVariable = 'PermanentVariable',
-  temporaryVariable = 'TemporaryVariable'
-}
-
-type Expression = {
-  outputVariableName: string;
-  expressionString: string;
-  destinationType: VariableDestinationType;
-  destinationDataType: DataType;
-  inputVariables: {
-    variableName: string;
-    sourceType: VariableSourceType;
-  }[];
-};
-
 type FieldValues = {
   expressions: Expression[];
   note: string | null;
 };
 
-export { columns, DataType, VariableSourceType, VariableDestinationType };
+export { columns };
 export type { FieldValues, Expression };

@@ -1,9 +1,13 @@
 import { Edge, Node, Viewport } from '@reactflow/core';
 
 import { IEntity } from './entity';
+import {
+  DATA_TYPE,
+  VARIABLE_DESTINATION_TYPE,
+  VARIABLE_SOURCE_TYPE
+} from './dataDictionary';
 
 import { StepType } from '@components/FlowManagment/FlowChart/types';
-import { Expression } from '@views/Calculation/types';
 
 export interface IFlowListItem extends IEntity {
   name: string;
@@ -31,8 +35,19 @@ export type ChampionChallengerData = {
   splits?: { edgeId: string | null; percentage: number }[];
 };
 
+export type Expression = {
+  outputVariableName: string;
+  expressionString: string;
+  destinationType: VARIABLE_DESTINATION_TYPE;
+  destinationDataType: DATA_TYPE;
+  inputVariables: {
+    variableName: string;
+    sourceType: VARIABLE_SOURCE_TYPE;
+  }[];
+};
+
 export type CalculationData = {
-  expressions: Expression[];
+  expressions?: Expression[];
 };
 
 export type FlowNode = Node<
