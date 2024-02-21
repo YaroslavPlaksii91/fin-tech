@@ -19,10 +19,10 @@ import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
 import Dialog from '@components/shared/Modals/Dialog';
 import {
   StyledTableRow,
-  StyledTableCell
+  StyledTableCell,
+  StyledPaper,
+  StyledTableContainer
 } from '@components/shared/Table/styled';
-import { StyledPaper } from '@views/ChampionChallenger/styled';
-import { StyledTableContainer } from '@views/DecisionTable/styled';
 import {
   AddIcon,
   DeleteOutlineIcon,
