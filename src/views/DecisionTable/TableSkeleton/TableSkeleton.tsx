@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { TextFieldProps } from '@mui/material/TextField';
 
-import { CATEGORIES } from '../constants';
+import { CATEGORIES, BOOLEAN_OPTIONS } from '../constants';
 import { VariableRowData, VariableHeaderData } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import { AutocompleteInput } from '../AutocompleteInput/AutocompleteInput';
@@ -57,9 +57,9 @@ type TableSkeletonProps = {
     category
   }: {
     columnId: string;
-    newVariable: Omit<
+    newVariable: Pick<
       DataDictionaryVariable,
-      'defaultValue' | 'isRequired' | 'usageMode' | 'description'
+      'variableName' | 'dataType' | 'allowedValues'
     >;
     category: CATEGORIES;
   }) => void;
@@ -158,22 +158,16 @@ const TableSkeleton = ({
                     forcePopupIcon={false}
                     disabled={category === CATEGORIES.ElseActions}
                     getOptionLabel={(
-                      option: Omit<
+                      option: Pick<
                         DataDictionaryVariable,
-                        | 'defaultValue'
-                        | 'isRequired'
-                        | 'usageMode'
-                        | 'description'
+                        'variableName' | 'dataType' | 'allowedValues'
                       >
                     ) => (option ? option.variableName : '')}
                     onChange={(
                       event: SyntheticEvent<Element, Event>,
-                      newValue: Omit<
+                      newValue: Pick<
                         DataDictionaryVariable,
-                        | 'defaultValue'
-                        | 'isRequired'
-                        | 'usageMode'
-                        | 'description'
+                        'variableName' | 'dataType' | 'allowedValues'
                       >
                     ) => {
                       event &&
@@ -212,34 +206,42 @@ const TableSkeleton = ({
                 <StyledTableCell key={index}>
                   {Object.values(DATA_TYPE_WITHOUT_ENUM).includes(
                     column.dataType as DATA_TYPE_WITHOUT_ENUM
-                  ) && (
-                    <StyledStack
-                      onClick={() =>
-                        setSelectedRowData({
-                          ...row,
-                          variableName: column.variableName,
-                          variableType: column.dataType
-                        })
-                      }
-                      disabled={!column.dataType.length}
-                      sx={{ cursor: 'pointer' }}
-                    >
-                      {row[column.variableName as keyof VariableRowData] ? (
-                        <Stack>
-                          {row[column.variableName as keyof VariableRowData]}
-                        </Stack>
-                      ) : (
-                        <Typography variant="body2">Select value</Typography>
-                      )}
-                    </StyledStack>
-                  )}
+                  ) &&
+                    (column.dataType as DATA_TYPE_WITHOUT_ENUM) !==
+                      DATA_TYPE_WITHOUT_ENUM['Boolean'] && (
+                      <StyledStack
+                        onClick={() =>
+                          setSelectedRowData({
+                            ...row,
+                            variableName: column.variableName,
+                            dataType: column.dataType
+                          })
+                        }
+                        disabled={!column.dataType.length}
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        {row[column.variableName as keyof VariableRowData] ? (
+                          <Stack>
+                            {row[column.variableName as keyof VariableRowData]}
+                          </Stack>
+                        ) : (
+                          <Typography variant="body2">Select value</Typography>
+                        )}
+                      </StyledStack>
+                    )}
 
-                  {Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
+                  {(Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
                     column.dataType as DATA_TYPE_WITH_ENUM_PREFIX
-                  ) && (
+                  ) ||
+                    (column.dataType as DATA_TYPE_WITHOUT_ENUM) ===
+                      DATA_TYPE_WITHOUT_ENUM.Boolean) && (
                     <SelectComponent
-                      options={column.allowedValues}
-                      name="decision"
+                      options={
+                        (column.dataType as DATA_TYPE_WITHOUT_ENUM) ===
+                        DATA_TYPE_WITHOUT_ENUM.Boolean
+                          ? BOOLEAN_OPTIONS
+                          : column.allowedValues
+                      }
                       fullWidth
                     />
                   )}

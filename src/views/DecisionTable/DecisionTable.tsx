@@ -82,9 +82,7 @@ const DecisionTableStep = ({
         rows: [
           {
             id: uuidv4(),
-            variableName: '',
-            variableType: '',
-            operator: ''
+            variableName: ''
           }
         ]
       }
@@ -135,9 +133,7 @@ const DecisionTableStep = ({
           ...selectedCategoriesEntries.conditions.rows,
           {
             id: newRowId,
-            variableName: '',
-            variableType: '',
-            operator: ''
+            variableName: ''
           }
         ]
       },
@@ -147,9 +143,7 @@ const DecisionTableStep = ({
           ...selectedCategoriesEntries.actions.rows,
           {
             id: newRowId,
-            variableName: '',
-            variableType: '',
-            operator: ''
+            variableName: ''
           }
         ]
       }
@@ -243,9 +237,9 @@ const DecisionTableStep = ({
     category
   }: {
     columnId: string;
-    newVariable: Omit<
+    newVariable: Pick<
       DataDictionaryVariable,
-      'defaultValue' | 'isRequired' | 'usageMode' | 'description'
+      'variableName' | 'dataType' | 'allowedValues'
     >;
     category: CATEGORIES;
   }) => {

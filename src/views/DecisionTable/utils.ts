@@ -1,35 +1,45 @@
 import {
-  VARIABLE_TYPE,
   EQUAL_OPERATOR,
   BETWEEN_OPERATOR,
   GREATER_AND_EQUAL_OPERATOR,
   ANY_OPERATOR,
   LESS_AND_EQUAL_OPERATOR,
-  IN_OPERATOR
+  IN_OPERATOR,
+  NOT_EQUAL_OPERATOR,
+  LESS_OPERATOR,
+  GREATER_OPERATOR
 } from './constants';
 
-export const getOperatorOptions = (variableType: string) => {
+import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
+
+export const getOperatorOptions = (dataType: DATA_TYPE_WITHOUT_ENUM) => {
+  const { Integer, Decimal, String } = DATA_TYPE_WITHOUT_ENUM;
   let operators: Record<string, string>[] = [];
 
-  switch (variableType) {
-    case VARIABLE_TYPE.String:
-      operators = [IN_OPERATOR, EQUAL_OPERATOR, ANY_OPERATOR];
+  switch (dataType) {
+    case String:
+      operators = [
+        IN_OPERATOR,
+        EQUAL_OPERATOR,
+        NOT_EQUAL_OPERATOR,
+        ANY_OPERATOR
+      ];
       break;
-    case VARIABLE_TYPE.Number:
+    case Integer || Decimal:
       operators = [
         EQUAL_OPERATOR,
+        NOT_EQUAL_OPERATOR,
+        GREATER_OPERATOR,
+        LESS_OPERATOR,
         GREATER_AND_EQUAL_OPERATOR,
         LESS_AND_EQUAL_OPERATOR,
         BETWEEN_OPERATOR,
         ANY_OPERATOR
       ];
       break;
-    case VARIABLE_TYPE.Boolean:
-      operators = [EQUAL_OPERATOR, ANY_OPERATOR];
-      break;
 
     default:
-      operators = [EQUAL_OPERATOR];
+      operators = [EQUAL_OPERATOR, NOT_EQUAL_OPERATOR, ANY_OPERATOR];
   }
 
   return operators;

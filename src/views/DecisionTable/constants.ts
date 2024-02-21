@@ -19,9 +19,24 @@ export const EQUAL_OPERATOR = {
   value: '='
 };
 
+export const NOT_EQUAL_OPERATOR = {
+  key: 'not-equal-operator',
+  value: '!='
+};
+
 export const IN_OPERATOR = {
   key: 'in-operator',
   value: 'in'
+};
+
+export const GREATER_OPERATOR = {
+  key: 'greater-operator',
+  value: '>'
+};
+
+export const LESS_OPERATOR = {
+  key: 'less-operator',
+  value: '<'
 };
 
 export const GREATER_AND_EQUAL_OPERATOR = {
@@ -55,16 +70,10 @@ export type CATEGORIES_WITHOUT_ELSE_ACTIONS = Exclude<
   CATEGORIES.ElseActions
 >;
 
-export const DECISION_OPTIONS = [
-  {
-    value: 'accept',
-    label: 'Accept'
-  },
-  { value: 'denied', label: 'Denied' }
-];
-
 export const USAGE_MODE = {
   ReadOnly: 'ReadOnly',
   WriteOnly: 'WriteOnly',
   ReadWrite: 'ReadWrite'
 };
+
+export const BOOLEAN_OPTIONS = ['true', 'false'];

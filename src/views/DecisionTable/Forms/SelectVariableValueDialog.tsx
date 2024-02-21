@@ -14,10 +14,11 @@ import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';
 import { SingleSelect } from '@components/shared/Forms/SingleSelect';
+import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
 
 type FormFieldsProps = {
   variableName: string;
-  operator: string;
+  operator?: string;
   value?: string;
   lowerBound?: number;
   upperBound?: number;
@@ -55,7 +56,9 @@ const SelectVariableValueDialog = ({
     }
   });
 
-  const operatorOptions = getOperatorOptions(selectedRowData.variableType);
+  const operatorOptions = getOperatorOptions(
+    (selectedRowData.dataType as DATA_TYPE_WITHOUT_ENUM) ?? ''
+  );
 
   const watchOperator = watch('operator');
 

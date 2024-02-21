@@ -8,13 +8,11 @@ import {
 
 type SelectComponentProps = {
   options: string[] | string;
-  name?: string;
   isMultiSelect?: boolean;
   fullWidth: boolean;
 };
 
 const SelectComponent = ({
-  name,
   options,
   isMultiSelect = false,
   fullWidth = false
@@ -40,7 +38,6 @@ const SelectComponent = ({
         onChange={handleOnSelectChange}
         multiple={isMultiSelect}
         sx={{ minWidth: 200 }}
-        name={name}
       >
         {getFormatedOptions().map((option: string) => (
           <MenuItem value={option} key={option}>
