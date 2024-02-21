@@ -30,7 +30,15 @@ export type ChampionChallengerData = {
   splits?: { edgeId: string | null; percentage: number }[];
 };
 
-export type FlowNode = Node<NodeData & ChampionChallengerData>;
+export type DecisionTableData = {
+  caseEntries?: { conditions: []; actions: [] }[];
+  elseActions?: [];
+  variableSources?: [];
+};
+
+export type FlowNode = Node<
+  NodeData & ChampionChallengerData & DecisionTableData
+>;
 
 export interface IFlow {
   id: string;

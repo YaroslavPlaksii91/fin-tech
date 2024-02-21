@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
   Button,
@@ -8,15 +8,15 @@ import {
   TableBody,
   TextField
 } from '@mui/material';
+import { enqueueSnackbar } from 'notistack';
 
 import { palette } from '../../themeConfig';
 
 import {
-  inputVariablesOptions,
-  outputVariablesOptions,
   CATEGORIES,
   OPERATORS,
-  CATEGORIES_WITHOUT_ELSE_ACTIONS
+  CATEGORIES_WITHOUT_ELSE_ACTIONS,
+  USAGE_MODE
 } from './constants';
 import {
   VariablesOptionsProps,
@@ -41,12 +41,22 @@ import {
   StyledTableCell,
   StyledTableRow
 } from '@components/shared/Table/styled';
+import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
+import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
+import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
+import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
 
 type DecisionTableStepProps = {
   step: FlowNode;
+  setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
+  rfInstance: CustomReactFlowInstance;
 };
 
-const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
+const DecisionTableStep = ({
+  step,
+  setStep,
+  rfInstance: { getNodes, setNodes }
+}: DecisionTableStepProps) => {
   const firstConditionsColumnId = uuidv4();
   const firstActionsColumnId = uuidv4();
 
@@ -79,6 +89,41 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     });
 
   const [openNoteModal, setOpenNoteModal] = useState(false);
+  const [noteValue, setNoteValue] = useState('');
+
+  const { variables } = useDataDictionaryVariables();
+
+  const nodes: FlowNode[] = getNodes();
+
+  // console.log('TABLE_STEP', step.data);
+
+  useEffect(() => {
+    const { data } = step;
+    setNoteValue(data?.note ?? '');
+  }, []);
+
+  const onApplyChangesClick = () => {
+    const updatedNodes = nodes.map((node: FlowNode) => {
+      if (node.id === step.id) {
+        node.data = {
+          ...node.data,
+          note: noteValue
+        };
+      }
+      return node;
+    });
+
+    setNodes(updatedNodes);
+
+    enqueueSnackbar(
+      <SnackbarMessage
+        message="Success"
+        details={`Changes for the "${step.data.name}" step were successfully applied.`}
+      />,
+      { variant: SNACK_TYPE.SUCCESS }
+    );
+    setStep({ id: MAIN_STEP_ID });
+  };
 
   const handleAddNewLayer = () => {
     const newRowId = uuidv4();
@@ -269,6 +314,8 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
         onDiscard={() => {}}
         disabled={false}
         isSubmitting={false}
+        buttonType="button"
+        onApplyChangesClick={onApplyChangesClick}
       />
       <StyledPaper>
         <StyledTableContainer>
@@ -284,7 +331,9 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
             <TableSkeleton
               columns={conditions.columns}
               rows={conditions.rows}
-              variablesOptions={inputVariablesOptions}
+              variablesOptions={variables.filter(
+                (variable) => variable.usageMode !== USAGE_MODE.WriteOnly
+              )}
               columnClickedId={conditions.columnClickedId}
               category={CATEGORIES.Conditions}
               handleDeleteRow={handleDeleteLayer}
@@ -304,7 +353,9 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
             <TableSkeleton
               columns={actions.columns}
               rows={actions.rows}
-              variablesOptions={outputVariablesOptions}
+              variablesOptions={variables.filter(
+                (variable) => variable.usageMode !== USAGE_MODE.ReadOnly
+              )}
               columnClickedId={actions.columnClickedId}
               category={CATEGORIES.Actions}
               handleDeleteRow={handleDeleteLayer}
@@ -358,7 +409,9 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
           <TableSkeleton
             columns={actions.columns}
             rows={elseActions.rows}
-            variablesOptions={outputVariablesOptions}
+            variablesOptions={variables.filter(
+              (variable) => variable.usageMode !== USAGE_MODE.ReadOnly
+            )}
             category={CATEGORIES.ElseActions}
             handleSubmitVariableValue={handleSubmitVariableValue}
           />
@@ -367,17 +420,25 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
 
       <Stack sx={{ margin: '16px' }}>
         <NoteSection handleOpenNoteModal={() => setOpenNoteModal(true)}>
-          <TextField fullWidth label="Enter note here" disabled size="small" />
+          <TextField
+            fullWidth
+            placeholder="Enter note here"
+            disabled
+            size="small"
+            value={noteValue}
+          />
         </NoteSection>
       </Stack>
 
-      {/* TODO: submition of note during integration */}
       {openNoteModal && (
         <NoteForm
           modalOpen={!!openNoteModal}
           handleClose={() => setOpenNoteModal(false)}
-          handleSubmitNote={() => setOpenNoteModal(false)}
-          note=""
+          handleSubmitNote={(data) => {
+            setNoteValue(data);
+            setOpenNoteModal(false);
+          }}
+          note={noteValue ?? ''}
         />
       )}
     </>

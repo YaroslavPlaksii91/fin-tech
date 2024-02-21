@@ -1,5 +1,3 @@
-import { VariablesOptionsProps } from './types';
-
 export const VARIABLE_TYPE = {
   Number: 'number',
   String: 'string',
@@ -46,19 +44,6 @@ export const ANY_OPERATOR = {
   value: 'any'
 };
 
-export const inputVariablesOptions: VariablesOptionsProps[] = [
-  { variableName: 'LeadSourсe', variableType: 'string' },
-  { variableName: 'RequestLoanAmount', variableType: 'number' },
-  { variableName: 'LeadPrice', variableType: 'number' },
-  { variableName: 'CRA.Claritties.Score', variableType: 'number' }
-];
-
-export const outputVariablesOptions: VariablesOptionsProps[] = [
-  { variableName: 'Decision', variableType: 'enum' },
-  { variableName: 'MaxLoanAmount', variableType: 'number' },
-  { variableName: 'MinLoanAmount', variableType: 'number' }
-];
-
 export enum CATEGORIES {
   Conditions = 'conditions',
   Actions = 'actions',
@@ -77,3 +62,9 @@ export const DECISION_OPTIONS = [
   },
   { value: 'denied', label: 'Denied' }
 ];
+
+export const USAGE_MODE = {
+  ReadOnly: 'ReadOnly',
+  WriteOnly: 'WriteOnly',
+  ReadWrite: 'ReadWrite'
+};
