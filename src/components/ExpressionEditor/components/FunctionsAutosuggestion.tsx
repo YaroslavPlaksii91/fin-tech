@@ -6,8 +6,8 @@ import React, {
 } from 'react';
 import { ListItemText, MenuItem, MenuList, Paper } from '@mui/material';
 
-import styles from '@components/ExpresionEditor/ExpressionEditor.module.scss';
-import { FunctionConfig } from '@components/ExpresionEditor/ExpressionEditor.constants.ts';
+import styles from '@components/ExpressionEditor/ExpressionEditor.module.scss';
+import { FunctionConfig } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
 
 export interface FunctionsAutosuggestionAPI {
   focus: () => void;
@@ -48,6 +48,7 @@ const FunctionsAutosuggestion: ForwardRefRenderFunction<
             }}
           >
             <ListItemText
+              tabIndex={0}
               primary={fnConf.literal}
               secondary={fnConf.description}
               secondaryTypographyProps={{

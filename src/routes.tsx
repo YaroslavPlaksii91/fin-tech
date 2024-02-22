@@ -9,7 +9,6 @@ import Flows from '@pages/Flows';
 import Home from '@pages/Home';
 import FlowEdit from '@pages/FlowEdit';
 import FlowDetails from '@pages/FlowDetails';
-import ExpressionPage from '@pages/Expression.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -72,10 +71,6 @@ export const router = createBrowserRouter([
         <Login />
       </PrivateAuthRoute>
     )
-  },
-  {
-    path: '/expression',
-    element: <ExpressionPage />
   },
   { path: '*', element: <p>Not found</p> }
 ]);

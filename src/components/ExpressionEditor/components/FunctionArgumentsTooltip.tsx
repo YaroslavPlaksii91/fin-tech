@@ -2,9 +2,9 @@ import React from 'react';
 import { ListItemText, MenuItem, Paper } from '@mui/material';
 import Highlighter from 'react-highlight-words';
 
-import { functionsConfigDict } from '@components/ExpresionEditor/ExpressionEditor.constants.ts';
-import { regExpHelpers } from '@components/ExpresionEditor/ExpressionEditor.utils.ts';
-import styles from '@components/ExpresionEditor/ExpressionEditor.module.scss';
+import { functionsConfigDict } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
+import { regExpHelpers } from '@components/ExpressionEditor/ExpressionEditor.utils.ts';
+import styles from '@components/ExpressionEditor/ExpressionEditor.module.scss';
 
 const FunctionArgumentsTooltip: React.FC<FunctionArgumentsTooltipProps> = ({
   value,
