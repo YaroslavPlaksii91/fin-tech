@@ -1,6 +1,7 @@
 stages:
   - build_development
   - deploy_development
+  - deploy_staging
 
 .common:
   tags:
@@ -57,5 +58,20 @@ deploy_development:
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
       when: on_success
+
+deploy_staging:
+  extends:
+    - .common
+    - .deploy
+  needs: [build_development]
+  stage: deploy_staging
+  script:
+    - export AWS_ACCESS_KEY_ID=$(eval echo \$aws_access_key_$CI_COMMIT_REF_SLUG)
+    - export AWS_SECRET_ACCESS_KEY=$(eval echo \$aws_secret_access_key_$CI_COMMIT_REF_SLUG)
+    - aws s3 sync dist/ s3://$(eval echo \$bucket_$CI_COMMIT_REF_SLUG) --delete
+    - aws cloudfront create-invalidation --distribution-id $(eval echo \$cloudfront_$CI_COMMIT_REF_SLUG) --paths \/\*
+    - curl -X POST -H "Content-type:application/json" --data "{\"text\":\"<$(eval echo \$public_url_$CI_COMMIT_REF_SLUG)|$domain> has been updated by *$GITLAB_USER_LOGIN*\", \"channel\":\"$(eval echo \$channel_name)\"}" https://hooks.slack.com/services/$slack_webhook_url
+  rules:
     - if: '$CI_COMMIT_BRANCH == "staging"'
       when: on_success
+
