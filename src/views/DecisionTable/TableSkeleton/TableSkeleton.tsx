@@ -11,7 +11,11 @@ import {
 import { TextFieldProps } from '@mui/material/TextField';
 
 import { CATEGORIES, BOOLEAN_OPTIONS } from '../constants';
-import { VariableRowData, VariableHeaderData } from '../types';
+import {
+  VariableRowData,
+  VariableHeaderData,
+  SelectedCellInRowData
+} from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import { AutocompleteInput } from '../AutocompleteInput/AutocompleteInput';
 
@@ -29,6 +33,7 @@ import {
   DATA_TYPE_WITH_ENUM_PREFIX
 } from '@domain/dataDictionary';
 
+// TODO: export to the types file
 type TableSkeletonProps = {
   columns: VariableHeaderData[];
   rows: VariableRowData[];
@@ -86,8 +91,8 @@ const TableSkeleton = ({
   handleSubmitVariableValue
 }: TableSkeletonProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedRowData, setSelectedRowData] =
-    useState<VariableRowData | null>(null);
+  const [selectedRowCell, setSelectedRowCell] =
+    useState<SelectedCellInRowData | null>(null);
 
   const open = Boolean(anchorEl);
   const isTheLastCategoryColumn = columns.length <= 1;
@@ -115,9 +120,9 @@ const TableSkeleton = ({
     handleCloseMenu();
   };
 
-  const handleSubmitSelectedRowData = (data: VariableRowData) => {
+  const handleSubmitSelectedRowCellData = (data: any) => {
     handleSubmitVariableValue({ newVariableValue: data, category });
-    setSelectedRowData(null);
+    setSelectedRowCell(null);
   };
 
   const getOptions = () => {
@@ -202,51 +207,59 @@ const TableSkeleton = ({
         <TableBody>
           {rows.map((row: VariableRowData) => (
             <StyledTableRow key={row.id} sx={{ height: '62px' }}>
-              {columns.map((column: VariableHeaderData, index: number) => (
-                <StyledTableCell key={index}>
-                  {Object.values(DATA_TYPE_WITHOUT_ENUM).includes(
-                    column.dataType as DATA_TYPE_WITHOUT_ENUM
-                  ) &&
-                    (column.dataType as DATA_TYPE_WITHOUT_ENUM) !==
-                      DATA_TYPE_WITHOUT_ENUM['Boolean'] && (
-                      <StyledStack
-                        onClick={() =>
-                          setSelectedRowData({
-                            ...row,
-                            variableName: column.variableName,
-                            dataType: column.dataType
-                          })
-                        }
-                        disabled={!column.dataType.length}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        {row[column.variableName as keyof VariableRowData] ? (
-                          <Stack>
-                            {row[column.variableName as keyof VariableRowData]}
-                          </Stack>
-                        ) : (
-                          <Typography variant="body2">Select value</Typography>
-                        )}
-                      </StyledStack>
-                    )}
+              {columns.map((column: VariableHeaderData, index: number) => {
+                return (
+                  <StyledTableCell key={index}>
+                    {Object.values(DATA_TYPE_WITHOUT_ENUM).includes(
+                      column.dataType as DATA_TYPE_WITHOUT_ENUM
+                    ) &&
+                      (column.dataType as DATA_TYPE_WITHOUT_ENUM) !==
+                        DATA_TYPE_WITHOUT_ENUM['Boolean'] && (
+                        <StyledStack
+                          onClick={() =>
+                            setSelectedRowCell({
+                              id: row.id,
+                              variableName: column.variableName,
+                              dataType: column.dataType
+                            })
+                          }
+                          disabled={!column.dataType.length}
+                          sx={{ cursor: 'pointer' }}
+                        >
+                          {row[column.variableName as keyof VariableRowData] ? (
+                            <Stack>
+                              {
+                                row[
+                                  column.variableName as keyof VariableRowData
+                                ].expression
+                              }
+                            </Stack>
+                          ) : (
+                            <Typography variant="body2">
+                              Select value
+                            </Typography>
+                          )}
+                        </StyledStack>
+                      )}
 
-                  {(Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
-                    column.dataType as DATA_TYPE_WITH_ENUM_PREFIX
-                  ) ||
-                    (column.dataType as DATA_TYPE_WITHOUT_ENUM) ===
-                      DATA_TYPE_WITHOUT_ENUM.Boolean) && (
-                    <SelectComponent
-                      options={
-                        (column.dataType as DATA_TYPE_WITHOUT_ENUM) ===
-                        DATA_TYPE_WITHOUT_ENUM.Boolean
-                          ? BOOLEAN_OPTIONS
-                          : column.allowedValues
-                      }
-                      fullWidth
-                    />
-                  )}
-                </StyledTableCell>
-              ))}
+                    {(Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
+                      column.dataType as DATA_TYPE_WITH_ENUM_PREFIX
+                    ) ||
+                      (column.dataType as DATA_TYPE_WITHOUT_ENUM) ===
+                        DATA_TYPE_WITHOUT_ENUM.Boolean) && (
+                      <SelectComponent
+                        options={
+                          (column.dataType as DATA_TYPE_WITHOUT_ENUM) ===
+                          DATA_TYPE_WITHOUT_ENUM.Boolean
+                            ? BOOLEAN_OPTIONS
+                            : column.allowedValues
+                        }
+                        fullWidth
+                      />
+                    )}
+                  </StyledTableCell>
+                );
+              })}
               {category === CATEGORIES.Actions && !!rows.length && (
                 <StyledTableCell sx={{ padding: 0 }} width={40}>
                   <Button
@@ -263,13 +276,13 @@ const TableSkeleton = ({
         </TableBody>
       </StyledTable>
 
-      {selectedRowData && (
+      {selectedRowCell && (
         <SelectVariableValueDialog
-          modalOpen={!!selectedRowData}
-          handleClose={() => setSelectedRowData(null)}
-          selectedRowData={selectedRowData}
+          modalOpen={!!selectedRowCell}
+          handleClose={() => setSelectedRowCell(null)}
+          selectedRowCell={selectedRowCell}
           category={category}
-          handleSubmitSelectedRowData={handleSubmitSelectedRowData}
+          handleSubmitSelectedRowCellData={handleSubmitSelectedRowCellData}
         />
       )}
     </>

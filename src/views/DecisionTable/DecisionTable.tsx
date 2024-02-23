@@ -82,7 +82,10 @@ const DecisionTableStep = ({
         rows: [
           {
             id: uuidv4(),
-            variableName: ''
+            variableName: {
+              variableName: '',
+              expression: ''
+            }
           }
         ]
       }
@@ -94,17 +97,53 @@ const DecisionTableStep = ({
 
   const nodes: FlowNode[] = getNodes();
 
+  // console.log('step.data', step.data);
+  /* After apply changes the data should be save in step.data, so on mount of Decision table component we should parse data again into the table */
+
   useEffect(() => {
     const { data } = step;
     setNoteValue(data?.note ?? '');
   }, []);
 
+  // TODO: tried to do parsing
+
+  // const getEntriesFromTableObj = () => {
+  //   console.log(
+  //     'selectedCategoriesEntries',
+  //     selectedCategoriesEntries['conditions'].rows
+  //   );
+  //   const conditionEntries = selectedCategoriesEntries['conditions'].rows.map(
+  //     (row) => {
+  //       let result = [];
+  //       Object.values(row).map((entry) => {
+  //         result = [
+  //           ...result,
+  //           {
+  //             variableName: entry.variableName,
+  //             operator: entry.operator,
+  //             conditionExpression: entry.value
+  //           }
+  //         ];
+  //       });
+  //       return result;
+  //     }
+  //   );
+  //   console.log('conditionEntries', conditionEntries);
+  // };
+
   const onApplyChangesClick = () => {
+    // const caseEntries = getEntriesFromTableObj();
+
     const updatedNodes = nodes.map((node: FlowNode) => {
       if (node.id === step.id) {
         node.data = {
           ...node.data,
           note: noteValue
+          /*
+          caseEntries: [{ conditions: [], actions: [] }],  where { conditions: [], actions: [] } a row from conditions and actions general state 
+          elseActions: [],
+          variableSources: []
+           */
         };
       }
       return node;
@@ -119,7 +158,7 @@ const DecisionTableStep = ({
       />,
       { variant: SNACK_TYPE.SUCCESS }
     );
-    setStep({ id: MAIN_STEP_ID });
+    // setStep({ id: MAIN_STEP_ID });
   };
 
   const handleAddNewLayer = () => {
@@ -133,7 +172,10 @@ const DecisionTableStep = ({
           ...selectedCategoriesEntries.conditions.rows,
           {
             id: newRowId,
-            variableName: ''
+            variableName: {
+              variableName: '',
+              expression: ''
+            }
           }
         ]
       },
@@ -143,7 +185,10 @@ const DecisionTableStep = ({
           ...selectedCategoriesEntries.actions.rows,
           {
             id: newRowId,
-            variableName: ''
+            variableName: {
+              variableName: '',
+              expression: ''
+            }
           }
         ]
       }
@@ -271,7 +316,7 @@ const DecisionTableStep = ({
     newVariableValue,
     category
   }: {
-    newVariableValue: VariableRowData;
+    newVariableValue: any;
     category: CATEGORIES;
   }) => {
     const { id, variableName, operator } = newVariableValue;
@@ -279,13 +324,30 @@ const DecisionTableStep = ({
     const updatedRows = selectedCategoriesEntries[category].rows.map(
       (row: VariableRowData) => {
         if (row.id === id) {
-          return {
-            ...row,
-            [variableName as keyof VariableRowData]:
-              operator === OPERATORS.Between
-                ? `${operator} ${newVariableValue.lowerBound} and ${newVariableValue.upperBound}`
-                : `${operator} ${newVariableValue.value}`
-          };
+          let updatedCellValue;
+          if (operator === OPERATORS.Between) {
+            updatedCellValue = {
+              ...row,
+              [variableName as keyof VariableRowData]: {
+                variableName,
+                operator,
+                lowerBound: newVariableValue.lowerBound,
+                upperBound: newVariableValue.upperBound,
+                expression: `${operator} ${newVariableValue.lowerBound} and ${newVariableValue.upperBound}`
+              }
+            };
+          } else {
+            updatedCellValue = {
+              ...row,
+              [variableName as keyof VariableRowData]: {
+                variableName,
+                operator,
+                value: newVariableValue.value,
+                expression: `${operator} ${newVariableValue.value}`
+              }
+            };
+          }
+          return updatedCellValue;
         } else {
           return row;
         }

@@ -7,12 +7,21 @@ export type VariablesOptionsProps = {
 
 export type VariableRowData = {
   id: string;
+  variableName: {
+    variableName: string;
+    expression: string;
+    dataType?: DATA_TYPE | string;
+    value?: string;
+    operator?: string;
+    lowerBound?: number;
+    upperBound?: number;
+  };
+};
+
+export type SelectedCellInRowData = {
+  id: string;
   variableName: string;
-  dataType?: DATA_TYPE | string;
-  value?: string;
-  operator?: string;
-  lowerBound?: number;
-  upperBound?: number;
+  dataType: string;
 };
 
 export type VariableHeaderData = {

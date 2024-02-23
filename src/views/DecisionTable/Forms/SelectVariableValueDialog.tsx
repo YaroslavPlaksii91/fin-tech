@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { palette } from '../../../themeConfig';
 import { OPERATORS, CATEGORIES } from '../constants';
-import { VariableRowData } from '../types';
+import { SelectedCellInRowData } from '../types';
 import { getOperatorOptions } from '../utils';
 
 import validationSchema from './validationSchema';
@@ -27,17 +27,19 @@ type FormFieldsProps = {
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
   handleClose: () => void;
-  selectedRowData: VariableRowData;
+  selectedRowCell: SelectedCellInRowData;
   category: CATEGORIES;
-  handleSubmitSelectedRowData: (data: VariableRowData) => void;
+  handleSubmitSelectedRowCellData: (
+    data: SelectedCellInRowData & FormFieldsProps
+  ) => void;
 };
 
 const SelectVariableValueDialog = ({
   modalOpen,
   handleClose,
-  selectedRowData,
+  selectedRowCell,
   category,
-  handleSubmitSelectedRowData
+  handleSubmitSelectedRowCellData
 }: SelectVariableValueDialogProps) => {
   const {
     handleSubmit,
@@ -46,18 +48,18 @@ const SelectVariableValueDialog = ({
     watch,
     setValue
   } = useForm({
-    resolver: yupResolver(validationSchema),
+    //resolver: yupResolver(validationSchema),
     defaultValues: {
-      variableName: selectedRowData.variableName,
-      operator: selectedRowData?.operator ?? '',
-      value: selectedRowData?.value ?? '',
-      lowerBound: selectedRowData?.lowerBound,
-      upperBound: selectedRowData?.upperBound
+      variableName: selectedRowCell.variableName,
+      operator: '',
+      value: '',
+      lowerBound: '',
+      upperBound: ''
     }
   });
 
   const operatorOptions = getOperatorOptions(
-    (selectedRowData.dataType as DATA_TYPE_WITHOUT_ENUM) ?? ''
+    (selectedRowCell.dataType as DATA_TYPE_WITHOUT_ENUM) ?? ''
   );
 
   const watchOperator = watch('operator');
@@ -72,12 +74,12 @@ const SelectVariableValueDialog = ({
     if (watchOperator !== OPERATORS.Between) {
       const { operator, value } = data;
 
-      handleSubmitSelectedRowData({ ...selectedRowData, operator, value });
+      handleSubmitSelectedRowCellData({ ...selectedRowCell, operator, value });
     } else {
       const { operator, lowerBound, upperBound } = data;
 
-      handleSubmitSelectedRowData({
-        ...selectedRowData,
+      handleSubmitSelectedRowCellData({
+        ...selectedRowCell,
         operator,
         lowerBound,
         upperBound
