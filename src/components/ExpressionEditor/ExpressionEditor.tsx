@@ -23,7 +23,7 @@ import FunctionsAutosuggestion, {
 } from '@components/ExpressionEditor/components/FunctionsAutosuggestion.tsx';
 
 export interface ExpressionEditorAPI {
-  focus: () => void;
+  focus: (payload: { selectionStart: number }) => void;
 }
 
 const ExpressionEditor: ForwardRefRenderFunction<
@@ -40,9 +40,11 @@ const ExpressionEditor: ForwardRefRenderFunction<
   useImperativeHandle(
     ref,
     () => ({
-      focus() {
+      focus(payload) {
         textareaRef.current?.focus();
-        setCaretPosition(textareaRef.current?.value.length || 0);
+        if (payload.selectionStart) {
+          setCaretPosition(payload.selectionStart);
+        }
       }
     }),
     [textareaRef, setCaretPosition]

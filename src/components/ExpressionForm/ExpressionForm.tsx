@@ -99,8 +99,11 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     (literal: string) => {
       const prev = getValues('expressionString');
       const isFunction = functionsLiterals.includes(literal);
-      setValue('expressionString', prev + literal + (isFunction ? '(' : ''));
-      expressionEditorRef.current?.focus();
+      const newValue = prev + literal + (isFunction ? '(' : '');
+      setValue('expressionString', newValue);
+      expressionEditorRef.current?.focus({
+        selectionStart: newValue.length + 1
+      });
     },
     [setValue, getValues, expressionEditorRef]
   );
