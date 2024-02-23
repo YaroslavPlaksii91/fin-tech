@@ -6,6 +6,7 @@ import { functionsConfigDict } from '@components/ExpressionEditor/ExpressionEdit
 import { regExpHelpers } from '@components/ExpressionEditor/ExpressionEditor.utils.ts';
 import styles from '@components/ExpressionEditor/ExpressionEditor.module.scss';
 
+// @TODO: Based on cursor position
 const FunctionArgumentsTooltip: React.FC<FunctionArgumentsTooltipProps> = ({
   value,
   currentOperatorIndex,
@@ -30,6 +31,7 @@ const FunctionArgumentsTooltip: React.FC<FunctionArgumentsTooltipProps> = ({
 
   const valueArgs = rightSideValue
     .replace(currentOperatorLiteral, '')
+    .replace(/\([^()]*\)/g, '')
     .replace(/[()]/g, '')
     .split(',');
 

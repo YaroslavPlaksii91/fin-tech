@@ -232,7 +232,7 @@ const Calculation: React.FC<CalculationProps> = ({
       />
       <ExpressionForm
         initialValues={initialValue}
-        handleAddNewBussinesRule={handleAddNewBussinesRule}
+        handleAddNewBusinessRule={handleAddNewBussinesRule}
         modalOpen={openExpEditorModal}
         setModalOpen={setOpenExpEditorModal}
       />

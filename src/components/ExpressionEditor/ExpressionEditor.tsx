@@ -1,4 +1,11 @@
-import React, { MutableRefObject, useMemo, useRef, useState } from 'react';
+import React, {
+  ForwardRefRenderFunction,
+  MutableRefObject,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import { TextareaAutosize } from '@mui/base';
 import { InputBaseComponentProps } from '@mui/material';
 
@@ -15,25 +22,40 @@ import FunctionsAutosuggestion, {
   FunctionsAutosuggestionAPI
 } from '@components/ExpressionEditor/components/FunctionsAutosuggestion.tsx';
 
-const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
-  name,
-  value,
-  onChange
-}) => {
+export interface ExpressionEditorAPI {
+  focus: () => void;
+}
+
+const ExpressionEditor: ForwardRefRenderFunction<
+  ExpressionEditorAPI,
+  ExpressionEditorProps
+> = ({ name, value, onChange }, ref) => {
   const textareaRef: MutableRefObject<HTMLTextAreaElement | null> =
     useRef(null);
 
   const functionAutosuggestionRef: MutableRefObject<FunctionsAutosuggestionAPI | null> =
     useRef(null);
-
   const [caretPosition, setCaretPosition] = useState<number>(0);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus() {
+        textareaRef.current?.focus();
+        setCaretPosition(textareaRef.current?.value.length || 0);
+      }
+    }),
+    [textareaRef, setCaretPosition]
+  );
 
   const currentOperator = regExpHelpers.findLeftOperator(
     value,
     caretPosition,
     functionsLiterals
   );
+
   const currentOperatorLiteral = currentOperator?.operator;
+
   const currentOperatorIndex: number = currentOperator?.index || 0;
 
   const functionsSuggestList = useMemo(
@@ -60,7 +82,13 @@ const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
         functionAutosuggestionRef.current.focus();
       }
     }
-    setCaretPosition(e.currentTarget.selectionStart);
+
+    if (e.key === 'ArrowLeft') {
+      setCaretPosition((prev) => prev - 1);
+      return;
+    }
+
+    setCaretPosition(e.currentTarget.selectionStart + 1);
   };
 
   const handleMenuListKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
@@ -109,4 +137,6 @@ interface ExpressionEditorProps extends InputBaseComponentProps {
   value: string;
 }
 
-export default ExpressionEditor;
+export default React.forwardRef<ExpressionEditorAPI, ExpressionEditorProps>(
+  ExpressionEditor
+);

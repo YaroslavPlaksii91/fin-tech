@@ -1,6 +1,6 @@
 import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useCallback, useEffect } from 'react';
+import { MutableRefObject, useCallback, useEffect, useRef } from 'react';
 import { groupBy } from 'lodash';
 
 import Dialog from '@components/shared/Modals/Dialog';
@@ -14,9 +14,12 @@ import {
   VARIABLE_DESTINATION_TYPE,
   VARIABLE_SOURCE_TYPE
 } from '@domain/dataDictionary';
-import ExpressionEditor from '@components/ExpressionEditor/ExpressionEditor.tsx';
+import ExpressionEditor, {
+  ExpressionEditorAPI
+} from '@components/ExpressionEditor/ExpressionEditor.tsx';
 import {
   functionsConfig,
+  functionsLiterals,
   operatorsConfig
 } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
 
@@ -40,7 +43,7 @@ const operatorsList = [
 
 interface ExpressionFormProps {
   initialValues?: Expression & { id: number };
-  handleAddNewBussinesRule: ({
+  handleAddNewBusinessRule: ({
     data,
     id
   }: {
@@ -53,10 +56,13 @@ interface ExpressionFormProps {
 
 export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   initialValues,
-  handleAddNewBussinesRule,
+  handleAddNewBusinessRule,
   modalOpen,
   setModalOpen
 }) => {
+  const expressionEditorRef: MutableRefObject<ExpressionEditorAPI | null> =
+    useRef(null);
+
   const {
     handleSubmit,
     reset,
@@ -72,7 +78,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   });
 
   const onSubmit: SubmitHandler<Expression> = (data) => {
-    handleAddNewBussinesRule({ data, id: initialValues?.id });
+    handleAddNewBusinessRule({ data, id: initialValues?.id });
     handleCloseModal();
   };
 
@@ -92,9 +98,11 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   const onExpressionOperatorsListClick = useCallback(
     (literal: string) => {
       const prev = getValues('expressionString');
-      setValue('expressionString', prev + literal);
+      const isFunction = functionsLiterals.includes(literal);
+      setValue('expressionString', prev + literal + (isFunction ? '(' : ''));
+      expressionEditorRef.current?.focus();
     },
-    [setValue, getValues]
+    [setValue, getValues, expressionEditorRef]
   );
 
   return (
@@ -124,7 +132,9 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
             label="Expression"
             placeholder="Enter expression"
             InputProps={{
-              inputComponent: ExpressionEditor
+              inputComponent: (props) => (
+                <ExpressionEditor {...props} ref={expressionEditorRef} />
+              )
             }}
           />
         </Stack>

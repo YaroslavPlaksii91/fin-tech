@@ -200,6 +200,6 @@ export const functionsConfig: FunctionConfig[] = [
 
 export const sortedFunctionsConfig = sortBy(functionsConfig, 'literal');
 export const functionsConfigDict = keyBy(functionsConfig, 'literal');
-export const functionsLiterals = sortedFunctionsConfig.map(
+export const functionsLiterals: string[] = sortedFunctionsConfig.map(
   ({ literal }) => literal
 );

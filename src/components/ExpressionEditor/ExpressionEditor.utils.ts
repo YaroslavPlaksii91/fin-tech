@@ -27,38 +27,42 @@ export function filterFunctionsSuggestList(
 }
 
 export const regExpHelpers = {
-  findLeftOperator(
-    inputValue: string,
-    searchPosition: number,
-    operators: string[]
-  ) {
-    const substringBeforeCursor = inputValue.substring(0, searchPosition);
+  findLeftOperator(input: string, caretPosition: number, operators: string[]) {
+    const substringBeforeCaret = input.substring(0, caretPosition);
 
-    let nearestOperator = null;
+    const openFunctions = Array.from(
+      substringBeforeCaret.matchAll(/[A-Z]+\(/g)
+    );
+    const closingBrackets = Array.from(substringBeforeCaret.matchAll(/\)/g));
 
-    for (const operator of operators) {
-      const lastIndex = substringBeforeCursor.lastIndexOf(operator);
-
-      const hasOpeningParenthesis =
-        inputValue[lastIndex + operator.length] === '(';
-
-      if (
-        lastIndex !== -1 &&
-        (hasOpeningParenthesis || searchPosition === inputValue.length) &&
-        (nearestOperator === null || lastIndex > nearestOperator.index)
-      ) {
-        nearestOperator = { operator, index: lastIndex };
+    while (closingBrackets.length) {
+      const el = closingBrackets.pop();
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call
+      const index: number = openFunctions.findLastIndex(
+        (element: { index: number }) => element.index < Number(el?.index)
+      );
+      if (index !== -1) {
+        openFunctions.splice(index, 1);
       }
     }
 
-    const openParentheses = (inputValue.match(/\(/g) || []).length;
-    const closeParentheses = (inputValue.match(/\)/g) || []).length;
+    if (openFunctions.length) {
+      const match = openFunctions[openFunctions.length - 1];
+      const operator = match[0].replace('(', '').trim();
 
-    if (openParentheses === closeParentheses) {
-      return null;
+      if (!operators.includes(operator)) {
+        return null;
+      }
+
+      return {
+        operator,
+        index: match.index
+      };
     }
 
-    return nearestOperator ? nearestOperator : null;
+    return null;
   },
 
   extractExpressionLastPart(value: string) {
