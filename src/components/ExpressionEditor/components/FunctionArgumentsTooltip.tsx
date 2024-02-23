@@ -6,7 +6,7 @@ import { functionsConfigDict } from '@components/ExpressionEditor/ExpressionEdit
 import { regExpHelpers } from '@components/ExpressionEditor/ExpressionEditor.utils.ts';
 import styles from '@components/ExpressionEditor/ExpressionEditor.module.scss';
 
-// @TODO: Based on cursor position
+// @TODO: Based on the cursor position in post-MVP?
 const FunctionArgumentsTooltip: React.FC<FunctionArgumentsTooltipProps> = ({
   value,
   currentOperatorIndex,
