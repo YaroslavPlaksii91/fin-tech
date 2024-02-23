@@ -28,7 +28,7 @@ import {
   DeleteOutlineIcon,
   EditNoteOutlinedIcon
 } from '@components/shared/Icons';
-import { ExpressionEditor } from '@components/ExpressionEditor/ExpressionEditor';
+import { ExpressionForm } from '@components/ExpressionForm/ExpressionForm.tsx';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
@@ -230,9 +230,9 @@ const Calculation: React.FC<CalculationProps> = ({
         handleSubmitNote={handleSubmitNote}
         note={getValues('note') ?? ''}
       />
-      <ExpressionEditor
+      <ExpressionForm
         initialValues={initialValue}
-        handleAddNewBussinesRule={handleAddNewBussinesRule}
+        handleAddNewBusinessRule={handleAddNewBussinesRule}
         modalOpen={openExpEditorModal}
         setModalOpen={setOpenExpEditorModal}
       />
