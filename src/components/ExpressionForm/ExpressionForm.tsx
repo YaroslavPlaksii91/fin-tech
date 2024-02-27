@@ -88,11 +88,15 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   });
 
   const data = useMemo(() => {
-    const groupedData = groupBy(value?.variables, (item) =>
-      item.source === VARIABLE_SOURCE_TYPE.TemporaryVariable
-        ? 'UserDefined'
-        : item.source
+    const groupedData = groupBy(
+      // TODO: temporary required as BE part if not finished yet. Need to add source
+      (value?.variables || []).filter((item) => item.source),
+      (item) =>
+        item.source === VARIABLE_SOURCE_TYPE.TemporaryVariable
+          ? 'UserDefined'
+          : item.source
     );
+
     return groupedData;
   }, [value]);
 
