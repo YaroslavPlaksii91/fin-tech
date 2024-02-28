@@ -8,16 +8,16 @@ import { HexagonOutlinedIcon } from '@components/shared/Icons';
 
 type AutocompleteInputProps = {
   open: boolean;
-  columnId: string;
-  columnClickedId?: string;
+  variableName: string;
+  columnClickedIndex?: number;
   anchorEl: HTMLElement | null;
-  index: number;
+  columnIndex: number;
   category: CATEGORIES;
   handleAddNewColumn?: (index: number) => void;
-  handleDeleteColumn?: (columnId: string) => void;
+  handleDeleteColumn?: (variableName: string) => void;
   handleClickOnMenu: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    columnId: string
+    columnIndex: number
   ) => void;
   handleCloseMenu: () => void;
   isTheLastCategoryColumn: boolean;
@@ -25,10 +25,10 @@ type AutocompleteInputProps = {
 
 export const AutocompleteInput = ({
   open,
-  columnId,
-  columnClickedId,
+  variableName,
+  columnClickedIndex,
   anchorEl,
-  index,
+  columnIndex,
   category,
   handleAddNewColumn,
   handleDeleteColumn,
@@ -52,7 +52,7 @@ export const AutocompleteInput = ({
             aria-haspopup="true"
             size="small"
             onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
-              handleClickOnMenu(event, columnId)
+              handleClickOnMenu(event, columnIndex)
             }
           >
             <MoreVertIcon />
@@ -60,12 +60,12 @@ export const AutocompleteInput = ({
           <Menu
             id="long-menu"
             anchorEl={anchorEl}
-            open={open && columnId === columnClickedId}
+            open={open && columnClickedIndex === columnIndex}
             onClose={handleCloseMenu}
           >
             <MenuItem
               key="add-column-action"
-              onClick={() => handleAddNewColumn?.(index)}
+              onClick={() => handleAddNewColumn?.(columnIndex)}
             >
               <ListItemIcon>
                 <HexagonOutlinedIcon size="16px" />
@@ -75,7 +75,7 @@ export const AutocompleteInput = ({
 
             <MenuItem
               key="delete-column-action"
-              onClick={() => handleDeleteColumn?.(columnId)}
+              onClick={() => handleDeleteColumn?.(variableName)}
               disabled={isTheLastCategoryColumn}
             >
               <ListItemIcon>

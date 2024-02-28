@@ -16,7 +16,7 @@ import { InputText } from '@components/shared/Forms/InputText';
 import { SingleSelect } from '@components/shared/Forms/SingleSelect';
 import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
 
-type FormFieldsProps = {
+export type FormFieldsProps = {
   variableName: string;
   operator?: string;
   value?: string;

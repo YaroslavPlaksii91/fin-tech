@@ -1,46 +1,72 @@
-import { DATA_TYPE } from '@domain/dataDictionary';
-// TODO: should be the same model as from data dictionary
-export type VariablesOptionsProps = {
-  variableName: string;
-  variableType: string;
-};
+import { CATEGORIES } from './constants';
+
+import {
+  DataDictionaryVariable,
+  DATA_TYPE,
+  DATA_TYPE_WITHOUT_ENUM,
+  DATA_TYPE_WITH_ENUM_PREFIX
+} from '@domain/dataDictionary';
 
 export type VariableRowData = {
-  id: string;
-  variableName: {
+  ['variableName']: {
     variableName: string;
-    expression: string;
-    dataType?: DATA_TYPE | string;
-    value?: string;
-    operator?: string;
-    lowerBound?: number;
-    upperBound?: number;
+    operator: string;
+    conditionExpression: string;
   };
 };
 
 export type SelectedCellInRowData = {
-  id: string;
+  rowIndex: number;
   variableName: string;
   dataType: string;
 };
 
-export type VariableHeaderData = {
-  id: string;
+export type VariableColumnData = {
   variableName: string;
   dataType: DATA_TYPE | string;
-  allowedValues: string | string[];
+  allowedValues?: string | string[];
 };
 
-type CategoryEntries = {
-  columnClickedId: string;
-  columns: VariableHeaderData[];
+export type TableSkeletonProps = {
+  columns: VariableColumnData[];
   rows: VariableRowData[];
-};
-
-export type SelectedCategoriesEntries = {
-  conditions: CategoryEntries;
-  actions: CategoryEntries;
-  elseActions: {
-    rows: VariableRowData[];
-  };
+  variablesOptions: DataDictionaryVariable[];
+  columnClickedIndex?: number;
+  category: CATEGORIES;
+  handleDeleteRow?: (index: number) => void;
+  handleChangeColumnClickedIndex?: (
+    newColumnIndex: number,
+    category: CATEGORIES
+  ) => void;
+  handleInsertingColumn?: ({
+    columnClickedIndex
+  }: {
+    columnClickedIndex: number;
+  }) => void;
+  handleDeleteCategoryColumn?: ({
+    columnVariableName
+  }: {
+    columnVariableName: string;
+  }) => void;
+  handleChangeColumnVariable?: ({
+    columnIndex,
+    newVariable
+  }: {
+    columnIndex: number;
+    newVariable: Pick<DataDictionaryVariable, 'variableName'>;
+  }) => void;
+  handleSubmitVariableValue: ({
+    formFieldData
+  }: {
+    formFieldData: any;
+  }) => void;
+  handleSubmitVariableValueForEnum: ({
+    rowIndex,
+    variableName,
+    newEnumValue
+  }: {
+    rowIndex: number;
+    variableName: string;
+    newEnumValue: string;
+  }) => void;
 };

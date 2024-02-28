@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   FormControl,
   MenuItem,
@@ -7,20 +6,38 @@ import {
 } from '@mui/material';
 
 type SelectComponentProps = {
+  rowIndex: number;
+  variableName: string;
+  value: string;
   options: string[] | string;
   isMultiSelect?: boolean;
   fullWidth: boolean;
+  handleSubmitVariableValueForEnum: ({
+    rowIndex,
+    variableName,
+    newEnumValue
+  }: {
+    rowIndex: number;
+    variableName: string;
+    newEnumValue: string;
+  }) => void;
 };
 
 const SelectComponent = ({
+  rowIndex,
+  variableName,
+  value,
   options,
   isMultiSelect = false,
-  fullWidth = false
+  fullWidth = false,
+  handleSubmitVariableValueForEnum
 }: SelectComponentProps) => {
-  const [selectedEnumOptions, setSelectedEnumOptions] = useState('');
-
   const handleOnSelectChange = (event: SelectChangeEvent<string>) => {
-    setSelectedEnumOptions(event.target.value);
+    handleSubmitVariableValueForEnum({
+      rowIndex,
+      variableName,
+      newEnumValue: event.target.value
+    });
   };
 
   const getFormatedOptions = () => {
@@ -34,7 +51,7 @@ const SelectComponent = ({
   return (
     <FormControl fullWidth={fullWidth} size="small">
       <Select
-        value={selectedEnumOptions}
+        value={value}
         onChange={handleOnSelectChange}
         multiple={isMultiSelect}
         sx={{ minWidth: 200 }}
