@@ -19,7 +19,8 @@ const isFulfilled = function <T>(
 };
 
 const useDataDictionaryVariables = (flow: IFlow) => {
-  const [variables, setVariables] = useState<DataDictionaryVariable[]>([]);
+  const [variables, setVariables] =
+    useState<Record<string, DataDictionaryVariable[]>>();
   const [isLoadingData, setIsLoadingData] = useState(false);
 
   const getVariables = useCallback(async () => {
@@ -34,20 +35,21 @@ const useDataDictionaryVariables = (flow: IFlow) => {
       source: VARIABLE_SOURCE_TYPE.TemporaryVariable
     }));
 
-    // TODO: think better way to join temporary variables
+    const extendedVariables: Record<string, DataDictionaryVariable[]> = {};
 
     const fulfilledValues = results
       .filter(isFulfilled)
       .map((p) => p.value)
-      .concat(temporaryVariables);
+      .concat({ userDefined: temporaryVariables });
+
+    fulfilledValues.forEach((obj) => {
+      Object.keys(obj).forEach((key) => {
+        extendedVariables[key] = obj[key];
+      });
+    });
 
     if (fulfilledValues.length) {
-      setVariables(
-        ([] as DataDictionaryVariable[]).concat.apply(
-          [],
-          fulfilledValues as ConcatArray<DataDictionaryVariable>[]
-        )
-      );
+      setVariables(extendedVariables);
     }
 
     setIsLoadingData(false);

@@ -11,12 +11,15 @@ import List from './List';
 import { DataDictionaryVariable } from '@domain/dataDictionary';
 
 const tabLabels: { [key: string]: string } = {
-  UserDefined: 'User Defined'
+  userDefined: 'User Defined',
+  laPMSVariables: 'Lead and Provider Management System'
 };
 
-const AddVariable: React.FC<{
-  data: { [key: string]: DataDictionaryVariable[] };
-}> = ({ data }) => {
+type AddVariableType = {
+  data: Record<string, DataDictionaryVariable[]>;
+};
+
+const AddVariable: React.FC<AddVariableType> = ({ data }) => {
   const [value, setValue] = useState(0);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {

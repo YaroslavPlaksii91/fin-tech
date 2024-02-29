@@ -17,7 +17,7 @@ export default function List({ data }: { data: DataDictionaryVariable[] }) {
             </IconButton>
           }
         >
-          <StyledListItemText primary={el.variableName} />
+          <StyledListItemText>{el.variableName || el.name}</StyledListItemText>
         </StyledListItem>
       ))}
     </StyledList>

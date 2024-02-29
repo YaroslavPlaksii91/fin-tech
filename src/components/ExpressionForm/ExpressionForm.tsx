@@ -5,7 +5,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useRef
 } from 'react';
 import { groupBy } from 'lodash';
@@ -87,19 +86,6 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     }
   });
 
-  const data = useMemo(() => {
-    const groupedData = groupBy(
-      // TODO: temporary required as BE part if not finished yet. Need to add source
-      (value?.variables || []).filter((item) => item.source),
-      (item) =>
-        item.source === VARIABLE_SOURCE_TYPE.TemporaryVariable
-          ? 'UserDefined'
-          : item.source
-    );
-
-    return groupedData;
-  }, [value]);
-
   const onSubmit: SubmitHandler<Expression> = (data) => {
     handleAddNewBusinessRule({ data, id: initialValues?.id });
     handleCloseModal();
@@ -165,7 +151,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
           />
         </Stack>
         <Stack spacing={2} direction="row" pt={2}>
-          <AddVariable data={data} />
+          {value?.variables && <AddVariable data={value.variables} />}
           <ExpressionOperatorsList
             list={operatorsList}
             onItemClick={onExpressionOperatorsListClick}
