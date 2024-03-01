@@ -40,8 +40,8 @@ export interface DataDictionaryVariable {
   variableName: string;
   name?: string;
   source: VARIABLE_SOURCE_TYPE;
-  destination?: string;
-  variableType: string;
+  variableDestinationType?: string;
+  variableSourceType: string;
   dataType?: DATA_TYPE;
   defaultValue?: string;
   isRequired?: boolean;
@@ -50,8 +50,9 @@ export interface DataDictionaryVariable {
   description?: string;
 }
 
-export type TemporaryVariable = {
-  variableType: DATA_TYPE;
-  variableName: string;
-  variableValue: string;
+export type UserDefinedVariable = {
+  dataType: DATA_TYPE;
+  name: string;
+  defaultValue: string;
+  description: string;
 };

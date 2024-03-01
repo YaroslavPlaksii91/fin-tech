@@ -180,28 +180,57 @@ export const userDefinedData = [
 // TODO: Remove after Data Dictionary will be implemented
 export const TEMPORARY_VARIABLES_MOCK = [
   {
-    variableName: 'PhonenumberPrefix',
-    variableDataType: DATA_TYPE_WITHOUT_ENUM.String,
-    variableValue: '+1'
+    dataType: DATA_TYPE_WITHOUT_ENUM.String,
+    defaultValue: '000',
+    description: '',
+    name: 'PhonenumberPrefix'
   },
   {
-    variableName: 'EmailExtension',
-    variableDataType: DATA_TYPE_WITHOUT_ENUM.String,
-    variableValue: 'test@gmail.com'
+    dataType: DATA_TYPE_WITHOUT_ENUM.String,
+    defaultValue: '',
+    description: '',
+    name: 'EmailExtension'
   },
   {
-    variableName: 'PreCalculatedMaxLoanAmount',
-    variableDataType: DATA_TYPE_WITHOUT_ENUM.Integer,
-    variableValue: '1000'
+    dataType: DATA_TYPE_WITHOUT_ENUM.Decimal,
+    defaultValue: '0',
+    description: '',
+    name: 'PreCalculatedMaxLoanAmount'
   },
   {
-    variableName: 'CalculatedLoanAmountMultiplier',
-    variableDataType: DATA_TYPE_WITHOUT_ENUM.Integer,
-    variableValue: '1000'
+    dataType: DATA_TYPE_WITHOUT_ENUM.Decimal,
+    defaultValue: '1',
+    description: '',
+    name: 'CalculatedLoanAmountMultiplier'
   },
   {
-    variableName: 'MaxLoanAmount',
-    variableDataType: DATA_TYPE_WITHOUT_ENUM.Integer,
-    variableValue: '1000'
+    dataType: DATA_TYPE_WITHOUT_ENUM.Decimal,
+    defaultValue: '0',
+    description: '',
+    name: 'MaxLoanAmount'
+  },
+  {
+    dataType: DATA_TYPE_WITHOUT_ENUM.Integer,
+    defaultValue: '0',
+    description: 'Years multiplied by 12 plus months at address',
+    name: 'TotalMonthsAtAdress'
+  },
+  {
+    dataType: DATA_TYPE_WITHOUT_ENUM.Integer,
+    defaultValue: '0',
+    description: 'Datediff between today and day of hire',
+    name: 'TotalDayAtwork'
+  },
+  {
+    dataType: DATA_TYPE_WITHOUT_ENUM.Integer,
+    defaultValue: '0',
+    description: 'Datediff between today and next paydday',
+    name: 'DayTillsNextPayday'
+  },
+  {
+    dataType: DATA_TYPE_WITHOUT_ENUM.Integer,
+    defaultValue: '0',
+    description: 'Years multiplied by 12 plus months at Bank',
+    name: 'TotalMonthsAtBank'
   }
 ];

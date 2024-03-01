@@ -36,7 +36,7 @@ export const createInitialFlowDataHelper = (name: string): IFlowDataCreate => {
     edges: [edgeData],
     viewport,
     temporaryVariables: TEMPORARY_VARIABLES_MOCK,
-    permanentVariables: null
+    permanentVariables: []
   };
 };
 
