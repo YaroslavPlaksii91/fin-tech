@@ -1,25 +1,45 @@
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { IconButton } from '@mui/material';
+
 import Menu from '@components/shared/Menu/Menu';
 import Logger from '@utils/logger';
 import {
   ActionTypes,
   options
 } from '@components/StepManagment/StepActionsMenu/types';
-import ActionMenuButton from '@components/shared/Buttons/ActionMenuButton';
+import { FlowNode } from '@domain/flow.ts';
+import routes from '@constants/routes.ts';
+import { MoreVertIcon } from '@components/shared/Icons.tsx';
 
 interface StepActionMenuOnNode {
-  anchorEl: HTMLElement | null;
-  setAnchorEl: (el: HTMLElement | null) => void;
+  isOpen?: boolean;
+  onClose?: () => void;
+  anchorElement?: HTMLElement | null;
+  flowNode: FlowNode | null;
   showActionMenuButton?: boolean;
 }
 
 const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
-  anchorEl,
-  setAnchorEl,
+  isOpen = false,
+  onClose,
+  anchorElement,
+  flowNode,
   showActionMenuButton = false
 }) => {
-  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
-    event.stopPropagation();
-    setAnchorEl(event.currentTarget);
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+  const menuRef: MutableRefObject<HTMLButtonElement | null> = useRef(null);
+  const [open, setIsOpen] = useState(isOpen);
+
+  useEffect(() => {
+    setIsOpen(isOpen);
+  }, [isOpen]);
+
+  const handleMenuButtonClick = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    setIsOpen((prev) => !prev);
   };
 
   const handleSelectedActions = (action: ActionTypes) => {
@@ -28,7 +48,9 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
         Logger.info('Step text view');
         break;
       case ActionTypes.EDIT_STEP:
-        Logger.info('Edit step');
+        navigate(routes.underwriting.flow.edit(id as string), {
+          state: { node: flowNode }
+        });
         break;
       case ActionTypes.RENAME_STEP:
         Logger.info('Rename step');
@@ -44,16 +66,26 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
     if (key) {
       handleSelectedActions(key as ActionTypes);
     }
-    setAnchorEl(null);
+    setIsOpen(false);
+    onClose && onClose();
   };
+
+  const menuAnchor = anchorElement || menuRef.current;
+
+  if (!flowNode) {
+    return null;
+  }
 
   return (
     <>
       {showActionMenuButton && (
-        <ActionMenuButton handleOnClick={handleOpenMenu} />
+        <IconButton ref={menuRef} onClick={handleMenuButtonClick}>
+          <MoreVertIcon />
+        </IconButton>
       )}
       <Menu
-        anchorEl={anchorEl}
+        id={flowNode.id}
+        anchorEl={open ? menuAnchor : null}
         handleCloseMenu={handleCloseMenu}
         options={options}
       />
