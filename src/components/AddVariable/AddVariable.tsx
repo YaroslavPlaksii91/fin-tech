@@ -8,7 +8,10 @@ import TabPanel from '../shared/Tabs/TabPanel';
 import { StyledContainer, StyledTab } from './styled';
 import List from './List';
 
-import { DataDictionaryVariable } from '@domain/dataDictionary';
+import {
+  DataDictionaryVariable,
+  UserDefinedVariable
+} from '@domain/dataDictionary';
 
 const tabLabels: { [key: string]: string } = {
   userDefined: 'User Defined',
@@ -16,7 +19,7 @@ const tabLabels: { [key: string]: string } = {
 };
 
 type AddVariableType = {
-  data: Record<string, DataDictionaryVariable[]>;
+  data: Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>;
 };
 
 const AddVariable: React.FC<AddVariableType> = ({ data }) => {

@@ -3,9 +3,16 @@ import { IconButton } from '@mui/material';
 import { StyledList, StyledListItem, StyledListItemText } from './styled';
 
 import { AddCircleOutlineIcon } from '@components/shared/Icons';
-import { DataDictionaryVariable } from '@domain/dataDictionary';
+import {
+  DataDictionaryVariable,
+  UserDefinedVariable
+} from '@domain/dataDictionary';
 
-export default function List({ data }: { data: DataDictionaryVariable[] }) {
+export default function List({
+  data
+}: {
+  data: DataDictionaryVariable[] | UserDefinedVariable[];
+}) {
   return (
     <StyledList>
       {data.map((el, index) => (
@@ -17,7 +24,9 @@ export default function List({ data }: { data: DataDictionaryVariable[] }) {
             </IconButton>
           }
         >
-          <StyledListItemText>{el.variableName || el.name}</StyledListItemText>
+          <StyledListItemText>
+            {'variableName' in el ? el.variableName : el.name}
+          </StyledListItemText>
         </StyledListItem>
       ))}
     </StyledList>

@@ -38,7 +38,6 @@ export enum VARIABLE_SOURCE_TYPE {
 
 export interface DataDictionaryVariable {
   variableName: string;
-  name?: string;
   source: VARIABLE_SOURCE_TYPE;
   variableDestinationType?: string;
   variableSourceType: string;

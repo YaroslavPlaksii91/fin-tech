@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { dataDictionaryService } from '@services/data-dictionary';
 import {
   DataDictionaryVariable,
+  UserDefinedVariable,
   VARIABLE_SOURCE_TYPE
 } from '@domain/dataDictionary';
 import { IFlow } from '@domain/flow';
@@ -20,12 +21,15 @@ const isFulfilled = function <T>(
 
 const useDataDictionaryVariables = (flow: IFlow) => {
   const [variables, setVariables] =
-    useState<Record<string, DataDictionaryVariable[]>>();
+    useState<
+      Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>
+    >();
   const [isLoadingData, setIsLoadingData] = useState(false);
 
   const getVariables = useCallback(async () => {
     setIsLoadingData(true);
 
+    // TODO: extends with new endpoints for getting data dictionary variables
     const results = await Promise.allSettled([
       dataDictionaryService.getDataDictionaryVariables()
     ]);
@@ -35,18 +39,20 @@ const useDataDictionaryVariables = (flow: IFlow) => {
       source: VARIABLE_SOURCE_TYPE.TemporaryVariable
     }));
 
-    const extendedVariables: Record<string, DataDictionaryVariable[]> = {};
+    const extendedVariables: Record<
+      string,
+      DataDictionaryVariable[] | UserDefinedVariable[]
+    > = {};
 
-    const fulfilledValues = results
-      .filter(isFulfilled)
-      .map((p) => p.value)
-      .concat({ userDefined: temporaryVariables });
+    const fulfilledValues = results.filter(isFulfilled).map((p) => p.value);
 
     fulfilledValues.forEach((obj) => {
       Object.keys(obj).forEach((key) => {
         extendedVariables[key] = obj[key];
       });
     });
+
+    extendedVariables.userDefined = temporaryVariables;
 
     if (fulfilledValues.length) {
       setVariables(extendedVariables);
