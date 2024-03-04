@@ -42,13 +42,20 @@ export enum VARIABLE_SOURCE_TYPE {
 
 export interface DataDictionaryVariable {
   variableName: string;
-  source?: string;
-  destination?: string;
-  variableType?: string;
-  dataType: DATA_TYPE | string;
-  defaultValue: string;
-  isRequired: boolean;
-  usageMode: string;
-  allowedValues: string | string[];
-  description: string;
+  source: VARIABLE_SOURCE_TYPE;
+  variableDestinationType?: string;
+  variableSourceType: string;
+  dataType?: DATA_TYPE;
+  defaultValue?: string;
+  isRequired?: boolean;
+  usageMode?: string;
+  allowedValues?: string | string[];
+  description?: string;
 }
+
+export type UserDefinedVariable = {
+  dataType: DATA_TYPE;
+  name: string;
+  defaultValue: string;
+  description: string;
+};

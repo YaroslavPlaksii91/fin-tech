@@ -1,3 +1,5 @@
+import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
+
 export const userDefinedData = [
   {
     variableName: 'Promocode',
@@ -172,5 +174,63 @@ export const userDefinedData = [
     ],
     description:
       'Store define the flow how the application will be processed in PLM infinity LMS'
+  }
+];
+
+// TODO: Remove after Data Dictionary will be implemented
+export const TEMPORARY_VARIABLES_MOCK = [
+  {
+    dataType: DATA_TYPE_WITHOUT_ENUM.String,
+    defaultValue: '000',
+    description: '',
+    name: 'PhonenumberPrefix'
+  },
+  {
+    dataType: DATA_TYPE_WITHOUT_ENUM.String,
+    defaultValue: '',
+    description: '',
+    name: 'EmailExtension'
+  },
+  {
+    dataType: DATA_TYPE_WITHOUT_ENUM.Decimal,
+    defaultValue: '0',
+    description: '',
+    name: 'PreCalculatedMaxLoanAmount'
+  },
+  {
+    dataType: DATA_TYPE_WITHOUT_ENUM.Decimal,
+    defaultValue: '1',
+    description: '',
+    name: 'CalculatedLoanAmountMultiplier'
+  },
+  {
+    dataType: DATA_TYPE_WITHOUT_ENUM.Decimal,
+    defaultValue: '0',
+    description: '',
+    name: 'MaxLoanAmount'
+  },
+  {
+    dataType: DATA_TYPE_WITHOUT_ENUM.Integer,
+    defaultValue: '0',
+    description: 'Years multiplied by 12 plus months at address',
+    name: 'TotalMonthsAtAdress'
+  },
+  {
+    dataType: DATA_TYPE_WITHOUT_ENUM.Integer,
+    defaultValue: '0',
+    description: 'Datediff between today and day of hire',
+    name: 'TotalDayAtwork'
+  },
+  {
+    dataType: DATA_TYPE_WITHOUT_ENUM.Integer,
+    defaultValue: '0',
+    description: 'Datediff between today and next paydday',
+    name: 'DayTillsNextPayday'
+  },
+  {
+    dataType: DATA_TYPE_WITHOUT_ENUM.Integer,
+    defaultValue: '0',
+    description: 'Years multiplied by 12 plus months at Bank',
+    name: 'TotalMonthsAtBank'
   }
 ];

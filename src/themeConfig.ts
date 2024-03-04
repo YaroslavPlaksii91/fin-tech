@@ -172,6 +172,13 @@ export const theme = createTheme({
           fontSize: '14px'
         }
       }
+    },
+    MuiTabs: {
+      styleOverrides: {
+        indicator: {
+          backgroundColor: palette.gray
+        }
+      }
     }
   },
   typography: {

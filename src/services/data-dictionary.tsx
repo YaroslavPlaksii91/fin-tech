@@ -4,7 +4,7 @@ import { userDefinedData } from '@constants/mocks';
 
 class DataDictionaryService {
   async getDataDictionaryVariables() {
-    const { data } = await api.get<DataDictionaryVariable[]>(
+    const { data } = await api.get<Record<string, DataDictionaryVariable[]>>(
       '/expression-builder/data-dictionary-variables'
     );
     return data;
