@@ -8,7 +8,7 @@ import {
 } from '@domain/dataDictionary';
 
 export type VariableRowData = {
-  ['variableName']: {
+  [key: string]: {
     variableName: string;
     operator: string;
     expression: string;

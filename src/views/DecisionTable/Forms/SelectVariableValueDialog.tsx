@@ -20,8 +20,8 @@ export type FormFieldsProps = {
   variableName: string;
   operator?: string;
   value?: string;
-  lowerBound?: number;
-  upperBound?: number;
+  lowerBound?: number | null;
+  upperBound?: number | null;
 };
 
 type SelectVariableValueDialogProps = {
@@ -48,13 +48,13 @@ const SelectVariableValueDialog = ({
     watch,
     setValue
   } = useForm({
-    //resolver: yupResolver(validationSchema),
+    resolver: yupResolver(validationSchema),
     defaultValues: {
       variableName: selectedRowCell.variableName,
       operator: '',
       value: '',
-      lowerBound: '',
-      upperBound: ''
+      lowerBound: null || undefined,
+      upperBound: null || undefined
     }
   });
 
