@@ -56,6 +56,8 @@ import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 import NavigateTo from '@components/shared/Link/NavigateTo.tsx';
 // import { useDataDictionary } from '@contexts/DataDictionaryContext';
+import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
+import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 
 interface FlowChartViewProps {
   flow: IFlow;
@@ -66,7 +68,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   flow,
   setFlow
 }) => {
-  // const { variables } = useDataDictionary();
+  const { variables } = useDataDictionaryVariables(flow);
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
   const [startDrag, setStartDrag] = useState<boolean>(false);
@@ -314,7 +316,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   }, [startDrag]);
 
   return (
-    <>
+    <DataDictionaryContext.Provider value={{ variables }}>
       <SideNavContainer
         header={<NavigateTo to={-1} title="Back" />}
         footer={<SelectStep onAddNode={onAddNode} />}
@@ -376,7 +378,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         onClose={onPaneClick}
       />
       <ConfirmationDialog isDirty={isDirty} />
-    </>
+    </DataDictionaryContext.Provider>
   );
 };
 

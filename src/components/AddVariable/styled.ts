@@ -1,4 +1,4 @@
-import { Box, List } from '@mui/material';
+import { Box, List, Tab } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 export const StyledContainer = styled(Box)(({ theme }) => ({
@@ -14,4 +14,8 @@ export const StyledList = styled(List)(() => ({
   padding: 0,
   overflow: 'auto',
   maxHeight: '255px'
+}));
+
+export const StyledTab = styled(Tab)(() => ({
+  textTransform: 'none'
 }));

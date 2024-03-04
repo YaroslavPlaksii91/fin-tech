@@ -38,15 +38,15 @@ export enum VARIABLE_SOURCE_TYPE {
 
 export interface DataDictionaryVariable {
   variableName: string;
-  source?: string;
+  source: VARIABLE_SOURCE_TYPE;
   destination?: string;
   variableType: string;
-  dataType: DATA_TYPE;
-  defaultValue: string;
-  isRequired: boolean;
-  usageMode: string;
-  allowedValues: string | string[];
-  description: string;
+  dataType?: DATA_TYPE;
+  defaultValue?: string;
+  isRequired?: boolean;
+  usageMode?: string;
+  allowedValues?: string | string[];
+  description?: string;
 }
 
 export type TemporaryVariable = {

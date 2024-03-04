@@ -1,7 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
 
 import { dataDictionaryService } from '@services/data-dictionary';
-import { DataDictionaryVariable } from '@domain/dataDictionary';
+import {
+  DataDictionaryVariable,
+  VARIABLE_SOURCE_TYPE
+} from '@domain/dataDictionary';
+import { IFlow } from '@domain/flow';
 
 enum PROMISE_TYPES {
   Fulfilled = 'fulfilled',
@@ -14,7 +18,7 @@ const isFulfilled = function <T>(
   return input.status === PROMISE_TYPES.Fulfilled;
 };
 
-const useDataDictionaryVariables = () => {
+const useDataDictionaryVariables = (flow: IFlow) => {
   const [variables, setVariables] = useState<DataDictionaryVariable[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(false);
 
@@ -22,11 +26,20 @@ const useDataDictionaryVariables = () => {
     setIsLoadingData(true);
 
     const results = await Promise.allSettled([
-      dataDictionaryService.getDataDictionaryVariables(),
-      dataDictionaryService.getUserDefinedVariables()
+      dataDictionaryService.getDataDictionaryVariables()
     ]);
 
-    const fulfilledValues = results.filter(isFulfilled).map((p) => p.value);
+    const temporaryVariables = flow.temporaryVariables?.map((variable) => ({
+      ...variable,
+      source: VARIABLE_SOURCE_TYPE.TemporaryVariable
+    }));
+
+    // TODO: think better way to join temporary variables
+
+    const fulfilledValues = results
+      .filter(isFulfilled)
+      .map((p) => p.value)
+      .concat(temporaryVariables);
 
     if (fulfilledValues.length) {
       setVariables(

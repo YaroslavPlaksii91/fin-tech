@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Box, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Tabs, Typography } from '@mui/material';
 import React from 'react';
 
 import { palette } from '../../themeConfig';
 
-import { StyledContainer } from './styled';
+import { StyledContainer, StyledTab } from './styled';
 import List from './List';
+
+import { DataDictionaryVariable } from '@domain/dataDictionary';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -36,12 +38,13 @@ function a11yProps(index: number) {
   };
 }
 
-interface AddVariableProps {
-  labels: { text: string; index: number }[];
-  tabContent: { index: number; listItems: [] }[];
-}
+const tabLabels: { [key: string]: string } = {
+  UserDefined: 'User Defined'
+};
 
-const AddVariable: React.FC<AddVariableProps> = ({ labels }) => {
+const AddVariable: React.FC<{
+  data: { [key: string]: DataDictionaryVariable[] };
+}> = ({ data }) => {
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -58,20 +61,20 @@ const AddVariable: React.FC<AddVariableProps> = ({ labels }) => {
           onChange={handleChange}
           aria-label="basic tabs example"
         >
-          {labels.map(({ text, index }) => (
-            <Tab key={index} label={text} {...a11yProps(index)} />
+          {Object.keys(data).map((tabName, index) => (
+            <StyledTab
+              key={index}
+              label={tabLabels[tabName]}
+              {...a11yProps(index)}
+            />
           ))}
         </Tabs>
       </Box>
-      <CustomTabPanel value={value} index={0}>
-        <List />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        <List />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-        <List />
-      </CustomTabPanel>
+      {Object.keys(data).map((tabName, index) => (
+        <CustomTabPanel key={index} value={value} index={index}>
+          <List data={data[tabName]} />
+        </CustomTabPanel>
+      ))}
     </StyledContainer>
   );
 };

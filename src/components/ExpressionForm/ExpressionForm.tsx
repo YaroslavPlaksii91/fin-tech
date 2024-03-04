@@ -1,6 +1,13 @@
 import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { MutableRefObject, useCallback, useEffect, useRef } from 'react';
+import {
+  MutableRefObject,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef
+} from 'react';
 import { groupBy } from 'lodash';
 
 import Dialog from '@components/shared/Modals/Dialog';
@@ -22,6 +29,7 @@ import {
   functionsLiterals,
   operatorsConfig
 } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
+import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 
 const DEFAULT_MOCK = {
   outputVariableName: 'temp2',
@@ -63,6 +71,8 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   const expressionEditorRef: MutableRefObject<ExpressionEditorAPI | null> =
     useRef(null);
 
+  const value = useContext(DataDictionaryContext);
+
   const {
     handleSubmit,
     reset,
@@ -76,6 +86,15 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
       expressionString: ''
     }
   });
+
+  const data = useMemo(() => {
+    const groupedData = groupBy(value?.variables, (item) =>
+      item.source === VARIABLE_SOURCE_TYPE.TemporaryVariable
+        ? 'UserDefined'
+        : item.source
+    );
+    return groupedData;
+  }, [value]);
 
   const onSubmit: SubmitHandler<Expression> = (data) => {
     handleAddNewBusinessRule({ data, id: initialValues?.id });
@@ -142,7 +161,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
           />
         </Stack>
         <Stack spacing={2} direction="row" pt={2}>
-          <AddVariable />
+          <AddVariable data={data} />
           <ExpressionOperatorsList
             list={operatorsList}
             onItemClick={onExpressionOperatorsListClick}

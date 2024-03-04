@@ -61,7 +61,7 @@ export interface IFlow {
   edges: Edge[];
   viewport: Viewport;
   data: Omit<FlowData, 'id'>;
-  temporaryVariables: TemporaryVariable[] | null;
+  temporaryVariables: TemporaryVariable[];
   permanentVariables: null;
 }
 
