@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { useEffect, useMemo, useState, useContext } from 'react';
 import { Button, Typography, Stack, TableHead, TableBody } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { keyBy } from 'lodash';
@@ -30,13 +29,13 @@ import {
 } from '@components/shared/Table/styled';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
-import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
 import {
   DataDictionaryVariable,
   DATA_TYPE_WITH_ENUM_PREFIX
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
+import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 
 type DecisionTableStepProps = {
   step: FlowNode;
@@ -56,79 +55,86 @@ const DecisionTableStep = ({
     {
       conditions: [
         {
-          variableName: 'AvgNetMonthlyIncome',
+          name: 'CalculatedLoanAmountMultiplier',
           operator: '>=',
-          expression: '1000'
+          expression: '100'
         },
         {
-          variableName: 'EmailExtension',
+          name: 'EmailExtension',
           operator: 'Any',
           expression: ''
         }
       ],
       actions: [
         {
-          variableName: 'MaxLoanAmount',
+          name: 'MaxLoanAmount',
           operator: '=',
-          expression: ' 1000'
+          expression: ' 1000',
+          destinationType: 'TemporaryVariable'
         }
       ]
     },
     {
       conditions: [
         {
-          variableName: 'AvgNetMonthlyIncome',
+          name: 'CalculatedLoanAmountMultiplier',
           operator: 'between',
           expression: '500,900'
         },
         {
-          variableName: 'EmailExtension',
+          name: 'EmailExtension',
           operator: '!=',
           expression: 'co'
         }
       ],
       actions: [
         {
-          variableName: 'MaxLoanAmount',
+          name: 'MaxLoanAmount',
           operator: '>=',
-          expression: ' 500'
+          expression: ' 500',
+          destinationType: 'TemporaryVariable'
         }
       ]
     }
   ]);
 
-  const { variables } = useDataDictionaryVariables();
-
+  const value = useContext(DataDictionaryContext);
   const nodes: FlowNode[] = getNodes();
 
-  const variablesDataTypes: Record<string, string> = variables.reduce(
+  // temporary combine two groups of variables
+  const combinedVariables = [
+    ...value?.variables?.laPMSVariables,
+    ...value?.variables?.userDefined
+  ];
+
+  const variablesDataTypes: Record<string, string> = combinedVariables.reduce(
     (acc, current) => ({
       ...acc,
-      [current.variableName]: current.dataType
+      [current.name]: current.dataType
     }),
     {}
   );
 
   const conditionsColumns = caseEntries[0].conditions.map((el) =>
     Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
-      variablesDataTypes[el.variableName] as DATA_TYPE_WITH_ENUM_PREFIX
+      variablesDataTypes[el.name] as DATA_TYPE_WITH_ENUM_PREFIX
     )
       ? {
-          variableName: el.variableName,
-          dataType: variablesDataTypes[el.variableName],
+          name: el.name,
+          dataType: variablesDataTypes[el.name],
           // if variable enum type we have additional prop with allowedValues
-          allowedValues: variables.find(
-            (variable) => variable.variableName === el.variableName
+          allowedValues: combinedVariables.find(
+            (variable) => variable.name === el.name
           )?.allowedValues
         }
       : {
-          variableName: el.variableName,
-          dataType: variablesDataTypes[el.variableName]
+          name: el.name,
+          dataType: variablesDataTypes[el.name]
         }
   );
 
   const conditionRows = caseEntries.map((row) => {
-    return keyBy(row.conditions, 'variableName');
+    return keyBy(row.conditions, 'name');
   });
 
   //console.log('step.data', step.data);
@@ -146,7 +152,20 @@ const DecisionTableStep = ({
           note: noteValue,
           caseEntries: caseEntries,
           /*elseActions: [], */
-          variableSources: []
+          variableSources: [
+            {
+              name: 'CalculatedLoanAmountMultiplier',
+              sourceType: 'TemporaryVariable'
+            },
+            {
+              name: 'EmailExtension',
+              sourceType: 'TemporaryVariable'
+            },
+            {
+              name: 'MaxLoanAmount',
+              sourceType: 'TemporaryVariable'
+            }
+          ]
         };
       }
       return node;
@@ -166,7 +185,7 @@ const DecisionTableStep = ({
 
   const handleAddNewLayer = () => {
     const newLayerColumns = conditionsColumns.map((column) => ({
-      variableName: column.variableName,
+      name: column.name,
       operator: '',
       expression: ''
     }));
@@ -201,7 +220,7 @@ const DecisionTableStep = ({
       return prev.map((row) => {
         const newConditions = [...row.conditions];
         newConditions.splice(columnClickedIndex + 1, 0, {
-          variableName: '',
+          name: '',
           operator: '',
           expression: ''
         });
@@ -225,7 +244,7 @@ const DecisionTableStep = ({
         return {
           ...row,
           conditions: newConditions.filter(
-            (el) => el.variableName !== columnVariableName
+            (el) => el.name !== columnVariableName
           )
         };
       });
@@ -237,13 +256,13 @@ const DecisionTableStep = ({
     newVariable
   }: {
     columnIndex: number;
-    newVariable: Pick<DataDictionaryVariable, 'variableName'>;
+    newVariable: Pick<DataDictionaryVariable, 'name'>;
   }) => {
     setCaseEntries((prev) => {
       return prev.map((row) => {
         const newConditions = [...row.conditions];
         newConditions.splice(columnIndex, 1, {
-          variableName: newVariable.variableName,
+          name: newVariable.name,
           operator: '',
           expression: ''
         });
@@ -268,7 +287,7 @@ const DecisionTableStep = ({
           return {
             ...row,
             conditions: row.conditions.map((column) =>
-              column.variableName !== variableName
+              column.name !== variableName
                 ? column
                 : {
                     ...column,
@@ -299,7 +318,7 @@ const DecisionTableStep = ({
           return {
             ...row,
             conditions: row.conditions.map((column) =>
-              column.variableName !== variableName
+              column.name !== variableName
                 ? column
                 : {
                     ...column,
@@ -344,7 +363,7 @@ const DecisionTableStep = ({
             <TableSkeleton
               columns={conditionsColumns}
               rows={conditionRows}
-              variablesOptions={variables.filter(
+              variablesOptions={combinedVariables.filter(
                 (variable) => variable.usageMode !== USAGE_MODE.WriteOnly
               )}
               columnClickedIndex={columnClickedIndex}

@@ -84,12 +84,12 @@ const TableSkeleton = ({
 
   const getOptions = () => {
     const columnsVariables = columns.map(
-      (column: VariableColumnData) => column.variableName
+      (column: VariableColumnData) => column.name
     );
 
     const newOptions: DataDictionaryVariable[] = variablesOptions.filter(
       (option: DataDictionaryVariable) =>
-        !columnsVariables.includes(option.variableName)
+        !columnsVariables.includes(option.name)
     );
 
     return newOptions;
@@ -120,8 +120,8 @@ const TableSkeleton = ({
                     forcePopupIcon={false}
                     disabled={category === CATEGORIES.ElseActions}
                     getOptionLabel={(
-                      option: Pick<DataDictionaryVariable, 'variableName'>
-                    ) => (option ? option.variableName : '')}
+                      option: Pick<DataDictionaryVariable, 'name'>
+                    ) => (option ? option.name : '')}
                     onChange={(
                       event: SyntheticEvent<Element, Event>,
                       newValue
@@ -136,7 +136,7 @@ const TableSkeleton = ({
                       <AutocompleteInput
                         {...params}
                         open={open}
-                        variableName={column.variableName}
+                        variableName={column.name}
                         columnClickedIndex={columnClickedIndex}
                         anchorEl={anchorEl}
                         columnIndex={index}
@@ -161,16 +161,10 @@ const TableSkeleton = ({
                 (column: VariableColumnData, columnIndex: number) => {
                   // define cell value for each row
                   const cellValue =
-                    row[column.variableName as keyof VariableRowData]
-                      .expression ||
-                    row[column.variableName as keyof VariableRowData]
-                      .operator ? (
-                      `${
-                        row[column.variableName as keyof VariableRowData]
-                          .operator
-                      } ${
-                        row[column.variableName as keyof VariableRowData]
-                          .expression
+                    row[column.name as keyof VariableRowData].expression ||
+                    row[column.name as keyof VariableRowData].operator ? (
+                      `${row[column.name as keyof VariableRowData].operator} ${
+                        row[column.name as keyof VariableRowData].expression
                       }`
                     ) : (
                       <Typography variant="body2">Select value</Typography>
@@ -187,7 +181,7 @@ const TableSkeleton = ({
                             onClick={() =>
                               setSelectedRowCell({
                                 rowIndex,
-                                variableName: column.variableName,
+                                variableName: column.name,
                                 dataType: column.dataType
                               })
                             }
@@ -205,9 +199,9 @@ const TableSkeleton = ({
                           DATA_TYPE_WITHOUT_ENUM.Boolean) && (
                         <SelectComponent
                           rowIndex={rowIndex}
-                          variableName={column.variableName}
+                          variableName={column.name}
                           value={
-                            row[column.variableName as keyof VariableRowData]
+                            row[column.name as keyof VariableRowData]
                               .expression ?? ''
                           }
                           options={

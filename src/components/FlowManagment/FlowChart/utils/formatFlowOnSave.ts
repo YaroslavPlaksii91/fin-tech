@@ -16,18 +16,6 @@ export const formatFlowOnSave = ({ flow, rfInstance }: inputData): IFlow => {
       type: DEFAULT_EDGE_TYPE
     })),
     nodes: flowInstance.nodes,
-    viewport: flowInstance.viewport,
-    temporaryVariables: [
-      {
-        variableDataType: 'Integer',
-        variableName: 'wTemp1',
-        variableValue: '0'
-      },
-      {
-        variableDataType: 'Boolean',
-        variableName: 'wTemp2',
-        variableValue: 'true'
-      }
-    ]
+    viewport: flowInstance.viewport
   };
 };

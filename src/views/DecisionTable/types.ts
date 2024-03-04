@@ -9,7 +9,7 @@ import {
 
 export type VariableRowData = {
   [key: string]: {
-    variableName: string;
+    name: string;
     operator: string;
     expression: string;
   };
@@ -22,7 +22,7 @@ export type SelectedCellInRowData = {
 };
 
 export type VariableColumnData = {
-  variableName: string;
+  name: string;
   dataType: DATA_TYPE | string;
   allowedValues?: string | string[];
 };
@@ -53,7 +53,7 @@ export type TableSkeletonProps = {
     newVariable
   }: {
     columnIndex: number;
-    newVariable: Pick<DataDictionaryVariable, 'variableName'>;
+    newVariable: Pick<DataDictionaryVariable, 'name'>;
   }) => void;
   handleSubmitVariableValue: ({
     formFieldData

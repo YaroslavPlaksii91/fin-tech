@@ -92,7 +92,7 @@ export const userDefinedData = [
     description: ''
   },
   {
-    variableName: 'EmailExtension',
+    variableName: '++',
     source: 'UserDefined',
     variableType: 'TemporaryVariable',
     dataType: 'String',
