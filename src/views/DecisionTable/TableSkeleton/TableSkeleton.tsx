@@ -162,7 +162,7 @@ const TableSkeleton = ({
                   // define cell value for each row
                   const cellValue =
                     row[column.variableName as keyof VariableRowData]
-                      .conditionExpression ||
+                      .expression ||
                     row[column.variableName as keyof VariableRowData]
                       .operator ? (
                       `${
@@ -170,7 +170,7 @@ const TableSkeleton = ({
                           .operator
                       } ${
                         row[column.variableName as keyof VariableRowData]
-                          .conditionExpression
+                          .expression
                       }`
                     ) : (
                       <Typography variant="body2">Select value</Typography>
@@ -208,7 +208,7 @@ const TableSkeleton = ({
                           variableName={column.variableName}
                           value={
                             row[column.variableName as keyof VariableRowData]
-                              .conditionExpression ?? ''
+                              .expression ?? ''
                           }
                           options={
                             (column.dataType as DATA_TYPE_WITHOUT_ENUM) !==

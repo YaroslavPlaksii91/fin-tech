@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { Button, Typography, Stack, TableHead, TableBody } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { keyBy } from 'lodash';
-import pluck from 'lodash/pluck';
 
 import { palette } from '../../themeConfig';
 
@@ -57,42 +56,42 @@ const DecisionTableStep = ({
     {
       conditions: [
         {
-          variableName: 'LeadPrice',
+          variableName: 'AvgNetMonthlyIncome',
           operator: '>=',
-          conditionExpression: '10'
+          expression: '1000'
         },
         {
           variableName: 'EmailExtension',
           operator: 'Any',
-          conditionExpression: ''
+          expression: ''
         }
       ],
       actions: [
         {
           variableName: 'MaxLoanAmount',
           operator: '=',
-          conditionExpression: ' 1000'
+          expression: ' 1000'
         }
       ]
     },
     {
       conditions: [
         {
-          variableName: 'LeadPrice',
+          variableName: 'AvgNetMonthlyIncome',
           operator: 'between',
-          conditionExpression: '4,31'
+          expression: '500,900'
         },
         {
           variableName: 'EmailExtension',
           operator: '!=',
-          conditionExpression: 'co'
+          expression: 'co'
         }
       ],
       actions: [
         {
           variableName: 'MaxLoanAmount',
           operator: '>=',
-          conditionExpression: ' 500'
+          expression: ' 500'
         }
       ]
     }
@@ -132,8 +131,6 @@ const DecisionTableStep = ({
     return keyBy(row.conditions, 'variableName');
   });
 
-  console.log('conditionRows', conditionRows);
-
   //console.log('step.data', step.data);
 
   useEffect(() => {
@@ -171,7 +168,7 @@ const DecisionTableStep = ({
     const newLayerColumns = conditionsColumns.map((column) => ({
       variableName: column.variableName,
       operator: '',
-      conditionExpression: ''
+      expression: ''
     }));
     setCaseEntries((prev) => [
       ...prev,
@@ -206,7 +203,7 @@ const DecisionTableStep = ({
         newConditions.splice(columnClickedIndex + 1, 0, {
           variableName: '',
           operator: '',
-          conditionExpression: ''
+          expression: ''
         });
 
         return {
@@ -248,7 +245,7 @@ const DecisionTableStep = ({
         newConditions.splice(columnIndex, 1, {
           variableName: newVariable.variableName,
           operator: '',
-          conditionExpression: ''
+          expression: ''
         });
 
         return {
@@ -276,7 +273,7 @@ const DecisionTableStep = ({
                 : {
                     ...column,
                     operator: operator,
-                    conditionExpression: formFieldData.value
+                    expression: formFieldData.value
                   }
             )
           };
@@ -307,7 +304,7 @@ const DecisionTableStep = ({
                 : {
                     ...column,
                     operator: '=',
-                    conditionExpression: newEnumValue
+                    expression: newEnumValue
                   }
             )
           };

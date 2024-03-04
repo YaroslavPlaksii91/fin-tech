@@ -11,7 +11,7 @@ export type VariableRowData = {
   ['variableName']: {
     variableName: string;
     operator: string;
-    conditionExpression: string;
+    expression: string;
   };
 };
 
