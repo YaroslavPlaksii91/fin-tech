@@ -1,5 +1,6 @@
 import { Button } from '@mui/material';
 import { NavLink } from 'react-router-dom';
+import { ReactFlowProvider } from 'reactflow';
 
 import {
   LayoutContainer,
@@ -27,9 +28,6 @@ function FlowDetailsMain() {
         footer={
           <Button
             component={NavLink}
-            state={{
-              from: routes.underwriting.flow.details(flow?.id)
-            }}
             to={routes.underwriting.flow.edit(flow?.id)}
             variant="contained"
             color="primary"
@@ -67,7 +65,9 @@ function FlowDetailsMain() {
 
 const FlowDetails = () => (
   <StepProvider>
-    <FlowDetailsMain />
+    <ReactFlowProvider>
+      <FlowDetailsMain />
+    </ReactFlowProvider>
   </StepProvider>
 );
 

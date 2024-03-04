@@ -1,4 +1,11 @@
-import { createContext, useContext, ReactNode, useState } from 'react';
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useEffect
+} from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { FlowNode } from '@domain/flow';
 import { MAIN_STEP_ID } from '@constants/common';
@@ -14,10 +21,23 @@ interface StepProviderProps {
   children: ReactNode;
 }
 
+interface LocationState {
+  node?: FlowNode;
+}
+
 export const StepProvider: React.FC<StepProviderProps> = ({ children }) => {
+  const location = useLocation();
+
   const [step, setStep] = useState<FlowNode | { id: typeof MAIN_STEP_ID }>({
     id: MAIN_STEP_ID
   });
+
+  useEffect(() => {
+    const state = (location.state || {}) as LocationState;
+    if (state.node) {
+      setStep(state.node);
+    }
+  }, [location]);
 
   const contextValue = {
     step,

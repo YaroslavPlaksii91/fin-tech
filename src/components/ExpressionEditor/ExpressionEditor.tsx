@@ -1,132 +1,144 @@
-import { Button, Stack } from '@mui/material';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { useEffect } from 'react';
+import React, {
+  ForwardRefRenderFunction,
+  MutableRefObject,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
+import { TextareaAutosize } from '@mui/base';
+import { InputBaseComponentProps } from '@mui/material';
 
-import Dialog from '@components/shared/Modals/Dialog';
-import { InputText } from '@components/shared/Forms/InputText';
-import LoadingButton from '@components/shared/LoadingButton';
-import { Expression } from '@views/Calculation/types';
-import AddVariable from '@components/AddVariable/AddVariable';
-import AddFunction from '@components/AddFunction/AddFunction';
+import styles from './ExpressionEditor.module.scss';
+
 import {
-  DATA_TYPE_WITHOUT_ENUM,
-  VARIABLE_DESTINATION_TYPE,
-  VARIABLE_SOURCE_TYPE
-} from '@domain/dataDictionary';
+  regExpHelpers,
+  highlightChunks,
+  filterFunctionsSuggestList
+} from '@components/ExpressionEditor/ExpressionEditor.utils.ts';
+import { functionsLiterals } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
+import FunctionArgumentsTooltip from '@components/ExpressionEditor/components/FunctionArgumentsTooltip.tsx';
+import FunctionsAutosuggestion, {
+  FunctionsAutosuggestionAPI
+} from '@components/ExpressionEditor/components/FunctionsAutosuggestion.tsx';
 
-const DEFAULT_MOCK = {
-  outputVariableName: 'temp2',
-  expressionString: 'Max(perm2,3,1) == 4',
-  destinationType: VARIABLE_DESTINATION_TYPE.TemporaryVariable,
-  destinationDataType: DATA_TYPE_WITHOUT_ENUM.Boolean,
-  inputVariables: [
-    {
-      variableName: 'perm2',
-      sourceType: VARIABLE_SOURCE_TYPE.PermanentVariable
-    }
-  ]
-};
-
-interface ExpressionEditorProps {
-  initialValues?: Expression & { id: number };
-  handleAddNewBussinesRule: ({
-    data,
-    id
-  }: {
-    data: Expression;
-    id?: number;
-  }) => void;
-  modalOpen: boolean;
-  setModalOpen: (value: boolean) => void;
+export interface ExpressionEditorAPI {
+  focus: (payload: { selectionStart: number }) => void;
 }
 
-export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
-  initialValues,
-  handleAddNewBussinesRule,
-  modalOpen,
-  setModalOpen
-}) => {
-  const {
-    handleSubmit,
-    reset,
-    control,
-    formState: { isSubmitting }
-  } = useForm<Expression>({
-    defaultValues: {
-      outputVariableName: '',
-      expressionString: ''
-    }
-  });
+const ExpressionEditor: ForwardRefRenderFunction<
+  ExpressionEditorAPI,
+  ExpressionEditorProps
+> = ({ name, value, onChange }, ref) => {
+  const textareaRef: MutableRefObject<HTMLTextAreaElement | null> =
+    useRef(null);
 
-  const onSubmit: SubmitHandler<Expression> = (data) => {
-    handleAddNewBussinesRule({ data, id: initialValues?.id });
-    handleCloseModal();
+  const functionAutosuggestionRef: MutableRefObject<FunctionsAutosuggestionAPI | null> =
+    useRef(null);
+  const [caretPosition, setCaretPosition] = useState<number>(0);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus(payload) {
+        textareaRef.current?.focus();
+        if (payload.selectionStart) {
+          setCaretPosition(payload.selectionStart);
+        }
+      }
+    }),
+    [textareaRef, setCaretPosition]
+  );
+
+  const currentOperator = regExpHelpers.findLeftOperator(
+    value,
+    caretPosition,
+    functionsLiterals
+  );
+
+  const currentOperatorLiteral = currentOperator?.operator;
+
+  const currentOperatorIndex: number = currentOperator?.index || 0;
+
+  const functionsSuggestList = useMemo(
+    () => filterFunctionsSuggestList(value, currentOperatorLiteral),
+    [value, currentOperatorLiteral]
+  );
+
+  const handleSuggestClick = (literal: string) => {
+    const updatedValue =
+      (value ? regExpHelpers.replaceLastWord(value, literal) : literal) + '(';
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    onChange && onChange({ target: { name, value: updatedValue } });
+    setCaretPosition(updatedValue.length);
+    textareaRef.current?.focus();
   };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    reset();
+  const handleTextareaKeyDown = (
+    e: React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
+    if (e.key === 'ArrowDown') {
+      if (functionAutosuggestionRef.current) {
+        functionAutosuggestionRef.current.focus();
+      }
+    }
+
+    if (e.key === 'ArrowLeft') {
+      setCaretPosition((prev) => prev - 1);
+      return;
+    }
+
+    setCaretPosition(e.currentTarget.selectionStart + 1);
   };
 
-  useEffect(() => {
-    if (initialValues) {
-      reset(initialValues);
-    } else {
-      reset(DEFAULT_MOCK);
+  const handleMenuListKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
+    if (e.key === 'Escape') {
+      textareaRef.current?.focus();
     }
-  }, [initialValues]);
+  };
 
   return (
-    <Dialog
-      title="Add new business rule"
-      fullWidth
-      maxWidth="md"
-      open={modalOpen}
-      displayConfirmBtn={false}
-      displayedCancelBtn={false}
-    >
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack direction="row" spacing={1}>
-          <InputText
-            disabled
-            fullWidth
-            name="outputVariableName"
-            control={control}
-            label="Variable"
-            placeholder="Enter variable"
-          />
-          <InputText
-            fullWidth
-            disabled
-            name="expressionString"
-            control={control}
-            label="Expression"
-            placeholder="Enter expression"
-          />
-        </Stack>
-        <Stack spacing={2} direction="row" pt={2}>
-          <AddVariable />
-          <AddFunction />
-        </Stack>
-        <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleCloseModal}
-          >
-            Cancel
-          </Button>
-          <LoadingButton
-            loading={isSubmitting}
-            disabled={isSubmitting}
-            variant="contained"
-            color="primary"
-            type="submit"
-          >
-            Confirm
-          </LoadingButton>
-        </Stack>
-      </form>
-    </Dialog>
+    <div className={styles.root}>
+      <TextareaAutosize
+        ref={textareaRef}
+        value={value}
+        className={styles.textarea}
+        minRows={1}
+        maxRows={10}
+        onKeyDown={handleTextareaKeyDown}
+        onChange={onChange}
+        onClick={(e) => {
+          setCaretPosition(e.currentTarget.selectionStart);
+        }}
+      />
+      <div
+        className={styles.coloredValue}
+        dangerouslySetInnerHTML={{ __html: highlightChunks(value) }}
+      />
+      <FunctionArgumentsTooltip
+        value={value}
+        currentOperatorIndex={currentOperatorIndex}
+        currentOperatorLiteral={currentOperatorLiteral}
+      />
+      {!currentOperatorLiteral && Boolean(functionsSuggestList.length) && (
+        <FunctionsAutosuggestion
+          ref={functionAutosuggestionRef}
+          list={functionsSuggestList}
+          onClick={handleSuggestClick}
+          onKeyDown={handleMenuListKeyDown}
+        />
+      )}
+    </div>
   );
 };
+
+interface ExpressionEditorProps extends InputBaseComponentProps {
+  name: string;
+  value: string;
+}
+
+export default React.forwardRef<ExpressionEditorAPI, ExpressionEditorProps>(
+  ExpressionEditor
+);

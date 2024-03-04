@@ -41,8 +41,6 @@ import {
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
 import { DEFAULT_SOURCE_HANDLE } from '../constants';
 
-import NavigationHeader from './NavigateHeader';
-
 import { FlowNode, IFlow } from '@domain/flow';
 import {
   MainContainer,
@@ -55,7 +53,8 @@ import StepConfigureView from '@components/StepManagment/StepConfigureView/StepC
 import { MAIN_STEP_ID } from '@constants/common';
 import ConfirmationDialog from '@components/shared/Confirmation/Confirmation';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
-import StepActionMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
+import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
+import NavigateTo from '@components/shared/Link/NavigateTo.tsx';
 
 interface FlowChartViewProps {
   flow: IFlow;
@@ -69,7 +68,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
   const [startDrag, setStartDrag] = useState<boolean>(false);
-  const { menu, setMenu, onPaneClick, onNodeContextMenu } =
+  const { flowNode, nodeElement, onPaneClick, onNodeContextMenu } =
     useFlowChartContextMenu();
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -315,7 +314,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   return (
     <>
       <SideNavContainer
-        header={<NavigationHeader />}
+        header={<NavigateTo to={-1} title="Back" />}
         footer={<SelectStep onAddNode={onAddNode} />}
       >
         <FlowHeader name={flow.data.name} />
@@ -368,7 +367,12 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           />
         )}
       </MainContainer>
-      <StepActionMenu anchorEl={menu} setAnchorEl={setMenu} />
+      <StepActionsMenu
+        anchorElement={nodeElement}
+        flowNode={flowNode}
+        isOpen={Boolean(flowNode)}
+        onClose={onPaneClick}
+      />
       <ConfirmationDialog isDirty={isDirty} />
     </>
   );

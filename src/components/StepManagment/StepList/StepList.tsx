@@ -1,5 +1,5 @@
 import { ListItemSecondaryAction, Typography } from '@mui/material';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 import { StyledStepItem, StyledStepItemText } from './styled';
 
@@ -22,15 +22,14 @@ const StepList: React.FC<StepListProps> = ({
   step,
   isProductionFlow = false
 }) => {
-  const [menu, setMenu] = useState<HTMLElement | null>(null);
-
-  const steps = useMemo(() => {
-    const steps = nodes.filter(
-      (node) =>
-        node.data.$type !== StepType.START && node.data.$type !== StepType.END
-    );
-    return steps;
-  }, [nodes]);
+  const steps = useMemo(
+    () =>
+      nodes.filter(
+        (node) =>
+          node.data.$type !== StepType.START && node.data.$type !== StepType.END
+      ),
+    [nodes]
+  );
 
   return (
     <StyledList>
@@ -49,7 +48,6 @@ const StepList: React.FC<StepListProps> = ({
           onClick={() => setStep(el)}
         >
           <HexagonOutlinedIcon sx={{ paddingRight: 1 }} />
-
           <StyledStepItem>
             <Typography variant="caption">
               {el.data.tag || NO_TAG_LABEL}
@@ -58,11 +56,7 @@ const StepList: React.FC<StepListProps> = ({
           </StyledStepItem>
           {!isProductionFlow && (
             <ListItemSecondaryAction>
-              <StepActionsMenu
-                showActionMenuButton={true}
-                anchorEl={menu}
-                setAnchorEl={setMenu}
-              />
+              <StepActionsMenu flowNode={el} showActionMenuButton={true} />
             </ListItemSecondaryAction>
           )}
         </StyledListItem>

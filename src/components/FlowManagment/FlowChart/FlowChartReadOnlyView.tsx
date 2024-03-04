@@ -16,8 +16,9 @@ import './overview.css';
 import ControlPanelView from './ContolPanels/ControlPanelView';
 
 import { IFlow } from '@domain/flow';
-import StepActionMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
+import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
+import { StepProvider } from '@contexts/StepContext.tsx';
 
 interface FlowChartViewProps {
   flow: IFlow;
@@ -33,7 +34,7 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
   const [nodes, setNodes] = useNodesState(flow.nodes);
   const [edges, setEdges] = useEdgesState(flow.edges);
   const { setViewport } = useReactFlow();
-  const { menu, setMenu, onPaneClick, onNodeContextMenu } =
+  const { flowNode, nodeElement, onPaneClick, onNodeContextMenu } =
     useFlowChartContextMenu();
 
   useEffect(() => {
@@ -56,16 +57,23 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
       onNodeContextMenu={isProductionFlow ? undefined : onNodeContextMenu}
     >
       <Background variant={BackgroundVariant.Lines} />
-      <StepActionMenu anchorEl={menu} setAnchorEl={setMenu} />
+      <StepActionsMenu
+        anchorElement={nodeElement}
+        flowNode={flowNode}
+        isOpen={Boolean(flowNode)}
+        onClose={onPaneClick}
+      />
       {showControlPanel && <ControlPanelView />}
     </ReactFlow>
   );
 };
 
 const FlowChartReadOnlyView = (props: FlowChartViewProps) => (
-  <ReactFlowProvider>
-    <FlowChartReadOnlyViewLayout {...props} />
-  </ReactFlowProvider>
+  <StepProvider>
+    <ReactFlowProvider>
+      <FlowChartReadOnlyViewLayout {...props} />
+    </ReactFlowProvider>
+  </StepProvider>
 );
 
 export default FlowChartReadOnlyView;

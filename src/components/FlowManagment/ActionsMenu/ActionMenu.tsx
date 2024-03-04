@@ -61,8 +61,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         Logger.info('View data dictionary');
         break;
       case ActionTypes.EDIT_FLOW: {
-        const state = { from: routes.underwriting.flow.list };
-        navigate(routes.underwriting.flow.edit(flow.id), { state });
+        navigate(routes.underwriting.flow.edit(flow.id));
         break;
       }
       default:
