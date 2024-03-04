@@ -1,3 +1,5 @@
+import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
+
 export const userDefinedData = [
   {
     variableName: 'Promocode',
@@ -172,5 +174,34 @@ export const userDefinedData = [
     ],
     description:
       'Store define the flow how the application will be processed in PLM infinity LMS'
+  }
+];
+
+// TODO: Remove after Data Dictionary will be implemented
+export const TEMPORARY_VARIABLES_MOCK = [
+  {
+    variableName: 'PhonenumberPrefix',
+    variableDataType: DATA_TYPE_WITHOUT_ENUM.String,
+    variableValue: '+1'
+  },
+  {
+    variableName: 'EmailExtension',
+    variableDataType: DATA_TYPE_WITHOUT_ENUM.String,
+    variableValue: 'test@gmail.com'
+  },
+  {
+    variableName: 'PreCalculatedMaxLoanAmount',
+    variableDataType: DATA_TYPE_WITHOUT_ENUM.Integer,
+    variableValue: '1000'
+  },
+  {
+    variableName: 'CalculatedLoanAmountMultiplier',
+    variableDataType: DATA_TYPE_WITHOUT_ENUM.Integer,
+    variableValue: '1000'
+  },
+  {
+    variableName: 'MaxLoanAmount',
+    variableDataType: DATA_TYPE_WITHOUT_ENUM.Integer,
+    variableValue: '1000'
   }
 ];

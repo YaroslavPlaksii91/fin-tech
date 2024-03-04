@@ -1,19 +1,11 @@
 import { useState } from 'react';
-import {
-  Box,
-  IconButton,
-  ListItem,
-  ListItemText,
-  Tab,
-  Tabs,
-  Typography
-} from '@mui/material';
+import { Box, Tab, Tabs, Typography } from '@mui/material';
 import React from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 import { palette } from '../../themeConfig';
 
-import { StyledContainer, StyledList } from './styled';
+import { StyledContainer } from './styled';
+import List from './List';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -44,15 +36,12 @@ function a11yProps(index: number) {
   };
 }
 
-function generate(element: React.ReactElement) {
-  return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) =>
-    React.cloneElement(element, {
-      key: value
-    })
-  );
+interface AddVariableProps {
+  labels: { text: string; index: number }[];
+  tabContent: { index: number; listItems: [] }[];
 }
 
-export default function AddVariable() {
+const AddVariable: React.FC<AddVariableProps> = ({ labels }) => {
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -69,56 +58,22 @@ export default function AddVariable() {
           onChange={handleChange}
           aria-label="basic tabs example"
         >
-          <Tab label="Item One" {...a11yProps(0)} />
-          <Tab label="Item Two" {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
+          {labels.map(({ text, index }) => (
+            <Tab key={index} label={text} {...a11yProps(index)} />
+          ))}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        <StyledList>
-          {generate(
-            <ListItem
-              secondaryAction={
-                <IconButton edge="end" aria-label="delete">
-                  <DeleteIcon />
-                </IconButton>
-              }
-            >
-              <ListItemText primary="Single-line item" />
-            </ListItem>
-          )}
-        </StyledList>
+        <List />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <StyledList>
-          {generate(
-            <ListItem
-              secondaryAction={
-                <IconButton edge="end" aria-label="delete">
-                  <DeleteIcon />
-                </IconButton>
-              }
-            >
-              <ListItemText primary="Single-line item" />
-            </ListItem>
-          )}
-        </StyledList>
+        <List />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        <StyledList>
-          {generate(
-            <ListItem
-              secondaryAction={
-                <IconButton edge="end" aria-label="delete">
-                  <DeleteIcon />
-                </IconButton>
-              }
-            >
-              <ListItemText primary="Single-line item" />
-            </ListItem>
-          )}
-        </StyledList>
+        <List />
       </CustomTabPanel>
     </StyledContainer>
   );
-}
+};
+
+export default AddVariable;

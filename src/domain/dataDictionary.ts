@@ -48,3 +48,9 @@ export interface DataDictionaryVariable {
   allowedValues: string | string[];
   description: string;
 }
+
+export type TemporaryVariable = {
+  variableType: DATA_TYPE;
+  variableName: string;
+  variableValue: string;
+};

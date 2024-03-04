@@ -8,6 +8,7 @@ import Logger from '@utils/logger';
 import { flowService } from '@services/flow-service';
 import { useLoading } from '@contexts/LoadingContext';
 import FlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEditor/FlowChartEditor';
+import { DataDictionaryProvider } from '@contexts/DataDictionaryContext';
 
 function FlowEditMain() {
   const { id } = useParams();
@@ -38,9 +39,11 @@ function FlowEditMain() {
 }
 
 const FlowEditor = () => (
-  <StepProvider>
-    <FlowEditMain />
-  </StepProvider>
+  <DataDictionaryProvider>
+    <StepProvider>
+      <FlowEditMain />
+    </StepProvider>
+  </DataDictionaryProvider>
 );
 
 export default FlowEditor;

@@ -9,6 +9,7 @@ import {
 
 import { IFlowDataCreate } from '@domain/flow';
 import Auth from '@utils/auth';
+import { TEMPORARY_VARIABLES_MOCK } from '@constants/mocks';
 
 export const validationSchema = yup.object().shape({
   name: yup
@@ -33,7 +34,9 @@ export const createInitialFlowDataHelper = (name: string): IFlowDataCreate => {
     },
     nodes: [startNodeData, endNodeData],
     edges: [edgeData],
-    viewport
+    viewport,
+    temporaryVariables: TEMPORARY_VARIABLES_MOCK,
+    permanentVariables: null
   };
 };
 

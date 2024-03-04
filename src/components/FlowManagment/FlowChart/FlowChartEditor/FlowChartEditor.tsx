@@ -55,6 +55,7 @@ import ConfirmationDialog from '@components/shared/Confirmation/Confirmation';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 import NavigateTo from '@components/shared/Link/NavigateTo.tsx';
+// import { useDataDictionary } from '@contexts/DataDictionaryContext';
 
 interface FlowChartViewProps {
   flow: IFlow;
@@ -65,6 +66,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   flow,
   setFlow
 }) => {
+  // const { variables } = useDataDictionary();
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
   const [startDrag, setStartDrag] = useState<boolean>(false);

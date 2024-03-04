@@ -13,5 +13,5 @@ export const StyledContainer = styled(Box)(({ theme }) => ({
 export const StyledList = styled(List)(() => ({
   padding: 0,
   overflow: 'auto',
-  maxHeight: '270px'
+  maxHeight: '255px'
 }));
