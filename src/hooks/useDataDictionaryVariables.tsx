@@ -34,10 +34,11 @@ const useDataDictionaryVariables = (flow: IFlow) => {
       dataDictionaryService.getDataDictionaryVariables()
     ]);
 
-    const temporaryVariables = flow.temporaryVariables?.map((variable) => ({
-      ...variable,
-      source: VARIABLE_SOURCE_TYPE.TemporaryVariable
-    }));
+    const temporaryVariables =
+      flow.temporaryVariables?.map((variable) => ({
+        ...variable,
+        source: VARIABLE_SOURCE_TYPE.TemporaryVariable
+      })) ?? [];
 
     const extendedVariables: Record<
       string,
