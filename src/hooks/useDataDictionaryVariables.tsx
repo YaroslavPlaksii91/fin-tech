@@ -1,7 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
 
 import { dataDictionaryService } from '@services/data-dictionary';
-import { DataDictionaryVariable } from '@domain/dataDictionary';
+import {
+  DataDictionaryVariable,
+  UserDefinedVariable,
+  VARIABLE_SOURCE_TYPE
+} from '@domain/dataDictionary';
+import { IFlow } from '@domain/flow';
 
 enum PROMISE_TYPES {
   Fulfilled = 'fulfilled',
@@ -14,27 +19,44 @@ const isFulfilled = function <T>(
   return input.status === PROMISE_TYPES.Fulfilled;
 };
 
-const useDataDictionaryVariables = () => {
-  const [variables, setVariables] = useState<DataDictionaryVariable[]>([]);
+const useDataDictionaryVariables = (flow: IFlow) => {
+  const [variables, setVariables] =
+    useState<
+      Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>
+    >();
   const [isLoadingData, setIsLoadingData] = useState(false);
 
   const getVariables = useCallback(async () => {
     setIsLoadingData(true);
 
+    // TODO: extends with new endpoints for getting data dictionary variables
     const results = await Promise.allSettled([
-      dataDictionaryService.getDataDictionaryVariables(),
-      dataDictionaryService.getUserDefinedVariables()
+      dataDictionaryService.getDataDictionaryVariables()
     ]);
+
+    const temporaryVariables =
+      flow.temporaryVariables?.map((variable) => ({
+        ...variable,
+        source: VARIABLE_SOURCE_TYPE.TemporaryVariable
+      })) ?? [];
+
+    const extendedVariables: Record<
+      string,
+      DataDictionaryVariable[] | UserDefinedVariable[]
+    > = {};
 
     const fulfilledValues = results.filter(isFulfilled).map((p) => p.value);
 
+    fulfilledValues.forEach((obj) => {
+      Object.keys(obj).forEach((key) => {
+        extendedVariables[key] = obj[key];
+      });
+    });
+
+    extendedVariables.userDefined = temporaryVariables;
+
     if (fulfilledValues.length) {
-      setVariables(
-        ([] as DataDictionaryVariable[]).concat.apply(
-          [],
-          fulfilledValues as ConcatArray<DataDictionaryVariable>[]
-        )
-      );
+      setVariables(extendedVariables);
     }
 
     setIsLoadingData(false);

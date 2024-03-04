@@ -3,6 +3,7 @@ import { Edge, Node, Viewport } from '@reactflow/core';
 import { IEntity } from './entity';
 import {
   DATA_TYPE,
+  UserDefinedVariable,
   VARIABLE_DESTINATION_TYPE,
   VARIABLE_SOURCE_TYPE
 } from './dataDictionary';
@@ -60,6 +61,8 @@ export interface IFlow {
   edges: Edge[];
   viewport: Viewport;
   data: Omit<FlowData, 'id'>;
+  temporaryVariables: UserDefinedVariable[];
+  permanentVariables: UserDefinedVariable[];
 }
 
 type FlowDataCreate = Pick<FlowData, 'name' | 'createdBy' | 'editedBy'>;

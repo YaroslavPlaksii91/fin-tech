@@ -98,9 +98,7 @@ export function highlightChunks(textToHighlight: string): string {
 
       const literalConfig = functionsConfigDict[text];
       const spanColor = literalConfig?.color
-        ? color(literalConfig?.color)
-            .darken(0.5)
-            .toString()
+        ? color(literalConfig?.color).darken(0.5).toString()
         : 'inherit';
 
       if (highlight) {
