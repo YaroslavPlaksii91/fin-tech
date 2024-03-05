@@ -5,7 +5,7 @@ import { Typography } from '@mui/material';
 import Dialog from '@components/shared/Modals/Dialog';
 import { ROURER_BLOCKED_STATE } from '@constants/common';
 
-interface ConfirmationDialogProps {
+interface LeavePageConfirmationDialogProps {
   isDirty: boolean;
   title?: string;
   message?: string;
@@ -13,7 +13,9 @@ interface ConfirmationDialogProps {
   cancelText?: string;
 }
 
-const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
+const LeavePageConfirmationDialog: React.FC<
+  LeavePageConfirmationDialogProps
+> = ({
   isDirty,
   confirmText = 'Yes',
   cancelText = 'No',
@@ -60,4 +62,4 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   );
 };
 
-export default ConfirmationDialog;
+export default LeavePageConfirmationDialog;
