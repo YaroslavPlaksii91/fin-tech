@@ -41,6 +41,7 @@ import {
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
 import { DEFAULT_SOURCE_HANDLE } from '../constants';
 
+import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
 import { FlowNode, IFlow } from '@domain/flow';
 import {
   MainContainer,
@@ -51,13 +52,15 @@ import StepList from '@components/StepManagment/StepList/StepList';
 import { useStep } from '@contexts/StepContext';
 import StepConfigureView from '@components/StepManagment/StepConfigureView/StepConfigureView';
 import { MAIN_STEP_ID } from '@constants/common';
-import ConfirmationDialog from '@components/shared/Confirmation/Confirmation';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 import NavigateTo from '@components/shared/Link/NavigateTo.tsx';
-// import { useDataDictionary } from '@contexts/DataDictionaryContext';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
+import {
+  editModeOptions,
+  options
+} from '@components/StepManagment/StepActionsMenu/types.ts';
 
 interface FlowChartViewProps {
   flow: IFlow;
@@ -315,6 +318,13 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
     );
   }, [startDrag]);
 
+  const stepActionsMenuOptions = useMemo(() => {
+    if (flowNode?.type === StepType.START || flowNode?.type === StepType.END) {
+      return options;
+    }
+    return editModeOptions;
+  }, [flowNode, editModeOptions, options]);
+
   return (
     <DataDictionaryContext.Provider value={{ variables }}>
       <SideNavContainer
@@ -376,8 +386,9 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         flowNode={flowNode}
         isOpen={Boolean(flowNode)}
         onClose={onPaneClick}
+        options={stepActionsMenuOptions}
       />
-      <ConfirmationDialog isDirty={isDirty} />
+      <LeavePageConfirmationDialog isDirty={isDirty} />
     </DataDictionaryContext.Provider>
   );
 };

@@ -1,16 +1,19 @@
 import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
+import { useReactFlow } from 'reactflow';
+import { Node } from '@reactflow/core';
 
 import Menu from '@components/shared/Menu/Menu';
 import Logger from '@utils/logger';
 import {
   ActionTypes,
-  options
+  options as defaultOptions
 } from '@components/StepManagment/StepActionsMenu/types';
 import { FlowNode } from '@domain/flow.ts';
 import routes from '@constants/routes.ts';
 import { MoreVertIcon } from '@components/shared/Icons.tsx';
+import { asyncConfirmDialog } from '@components/shared/Confirmation/AsyncConfirmDialog.tsx';
 
 interface StepActionMenuOnNode {
   isOpen?: boolean;
@@ -18,6 +21,7 @@ interface StepActionMenuOnNode {
   anchorElement?: HTMLElement | null;
   flowNode: FlowNode | null;
   showActionMenuButton?: boolean;
+  options?: { label: string; dataKey: ActionTypes }[];
 }
 
 const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
@@ -25,8 +29,10 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
   onClose,
   anchorElement,
   flowNode,
-  showActionMenuButton = false
+  showActionMenuButton = false,
+  options = defaultOptions
 }) => {
+  const { deleteElements } = useReactFlow();
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -42,7 +48,7 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
     setIsOpen((prev) => !prev);
   };
 
-  const handleSelectedActions = (action: ActionTypes) => {
+  const handleSelectedActions = async (action: ActionTypes) => {
     switch (action) {
       case ActionTypes.STEP_TEXT_VIEW:
         Logger.info('Step text view');
@@ -58,13 +64,24 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
       case ActionTypes.DUPLICATE_STEP:
         Logger.info('Duplicate step');
         break;
+      case ActionTypes.DELETE_STEP: {
+        const answer = await asyncConfirmDialog({
+          title: 'Delete Step?',
+          message: 'Are you sure you want to delete this step from the flow?',
+          confirmText: 'Delete'
+        });
+        if (answer) {
+          deleteElements({ nodes: [flowNode as Node] });
+        }
+        break;
+      }
       default:
     }
   };
 
-  const handleCloseMenu = (key?: string) => {
+  const handleCloseMenu = async (key?: string) => {
     if (key) {
-      handleSelectedActions(key as ActionTypes);
+      await handleSelectedActions(key as ActionTypes);
     }
     setIsOpen(false);
     onClose && onClose();
