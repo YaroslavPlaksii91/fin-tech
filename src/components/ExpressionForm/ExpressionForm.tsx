@@ -1,6 +1,12 @@
 import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { MutableRefObject, useCallback, useEffect, useRef } from 'react';
+import {
+  MutableRefObject,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef
+} from 'react';
 import { groupBy } from 'lodash';
 
 import Dialog from '@components/shared/Modals/Dialog';
@@ -22,6 +28,7 @@ import {
   functionsLiterals,
   operatorsConfig
 } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
+import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 
 const DEFAULT_MOCK = {
   outputVariableName: 'temp2',
@@ -62,6 +69,8 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
 }) => {
   const expressionEditorRef: MutableRefObject<ExpressionEditorAPI | null> =
     useRef(null);
+
+  const value = useContext(DataDictionaryContext);
 
   const {
     handleSubmit,
@@ -142,7 +151,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
           />
         </Stack>
         <Stack spacing={2} direction="row" pt={2}>
-          <AddVariable />
+          {value?.variables && <AddVariable data={value.variables} />}
           <ExpressionOperatorsList
             list={operatorsList}
             onItemClick={onExpressionOperatorsListClick}

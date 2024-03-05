@@ -55,6 +55,8 @@ import { MAIN_STEP_ID } from '@constants/common';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 import NavigateTo from '@components/shared/Link/NavigateTo.tsx';
+import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
+import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 import {
   editModeOptions,
   options
@@ -69,6 +71,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   flow,
   setFlow
 }) => {
+  const { variables } = useDataDictionaryVariables(flow);
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
   const [startDrag, setStartDrag] = useState<boolean>(false);
@@ -323,7 +326,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   }, [flowNode, editModeOptions, options]);
 
   return (
-    <>
+    <DataDictionaryContext.Provider value={{ variables }}>
       <SideNavContainer
         header={<NavigateTo to={-1} title="Back" />}
         footer={<SelectStep onAddNode={onAddNode} />}
@@ -347,7 +350,6 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onEdgesDelete={onEdgesDelete}
-          // onNodesDelete={onNodesDelete}
           onNodeDragStart={onNodeDragStart}
           onInit={(instance) => {
             setRfInstance({
@@ -387,7 +389,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         options={stepActionsMenuOptions}
       />
       <LeavePageConfirmationDialog isDirty={isDirty} />
-    </>
+    </DataDictionaryContext.Provider>
   );
 };
 

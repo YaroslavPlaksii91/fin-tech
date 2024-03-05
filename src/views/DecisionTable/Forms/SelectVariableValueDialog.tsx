@@ -125,6 +125,7 @@ const SelectVariableValueDialog = ({
             sx={{ '& .MuiOutlinedInput-root': { paddingLeft: '0' } }}
           />
           <SingleSelect
+            variant="outlined"
             name="operator"
             control={control}
             displayEmpty
