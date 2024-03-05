@@ -11,7 +11,8 @@ import ReactFlow, {
   useReactFlow,
   ReactFlowProvider,
   Edge,
-  ConnectionMode
+  ConnectionMode,
+  Controls
 } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 import debounce from 'lodash/debounce';
@@ -371,6 +372,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
             setFlow={setFlow}
             rfInstance={rfInstance}
           />
+          <Controls />
         </ReactFlow>
         {rfInstance && step.id !== MAIN_STEP_ID && (
           <StepConfigureView
