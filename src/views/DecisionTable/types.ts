@@ -1,10 +1,9 @@
-import { CATEGORIES } from './constants';
+import { CATEGORIES, CATEGORIES_WITHOUT_ELSE_ACTIONS } from './constants';
 
 import {
   DataDictionaryVariable,
-  DATA_TYPE,
-  DATA_TYPE_WITHOUT_ENUM,
-  DATA_TYPE_WITH_ENUM_PREFIX
+  UserDefinedVariable,
+  DATA_TYPE
 } from '@domain/dataDictionary';
 
 export type VariableRowData = {
@@ -27,46 +26,61 @@ export type VariableColumnData = {
   allowedValues?: string | string[];
 };
 
+export type FormFieldsProps = {
+  variableName: string;
+  operator: string;
+  value?: string;
+  lowerBound?: number | null;
+  upperBound?: number | null;
+};
+
 export type TableSkeletonProps = {
   columns: VariableColumnData[];
   rows: VariableRowData[];
-  variablesOptions: DataDictionaryVariable[];
+  variablesOptions: (DataDictionaryVariable | UserDefinedVariable)[];
   columnClickedIndex?: number;
   category: CATEGORIES;
   handleDeleteRow?: (index: number) => void;
-  handleChangeColumnClickedIndex?: (
-    newColumnIndex: number,
-    category: CATEGORIES
-  ) => void;
+  handleChangeColumnClickedIndex?: (newColumnIndex: number) => void;
   handleInsertingColumn?: ({
-    columnClickedIndex
+    columnClickedIndex,
+    category
   }: {
     columnClickedIndex: number;
+    category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => void;
   handleDeleteCategoryColumn?: ({
-    columnVariableName
+    columnVariableName,
+    category
   }: {
     columnVariableName: string;
+    category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => void;
   handleChangeColumnVariable?: ({
     columnIndex,
-    newVariable
+    newVariable,
+    category
   }: {
     columnIndex: number;
     newVariable: Pick<DataDictionaryVariable, 'name'>;
+    category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => void;
   handleSubmitVariableValue: ({
-    formFieldData
+    formFieldData,
+    category
   }: {
-    formFieldData: any;
+    formFieldData: SelectedCellInRowData & FormFieldsProps;
+    category: CATEGORIES;
   }) => void;
   handleSubmitVariableValueForEnum: ({
     rowIndex,
     variableName,
-    newEnumValue
+    newEnumValue,
+    category
   }: {
     rowIndex: number;
     variableName: string;
     newEnumValue: string;
+    category: CATEGORIES;
   }) => void;
 };

@@ -9,12 +9,17 @@ import {
 } from '@mui/material';
 import { TextFieldProps } from '@mui/material/TextField';
 
-import { CATEGORIES, BOOLEAN_OPTIONS } from '../constants';
+import {
+  CATEGORIES,
+  BOOLEAN_OPTIONS,
+  CATEGORIES_WITHOUT_ELSE_ACTIONS
+} from '../constants';
 import {
   VariableRowData,
   VariableColumnData,
   SelectedCellInRowData,
-  TableSkeletonProps
+  TableSkeletonProps,
+  FormFieldsProps
 } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import { AutocompleteInput } from '../AutocompleteInput/AutocompleteInput';
@@ -26,9 +31,10 @@ import {
   StyledTableCell,
   StyledTableRow
 } from '@components/shared/Table/styled';
-import SelectComponent from '@components/shared/SelectComponent/SelectComponent';
+import SelectComponent from '@views/DecisionTable/SelectComponent/SelectComponent';
 import {
   DataDictionaryVariable,
+  UserDefinedVariable,
   DATA_TYPE_WITHOUT_ENUM,
   DATA_TYPE_WITH_ENUM_PREFIX
 } from '@domain/dataDictionary';
@@ -60,7 +66,7 @@ const TableSkeleton = ({
   ) => {
     setAnchorEl(event.currentTarget);
 
-    handleChangeColumnClickedIndex?.(columnClickedIndexNew, category);
+    handleChangeColumnClickedIndex?.(columnClickedIndexNew);
   };
 
   const handleCloseMenu = () => {
@@ -68,17 +74,28 @@ const TableSkeleton = ({
   };
 
   const handleAddNewColumn = (columnClickedIndex: number) => {
-    handleInsertingColumn?.({ columnClickedIndex });
+    handleInsertingColumn?.({
+      columnClickedIndex,
+      category: category as CATEGORIES_WITHOUT_ELSE_ACTIONS
+    });
     handleCloseMenu();
   };
 
   const handleDeleteColumn = (columnVariableName: string) => {
-    handleDeleteCategoryColumn?.({ columnVariableName });
+    handleDeleteCategoryColumn?.({
+      columnVariableName,
+      category: category as CATEGORIES_WITHOUT_ELSE_ACTIONS
+    });
     handleCloseMenu();
   };
 
-  const handleSubmitSelectedRowCellData = (data: any) => {
-    handleSubmitVariableValue({ formFieldData: data });
+  const handleSubmitSelectedRowCellData = (
+    data: SelectedCellInRowData & FormFieldsProps
+  ) => {
+    handleSubmitVariableValue({
+      formFieldData: data,
+      category: category as CATEGORIES_WITHOUT_ELSE_ACTIONS
+    });
     setSelectedRowCell(null);
   };
 
@@ -87,10 +104,11 @@ const TableSkeleton = ({
       (column: VariableColumnData) => column.name
     );
 
-    const newOptions: DataDictionaryVariable[] = variablesOptions.filter(
-      (option: DataDictionaryVariable) =>
-        !columnsVariables.includes(option.name)
-    );
+    const newOptions: (DataDictionaryVariable | UserDefinedVariable)[] =
+      variablesOptions.filter(
+        (option: DataDictionaryVariable | UserDefinedVariable) =>
+          !columnsVariables.includes(option.name)
+      );
 
     return newOptions;
   };
@@ -129,7 +147,8 @@ const TableSkeleton = ({
                       event &&
                         handleChangeColumnVariable?.({
                           columnIndex: index,
-                          newVariable: newValue
+                          newVariable: newValue,
+                          category: category as CATEGORIES_WITHOUT_ELSE_ACTIONS
                         });
                     }}
                     renderInput={(params: TextFieldProps) => (
@@ -191,7 +210,7 @@ const TableSkeleton = ({
                             {cellValue}
                           </StyledStack>
                         )}
-
+                      {/* Controller for the enum type of variables */}
                       {(Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
                         column.dataType as DATA_TYPE_WITH_ENUM_PREFIX
                       ) ||
@@ -199,6 +218,7 @@ const TableSkeleton = ({
                           DATA_TYPE_WITHOUT_ENUM.Boolean) && (
                         <SelectComponent
                           rowIndex={rowIndex}
+                          category={category}
                           variableName={column.name}
                           value={
                             row[column.name as keyof VariableRowData]
@@ -221,7 +241,7 @@ const TableSkeleton = ({
                   );
                 }
               )}
-              {!!rows.length && (
+              {!!rows.length && category === CATEGORIES.Actions && (
                 <StyledTableCell sx={{ padding: 0 }} width={40}>
                   <Button
                     fullWidth

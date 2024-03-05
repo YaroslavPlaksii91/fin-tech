@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { palette } from '../../../themeConfig';
 import { OPERATORS, CATEGORIES } from '../constants';
-import { SelectedCellInRowData } from '../types';
+import { SelectedCellInRowData, FormFieldsProps } from '../types';
 import { getOperatorOptions } from '../utils';
 
 import validationSchema from './validationSchema';
@@ -15,14 +15,6 @@ import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';
 import { SingleSelect } from '@components/shared/Forms/SingleSelect';
 import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
-
-export type FormFieldsProps = {
-  variableName: string;
-  operator?: string;
-  value?: string;
-  lowerBound?: number | null;
-  upperBound?: number | null;
-};
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;

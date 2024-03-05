@@ -24,9 +24,7 @@ export default function List({
             </IconButton>
           }
         >
-          <StyledListItemText>
-            {'variableName' in el ? el.variableName : el.name}
-          </StyledListItemText>
+          <StyledListItemText>{el.name}</StyledListItemText>
         </StyledListItem>
       ))}
     </StyledList>

@@ -5,8 +5,11 @@ import {
   SelectChangeEvent
 } from '@mui/material';
 
+import { CATEGORIES, CATEGORIES_WITHOUT_ELSE_ACTIONS } from '../constants';
+
 type SelectComponentProps = {
   rowIndex: number;
+  category: CATEGORIES;
   variableName: string;
   value: string;
   options: string[] | string;
@@ -15,16 +18,19 @@ type SelectComponentProps = {
   handleSubmitVariableValueForEnum: ({
     rowIndex,
     variableName,
-    newEnumValue
+    newEnumValue,
+    category
   }: {
     rowIndex: number;
     variableName: string;
     newEnumValue: string;
+    category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => void;
 };
 
 const SelectComponent = ({
   rowIndex,
+  category,
   variableName,
   value,
   options,
@@ -36,7 +42,8 @@ const SelectComponent = ({
     handleSubmitVariableValueForEnum({
       rowIndex,
       variableName,
-      newEnumValue: event.target.value
+      newEnumValue: event.target.value,
+      category: category as CATEGORIES_WITHOUT_ELSE_ACTIONS
     });
   };
 

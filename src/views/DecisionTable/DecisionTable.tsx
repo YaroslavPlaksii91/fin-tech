@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Button, Typography, Stack, TableHead, TableBody } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { keyBy } from 'lodash';
@@ -7,11 +7,14 @@ import { palette } from '../../themeConfig';
 
 import {
   CATEGORIES,
-  OPERATORS,
   CATEGORIES_WITHOUT_ELSE_ACTIONS,
   USAGE_MODE
 } from './constants';
-import { VariableRowData, VariableColumnData } from './types';
+import {
+  VariableColumnData,
+  SelectedCellInRowData,
+  FormFieldsProps
+} from './types';
 import {
   StyledPaper,
   StyledTableContainer,
@@ -32,6 +35,7 @@ import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
 import {
   DataDictionaryVariable,
+  UserDefinedVariable,
   DATA_TYPE_WITH_ENUM_PREFIX
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
@@ -55,56 +59,36 @@ const DecisionTableStep = ({
     {
       conditions: [
         {
-          name: 'CalculatedLoanAmountMultiplier',
-          operator: '>=',
-          expression: '100'
-        },
-        {
-          name: 'EmailExtension',
-          operator: 'Any',
+          name: '',
+          operator: '',
           expression: ''
         }
       ],
       actions: [
         {
-          name: 'MaxLoanAmount',
-          operator: '=',
-          expression: ' 1000',
-          destinationType: 'TemporaryVariable'
+          name: '',
+          operator: '',
+          expression: ''
         }
       ]
-    },
+    }
+  ]);
+
+  const [elseActions, setElseActions] = useState([
     {
-      conditions: [
-        {
-          name: 'CalculatedLoanAmountMultiplier',
-          operator: 'between',
-          expression: '500,900'
-        },
-        {
-          name: 'EmailExtension',
-          operator: '!=',
-          expression: 'co'
-        }
-      ],
-      actions: [
-        {
-          name: 'MaxLoanAmount',
-          operator: '>=',
-          expression: ' 500',
-          destinationType: 'TemporaryVariable'
-        }
-      ]
+      name: '',
+      operator: '',
+      expression: ''
     }
   ]);
 
   const value = useContext(DataDictionaryContext);
   const nodes: FlowNode[] = getNodes();
 
-  // temporary combine two groups of variables
+  // temporary combine two groups of variables for autocomplete
   const combinedVariables = [
-    ...value?.variables?.laPMSVariables,
-    ...value?.variables?.userDefined
+    ...(value?.variables?.laPMSVariables as DataDictionaryVariable[]),
+    ...(value?.variables?.userDefined as UserDefinedVariable[])
   ];
 
   const variablesDataTypes: Record<string, string> = combinedVariables.reduce(
@@ -115,27 +99,36 @@ const DecisionTableStep = ({
     {}
   );
 
-  const conditionsColumns = caseEntries[0].conditions.map((el) =>
-    Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
-      variablesDataTypes[el.name] as DATA_TYPE_WITH_ENUM_PREFIX
-    )
-      ? {
-          name: el.name,
-          dataType: variablesDataTypes[el.name],
-          // if variable enum type we have additional prop with allowedValues
-          allowedValues: combinedVariables.find(
-            (variable) => variable.name === el.name
-          )?.allowedValues
-        }
-      : {
-          name: el.name,
-          dataType: variablesDataTypes[el.name]
-        }
-  );
+  const getColumns = (category: CATEGORIES_WITHOUT_ELSE_ACTIONS) =>
+    caseEntries[0][category].map((el) =>
+      Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
+        variablesDataTypes[el.name] as DATA_TYPE_WITH_ENUM_PREFIX
+      )
+        ? {
+            name: el.name,
+            dataType: variablesDataTypes[el.name],
+            // if variable enum type we have additional prop with allowedValues
+            allowedValues: combinedVariables.find(
+              (variable) => variable.name === el.name
+            )?.allowedValues
+          }
+        : {
+            name: el.name,
+            dataType: variablesDataTypes[el.name]
+          }
+    );
 
-  const conditionRows = caseEntries.map((row) => {
-    return keyBy(row.conditions, 'name');
-  });
+  // Define rows and columns for the table
+  const conditionsColumns: VariableColumnData[] = getColumns(
+    CATEGORIES.Conditions
+  );
+  const actionsColumns: VariableColumnData[] = getColumns(CATEGORIES.Actions);
+
+  const conditionsRows = caseEntries.map((row) =>
+    keyBy(row.conditions, 'name')
+  );
+  const actionsRows = caseEntries.map((row) => keyBy(row.actions, 'name'));
+  const elseActionsRows = [keyBy(elseActions, 'name')];
 
   //console.log('step.data', step.data);
 
@@ -149,9 +142,9 @@ const DecisionTableStep = ({
       if (node.id === step.id) {
         node.data = {
           ...node.data,
-          note: noteValue,
-          caseEntries: caseEntries,
-          /*elseActions: [], */
+          note: noteValue
+          /*caseEntries: caseEntries,
+          elseActions: [], 
           variableSources: [
             {
               name: 'CalculatedLoanAmountMultiplier',
@@ -165,7 +158,7 @@ const DecisionTableStep = ({
               name: 'MaxLoanAmount',
               sourceType: 'TemporaryVariable'
             }
-          ]
+          ]*/
         };
       }
       return node;
@@ -180,20 +173,22 @@ const DecisionTableStep = ({
       />,
       { variant: SNACK_TYPE.SUCCESS }
     );
-    // setStep({ id: MAIN_STEP_ID });
+    setStep({ id: MAIN_STEP_ID });
   };
 
   const handleAddNewLayer = () => {
-    const newLayerColumns = conditionsColumns.map((column) => ({
-      name: column.name,
-      operator: '',
-      expression: ''
-    }));
+    const newLayerColumns = (existedColumns: VariableColumnData[]) =>
+      existedColumns.map((column) => ({
+        name: column.name,
+        operator: '',
+        expression: ''
+      }));
+
     setCaseEntries((prev) => [
       ...prev,
       {
-        conditions: newLayerColumns,
-        actions: []
+        conditions: newLayerColumns(conditionsColumns),
+        actions: newLayerColumns(actionsColumns)
       }
     ]);
   };
@@ -204,22 +199,32 @@ const DecisionTableStep = ({
     setCaseEntries(newCaseEntries);
   };
 
-  const handleChangeColumnClickedIndex = (
-    newColumnIndex: number,
-    category: CATEGORIES
-  ) => {
+  const handleChangeColumnClickedIndex = (newColumnIndex: number) => {
     setColumnClickedIndex(newColumnIndex);
   };
 
   const handleInsertingColumn = ({
-    columnClickedIndex
+    columnClickedIndex,
+    category
   }: {
     columnClickedIndex: number;
+    category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => {
-    setCaseEntries((prev) => {
-      return prev.map((row) => {
-        const newConditions = [...row.conditions];
-        newConditions.splice(columnClickedIndex + 1, 0, {
+    // actions and else actions columns should be identical
+    if (category === CATEGORIES.Actions) {
+      const newElseActionsEntries = [...elseActions];
+      newElseActionsEntries.splice(columnClickedIndex + 1, 0, {
+        name: '',
+        operator: '',
+        expression: ''
+      });
+      setElseActions(newElseActionsEntries);
+    }
+
+    setCaseEntries((prev) =>
+      prev.map((row) => {
+        const newColumns = [...row[category]];
+        newColumns.splice(columnClickedIndex + 1, 0, {
           name: '',
           operator: '',
           expression: ''
@@ -227,41 +232,62 @@ const DecisionTableStep = ({
 
         return {
           ...row,
-          conditions: newConditions
+          [category]: newColumns
         };
-      });
-    });
+      })
+    );
   };
 
   const handleDeleteCategoryColumn = ({
-    columnVariableName
+    columnVariableName,
+    category
   }: {
     columnVariableName: string;
+    category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => {
-    setCaseEntries((prev) => {
-      return prev.map((row) => {
-        const newConditions = [...row.conditions];
+    if (category === CATEGORIES.Actions) {
+      const newElseActionsEntries = [...elseActions];
+
+      setElseActions(
+        newElseActionsEntries.filter((el) => el.name !== columnVariableName)
+      );
+    }
+
+    setCaseEntries((prev) =>
+      prev.map((row) => {
+        const newColumns = [...row[category]];
         return {
           ...row,
-          conditions: newConditions.filter(
-            (el) => el.name !== columnVariableName
-          )
+          [category]: newColumns.filter((el) => el.name !== columnVariableName)
         };
-      });
-    });
+      })
+    );
   };
 
   const handleChangeColumnVariable = ({
     columnIndex,
-    newVariable
+    newVariable,
+    category
   }: {
     columnIndex: number;
     newVariable: Pick<DataDictionaryVariable, 'name'>;
+    category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => {
-    setCaseEntries((prev) => {
-      return prev.map((row) => {
-        const newConditions = [...row.conditions];
-        newConditions.splice(columnIndex, 1, {
+    if (category === CATEGORIES.Actions) {
+      const newElseActionsEntries = [...elseActions];
+      newElseActionsEntries.splice(columnIndex, 1, {
+        name: newVariable.name,
+        operator: '',
+        expression: ''
+      });
+
+      setElseActions(newElseActionsEntries);
+    }
+
+    setCaseEntries((prev) =>
+      prev.map((row) => {
+        const newColumns = [...row[category]];
+        newColumns.splice(columnIndex, 1, {
           name: newVariable.name,
           operator: '',
           expression: ''
@@ -269,72 +295,104 @@ const DecisionTableStep = ({
 
         return {
           ...row,
-          conditions: newConditions
+          [category]: newColumns
         };
-      });
-    });
+      })
+    );
   };
 
   const handleSubmitVariableValue = ({
-    formFieldData
+    formFieldData,
+    category
   }: {
-    formFieldData: any;
+    formFieldData: SelectedCellInRowData & FormFieldsProps;
+    category: CATEGORIES;
   }) => {
     const { rowIndex, variableName, operator } = formFieldData;
-    setCaseEntries((prev) => {
-      return prev.map((row, index) => {
-        if (index === rowIndex) {
-          return {
-            ...row,
-            conditions: row.conditions.map((column) =>
-              column.name !== variableName
-                ? column
-                : {
-                    ...column,
-                    operator: operator,
-                    expression: formFieldData.value
-                  }
-            )
-          };
-        } else {
-          return row;
-        }
-      });
-    });
+    if (category === CATEGORIES.ElseActions) {
+      setElseActions((prev) =>
+        prev.map((column) =>
+          column.name !== variableName
+            ? column
+            : {
+                ...column,
+                operator: operator,
+                expression: formFieldData.value ?? ''
+              }
+        )
+      );
+    } else {
+      setCaseEntries((prev) =>
+        prev.map((row, index) => {
+          if (index === rowIndex) {
+            return {
+              ...row,
+              [category]: row[category as CATEGORIES_WITHOUT_ELSE_ACTIONS].map(
+                (column) =>
+                  column.name !== variableName
+                    ? column
+                    : {
+                        ...column,
+                        operator: operator,
+                        expression: formFieldData.value
+                      }
+              )
+            };
+          } else {
+            return row;
+          }
+        })
+      );
+    }
   };
 
   const handleSubmitVariableValueForEnum = ({
     rowIndex,
     variableName,
-    newEnumValue
+    newEnumValue,
+    category
   }: {
     rowIndex: number;
     variableName: string;
     newEnumValue: string;
+    category: CATEGORIES;
   }) => {
-    setCaseEntries((prev) => {
-      return prev.map((row, index) => {
-        if (index === rowIndex) {
-          return {
-            ...row,
-            conditions: row.conditions.map((column) =>
-              column.name !== variableName
-                ? column
-                : {
-                    ...column,
-                    operator: '=',
-                    expression: newEnumValue
-                  }
-            )
-          };
-        } else {
-          return row;
-        }
-      });
-    });
+    if (category === CATEGORIES.ElseActions) {
+      setElseActions((prev) =>
+        prev.map((column) =>
+          column.name !== variableName
+            ? column
+            : {
+                ...column,
+                operator: '=',
+                expression: newEnumValue
+              }
+        )
+      );
+    } else {
+      setCaseEntries((prev) =>
+        prev.map((row, index) => {
+          if (index === rowIndex) {
+            return {
+              ...row,
+              [category]: row[category as CATEGORIES_WITHOUT_ELSE_ACTIONS].map(
+                (column) =>
+                  column.name !== variableName
+                    ? column
+                    : {
+                        ...column,
+                        operator: '=',
+                        expression: newEnumValue
+                      }
+              )
+            };
+          } else {
+            return row;
+          }
+        })
+      );
+    }
   };
-
-  // console.log({ caseEntries });
 
   return (
     <>
@@ -362,7 +420,7 @@ const DecisionTableStep = ({
             </StyledStack>
             <TableSkeleton
               columns={conditionsColumns}
-              rows={conditionRows}
+              rows={conditionsRows}
               variablesOptions={combinedVariables.filter(
                 (variable) => variable.usageMode !== USAGE_MODE.WriteOnly
               )}
@@ -379,28 +437,31 @@ const DecisionTableStep = ({
               }
             />
           </Stack>
-          {/* <Stack>
+          <Stack>
             <StyledStack
               sx={{ borderBottom: '2px solid rgba(209, 217, 226, 0.4)' }}
             >
               Output
             </StyledStack>
             <TableSkeleton
-              columns={actions.columns}
-              rows={actions.rows}
-              variablesOptions={variables.filter(
+              columns={actionsColumns}
+              rows={actionsRows}
+              variablesOptions={combinedVariables.filter(
                 (variable) => variable.usageMode !== USAGE_MODE.ReadOnly
               )}
-              columnClickedId={actions.columnClickedId}
+              columnClickedIndex={columnClickedIndex}
               category={CATEGORIES.Actions}
               handleDeleteRow={handleDeleteLayer}
-              handleChangeColumnClickedId={handleChangeColumnClickedId}
+              handleChangeColumnClickedIndex={handleChangeColumnClickedIndex}
               handleInsertingColumn={handleInsertingColumn}
-              handleDeleteColumn={handleDeleteColumn}
+              handleDeleteCategoryColumn={handleDeleteCategoryColumn}
               handleChangeColumnVariable={handleChangeColumnVariable}
               handleSubmitVariableValue={handleSubmitVariableValue}
+              handleSubmitVariableValueForEnum={
+                handleSubmitVariableValueForEnum
+              }
             />
-          </Stack> */}
+          </Stack>
         </StyledTableContainer>
       </StyledPaper>
       <Button
@@ -421,7 +482,7 @@ const DecisionTableStep = ({
         isSubmitting={false}
       />
       {/* Otherwise table */}
-      {/* <StyledPaper>
+      <StyledPaper>
         <StyledTableContainer
           sx={{
             '& .MuiTableCell-root': {
@@ -442,16 +503,17 @@ const DecisionTableStep = ({
             </TableBody>
           </StyledTable>
           <TableSkeleton
-            columns={actions.columns}
-            rows={elseActions.rows}
-            variablesOptions={variables.filter(
+            columns={actionsColumns}
+            rows={elseActionsRows}
+            variablesOptions={combinedVariables.filter(
               (variable) => variable.usageMode !== USAGE_MODE.ReadOnly
             )}
             category={CATEGORIES.ElseActions}
             handleSubmitVariableValue={handleSubmitVariableValue}
+            handleSubmitVariableValueForEnum={handleSubmitVariableValueForEnum}
           />
         </StyledTableContainer>
-      </StyledPaper> */}
+      </StyledPaper>
 
       <StepNoteSection noteValue={noteValue} setNoteValue={setNoteValue} />
     </>

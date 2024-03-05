@@ -58,4 +58,6 @@ export type UserDefinedVariable = {
   name: string;
   defaultValue: string;
   description: string;
+  allowedValues?: string | string[];
+  usageMode?: string;
 };
