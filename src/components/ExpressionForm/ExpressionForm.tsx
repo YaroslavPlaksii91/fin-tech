@@ -1,11 +1,13 @@
-import { Button, Stack } from '@mui/material';
+import { AutocompleteRenderInputParams, Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import {
   MutableRefObject,
+  SyntheticEvent,
   useCallback,
-  useContext,
   useEffect,
-  useRef
+  useMemo,
+  useRef,
+  useState
 } from 'react';
 import { groupBy } from 'lodash';
 
@@ -17,6 +19,8 @@ import AddVariable from '@components/AddVariable/AddVariable';
 import ExpressionOperatorsList from '@components/ExpressionForm/ExpressionOperatorsList/ExpressionOperatorsList.tsx';
 import {
   DATA_TYPE_WITHOUT_ENUM,
+  DataDictionaryVariable,
+  UserDefinedVariable,
   VARIABLE_DESTINATION_TYPE,
   VARIABLE_SOURCE_TYPE
 } from '@domain/dataDictionary';
@@ -28,7 +32,7 @@ import {
   functionsLiterals,
   operatorsConfig
 } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
-import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
+import AutocompleteGroup from '@components/shared/Autocomplete/Autocomplete';
 
 const DEFAULT_MOCK = {
   outputVariableName: 'temp2',
@@ -50,6 +54,7 @@ const operatorsList = [
 
 interface ExpressionFormProps {
   initialValues?: Expression & { id: number };
+  variables: Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>;
   handleAddNewBusinessRule: ({
     data,
     id
@@ -61,16 +66,31 @@ interface ExpressionFormProps {
   setModalOpen: (value: boolean) => void;
 }
 
+type Variable = DataDictionaryVariable | UserDefinedVariable;
+
+type Option = Variable & { group: string };
+
 export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   initialValues,
+  variables,
   handleAddNewBusinessRule,
   modalOpen,
   setModalOpen
 }) => {
   const expressionEditorRef: MutableRefObject<ExpressionEditorAPI | null> =
     useRef(null);
+  const [autoCompleteValue, setAutoCompleteValue] = useState<Option | null>(
+    null
+  );
 
-  const value = useContext(DataDictionaryContext);
+  const options = useMemo(
+    () =>
+      Object.entries(variables).reduce((acc: Option[], [group, items]) => {
+        const groupOptions = items.map((item) => ({ group, ...item }));
+        return [...acc, ...groupOptions];
+      }, []),
+    [variables]
+  );
 
   const {
     handleSubmit,
@@ -99,10 +119,16 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   useEffect(() => {
     if (initialValues) {
       reset(initialValues);
+      const defaultValue =
+        options.find(
+          (variable) => variable.name === getValues('outputVariableName')
+        ) ?? null;
+      setAutoCompleteValue(defaultValue);
     } else {
+      setAutoCompleteValue(null);
       reset(DEFAULT_MOCK);
     }
-  }, [initialValues]);
+  }, [initialValues, options]);
 
   const onExpressionOperatorsListClick = useCallback(
     (literal: string) => {
@@ -117,6 +143,14 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     [setValue, getValues, expressionEditorRef]
   );
 
+  const handleAutoCompleteChange = (
+    _event: SyntheticEvent<Element, Event>,
+    value: Option | null
+  ) => {
+    setValue('outputVariableName', value?.name || '');
+    setAutoCompleteValue(value);
+  };
+
   return (
     <Dialog
       title="Add new business rule"
@@ -128,12 +162,30 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack direction="row" spacing={1}>
-          <InputText
-            fullWidth
-            name="outputVariableName"
-            control={control}
-            label="Variable"
-            placeholder="Enter variable"
+          <AutocompleteGroup
+            forcePopupIcon={false}
+            disableClearable={true}
+            id="grouped-variables"
+            value={autoCompleteValue}
+            isOptionEqualToValue={(option: Option, value: Option) =>
+              option.name === value.name
+            }
+            noOptionsText="No variables"
+            options={options}
+            onChange={handleAutoCompleteChange}
+            groupBy={(option) => option.group}
+            getOptionLabel={(option: Option) => option.name || ''}
+            renderInput={(params: AutocompleteRenderInputParams) => (
+              <InputText
+                {...params}
+                size="small"
+                sx={{ width: 320 }}
+                name="outputVariableName"
+                control={control}
+                label="Variable"
+                placeholder="Enter variable"
+              />
+            )}
           />
           <InputText
             fullWidth
@@ -151,7 +203,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
           />
         </Stack>
         <Stack spacing={2} direction="row" pt={2}>
-          {value?.variables && <AddVariable data={value.variables} />}
+          <AddVariable data={variables} />
           <ExpressionOperatorsList
             list={operatorsList}
             onItemClick={onExpressionOperatorsListClick}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   Button,
   Stack,
@@ -33,6 +33,7 @@ import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { InputText } from '@components/shared/Forms/InputText';
+import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 interface CalculationProps {
   step: FlowNode;
   setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
@@ -52,6 +53,7 @@ const Calculation: React.FC<CalculationProps> = ({
   const [initialValue, setInitialValue] = useState<
     (Expression & { id: number }) | undefined
   >(undefined);
+  const value = useContext(DataDictionaryContext);
 
   const {
     handleSubmit,
@@ -194,6 +196,7 @@ const Calculation: React.FC<CalculationProps> = ({
           <Button
             sx={{ width: '190px' }}
             onClick={() => {
+              // setInitialValue(undefined);
               setOpenExpEditorModal(true);
             }}
             startIcon={<AddIcon />}
@@ -230,12 +233,15 @@ const Calculation: React.FC<CalculationProps> = ({
         handleSubmitNote={handleSubmitNote}
         note={getValues('note') ?? ''}
       />
-      <ExpressionForm
-        initialValues={initialValue}
-        handleAddNewBusinessRule={handleAddNewBussinesRule}
-        modalOpen={openExpEditorModal}
-        setModalOpen={setOpenExpEditorModal}
-      />
+      {value?.variables && (
+        <ExpressionForm
+          initialValues={initialValue}
+          variables={value.variables}
+          handleAddNewBusinessRule={handleAddNewBussinesRule}
+          modalOpen={openExpEditorModal}
+          setModalOpen={setOpenExpEditorModal}
+        />
+      )}
     </>
   );
 };
