@@ -8,7 +8,7 @@ import { NodeData, DecisionTableData } from '@domain/flow';
 const RectangleNode: React.FC<NodeProps<NodeData & DecisionTableData>> = ({
   data
 }) => (
-  <div className={styles['node-rectangle']}>
+  <div id={data.stepId} className={styles['node-rectangle']}>
     <Handle type="source" position={Position.Right} />
     <HexagonOutlinedIconSvg />
     <div className={styles['node-header']}>

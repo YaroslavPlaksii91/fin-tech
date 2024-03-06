@@ -5,7 +5,8 @@ import ReactFlow, {
   useEdgesState,
   BackgroundVariant,
   useReactFlow,
-  ReactFlowProvider
+  ReactFlowProvider,
+  Controls
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
@@ -57,6 +58,7 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
       onNodeContextMenu={isProductionFlow ? undefined : onNodeContextMenu}
     >
       <Background variant={BackgroundVariant.Lines} />
+      <Controls />
       <StepActionsMenu
         anchorElement={nodeElement}
         flowNode={flowNode}
