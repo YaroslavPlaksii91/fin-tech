@@ -34,6 +34,7 @@ import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { InputText } from '@components/shared/Forms/InputText';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
+
 interface CalculationProps {
   step: FlowNode;
   setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
@@ -51,7 +52,7 @@ const Calculation: React.FC<CalculationProps> = ({
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
   const [openExpEditorModal, setOpenExpEditorModal] = useState<boolean>(false);
   const [initialValue, setInitialValue] = useState<
-    (Expression & { id: number }) | undefined
+    (Expression & { id: string }) | undefined
   >(undefined);
   const value = useContext(DataDictionaryContext);
 
@@ -116,10 +117,11 @@ const Calculation: React.FC<CalculationProps> = ({
     id
   }: {
     data: Expression;
-    id?: number;
+    id?: string;
   }) => {
     if (id !== undefined) {
-      update(id, data);
+      const index = fields.map((x) => x.id).indexOf(id);
+      update(index, data);
     } else {
       append(data);
     }
@@ -169,7 +171,7 @@ const Calculation: React.FC<CalculationProps> = ({
                             onClick={() => {
                               setInitialValue({
                                 ...expression,
-                                id: index
+                                id: expression.id
                               });
                               setOpenExpEditorModal(true);
                             }}
@@ -196,7 +198,7 @@ const Calculation: React.FC<CalculationProps> = ({
           <Button
             sx={{ width: '190px' }}
             onClick={() => {
-              // setInitialValue(undefined);
+              setInitialValue(undefined);
               setOpenExpEditorModal(true);
             }}
             startIcon={<AddIcon />}

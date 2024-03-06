@@ -53,14 +53,14 @@ const operatorsList = [
 ];
 
 interface ExpressionFormProps {
-  initialValues?: Expression & { id: number };
+  initialValues?: Expression & { id: string };
   variables: Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>;
   handleAddNewBusinessRule: ({
     data,
     id
   }: {
     data: Expression;
-    id?: number;
+    id?: string;
   }) => void;
   modalOpen: boolean;
   setModalOpen: (value: boolean) => void;
@@ -128,7 +128,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
       setAutoCompleteValue(null);
       reset(DEFAULT_MOCK);
     }
-  }, [initialValues, options]);
+  }, [initialValues, modalOpen, options]);
 
   const onExpressionOperatorsListClick = useCallback(
     (literal: string) => {
