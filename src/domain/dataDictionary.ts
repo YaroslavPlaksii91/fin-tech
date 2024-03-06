@@ -40,11 +40,17 @@ export enum VARIABLE_SOURCE_TYPE {
   TemporaryVariable = 'TemporaryVariable'
 }
 
+export enum VARIABLE_USAGE_MODE {
+  ReadOnly = 'ReadOnly',
+  WriteOnly = 'WriteOnly',
+  ReadWrite = 'ReadWrite'
+}
+
 export interface DataDictionaryVariable {
   name: string;
   source: VARIABLE_SOURCE_TYPE;
-  variableDestinationType?: string;
-  variableSourceType: string;
+  destinationType?: string;
+  sourceType: string;
   dataType?: DATA_TYPE;
   defaultValue?: string;
   isRequired?: boolean;
@@ -60,4 +66,5 @@ export type UserDefinedVariable = {
   description: string;
   allowedValues?: string | string[];
   usageMode?: string;
+  sourceType?: string;
 };

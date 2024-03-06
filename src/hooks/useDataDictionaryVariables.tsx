@@ -4,7 +4,8 @@ import { dataDictionaryService } from '@services/data-dictionary';
 import {
   DataDictionaryVariable,
   UserDefinedVariable,
-  VARIABLE_SOURCE_TYPE
+  VARIABLE_SOURCE_TYPE,
+  VARIABLE_USAGE_MODE
 } from '@domain/dataDictionary';
 import { IFlow } from '@domain/flow';
 
@@ -38,7 +39,8 @@ const useDataDictionaryVariables = (flow: IFlow) => {
       flow.temporaryVariables?.map((variable) => ({
         ...variable,
         source: VARIABLE_SOURCE_TYPE.TemporaryVariable,
-        usageMode: 'ReadWrite'
+        usageMode: VARIABLE_USAGE_MODE.ReadWrite,
+        sourceType: VARIABLE_SOURCE_TYPE.TemporaryVariable
       })) ?? [];
 
     const extendedVariables: Record<

@@ -6,6 +6,18 @@ import {
   DATA_TYPE
 } from '@domain/dataDictionary';
 
+export type CaseEntry = {
+  name: string;
+  operator: string;
+  expression: string;
+  destinationType?: string;
+};
+
+export type CaseEntriesDate = {
+  conditions: CaseEntry[];
+  actions: CaseEntry[];
+};
+
 export type VariableRowData = {
   [key: string]: {
     name: string;

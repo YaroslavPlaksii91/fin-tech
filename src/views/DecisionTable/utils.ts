@@ -9,8 +9,12 @@ import {
   LESS_OPERATOR,
   GREATER_OPERATOR
 } from './constants';
+import { CaseEntriesDate, CaseEntry } from './types';
 
-import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
+import {
+  DATA_TYPE_WITHOUT_ENUM,
+  VARIABLE_SOURCE_TYPE
+} from '@domain/dataDictionary';
 
 export const getOperatorOptions = (dataType: DATA_TYPE_WITHOUT_ENUM) => {
   const { Integer, Decimal, String } = DATA_TYPE_WITHOUT_ENUM;
@@ -43,4 +47,48 @@ export const getOperatorOptions = (dataType: DATA_TYPE_WITHOUT_ENUM) => {
   }
 
   return operators;
+};
+
+export const getSerializedCaseEntries = (caseEntries: CaseEntriesDate[]) =>
+  caseEntries.map((row) => {
+    const serializedActions = [...row.actions];
+
+    return {
+      ...row,
+      actions: serializedActions.map((column) => ({
+        ...column,
+        // set variable destinationType
+        destinationType: 'TemporaryVariable'
+      }))
+    };
+  });
+
+export const getSerializedElseActions = (elseActions: CaseEntry[]) =>
+  elseActions.map((element) => ({
+    ...element,
+    // set variable destinationType
+    destinationType: 'TemporaryVariable'
+  }));
+
+export const setVariableSources = ({
+  caseEntry,
+  variablesSourceTypes
+}: {
+  caseEntry: CaseEntriesDate;
+  variablesSourceTypes: Record<string, VARIABLE_SOURCE_TYPE>;
+}) => {
+  let variableSources: { name: string; sourceType: VARIABLE_SOURCE_TYPE }[] =
+    [];
+
+  Object.keys(caseEntry).forEach((obj) => {
+    caseEntry[obj as keyof CaseEntriesDate].map(
+      (el) =>
+        el.name.length &&
+        (variableSources = [
+          ...variableSources,
+          { name: el.name, sourceType: variablesSourceTypes[el.name] }
+        ])
+    );
+  });
+  return variableSources;
 };

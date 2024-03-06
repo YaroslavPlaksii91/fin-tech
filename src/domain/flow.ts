@@ -9,6 +9,7 @@ import {
 } from './dataDictionary';
 
 import { StepType } from '@components/FlowManagment/FlowChart/types';
+import { CaseEntry } from '@views/DecisionTable/types';
 
 export interface IFlowListItem extends IEntity {
   name: string;
@@ -37,9 +38,12 @@ export type ChampionChallengerData = {
 };
 
 export type DecisionTableData = {
-  caseEntries?: { conditions: []; actions: [] }[];
-  elseActions?: [];
-  variableSources?: [];
+  caseEntries?: {
+    conditions: CaseEntry[];
+    actions: CaseEntry[];
+  }[];
+  elseActions?: CaseEntry[];
+  variableSources?: { name: string; sourceType: VARIABLE_SOURCE_TYPE }[];
 };
 
 export type Expression = {

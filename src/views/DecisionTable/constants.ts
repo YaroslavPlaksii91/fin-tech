@@ -70,10 +70,4 @@ export type CATEGORIES_WITHOUT_ELSE_ACTIONS = Exclude<
   CATEGORIES.ElseActions
 >;
 
-export const USAGE_MODE = {
-  ReadOnly: 'ReadOnly',
-  WriteOnly: 'WriteOnly',
-  ReadWrite: 'ReadWrite'
-};
-
 export const BOOLEAN_OPTIONS = ['true', 'false'];

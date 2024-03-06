@@ -171,6 +171,9 @@ const TableSkeleton = ({
                 </Box>
               </StyledTableCell>
             ))}
+            {category === CATEGORIES.Actions && (
+              <StyledTableCell></StyledTableCell>
+            )}
           </StyledTableRow>
         </TableHead>
         <TableBody>
@@ -247,6 +250,7 @@ const TableSkeleton = ({
                     fullWidth
                     sx={{ padding: '10px' }}
                     onClick={() => handleDeleteRow?.(rowIndex)}
+                    disabled={rows.length <= 1}
                   >
                     <DeleteOutlineIcon />
                   </Button>

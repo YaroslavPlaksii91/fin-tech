@@ -1,15 +1,11 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useMemo } from 'react';
 import { Button, Typography, Stack, TableHead, TableBody } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { keyBy } from 'lodash';
 
 import { palette } from '../../themeConfig';
 
-import {
-  CATEGORIES,
-  CATEGORIES_WITHOUT_ELSE_ACTIONS,
-  USAGE_MODE
-} from './constants';
+import { CATEGORIES, CATEGORIES_WITHOUT_ELSE_ACTIONS } from './constants';
 import {
   VariableColumnData,
   SelectedCellInRowData,
@@ -23,6 +19,11 @@ import {
 } from './styled';
 import TableSkeleton from './TableSkeleton/TableSkeleton';
 import StepNoteSection from './StepNoteSection/StepNoteSection';
+import {
+  getSerializedCaseEntries,
+  getSerializedElseActions,
+  setVariableSources
+} from './utils';
 
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import { AddIcon } from '@components/shared/Icons';
@@ -36,7 +37,9 @@ import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
 import {
   DataDictionaryVariable,
   UserDefinedVariable,
-  DATA_TYPE_WITH_ENUM_PREFIX
+  DATA_TYPE_WITH_ENUM_PREFIX,
+  VARIABLE_USAGE_MODE,
+  VARIABLE_SOURCE_TYPE
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
@@ -91,12 +94,28 @@ const DecisionTableStep = ({
     ...(value?.variables?.userDefined as UserDefinedVariable[])
   ];
 
-  const variablesDataTypes: Record<string, string> = combinedVariables.reduce(
-    (acc, current) => ({
-      ...acc,
-      [current.name]: current.dataType
-    }),
-    {}
+  const variablesDataTypes: Record<string, string> = useMemo(
+    () =>
+      combinedVariables.reduce(
+        (acc, current) => ({
+          ...acc,
+          [current.name]: current.dataType
+        }),
+        {}
+      ),
+    []
+  );
+
+  const variablesSourceTypes: Record<string, VARIABLE_SOURCE_TYPE> = useMemo(
+    () =>
+      combinedVariables.reduce(
+        (acc, current) => ({
+          ...acc,
+          [current.name]: current.sourceType
+        }),
+        {}
+      ),
+    []
   );
 
   const getColumns = (category: CATEGORIES_WITHOUT_ELSE_ACTIONS) =>
@@ -130,8 +149,6 @@ const DecisionTableStep = ({
   const actionsRows = caseEntries.map((row) => keyBy(row.actions, 'name'));
   const elseActionsRows = [keyBy(elseActions, 'name')];
 
-  //console.log('step.data', step.data);
-
   useEffect(() => {
     const { data } = step;
     setNoteValue(data?.note ?? '');
@@ -142,23 +159,13 @@ const DecisionTableStep = ({
       if (node.id === step.id) {
         node.data = {
           ...node.data,
-          note: noteValue
-          /*caseEntries: caseEntries,
-          elseActions: [], 
-          variableSources: [
-            {
-              name: 'CalculatedLoanAmountMultiplier',
-              sourceType: 'TemporaryVariable'
-            },
-            {
-              name: 'EmailExtension',
-              sourceType: 'TemporaryVariable'
-            },
-            {
-              name: 'MaxLoanAmount',
-              sourceType: 'TemporaryVariable'
-            }
-          ]*/
+          note: noteValue,
+          caseEntries: getSerializedCaseEntries(caseEntries),
+          elseActions: getSerializedElseActions(elseActions),
+          variableSources: setVariableSources({
+            caseEntry: caseEntries[0],
+            variablesSourceTypes
+          })
         };
       }
       return node;
@@ -422,7 +429,8 @@ const DecisionTableStep = ({
               columns={conditionsColumns}
               rows={conditionsRows}
               variablesOptions={combinedVariables.filter(
-                (variable) => variable.usageMode !== USAGE_MODE.WriteOnly
+                (variable) =>
+                  variable.usageMode !== VARIABLE_USAGE_MODE.WriteOnly
               )}
               columnClickedIndex={columnClickedIndex}
               category={CATEGORIES.Conditions}
@@ -447,7 +455,8 @@ const DecisionTableStep = ({
               columns={actionsColumns}
               rows={actionsRows}
               variablesOptions={combinedVariables.filter(
-                (variable) => variable.usageMode !== USAGE_MODE.ReadOnly
+                (variable) =>
+                  variable.usageMode !== VARIABLE_USAGE_MODE.ReadOnly
               )}
               columnClickedIndex={columnClickedIndex}
               category={CATEGORIES.Actions}
@@ -506,7 +515,7 @@ const DecisionTableStep = ({
             columns={actionsColumns}
             rows={elseActionsRows}
             variablesOptions={combinedVariables.filter(
-              (variable) => variable.usageMode !== USAGE_MODE.ReadOnly
+              (variable) => variable.usageMode !== VARIABLE_USAGE_MODE.ReadOnly
             )}
             category={CATEGORIES.ElseActions}
             handleSubmitVariableValue={handleSubmitVariableValue}
