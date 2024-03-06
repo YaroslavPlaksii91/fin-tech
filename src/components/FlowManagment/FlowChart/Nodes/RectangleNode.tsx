@@ -6,7 +6,7 @@ import { HexagonOutlinedIconSvg } from '@components/shared/Icons';
 import { NodeData } from '@domain/flow';
 
 const RectangleNode: React.FC<NodeProps<NodeData>> = ({ data }) => (
-  <div className={styles['node-rectangle']}>
+  <div id={data.stepId} className={styles['node-rectangle']}>
     <Handle type="source" position={Position.Right} />
     <HexagonOutlinedIconSvg />
     <div className={styles['node-header']}>
