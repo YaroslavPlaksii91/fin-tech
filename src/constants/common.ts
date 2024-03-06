@@ -26,3 +26,8 @@ export const SPECIAL_KEY_CODES = {
   Escape: 'Escape',
   Minus: '-'
 };
+
+export const DATA_DICTIONARY_LABELS: { [key: string]: string } = {
+  userDefined: 'User Defined',
+  laPMSVariables: 'Lead and Provider Management System'
+};
