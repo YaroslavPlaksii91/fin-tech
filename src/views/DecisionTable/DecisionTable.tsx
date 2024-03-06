@@ -1,28 +1,15 @@
-import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import {
-  Button,
-  Typography,
-  Stack,
-  TableHead,
-  TableBody,
-  TextField
-} from '@mui/material';
+import { useEffect, useState, useContext, useMemo } from 'react';
+import { Button, Typography, Stack, TableHead, TableBody } from '@mui/material';
+import { enqueueSnackbar } from 'notistack';
+import { keyBy } from 'lodash';
 
 import { palette } from '../../themeConfig';
 
+import { CATEGORIES, CATEGORIES_WITHOUT_ELSE_ACTIONS } from './constants';
 import {
-  inputVariablesOptions,
-  outputVariablesOptions,
-  CATEGORIES,
-  OPERATORS,
-  CATEGORIES_WITHOUT_ELSE_ACTIONS
-} from './constants';
-import {
-  VariablesOptionsProps,
-  VariableRowData,
-  SelectedCategoriesEntries,
-  VariableHeaderData
+  VariableColumnData,
+  SelectedCellInRowData,
+  FormFieldsProps
 } from './types';
 import {
   StyledPaper,
@@ -31,117 +18,196 @@ import {
   StyledTable
 } from './styled';
 import TableSkeleton from './TableSkeleton/TableSkeleton';
+import StepNoteSection from './StepNoteSection/StepNoteSection';
+import {
+  getSerializedCaseEntries,
+  getSerializedElseActions,
+  setVariableSources
+} from './utils';
 
-import { FlowNode } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
-import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
-import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
 import { AddIcon } from '@components/shared/Icons';
 import {
   StyledTableCell,
   StyledTableRow
 } from '@components/shared/Table/styled';
+import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
+import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
+import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
+import {
+  DataDictionaryVariable,
+  UserDefinedVariable,
+  DATA_TYPE_WITH_ENUM_PREFIX,
+  VARIABLE_USAGE_MODE,
+  VARIABLE_SOURCE_TYPE
+} from '@domain/dataDictionary';
+import { FlowNode } from '@domain/flow';
+import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 
 type DecisionTableStepProps = {
   step: FlowNode;
+  setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
+  rfInstance: CustomReactFlowInstance;
 };
 
-const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
-  const firstConditionsColumnId = uuidv4();
-  const firstActionsColumnId = uuidv4();
+const DecisionTableStep = ({
+  step,
+  setStep,
+  rfInstance: { getNodes, setNodes }
+}: DecisionTableStepProps) => {
+  const [noteValue, setNoteValue] = useState('');
+  const [columnClickedIndex, setColumnClickedIndex] = useState(0);
 
-  const [selectedCategoriesEntries, setSelectedCategoriesEntries] =
-    useState<SelectedCategoriesEntries>({
-      conditions: {
-        columnClickedId: firstConditionsColumnId,
-        columns: [
-          { id: firstConditionsColumnId, variableName: '', variableType: '' }
-        ],
-        rows: []
-      },
-      actions: {
-        columnClickedId: firstActionsColumnId,
-        columns: [
-          { id: firstActionsColumnId, variableName: '', variableType: '' }
-        ],
-        rows: []
-      },
-      elseActions: {
-        rows: [
-          {
-            id: uuidv4(),
-            variableName: '',
-            variableType: '',
-            operator: ''
+  const [caseEntries, setCaseEntries] = useState([
+    {
+      conditions: [
+        {
+          name: '',
+          operator: '',
+          expression: ''
+        }
+      ],
+      actions: [
+        {
+          name: '',
+          operator: '',
+          expression: ''
+        }
+      ]
+    }
+  ]);
+
+  const [elseActions, setElseActions] = useState([
+    {
+      name: '',
+      operator: '',
+      expression: ''
+    }
+  ]);
+
+  const value = useContext(DataDictionaryContext);
+  const nodes: FlowNode[] = getNodes();
+
+  // temporary combine two groups of variables for autocomplete
+  const combinedVariables = [
+    ...(value?.variables?.laPMSVariables as DataDictionaryVariable[]),
+    ...(value?.variables?.userDefined as UserDefinedVariable[])
+  ];
+
+  const variablesDataTypes: Record<string, string> = useMemo(
+    () =>
+      combinedVariables.reduce(
+        (acc, current) => ({
+          ...acc,
+          [current.name]: current.dataType
+        }),
+        {}
+      ),
+    []
+  );
+
+  const variablesSourceTypes: Record<string, VARIABLE_SOURCE_TYPE> = useMemo(
+    () =>
+      combinedVariables.reduce(
+        (acc, current) => ({
+          ...acc,
+          [current.name]: current.sourceType
+        }),
+        {}
+      ),
+    []
+  );
+
+  const getColumns = (category: CATEGORIES_WITHOUT_ELSE_ACTIONS) =>
+    caseEntries[0][category].map((el) =>
+      Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
+        variablesDataTypes[el.name] as DATA_TYPE_WITH_ENUM_PREFIX
+      )
+        ? {
+            name: el.name,
+            dataType: variablesDataTypes[el.name],
+            // if variable enum type we have additional prop with allowedValues
+            allowedValues: combinedVariables.find(
+              (variable) => variable.name === el.name
+            )?.allowedValues
           }
-        ]
+        : {
+            name: el.name,
+            dataType: variablesDataTypes[el.name]
+          }
+    );
+
+  // Define rows and columns for the table
+  const conditionsColumns: VariableColumnData[] = getColumns(
+    CATEGORIES.Conditions
+  );
+  const actionsColumns: VariableColumnData[] = getColumns(CATEGORIES.Actions);
+
+  const conditionsRows = caseEntries.map((row) =>
+    keyBy(row.conditions, 'name')
+  );
+  const actionsRows = caseEntries.map((row) => keyBy(row.actions, 'name'));
+  const elseActionsRows = [keyBy(elseActions, 'name')];
+
+  useEffect(() => {
+    const { data } = step;
+    setNoteValue(data?.note ?? '');
+  }, []);
+
+  const onApplyChangesClick = () => {
+    const updatedNodes = nodes.map((node: FlowNode) => {
+      if (node.id === step.id) {
+        node.data = {
+          ...node.data,
+          note: noteValue,
+          caseEntries: getSerializedCaseEntries(caseEntries),
+          elseActions: getSerializedElseActions(elseActions),
+          variableSources: setVariableSources({
+            caseEntry: caseEntries[0],
+            variablesSourceTypes
+          })
+        };
       }
+      return node;
     });
 
-  const [openNoteModal, setOpenNoteModal] = useState(false);
+    setNodes(updatedNodes);
+
+    enqueueSnackbar(
+      <SnackbarMessage
+        message="Success"
+        details={`Changes for the "${step.data.name}" step were successfully applied.`}
+      />,
+      { variant: SNACK_TYPE.SUCCESS }
+    );
+    setStep({ id: MAIN_STEP_ID });
+  };
 
   const handleAddNewLayer = () => {
-    const newRowId = uuidv4();
+    const newLayerColumns = (existedColumns: VariableColumnData[]) =>
+      existedColumns.map((column) => ({
+        name: column.name,
+        operator: '',
+        expression: ''
+      }));
 
-    setSelectedCategoriesEntries({
-      ...selectedCategoriesEntries,
-      conditions: {
-        ...selectedCategoriesEntries.conditions,
-        rows: [
-          ...selectedCategoriesEntries.conditions.rows,
-          {
-            id: newRowId,
-            variableName: '',
-            variableType: '',
-            operator: ''
-          }
-        ]
-      },
-      actions: {
-        ...selectedCategoriesEntries.actions,
-        rows: [
-          ...selectedCategoriesEntries.actions.rows,
-          {
-            id: newRowId,
-            variableName: '',
-            variableType: '',
-            operator: ''
-          }
-        ]
+    setCaseEntries((prev) => [
+      ...prev,
+      {
+        conditions: newLayerColumns(conditionsColumns),
+        actions: newLayerColumns(actionsColumns)
       }
-    });
+    ]);
   };
 
-  const handleDeleteLayer = (id: string) => {
-    const { conditions, actions } = selectedCategoriesEntries;
-
-    const newConditionsRows = conditions.rows.filter((item) => item.id !== id);
-    const newActionsRows = actions.rows.filter((item) => item.id !== id);
-
-    setSelectedCategoriesEntries({
-      ...selectedCategoriesEntries,
-      conditions: {
-        ...selectedCategoriesEntries.conditions,
-        rows: newConditionsRows
-      },
-      actions: {
-        ...selectedCategoriesEntries.actions,
-        rows: newActionsRows
-      }
-    });
+  const handleDeleteLayer = (index: number) => {
+    const newCaseEntries = [...caseEntries];
+    newCaseEntries.splice(index, 1);
+    setCaseEntries(newCaseEntries);
   };
 
-  const handleChangeColumnClickedId = (
-    newColumnId: string,
-    category: CATEGORIES
-  ) => {
-    setSelectedCategoriesEntries({
-      ...selectedCategoriesEntries,
-      [category]: {
-        ...selectedCategoriesEntries[category],
-        columnClickedId: newColumnId
-      }
-    });
+  const handleChangeColumnClickedIndex = (newColumnIndex: number) => {
+    setColumnClickedIndex(newColumnIndex);
   };
 
   const handleInsertingColumn = ({
@@ -149,116 +215,192 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
     category
   }: {
     columnClickedIndex: number;
-    category: CATEGORIES;
+    category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => {
-    const newColumns = [
-      ...selectedCategoriesEntries[category as CATEGORIES_WITHOUT_ELSE_ACTIONS]
-        .columns
-    ];
+    // actions and else actions columns should be identical
+    if (category === CATEGORIES.Actions) {
+      const newElseActionsEntries = [...elseActions];
+      newElseActionsEntries.splice(columnClickedIndex + 1, 0, {
+        name: '',
+        operator: '',
+        expression: ''
+      });
+      setElseActions(newElseActionsEntries);
+    }
 
-    newColumns.splice(columnClickedIndex + 1, 0, {
-      id: uuidv4(),
-      variableName: '',
-      variableType: ''
-    });
+    setCaseEntries((prev) =>
+      prev.map((row) => {
+        const newColumns = [...row[category]];
+        newColumns.splice(columnClickedIndex + 1, 0, {
+          name: '',
+          operator: '',
+          expression: ''
+        });
 
-    setSelectedCategoriesEntries({
-      ...selectedCategoriesEntries,
-      [category]: {
-        ...selectedCategoriesEntries[category],
-        columns: newColumns
-      }
-    });
+        return {
+          ...row,
+          [category]: newColumns
+        };
+      })
+    );
   };
 
   const handleDeleteCategoryColumn = ({
-    columnId,
+    columnVariableName,
     category
   }: {
-    columnId: string;
-    category: CATEGORIES;
+    columnVariableName: string;
+    category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => {
-    const newColumns = [
-      ...selectedCategoriesEntries[category as CATEGORIES_WITHOUT_ELSE_ACTIONS]
-        .columns
-    ].filter((item) => item.id !== columnId);
+    if (category === CATEGORIES.Actions) {
+      const newElseActionsEntries = [...elseActions];
 
-    setSelectedCategoriesEntries({
-      ...selectedCategoriesEntries,
-      [category]: {
-        ...selectedCategoriesEntries[category],
-        columns: newColumns
-      }
-    });
+      setElseActions(
+        newElseActionsEntries.filter((el) => el.name !== columnVariableName)
+      );
+    }
+
+    setCaseEntries((prev) =>
+      prev.map((row) => {
+        const newColumns = [...row[category]];
+        return {
+          ...row,
+          [category]: newColumns.filter((el) => el.name !== columnVariableName)
+        };
+      })
+    );
   };
 
   const handleChangeColumnVariable = ({
-    columnId,
+    columnIndex,
     newVariable,
     category
   }: {
-    columnId: string;
-    newVariable: VariablesOptionsProps;
-    category: CATEGORIES;
+    columnIndex: number;
+    newVariable: Pick<DataDictionaryVariable, 'name'>;
+    category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => {
-    const updatedColumns = selectedCategoriesEntries[
-      category as CATEGORIES_WITHOUT_ELSE_ACTIONS
-    ].columns.map((item: VariableHeaderData) => {
-      if (item.id === columnId) {
-        return {
-          ...item,
-          variableName: newVariable.variableName,
-          variableType: newVariable.variableType
-        };
-      } else {
-        return item;
-      }
-    });
+    if (category === CATEGORIES.Actions) {
+      const newElseActionsEntries = [...elseActions];
+      newElseActionsEntries.splice(columnIndex, 1, {
+        name: newVariable.name,
+        operator: '',
+        expression: ''
+      });
 
-    setSelectedCategoriesEntries({
-      ...selectedCategoriesEntries,
-      [category]: {
-        ...selectedCategoriesEntries[category],
-        columns: updatedColumns
-      }
-    });
+      setElseActions(newElseActionsEntries);
+    }
+
+    setCaseEntries((prev) =>
+      prev.map((row) => {
+        const newColumns = [...row[category]];
+        newColumns.splice(columnIndex, 1, {
+          name: newVariable.name,
+          operator: '',
+          expression: ''
+        });
+
+        return {
+          ...row,
+          [category]: newColumns
+        };
+      })
+    );
   };
 
   const handleSubmitVariableValue = ({
-    newVariableValue,
+    formFieldData,
     category
   }: {
-    newVariableValue: VariableRowData;
+    formFieldData: SelectedCellInRowData & FormFieldsProps;
     category: CATEGORIES;
   }) => {
-    const { id, variableName, operator } = newVariableValue;
-
-    const updatedRows = selectedCategoriesEntries[category].rows.map(
-      (row: VariableRowData) => {
-        if (row.id === id) {
-          return {
-            ...row,
-            [variableName as keyof VariableRowData]:
-              operator === OPERATORS.Between
-                ? `${operator} ${newVariableValue.lowerBound} and ${newVariableValue.upperBound}`
-                : `${operator} ${newVariableValue.value}`
-          };
-        } else {
-          return row;
-        }
-      }
-    );
-
-    setSelectedCategoriesEntries({
-      ...selectedCategoriesEntries,
-      [category]: {
-        ...selectedCategoriesEntries[category],
-        rows: updatedRows
-      }
-    });
+    const { rowIndex, variableName, operator } = formFieldData;
+    if (category === CATEGORIES.ElseActions) {
+      setElseActions((prev) =>
+        prev.map((column) =>
+          column.name !== variableName
+            ? column
+            : {
+                ...column,
+                operator: operator,
+                expression: formFieldData.value ?? ''
+              }
+        )
+      );
+    } else {
+      setCaseEntries((prev) =>
+        prev.map((row, index) => {
+          if (index === rowIndex) {
+            return {
+              ...row,
+              [category]: row[category as CATEGORIES_WITHOUT_ELSE_ACTIONS].map(
+                (column) =>
+                  column.name !== variableName
+                    ? column
+                    : {
+                        ...column,
+                        operator: operator,
+                        expression: formFieldData.value
+                      }
+              )
+            };
+          } else {
+            return row;
+          }
+        })
+      );
+    }
   };
 
-  const { conditions, actions, elseActions } = selectedCategoriesEntries;
+  const handleSubmitVariableValueForEnum = ({
+    rowIndex,
+    variableName,
+    newEnumValue,
+    category
+  }: {
+    rowIndex: number;
+    variableName: string;
+    newEnumValue: string;
+    category: CATEGORIES;
+  }) => {
+    if (category === CATEGORIES.ElseActions) {
+      setElseActions((prev) =>
+        prev.map((column) =>
+          column.name !== variableName
+            ? column
+            : {
+                ...column,
+                operator: '=',
+                expression: newEnumValue
+              }
+        )
+      );
+    } else {
+      setCaseEntries((prev) =>
+        prev.map((row, index) => {
+          if (index === rowIndex) {
+            return {
+              ...row,
+              [category]: row[category as CATEGORIES_WITHOUT_ELSE_ACTIONS].map(
+                (column) =>
+                  column.name !== variableName
+                    ? column
+                    : {
+                        ...column,
+                        operator: '=',
+                        expression: newEnumValue
+                      }
+              )
+            };
+          } else {
+            return row;
+          }
+        })
+      );
+    }
+  };
+
   return (
     <>
       <StepDetailsHeader
@@ -269,6 +411,8 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
         onDiscard={() => {}}
         disabled={false}
         isSubmitting={false}
+        buttonType="button"
+        onApplyChangesClick={onApplyChangesClick}
       />
       <StyledPaper>
         <StyledTableContainer>
@@ -282,17 +426,23 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
               Condition
             </StyledStack>
             <TableSkeleton
-              columns={conditions.columns}
-              rows={conditions.rows}
-              variablesOptions={inputVariablesOptions}
-              columnClickedId={conditions.columnClickedId}
+              columns={conditionsColumns}
+              rows={conditionsRows}
+              variablesOptions={combinedVariables.filter(
+                (variable) =>
+                  variable.usageMode !== VARIABLE_USAGE_MODE.WriteOnly
+              )}
+              columnClickedIndex={columnClickedIndex}
               category={CATEGORIES.Conditions}
               handleDeleteRow={handleDeleteLayer}
-              handleChangeColumnClickedId={handleChangeColumnClickedId}
+              handleChangeColumnClickedIndex={handleChangeColumnClickedIndex}
               handleInsertingColumn={handleInsertingColumn}
               handleDeleteCategoryColumn={handleDeleteCategoryColumn}
               handleChangeColumnVariable={handleChangeColumnVariable}
               handleSubmitVariableValue={handleSubmitVariableValue}
+              handleSubmitVariableValueForEnum={
+                handleSubmitVariableValueForEnum
+              }
             />
           </Stack>
           <Stack>
@@ -302,17 +452,23 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
               Output
             </StyledStack>
             <TableSkeleton
-              columns={actions.columns}
-              rows={actions.rows}
-              variablesOptions={outputVariablesOptions}
-              columnClickedId={actions.columnClickedId}
+              columns={actionsColumns}
+              rows={actionsRows}
+              variablesOptions={combinedVariables.filter(
+                (variable) =>
+                  variable.usageMode !== VARIABLE_USAGE_MODE.ReadOnly
+              )}
+              columnClickedIndex={columnClickedIndex}
               category={CATEGORIES.Actions}
               handleDeleteRow={handleDeleteLayer}
-              handleChangeColumnClickedId={handleChangeColumnClickedId}
+              handleChangeColumnClickedIndex={handleChangeColumnClickedIndex}
               handleInsertingColumn={handleInsertingColumn}
               handleDeleteCategoryColumn={handleDeleteCategoryColumn}
               handleChangeColumnVariable={handleChangeColumnVariable}
               handleSubmitVariableValue={handleSubmitVariableValue}
+              handleSubmitVariableValueForEnum={
+                handleSubmitVariableValueForEnum
+              }
             />
           </Stack>
         </StyledTableContainer>
@@ -356,30 +512,19 @@ const DecisionTableStep = ({ step }: DecisionTableStepProps) => {
             </TableBody>
           </StyledTable>
           <TableSkeleton
-            columns={actions.columns}
-            rows={elseActions.rows}
-            variablesOptions={outputVariablesOptions}
+            columns={actionsColumns}
+            rows={elseActionsRows}
+            variablesOptions={combinedVariables.filter(
+              (variable) => variable.usageMode !== VARIABLE_USAGE_MODE.ReadOnly
+            )}
             category={CATEGORIES.ElseActions}
             handleSubmitVariableValue={handleSubmitVariableValue}
+            handleSubmitVariableValueForEnum={handleSubmitVariableValueForEnum}
           />
         </StyledTableContainer>
       </StyledPaper>
 
-      <Stack sx={{ margin: '16px' }}>
-        <NoteSection handleOpenNoteModal={() => setOpenNoteModal(true)}>
-          <TextField fullWidth label="Enter note here" disabled size="small" />
-        </NoteSection>
-      </Stack>
-
-      {/* TODO: submition of note during integration */}
-      {openNoteModal && (
-        <NoteForm
-          modalOpen={!!openNoteModal}
-          handleClose={() => setOpenNoteModal(false)}
-          handleSubmitNote={() => setOpenNoteModal(false)}
-          note=""
-        />
-      )}
+      <StepNoteSection noteValue={noteValue} setNoteValue={setNoteValue} />
     </>
   );
 };

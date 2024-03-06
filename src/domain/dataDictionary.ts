@@ -8,7 +8,11 @@ export enum DATA_TYPE_WITH_ENUM_PREFIX {
   WorkShift = 'Enum:WorkShift',
   PayFrequency = 'Enum:PayFrequency',
   BankAccountType = 'Enum:BankAccountType',
-  ReferenceRelationship = 'Enum:ReferenceRelationship'
+  ReferenceRelationship = 'Enum:ReferenceRelationship',
+  /*for mocked data*/
+  Store = 'Enum:Store',
+  LoyaltyTier = 'Enum:LoyaltyTier',
+  Promocode = 'Enum:Promocode'
 }
 
 export enum DATA_TYPE_WITHOUT_ENUM {
@@ -36,11 +40,17 @@ export enum VARIABLE_SOURCE_TYPE {
   TemporaryVariable = 'TemporaryVariable'
 }
 
+export enum VARIABLE_USAGE_MODE {
+  ReadOnly = 'ReadOnly',
+  WriteOnly = 'WriteOnly',
+  ReadWrite = 'ReadWrite'
+}
+
 export interface DataDictionaryVariable {
-  variableName: string;
+  name: string;
   source: VARIABLE_SOURCE_TYPE;
-  variableDestinationType?: string;
-  variableSourceType: string;
+  destinationType?: string;
+  sourceType: string;
   dataType?: DATA_TYPE;
   defaultValue?: string;
   isRequired?: boolean;
@@ -54,4 +64,7 @@ export type UserDefinedVariable = {
   name: string;
   defaultValue: string;
   description: string;
+  allowedValues?: string | string[];
+  usageMode?: string;
+  sourceType?: string;
 };

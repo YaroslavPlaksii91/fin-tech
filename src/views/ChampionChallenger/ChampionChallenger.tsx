@@ -229,6 +229,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
           onDiscard={() => setOpenDiscardModal(true)}
           disabled={!isEmpty(errors) || isSubmitting}
           isSubmitting={isSubmitting}
+          buttonType="submit"
         />
         <Stack pl={3} pr={3}>
           <StyledPaper>

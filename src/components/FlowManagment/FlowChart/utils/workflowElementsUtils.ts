@@ -39,6 +39,14 @@ export const createNewNode = (
         newNode.data = { ...newNode.data, splits: [] };
       }
       break;
+    case StepType.DECISION_TABLE:
+      newNode.data = {
+        ...newNode.data,
+        caseEntries: [{ conditions: [], actions: [] }],
+        elseActions: [],
+        variableSources: []
+      };
+      break;
     case StepType.CALCULATION:
       newNode.data = { ...newNode.data, expressions: [] };
       break;

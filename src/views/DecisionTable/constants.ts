@@ -1,5 +1,3 @@
-import { VariablesOptionsProps } from './types';
-
 export const VARIABLE_TYPE = {
   Number: 'number',
   String: 'string',
@@ -21,9 +19,24 @@ export const EQUAL_OPERATOR = {
   value: '='
 };
 
+export const NOT_EQUAL_OPERATOR = {
+  key: 'not-equal-operator',
+  value: '!='
+};
+
 export const IN_OPERATOR = {
   key: 'in-operator',
   value: 'in'
+};
+
+export const GREATER_OPERATOR = {
+  key: 'greater-operator',
+  value: '>'
+};
+
+export const LESS_OPERATOR = {
+  key: 'less-operator',
+  value: '<'
 };
 
 export const GREATER_AND_EQUAL_OPERATOR = {
@@ -46,19 +59,6 @@ export const ANY_OPERATOR = {
   value: 'any'
 };
 
-export const inputVariablesOptions: VariablesOptionsProps[] = [
-  { variableName: 'LeadSourсe', variableType: 'string' },
-  { variableName: 'RequestLoanAmount', variableType: 'number' },
-  { variableName: 'LeadPrice', variableType: 'number' },
-  { variableName: 'CRA.Claritties.Score', variableType: 'number' }
-];
-
-export const outputVariablesOptions: VariablesOptionsProps[] = [
-  { variableName: 'Decision', variableType: 'enum' },
-  { variableName: 'MaxLoanAmount', variableType: 'number' },
-  { variableName: 'MinLoanAmount', variableType: 'number' }
-];
-
 export enum CATEGORIES {
   Conditions = 'conditions',
   Actions = 'actions',
@@ -70,10 +70,4 @@ export type CATEGORIES_WITHOUT_ELSE_ACTIONS = Exclude<
   CATEGORIES.ElseActions
 >;
 
-export const DECISION_OPTIONS = [
-  {
-    value: 'accept',
-    label: 'Accept'
-  },
-  { value: 'denied', label: 'Denied' }
-];
+export const BOOLEAN_OPTIONS = ['true', 'false'];

@@ -11,6 +11,8 @@ interface StepDetailsHeaderProps {
   disabled: boolean;
   isSubmitting: boolean;
   onDiscard: () => void;
+  buttonType?: 'button' | 'submit' | undefined;
+  onApplyChangesClick?: () => void;
 }
 
 const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
@@ -19,7 +21,9 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
   onDiscard,
   disabled,
   isActionContainerVisible = true,
-  isSubmitting
+  isSubmitting,
+  buttonType,
+  onApplyChangesClick
 }) => (
   <Stack
     flexDirection="row"
@@ -46,8 +50,9 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
         <LoadingButton
           disabled={disabled}
           loading={isSubmitting}
-          type="submit"
+          type={buttonType}
           variant="contained"
+          onClick={() => (onApplyChangesClick ? onApplyChangesClick() : null)}
         >
           Apply changes
         </LoadingButton>

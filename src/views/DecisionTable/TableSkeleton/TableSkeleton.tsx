@@ -1,7 +1,6 @@
 import { useState, SyntheticEvent } from 'react';
 import {
   Button,
-  Stack,
   Box,
   TableBody,
   TableHead,
@@ -10,11 +9,17 @@ import {
 } from '@mui/material';
 import { TextFieldProps } from '@mui/material/TextField';
 
-import { CATEGORIES, VARIABLE_TYPE, DECISION_OPTIONS } from '../constants';
 import {
-  VariablesOptionsProps,
+  CATEGORIES,
+  BOOLEAN_OPTIONS,
+  CATEGORIES_WITHOUT_ELSE_ACTIONS
+} from '../constants';
+import {
   VariableRowData,
-  VariableHeaderData
+  VariableColumnData,
+  SelectedCellInRowData,
+  TableSkeletonProps,
+  FormFieldsProps
 } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import { AutocompleteInput } from '../AutocompleteInput/AutocompleteInput';
@@ -26,75 +31,42 @@ import {
   StyledTableCell,
   StyledTableRow
 } from '@components/shared/Table/styled';
-import SelectComponent from '@components/shared/SelectComponent/SelectComponent';
-
-type TableSkeletonProps = {
-  columns: VariableHeaderData[];
-  rows: VariableRowData[];
-  variablesOptions: VariablesOptionsProps[];
-  columnClickedId?: string;
-  category: CATEGORIES;
-  handleDeleteRow?: (id: string) => void;
-  handleChangeColumnClickedId?: (id: string, category: CATEGORIES) => void;
-  handleInsertingColumn?: ({
-    columnClickedIndex,
-    category
-  }: {
-    columnClickedIndex: number;
-    category: CATEGORIES;
-  }) => void;
-  handleDeleteCategoryColumn?: ({
-    columnId,
-    category
-  }: {
-    columnId: string;
-    category: CATEGORIES;
-  }) => void;
-  handleChangeColumnVariable?: ({
-    columnId,
-    newVariable,
-    category
-  }: {
-    columnId: string;
-    newVariable: VariablesOptionsProps;
-    category: CATEGORIES;
-  }) => void;
-  handleSubmitVariableValue: ({
-    newVariableValue,
-    category
-  }: {
-    newVariableValue: VariableRowData;
-    category: CATEGORIES;
-  }) => void;
-};
+import SelectComponent from '@views/DecisionTable/SelectComponent/SelectComponent';
+import {
+  DataDictionaryVariable,
+  UserDefinedVariable,
+  DATA_TYPE_WITHOUT_ENUM,
+  DATA_TYPE_WITH_ENUM_PREFIX
+} from '@domain/dataDictionary';
 
 const TableSkeleton = ({
   columns,
   rows,
   variablesOptions,
-  columnClickedId,
+  columnClickedIndex,
   category,
   handleDeleteRow,
-  handleChangeColumnClickedId,
+  handleChangeColumnClickedIndex,
   handleInsertingColumn,
   handleDeleteCategoryColumn,
   handleChangeColumnVariable,
-  handleSubmitVariableValue
+  handleSubmitVariableValue,
+  handleSubmitVariableValueForEnum
 }: TableSkeletonProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedRowData, setSelectedRowData] =
-    useState<VariableRowData | null>(null);
+  const [selectedRowCell, setSelectedRowCell] =
+    useState<SelectedCellInRowData | null>(null);
 
   const open = Boolean(anchorEl);
   const isTheLastCategoryColumn = columns.length <= 1;
 
   const handleClickOnMenu = (
     event: React.MouseEvent<HTMLElement>,
-    columnClickedIdNew: string
+    columnClickedIndexNew: number
   ) => {
     setAnchorEl(event.currentTarget);
 
-    handleChangeColumnClickedId?.(columnClickedIdNew, category);
+    handleChangeColumnClickedIndex?.(columnClickedIndexNew);
   };
 
   const handleCloseMenu = () => {
@@ -102,29 +74,41 @@ const TableSkeleton = ({
   };
 
   const handleAddNewColumn = (columnClickedIndex: number) => {
-    handleInsertingColumn?.({ columnClickedIndex, category });
+    handleInsertingColumn?.({
+      columnClickedIndex,
+      category: category as CATEGORIES_WITHOUT_ELSE_ACTIONS
+    });
     handleCloseMenu();
   };
 
-  const handleDeleteColumn = (columnId: string) => {
-    handleDeleteCategoryColumn?.({ columnId, category });
+  const handleDeleteColumn = (columnVariableName: string) => {
+    handleDeleteCategoryColumn?.({
+      columnVariableName,
+      category: category as CATEGORIES_WITHOUT_ELSE_ACTIONS
+    });
     handleCloseMenu();
   };
 
-  const handleSubmitSelectedRowData = (data: VariableRowData) => {
-    handleSubmitVariableValue({ newVariableValue: data, category });
-    setSelectedRowData(null);
+  const handleSubmitSelectedRowCellData = (
+    data: SelectedCellInRowData & FormFieldsProps
+  ) => {
+    handleSubmitVariableValue({
+      formFieldData: data,
+      category: category as CATEGORIES_WITHOUT_ELSE_ACTIONS
+    });
+    setSelectedRowCell(null);
   };
 
   const getOptions = () => {
     const columnsVariables = columns.map(
-      (column: VariableHeaderData) => column.variableName
+      (column: VariableColumnData) => column.name
     );
 
-    const newOptions: VariablesOptionsProps[] = variablesOptions.filter(
-      (option: VariablesOptionsProps) =>
-        !columnsVariables.includes(option.variableName)
-    );
+    const newOptions: (DataDictionaryVariable | UserDefinedVariable)[] =
+      variablesOptions.filter(
+        (option: DataDictionaryVariable | UserDefinedVariable) =>
+          !columnsVariables.includes(option.name)
+      );
 
     return newOptions;
   };
@@ -134,8 +118,8 @@ const TableSkeleton = ({
       <StyledTable sx={{ minWidth: 650 }}>
         <TableHead>
           <StyledTableRow>
-            {columns.map((column: VariableHeaderData, index: number) => (
-              <StyledTableCell key={column.id}>
+            {columns.map((column: VariableColumnData, index: number) => (
+              <StyledTableCell key={index}>
                 <Box
                   sx={{
                     display: 'flex',
@@ -153,28 +137,28 @@ const TableSkeleton = ({
                     disableClearable={true}
                     forcePopupIcon={false}
                     disabled={category === CATEGORIES.ElseActions}
-                    getOptionLabel={(option: VariablesOptionsProps) =>
-                      option ? option.variableName : ''
-                    }
+                    getOptionLabel={(
+                      option: Pick<DataDictionaryVariable, 'name'>
+                    ) => (option ? option.name : '')}
                     onChange={(
                       event: SyntheticEvent<Element, Event>,
-                      newValue: VariablesOptionsProps
+                      newValue
                     ) => {
                       event &&
                         handleChangeColumnVariable?.({
-                          columnId: column.id,
+                          columnIndex: index,
                           newVariable: newValue,
-                          category
+                          category: category as CATEGORIES_WITHOUT_ELSE_ACTIONS
                         });
                     }}
                     renderInput={(params: TextFieldProps) => (
                       <AutocompleteInput
                         {...params}
                         open={open}
-                        columnId={column.id}
-                        columnClickedId={columnClickedId}
+                        variableName={column.name}
+                        columnClickedIndex={columnClickedIndex}
                         anchorEl={anchorEl}
-                        index={index}
+                        columnIndex={index}
                         category={category}
                         handleAddNewColumn={handleAddNewColumn}
                         handleDeleteColumn={handleDeleteColumn}
@@ -187,52 +171,86 @@ const TableSkeleton = ({
                 </Box>
               </StyledTableCell>
             ))}
+            {category === CATEGORIES.Actions && (
+              <StyledTableCell></StyledTableCell>
+            )}
           </StyledTableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row: VariableRowData) => (
-            <StyledTableRow key={row.id} sx={{ height: '62px' }}>
-              {columns.map((column: VariableHeaderData, index: number) => (
-                <StyledTableCell key={index}>
-                  {(column.variableType === VARIABLE_TYPE.String ||
-                    column.variableType === VARIABLE_TYPE.Number) && (
-                    <StyledStack
-                      onClick={() =>
-                        setSelectedRowData({
-                          ...row,
-                          variableName: column.variableName,
-                          variableType: column.variableType
-                        })
-                      }
-                      disabled={!column.variableType.length}
-                      sx={{ cursor: 'pointer' }}
-                    >
-                      {row[column.variableName as keyof VariableRowData] ? (
-                        <Stack>
-                          {row[column.variableName as keyof VariableRowData]}
-                        </Stack>
-                      ) : (
-                        <Typography variant="body2">Select value</Typography>
-                      )}
-                    </StyledStack>
-                  )}
-                  {/* mock only for dicision type */}
+          {rows.map((row: VariableRowData, rowIndex: number) => (
+            <StyledTableRow key={rowIndex} sx={{ height: '62px' }}>
+              {columns.map(
+                (column: VariableColumnData, columnIndex: number) => {
+                  // define cell value for each row
+                  const cellValue =
+                    row[column.name as keyof VariableRowData].expression ||
+                    row[column.name as keyof VariableRowData].operator ? (
+                      `${row[column.name as keyof VariableRowData].operator} ${
+                        row[column.name as keyof VariableRowData].expression
+                      }`
+                    ) : (
+                      <Typography variant="body2">Select value</Typography>
+                    );
 
-                  {column.variableType === VARIABLE_TYPE.Enum && (
-                    <SelectComponent
-                      options={DECISION_OPTIONS}
-                      name="decision"
-                      fullWidth
-                    />
-                  )}
-                </StyledTableCell>
-              ))}
-              {category === CATEGORIES.Actions && !!rows.length && (
+                  return (
+                    <StyledTableCell key={columnIndex}>
+                      {Object.values(DATA_TYPE_WITHOUT_ENUM).includes(
+                        column.dataType as DATA_TYPE_WITHOUT_ENUM
+                      ) &&
+                        (column.dataType as DATA_TYPE_WITHOUT_ENUM) !==
+                          DATA_TYPE_WITHOUT_ENUM['Boolean'] && (
+                          <StyledStack
+                            onClick={() =>
+                              setSelectedRowCell({
+                                rowIndex,
+                                variableName: column.name,
+                                dataType: column.dataType
+                              })
+                            }
+                            disabled={!column.dataType.length}
+                            sx={{ cursor: 'pointer' }}
+                          >
+                            {cellValue}
+                          </StyledStack>
+                        )}
+                      {/* Controller for the enum type of variables */}
+                      {(Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
+                        column.dataType as DATA_TYPE_WITH_ENUM_PREFIX
+                      ) ||
+                        (column.dataType as DATA_TYPE_WITHOUT_ENUM) ===
+                          DATA_TYPE_WITHOUT_ENUM.Boolean) && (
+                        <SelectComponent
+                          rowIndex={rowIndex}
+                          category={category}
+                          variableName={column.name}
+                          value={
+                            row[column.name as keyof VariableRowData]
+                              .expression ?? ''
+                          }
+                          options={
+                            (column.dataType as DATA_TYPE_WITHOUT_ENUM) !==
+                              DATA_TYPE_WITHOUT_ENUM.Boolean &&
+                            column?.allowedValues
+                              ? column?.allowedValues
+                              : BOOLEAN_OPTIONS
+                          }
+                          fullWidth
+                          handleSubmitVariableValueForEnum={
+                            handleSubmitVariableValueForEnum
+                          }
+                        />
+                      )}
+                    </StyledTableCell>
+                  );
+                }
+              )}
+              {!!rows.length && category === CATEGORIES.Actions && (
                 <StyledTableCell sx={{ padding: 0 }} width={40}>
                   <Button
                     fullWidth
                     sx={{ padding: '10px' }}
-                    onClick={() => handleDeleteRow?.(row.id)}
+                    onClick={() => handleDeleteRow?.(rowIndex)}
+                    disabled={rows.length <= 1}
                   >
                     <DeleteOutlineIcon />
                   </Button>
@@ -243,13 +261,13 @@ const TableSkeleton = ({
         </TableBody>
       </StyledTable>
 
-      {selectedRowData && (
+      {selectedRowCell && (
         <SelectVariableValueDialog
-          modalOpen={!!selectedRowData}
-          handleClose={() => setSelectedRowData(null)}
-          selectedRowData={selectedRowData}
+          modalOpen={!!selectedRowCell}
+          handleClose={() => setSelectedRowCell(null)}
+          selectedRowCell={selectedRowCell}
           category={category}
-          handleSubmitSelectedRowData={handleSubmitSelectedRowData}
+          handleSubmitSelectedRowCellData={handleSubmitSelectedRowCellData}
         />
       )}
     </>

@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { palette } from '../../../themeConfig';
 import { OPERATORS, CATEGORIES } from '../constants';
-import { VariableRowData } from '../types';
+import { SelectedCellInRowData, FormFieldsProps } from '../types';
 import { getOperatorOptions } from '../utils';
 
 import validationSchema from './validationSchema';
@@ -14,29 +14,24 @@ import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';
 import { SingleSelect } from '@components/shared/Forms/SingleSelect';
-
-type FormFieldsProps = {
-  variableName: string;
-  operator: string;
-  value?: string;
-  lowerBound?: number;
-  upperBound?: number;
-};
+import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
   handleClose: () => void;
-  selectedRowData: VariableRowData;
+  selectedRowCell: SelectedCellInRowData;
   category: CATEGORIES;
-  handleSubmitSelectedRowData: (data: VariableRowData) => void;
+  handleSubmitSelectedRowCellData: (
+    data: SelectedCellInRowData & FormFieldsProps
+  ) => void;
 };
 
 const SelectVariableValueDialog = ({
   modalOpen,
   handleClose,
-  selectedRowData,
+  selectedRowCell,
   category,
-  handleSubmitSelectedRowData
+  handleSubmitSelectedRowCellData
 }: SelectVariableValueDialogProps) => {
   const {
     handleSubmit,
@@ -47,15 +42,17 @@ const SelectVariableValueDialog = ({
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      variableName: selectedRowData.variableName,
-      operator: selectedRowData?.operator ?? '',
-      value: selectedRowData?.value ?? '',
-      lowerBound: selectedRowData?.lowerBound,
-      upperBound: selectedRowData?.upperBound
+      variableName: selectedRowCell.variableName,
+      operator: '',
+      value: '',
+      lowerBound: null || undefined,
+      upperBound: null || undefined
     }
   });
 
-  const operatorOptions = getOperatorOptions(selectedRowData.variableType);
+  const operatorOptions = getOperatorOptions(
+    (selectedRowCell.dataType as DATA_TYPE_WITHOUT_ENUM) ?? ''
+  );
 
   const watchOperator = watch('operator');
 
@@ -69,12 +66,12 @@ const SelectVariableValueDialog = ({
     if (watchOperator !== OPERATORS.Between) {
       const { operator, value } = data;
 
-      handleSubmitSelectedRowData({ ...selectedRowData, operator, value });
+      handleSubmitSelectedRowCellData({ ...selectedRowCell, operator, value });
     } else {
       const { operator, lowerBound, upperBound } = data;
 
-      handleSubmitSelectedRowData({
-        ...selectedRowData,
+      handleSubmitSelectedRowCellData({
+        ...selectedRowCell,
         operator,
         lowerBound,
         upperBound

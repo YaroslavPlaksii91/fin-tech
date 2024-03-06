@@ -3,9 +3,11 @@ import { Handle, Position, NodeProps } from 'reactflow';
 import styles from './style.module.scss';
 
 import { HexagonOutlinedIconSvg } from '@components/shared/Icons';
-import { NodeData } from '@domain/flow';
+import { NodeData, DecisionTableData } from '@domain/flow';
 
-const RectangleNode: React.FC<NodeProps<NodeData>> = ({ data }) => (
+const RectangleNode: React.FC<NodeProps<NodeData & DecisionTableData>> = ({
+  data
+}) => (
   <div id={data.stepId} className={styles['node-rectangle']}>
     <Handle type="source" position={Position.Right} />
     <HexagonOutlinedIconSvg />
