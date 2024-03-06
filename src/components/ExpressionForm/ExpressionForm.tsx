@@ -32,7 +32,8 @@ import {
   functionsLiterals,
   operatorsConfig
 } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
-import AutocompleteGroup from '@components/shared/Autocomplete/Autocomplete';
+import AutocompleteGroup from '@components/shared/Autocomplete/AutocompleteGroup';
+import { DATA_DICTIONARY_LABELS } from '@constants/common';
 
 const DEFAULT_MOCK = {
   outputVariableName: 'temp2',
@@ -86,7 +87,10 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   const options = useMemo(
     () =>
       Object.entries(variables).reduce((acc: Option[], [group, items]) => {
-        const groupOptions = items.map((item) => ({ group, ...item }));
+        const groupOptions = items.map((item) => ({
+          group: DATA_DICTIONARY_LABELS[group],
+          ...item
+        }));
         return [...acc, ...groupOptions];
       }, []),
     [variables]

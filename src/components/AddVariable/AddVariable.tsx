@@ -12,11 +12,7 @@ import {
   DataDictionaryVariable,
   UserDefinedVariable
 } from '@domain/dataDictionary';
-
-const tabLabels: { [key: string]: string } = {
-  userDefined: 'User Defined',
-  laPMSVariables: 'Lead and Provider Management System'
-};
+import { DATA_DICTIONARY_LABELS } from '@constants/common';
 
 type AddVariableType = {
   data: Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>;
@@ -39,7 +35,7 @@ const AddVariable: React.FC<AddVariableType> = ({ data }) => {
           {Object.keys(data).map((tabName, index) => (
             <StyledTab
               key={index}
-              label={tabLabels[tabName]}
+              label={DATA_DICTIONARY_LABELS[tabName]}
               id={`tab-${index}`}
               aria-controls={`tabpanel-${index}`}
             />
