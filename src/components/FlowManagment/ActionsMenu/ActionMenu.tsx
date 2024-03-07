@@ -58,7 +58,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         setModalDuplicateOpen(true);
         break;
       case ActionTypes.VIEW_DATA_DICTIONARY:
-        Logger.info('View data dictionary');
+        navigate(routes.underwriting.flow.dataDictionary(flow.id));
         break;
       case ActionTypes.EDIT_FLOW: {
         navigate(routes.underwriting.flow.edit(flow.id));
