@@ -9,6 +9,7 @@ import Flows from '@pages/Flows';
 import Home from '@pages/Home';
 import FlowEdit from '@pages/FlowEdit';
 import FlowDetails from '@pages/FlowDetails';
+import DataDictionary from '@pages/DataDictionary';
 
 export const router = createBrowserRouter([
   {
@@ -43,6 +44,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoutes>
             <FlowEdit />
+          </PrivateRoutes>
+        )
+      },
+      {
+        path: `${routes.underwriting.flow.dataDictionary(':id')}`,
+        element: (
+          <PrivateRoutes>
+            <DataDictionary />
           </PrivateRoutes>
         )
       },
