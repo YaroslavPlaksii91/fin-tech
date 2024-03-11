@@ -1,19 +1,12 @@
 import { useState, useContext } from 'react';
-
 import { Box, Tabs, Typography } from '@mui/material';
 
-import { palette } from '../../themeConfig';
 import TabPanel from '../shared/Tabs/TabPanel';
 
 import { StyledContainer, StyledTab } from './styled';
-import TableList from './TableList';
+// import TableList from './TableList';
 
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
-
-import {
-  DataDictionaryVariable,
-  UserDefinedVariable
-} from '@domain/dataDictionary';
 
 const tabLabels: { [key: string]: string } = {
   userDefined: 'User Defined',
@@ -47,7 +40,7 @@ const AddVariable = () => {
       </Box>
       {value?.variables &&
         Object.keys(value.variables).map((tabName, index) => (
-          <TabPanel key={index} value={tab} index={index}>
+          <TabPanel key={tabName} value={tab} index={index}>
             {/* <TableList data={value.variables[tabName]} /> */}
           </TabPanel>
         ))}
