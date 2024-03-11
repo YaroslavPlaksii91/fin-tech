@@ -68,3 +68,14 @@ export type UserDefinedVariable = {
   usageMode?: string;
   sourceType?: string;
 };
+
+// targetDataType need add data type
+
+export type ExpressionValidate = {
+  expression: string;
+  targetDataType: string;
+  params: {
+    name: string;
+    type: DATA_TYPE;
+  }[];
+};

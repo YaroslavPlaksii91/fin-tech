@@ -24,6 +24,7 @@ import FunctionsAutosuggestion, {
 
 export interface ExpressionEditorAPI {
   focus: (payload: { selectionStart: number }) => void;
+  getCursorPosition: () => number;
 }
 
 const ExpressionEditor: ForwardRefRenderFunction<
@@ -45,9 +46,12 @@ const ExpressionEditor: ForwardRefRenderFunction<
         if (payload.selectionStart) {
           setCaretPosition(payload.selectionStart);
         }
+      },
+      getCursorPosition() {
+        return caretPosition;
       }
     }),
-    [textareaRef, setCaretPosition]
+    [textareaRef, setCaretPosition, caretPosition]
   );
 
   const currentOperator = regExpHelpers.findLeftOperator(

@@ -10,6 +10,9 @@ import {
   useState
 } from 'react';
 import { groupBy } from 'lodash';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+import validationSchema from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
@@ -34,9 +37,10 @@ import {
 } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
 import AutocompleteGroup from '@components/shared/Autocomplete/AutocompleteGroup';
 import { DATA_DICTIONARY_LABELS } from '@constants/common';
+import { dataDictionaryService } from '@services/data-dictionary';
 
 const DEFAULT_MOCK = {
-  outputVariableName: 'temp2',
+  outputVariableName: '',
   expressionString: 'Max(perm2,3,1) == 4',
   destinationType: VARIABLE_DESTINATION_TYPE.TemporaryVariable,
   destinationDataType: DATA_TYPE_WITHOUT_ENUM.Boolean,
@@ -107,10 +111,24 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     defaultValues: {
       outputVariableName: '',
       expressionString: ''
-    }
+    },
+    // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
+    resolver: yupResolver(validationSchema)
   });
 
-  const onSubmit: SubmitHandler<Expression> = (data) => {
+  const onSubmit: SubmitHandler<Expression> = async (data) => {
+    const usageVariables = options.filter((option) =>
+      data.expressionString.includes(option.name)
+    );
+    const params = usageVariables.map((variable) => ({
+      name: variable.name,
+      type: variable.dataType
+    }));
+    await dataDictionaryService.validateExpression({
+      expression: data.expressionString,
+      targetDataType: data.destinationDataType,
+      params
+    });
     handleAddNewBusinessRule({ data, id: initialValues?.id });
     handleCloseModal();
   };
@@ -147,11 +165,30 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     [setValue, getValues, expressionEditorRef]
   );
 
+  const onVariableListClick = useCallback(
+    (variable: DataDictionaryVariable | UserDefinedVariable) => {
+      const cursorPosition =
+        expressionEditorRef.current?.getCursorPosition() || 0;
+      const prev = getValues('expressionString');
+      const newValue =
+        prev.slice(0, cursorPosition) +
+        variable.name +
+        prev.slice(cursorPosition);
+      setValue('expressionString', newValue);
+      expressionEditorRef.current?.focus({
+        selectionStart: cursorPosition + variable.name.length
+      });
+    },
+    []
+  );
+
   const handleAutoCompleteChange = (
     _event: SyntheticEvent<Element, Event>,
     value: Option | null
   ) => {
     setValue('outputVariableName', value?.name || '');
+    setValue('destinationType', value?.sourceType);
+    setValue('destinationDataType', value?.dataType || '');
     setAutoCompleteValue(value);
   };
 
@@ -207,7 +244,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
           />
         </Stack>
         <Stack spacing={2} direction="row" pt={2}>
-          <AddVariable data={variables} />
+          <AddVariable onItemClick={onVariableListClick} data={variables} />
           <ExpressionOperatorsList
             list={operatorsList}
             onItemClick={onExpressionOperatorsListClick}

@@ -1,5 +1,8 @@
 import api from '@utils/api';
-import { DataDictionaryVariable } from '@domain/dataDictionary';
+import {
+  DataDictionaryVariable,
+  ExpressionValidate
+} from '@domain/dataDictionary';
 import { userDefinedData } from '@constants/mocks';
 
 class DataDictionaryService {
@@ -8,6 +11,14 @@ class DataDictionaryService {
       '/expression-builder/data-dictionary-variables'
     );
     return data;
+  }
+
+  async validateExpression(data: ExpressionValidate) {
+    const res = await api.post<ExpressionValidate>(
+      '/expression-builder/validate',
+      data
+    );
+    return res;
   }
 
   getUserDefinedVariables() {

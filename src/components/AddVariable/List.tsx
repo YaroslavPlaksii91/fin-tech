@@ -9,9 +9,11 @@ import {
 } from '@domain/dataDictionary';
 
 export default function List({
-  data
+  data,
+  onItemClick
 }: {
   data: DataDictionaryVariable[] | UserDefinedVariable[];
+  onItemClick: (item: DataDictionaryVariable | UserDefinedVariable) => void;
 }) {
   return (
     <StyledList>
@@ -19,7 +21,11 @@ export default function List({
         <StyledListItem
           key={index}
           secondaryAction={
-            <IconButton onClick={() => 'click'} edge="end" aria-label="add">
+            <IconButton
+              onClick={() => onItemClick(el)}
+              edge="end"
+              aria-label="add"
+            >
               <AddCircleOutlineIcon fontSize="large" />
             </IconButton>
           }
