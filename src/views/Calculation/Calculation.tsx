@@ -136,6 +136,7 @@ const Calculation: React.FC<CalculationProps> = ({
           onDiscard={() => setOpenDiscardModal(true)}
           disabled={isSubmitting}
           isSubmitting={isSubmitting}
+          buttonType="submit"
         />
         <Stack pl={3} pr={3}>
           <StyledPaper>
