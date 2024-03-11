@@ -38,6 +38,8 @@ import {
 import AutocompleteGroup from '@components/shared/Autocomplete/AutocompleteGroup';
 import { DATA_DICTIONARY_LABELS } from '@constants/common';
 import { dataDictionaryService } from '@services/data-dictionary';
+import { parseErrorMessages } from '@utils/helpers';
+import { StyledErrorText } from '@components/shared/ErrorText/styled';
 
 const DEFAULT_MOCK = {
   outputVariableName: '',
@@ -106,8 +108,10 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     control,
     getValues,
     setValue,
-    formState: { isSubmitting }
+    setError,
+    formState: { errors, isSubmitting }
   } = useForm<Expression>({
+    mode: 'onChange',
     defaultValues: {
       outputVariableName: '',
       expressionString: ''
@@ -124,13 +128,21 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
       name: variable.name,
       type: variable.dataType
     }));
-    await dataDictionaryService.validateExpression({
-      expression: data.expressionString,
-      targetDataType: data.destinationDataType,
-      params
-    });
-    handleAddNewBusinessRule({ data, id: initialValues?.id });
-    handleCloseModal();
+    try {
+      await dataDictionaryService.validateExpression({
+        expression: data.expressionString,
+        targetDataType: data.destinationDataType,
+        params
+      });
+      handleAddNewBusinessRule({ data, id: initialValues?.id });
+      handleCloseModal();
+    } catch (err) {
+      const message = parseErrorMessages(err);
+      setError('root.serverError', {
+        type: 'server',
+        message
+      });
+    }
   };
 
   const handleCloseModal = () => {
@@ -176,7 +188,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         prev.slice(cursorPosition);
       setValue('expressionString', newValue);
       expressionEditorRef.current?.focus({
-        selectionStart: cursorPosition + variable.name.length
+        selectionStart: newValue.length + 1
       });
     },
     []
@@ -250,6 +262,9 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
             onItemClick={onExpressionOperatorsListClick}
           />
         </Stack>
+        <StyledErrorText variant="body2">
+          {errors?.root?.serverError.message}
+        </StyledErrorText>
         <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
           <Button
             variant="contained"

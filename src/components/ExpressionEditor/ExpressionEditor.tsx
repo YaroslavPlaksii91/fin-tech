@@ -103,6 +103,13 @@ const ExpressionEditor: ForwardRefRenderFunction<
     }
   };
 
+  const handleOnChange = (
+    e: React.FormEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    setCaretPosition(e.currentTarget.selectionStart);
+    onChange && onChange(e);
+  };
+
   return (
     <div className={styles.root}>
       <TextareaAutosize
@@ -112,7 +119,7 @@ const ExpressionEditor: ForwardRefRenderFunction<
         minRows={1}
         maxRows={10}
         onKeyDown={handleTextareaKeyDown}
-        onChange={onChange}
+        onChange={handleOnChange}
         onClick={(e) => {
           setCaretPosition(e.currentTarget.selectionStart);
         }}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FieldErrors } from 'react-hook-form';
 
-import { StyledText } from './styled';
+import { StyledErrorText } from './styled';
 
 import { parseValidationError } from '@utils/helpers';
 
@@ -16,9 +16,9 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ errors, name }) => {
   }
 
   return (
-    <StyledText variant="body2">
+    <StyledErrorText variant="body2">
       {parseValidationError(errors, name)}
-    </StyledText>
+    </StyledErrorText>
   );
 };
 

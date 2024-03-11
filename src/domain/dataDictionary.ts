@@ -51,7 +51,7 @@ export interface DataDictionaryVariable {
   source: VARIABLE_SOURCE_TYPE;
   destinationType?: string;
   sourceType: string;
-  dataType?: DATA_TYPE;
+  dataType: DATA_TYPE;
   defaultValue?: string;
   isRequired?: boolean;
   usageMode?: string;
