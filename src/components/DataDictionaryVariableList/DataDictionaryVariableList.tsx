@@ -1,51 +1,62 @@
-import { useState, useContext } from 'react';
-import { Box, Tabs, Typography } from '@mui/material';
+import { useState } from 'react';
+import { Box, Stack, Tabs, Typography } from '@mui/material';
 
 import TabPanel from '../shared/Tabs/TabPanel';
 
-import { StyledContainer, StyledTab } from './styled';
-// import TableList from './TableList';
+import { StyledTab } from './styled';
+import TableList from './TableList';
 
-import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
+import {
+  DataDictionaryVariable,
+  UserDefinedVariable
+} from '@domain/dataDictionary';
 
 const tabLabels: { [key: string]: string } = {
-  userDefined: 'User Defined',
-  laPMSVariables: 'Lead and Provider Management System'
+  laPMSVariables: 'LaPMS (Input)',
+  userDefined: 'User Defined'
 };
 
-const AddVariable = () => {
+const DataDictionaryVariableList = ({
+  variables
+}: {
+  variables: Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>;
+}) => {
   const [tab, setTab] = useState(0);
-
-  const value = useContext(DataDictionaryContext);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
   };
 
   return (
-    <StyledContainer>
-      <Typography variant="h1">Data Dictionary</Typography>
+    <Stack>
+      <Typography variant="h1" pb={3}>
+        Data Dictionary
+      </Typography>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={tab} onChange={handleChange} aria-label="tabs">
-          {value?.variables &&
-            Object.keys(value.variables).map((tabName, index) => (
-              <StyledTab
-                key={index}
-                label={tabLabels[tabName]}
-                id={`tab-${index}`}
-                aria-controls={`tabpanel-${index}`}
-              />
-            ))}
+          {Object.keys(variables).map((tabName, index) => (
+            <StyledTab
+              key={index}
+              label={tabLabels[tabName]}
+              id={`tab-${index}`}
+              aria-controls={`tabpanel-${index}`}
+            />
+          ))}
+          <StyledTab
+            key="all-variables"
+            label="All"
+            id="tab-all"
+            aria-controls="tabpanel-all"
+          />
         </Tabs>
       </Box>
-      {value?.variables &&
-        Object.keys(value.variables).map((tabName, index) => (
-          <TabPanel key={tabName} value={tab} index={index}>
-            {/* <TableList data={value.variables[tabName]} /> */}
-          </TabPanel>
-        ))}
-    </StyledContainer>
+      {Object.keys(variables).map((tabName, index) => (
+        <TabPanel key={tabName} value={tab} index={index}>
+          <TableList data={variables[tabName]} />
+        </TabPanel>
+      ))}
+    </Stack>
   );
 };
 
-export default AddVariable;
+export default DataDictionaryVariableList;

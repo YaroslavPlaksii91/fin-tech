@@ -20,7 +20,7 @@ const isFulfilled = function <T>(
   return input.status === PROMISE_TYPES.Fulfilled;
 };
 
-const useDataDictionaryVariables = (flow: IFlow) => {
+const useDataDictionaryVariables = (flow?: IFlow) => {
   const [variables, setVariables] =
     useState<
       Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>
@@ -36,7 +36,7 @@ const useDataDictionaryVariables = (flow: IFlow) => {
     ]);
 
     const temporaryVariables =
-      flow.temporaryVariables?.map((variable) => ({
+      flow?.temporaryVariables?.map((variable) => ({
         ...variable,
         source: VARIABLE_SOURCE_TYPE.TemporaryVariable,
         usageMode: VARIABLE_USAGE_MODE.ReadWrite,
