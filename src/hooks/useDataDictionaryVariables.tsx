@@ -40,7 +40,8 @@ const useDataDictionaryVariables = (flow?: IFlow) => {
         ...variable,
         source: VARIABLE_SOURCE_TYPE.TemporaryVariable,
         usageMode: VARIABLE_USAGE_MODE.ReadWrite,
-        sourceType: VARIABLE_SOURCE_TYPE.TemporaryVariable
+        sourceType: VARIABLE_SOURCE_TYPE.TemporaryVariable,
+        destinationType: VARIABLE_SOURCE_TYPE.TemporaryVariable
       })) ?? [];
 
     const extendedVariables: Record<

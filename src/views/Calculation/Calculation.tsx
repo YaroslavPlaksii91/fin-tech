@@ -158,9 +158,7 @@ const Calculation: React.FC<CalculationProps> = ({
                 <TableBody>
                   {fields.map((expression, index) => (
                     <StyledTableRow key={index}>
-                      <StyledTableCell>
-                        {expression.outputVariableName}
-                      </StyledTableCell>
+                      <StyledTableCell>{expression.outputName}</StyledTableCell>
                       <StyledTableCell>
                         {expression.expressionString}
                       </StyledTableCell>

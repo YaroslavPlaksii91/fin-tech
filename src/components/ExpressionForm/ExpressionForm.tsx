@@ -21,11 +21,11 @@ import { Expression } from '@views/Calculation/types';
 import AddVariable from '@components/AddVariable/AddVariable';
 import ExpressionOperatorsList from '@components/ExpressionForm/ExpressionOperatorsList/ExpressionOperatorsList.tsx';
 import {
-  DATA_TYPE_WITHOUT_ENUM,
+  // DATA_TYPE_WITHOUT_ENUM,
   DataDictionaryVariable,
-  UserDefinedVariable,
-  VARIABLE_DESTINATION_TYPE,
-  VARIABLE_SOURCE_TYPE
+  UserDefinedVariable
+  // VARIABLE_DESTINATION_TYPE,
+  // VARIABLE_SOURCE_TYPE
 } from '@domain/dataDictionary';
 import ExpressionEditor, {
   ExpressionEditorAPI
@@ -40,19 +40,6 @@ import { DATA_DICTIONARY_LABELS } from '@constants/common';
 import { dataDictionaryService } from '@services/data-dictionary';
 import { parseErrorMessages } from '@utils/helpers';
 import { StyledErrorText } from '@components/shared/ErrorText/styled';
-
-const DEFAULT_MOCK = {
-  outputVariableName: '',
-  expressionString: 'Max(perm2,3,1) == 4',
-  destinationType: VARIABLE_DESTINATION_TYPE.TemporaryVariable,
-  destinationDataType: DATA_TYPE_WITHOUT_ENUM.Boolean,
-  inputVariables: [
-    {
-      variableName: 'perm2',
-      sourceType: VARIABLE_SOURCE_TYPE.PermanentVariable
-    }
-  ]
-};
 
 const operatorsList = [
   ...Object.values(groupBy(operatorsConfig, 'category')),
@@ -113,7 +100,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   } = useForm<Expression>({
     mode: 'onChange',
     defaultValues: {
-      outputVariableName: '',
+      outputName: '',
       expressionString: ''
     },
     // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
@@ -121,9 +108,10 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   });
 
   const onSubmit: SubmitHandler<Expression> = async (data) => {
-    const usageVariables = options.filter((option) =>
-      data.expressionString.includes(option.name)
-    );
+    const usageVariables = options.filter((option) => {
+      const regex = new RegExp(`\\b${option.name}\\b`);
+      return regex.test(data.expressionString);
+    });
     const params = usageVariables.map((variable) => ({
       name: variable.name,
       type: variable.dataType
@@ -134,7 +122,14 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         targetDataType: data.destinationDataType,
         params
       });
-      handleAddNewBusinessRule({ data, id: initialValues?.id });
+      const variableSources = usageVariables.map((variable) => ({
+        name: variable.name,
+        sourceType: variable.sourceType
+      }));
+      handleAddNewBusinessRule({
+        data: { ...data, variableSources },
+        id: initialValues?.id
+      });
       handleCloseModal();
     } catch (err) {
       const message = parseErrorMessages(err);
@@ -154,13 +149,12 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     if (initialValues) {
       reset(initialValues);
       const defaultValue =
-        options.find(
-          (variable) => variable.name === getValues('outputVariableName')
-        ) ?? null;
+        options.find((variable) => variable.name === getValues('outputName')) ??
+        null;
       setAutoCompleteValue(defaultValue);
     } else {
       setAutoCompleteValue(null);
-      reset(DEFAULT_MOCK);
+      reset(undefined);
     }
   }, [initialValues, modalOpen, options]);
 
@@ -198,9 +192,11 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     _event: SyntheticEvent<Element, Event>,
     value: Option | null
   ) => {
-    setValue('outputVariableName', value?.name || '');
-    setValue('destinationType', value?.sourceType);
-    setValue('destinationDataType', value?.dataType || '');
+    if (value) {
+      setValue('outputName', value.name);
+      setValue('destinationType', value.destinationType);
+      setValue('destinationDataType', value.dataType);
+    }
     setAutoCompleteValue(value);
   };
 
@@ -233,7 +229,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
                 {...params}
                 size="small"
                 sx={{ width: 320 }}
-                name="outputVariableName"
+                name="outputName"
                 control={control}
                 label="Variable"
                 placeholder="Enter variable"

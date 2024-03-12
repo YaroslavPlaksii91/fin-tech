@@ -67,6 +67,7 @@ export type UserDefinedVariable = {
   allowedValues?: string | string[];
   usageMode?: string;
   sourceType?: string;
+  destinationType?: string;
 };
 
 // targetDataType need add data type
