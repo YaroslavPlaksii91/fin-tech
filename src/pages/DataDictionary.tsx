@@ -1,15 +1,18 @@
 import { useParams } from 'react-router-dom';
-import { Box, Typography, Breadcrumbs, Stack, Link } from '@mui/material';
+import { Typography, Breadcrumbs, Stack, Link } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 import { palette } from '../themeConfig.ts';
 
 import { LayoutContainer } from '@components/Layouts/MainLayout';
-import { ChartIcon } from '@components/shared/Icons';
+import DataDictionaryVariableList from '@components/DataDictionaryVariableList/DataDictionaryVariableList.tsx';
+import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import routes from '@constants/routes';
 
 export default function DataDictionary() {
   const { id } = useParams();
+
+  const { variables } = useDataDictionaryVariables();
 
   const breadcrumbs = [
     <Link
@@ -36,18 +39,17 @@ export default function DataDictionary() {
   ];
   return (
     <LayoutContainer>
-      <Stack spacing={2} pl={12} pt={2}>
-        <Breadcrumbs
-          separator={<NavigateNextIcon fontSize="medium" />}
-          aria-label="breadcrumb"
-        >
-          {breadcrumbs}
-        </Breadcrumbs>
+      <Stack paddingX={12} sx={{ width: '100%' }}>
+        <Stack spacing={2} pt={2} pb={2}>
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="medium" />}
+            aria-label="breadcrumb"
+          >
+            {breadcrumbs}
+          </Breadcrumbs>
+        </Stack>
+        {variables && <DataDictionaryVariableList variables={variables} />}
       </Stack>
-      <Box sx={{ display: 'flex', alignItems: 'center', margin: 'auto' }}>
-        <Typography variant="h5">Data dictionary</Typography>
-        <ChartIcon />
-      </Box>
     </LayoutContainer>
   );
 }
