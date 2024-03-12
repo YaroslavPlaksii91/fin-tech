@@ -13,6 +13,8 @@ import { groupBy } from 'lodash';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import validationSchema from './validationSchema';
+import { Option } from './types';
+import { mapVariablesToParamsAndSources } from './utils';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
@@ -59,10 +61,6 @@ interface ExpressionFormProps {
   modalOpen: boolean;
   setModalOpen: (value: boolean) => void;
 }
-
-type Variable = DataDictionaryVariable | UserDefinedVariable;
-
-type Option = Variable & { group: string };
 
 export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   initialValues,
@@ -112,20 +110,14 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
       const regex = new RegExp(`\\b${option.name}\\b`);
       return regex.test(data.expressionString);
     });
-    const params = usageVariables.map((variable) => ({
-      name: variable.name,
-      type: variable.dataType
-    }));
+    const { params, variableSources } =
+      mapVariablesToParamsAndSources(usageVariables);
     try {
       await dataDictionaryService.validateExpression({
         expression: data.expressionString,
         targetDataType: data.destinationDataType,
         params
       });
-      const variableSources = usageVariables.map((variable) => ({
-        name: variable.name,
-        sourceType: variable.sourceType
-      }));
       handleAddNewBusinessRule({
         data: { ...data, variableSources },
         id: initialValues?.id
