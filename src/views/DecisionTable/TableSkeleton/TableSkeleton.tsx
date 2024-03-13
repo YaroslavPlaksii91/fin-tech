@@ -81,9 +81,9 @@ const TableSkeleton = ({
     handleCloseMenu();
   };
 
-  const handleDeleteColumn = (columnVariableName: string) => {
+  const handleDeleteColumn = (columnIndex: number) => {
     handleDeleteCategoryColumn?.({
-      columnVariableName,
+      columnIndex,
       category: category as CATEGORIES_WITHOUT_ELSE_ACTIONS
     });
     handleCloseMenu();
@@ -155,7 +155,6 @@ const TableSkeleton = ({
                       <AutocompleteInput
                         {...params}
                         open={open}
-                        variableName={column.name}
                         columnClickedIndex={columnClickedIndex}
                         anchorEl={anchorEl}
                         columnIndex={index}

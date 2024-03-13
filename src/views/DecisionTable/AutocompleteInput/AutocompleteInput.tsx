@@ -8,13 +8,12 @@ import { HexagonOutlinedIcon } from '@components/shared/Icons';
 
 type AutocompleteInputProps = {
   open: boolean;
-  variableName: string;
   columnClickedIndex?: number;
   anchorEl: HTMLElement | null;
   columnIndex: number;
   category: CATEGORIES;
   handleAddNewColumn?: (index: number) => void;
-  handleDeleteColumn?: (variableName: string) => void;
+  handleDeleteColumn?: (columnIndex: number) => void;
   handleClickOnMenu: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     columnIndex: number
@@ -25,7 +24,6 @@ type AutocompleteInputProps = {
 
 export const AutocompleteInput = ({
   open,
-  variableName,
   columnClickedIndex,
   anchorEl,
   columnIndex,
@@ -75,7 +73,7 @@ export const AutocompleteInput = ({
 
             <MenuItem
               key="delete-column-action"
-              onClick={() => handleDeleteColumn?.(variableName)}
+              onClick={() => handleDeleteColumn?.(columnIndex)}
               disabled={isTheLastCategoryColumn}
             >
               <ListItemIcon>
