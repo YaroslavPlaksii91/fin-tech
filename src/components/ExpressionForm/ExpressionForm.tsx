@@ -125,8 +125,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
       handleCloseModal();
     } catch (err) {
       const message = parseErrorMessages(err);
-      setError('root.serverError', {
-        type: 'server',
+      setError('expressionString', {
         message
       });
     }
@@ -238,7 +237,11 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
             placeholder="Enter expression"
             InputProps={{
               inputComponent: (props) => (
-                <ExpressionEditor {...props} ref={expressionEditorRef} />
+                <ExpressionEditor
+                  {...props}
+                  ref={expressionEditorRef}
+                  error={!!errors?.expressionString}
+                />
               )
             }}
           />

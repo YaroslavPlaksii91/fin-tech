@@ -77,6 +77,6 @@ export type ExpressionValidate = {
   targetDataType: string;
   params: {
     name: string;
-    type: DATA_TYPE;
+    dataType: DATA_TYPE;
   }[];
 };

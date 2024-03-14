@@ -2,7 +2,7 @@ import { Option } from './types';
 
 // Add correct type for params and variableSources
 interface MappingResult {
-  params: { name: string; type: string }[];
+  params: { name: string; dataType: string }[];
   variableSources: { name: string; sourceType?: string }[];
 }
 
@@ -11,7 +11,7 @@ export const mapVariablesToParamsAndSources = (variables: Option[]) =>
     (acc, variable) => {
       acc.params.push({
         name: variable.name,
-        type: variable.dataType
+        dataType: variable.dataType
       });
 
       acc.variableSources.push({

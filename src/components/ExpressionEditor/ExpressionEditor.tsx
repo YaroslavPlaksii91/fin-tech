@@ -30,7 +30,7 @@ export interface ExpressionEditorAPI {
 const ExpressionEditor: ForwardRefRenderFunction<
   ExpressionEditorAPI,
   ExpressionEditorProps
-> = ({ name, value, onChange }, ref) => {
+> = ({ name, value, onChange, error }, ref) => {
   const textareaRef: MutableRefObject<HTMLTextAreaElement | null> =
     useRef(null);
 
@@ -115,7 +115,8 @@ const ExpressionEditor: ForwardRefRenderFunction<
       <TextareaAutosize
         ref={textareaRef}
         value={value}
-        className={styles.textarea}
+        placeholder="Enter expression"
+        className={`${styles.textarea} ${error ? styles.error : ''}`}
         minRows={1}
         maxRows={10}
         onKeyDown={handleTextareaKeyDown}
