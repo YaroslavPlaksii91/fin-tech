@@ -52,6 +52,7 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
           loading={isSubmitting}
           type={buttonType}
           variant="contained"
+          sx={{ textWrap: 'nowrap' }}
           onClick={() => (onApplyChangesClick ? onApplyChangesClick() : null)}
         >
           Apply changes

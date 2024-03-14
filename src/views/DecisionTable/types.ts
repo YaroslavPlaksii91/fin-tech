@@ -62,10 +62,10 @@ export type TableSkeletonProps = {
     category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => void;
   handleDeleteCategoryColumn?: ({
-    columnVariableName,
+    columnIndex,
     category
   }: {
-    columnVariableName: string;
+    columnIndex: number;
     category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => void;
   handleChangeColumnVariable?: ({

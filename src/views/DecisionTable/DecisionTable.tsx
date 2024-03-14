@@ -246,26 +246,26 @@ const DecisionTableStep = ({
   };
 
   const handleDeleteCategoryColumn = ({
-    columnVariableName,
+    columnIndex,
     category
   }: {
-    columnVariableName: string;
+    columnIndex: number;
     category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => {
     if (category === CATEGORIES.Actions) {
       const newElseActionsEntries = [...elseActions];
-
-      setElseActions(
-        newElseActionsEntries.filter((el) => el.name !== columnVariableName)
-      );
+      newElseActionsEntries.splice(columnIndex, 1);
+      setElseActions(newElseActionsEntries);
     }
 
     setCaseEntries((prev) =>
       prev.map((row) => {
         const newColumns = [...row[category]];
+        newColumns.splice(columnIndex, 1);
+
         return {
           ...row,
-          [category]: newColumns.filter((el) => el.name !== columnVariableName)
+          [category]: newColumns
         };
       })
     );
@@ -416,7 +416,7 @@ const DecisionTableStep = ({
       />
       <StyledPaper>
         <StyledTableContainer>
-          <Stack sx={{ width: 'inherit' }}>
+          <Stack sx={{ width: 'auto' }}>
             <StyledStack
               sx={{
                 borderRight: '1px solid rgba(209, 217, 226, 0.4)',
@@ -445,7 +445,7 @@ const DecisionTableStep = ({
               }
             />
           </Stack>
-          <Stack>
+          <Stack sx={{ width: '100%' }}>
             <StyledStack
               sx={{ borderBottom: '2px solid rgba(209, 217, 226, 0.4)' }}
             >
