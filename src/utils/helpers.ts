@@ -25,8 +25,6 @@ const parseAxiosError = (error: AxiosError) => {
     );
 
     return errorsArray;
-  } else if (error.response && typeof error.response.data === 'string') {
-    return [error.response.data];
   } else {
     return [GENERAL_SERVER_ERROR];
   }

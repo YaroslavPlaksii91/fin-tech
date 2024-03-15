@@ -1,23 +1,28 @@
-import { AutocompleteRenderInputParams, Button, Stack } from '@mui/material';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import {
+  AutocompleteRenderInputParams,
+  Button,
+  FormControl,
+  InputLabel,
+  Stack,
+  TextField
+} from '@mui/material';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import {
   MutableRefObject,
-  SyntheticEvent,
   useCallback,
   useEffect,
   useMemo,
-  useRef,
-  useState
+  useRef
 } from 'react';
-import { groupBy } from 'lodash';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { groupBy, omit } from 'lodash';
+// import { yupResolver } from '@hookform/resolvers/yup';
+import { AxiosError } from 'axios';
 
-import validationSchema from './validationSchema';
-import { Option } from './types';
-import { mapVariablesToParamsAndSources } from './utils';
+// import validationSchema from './validationSchema';
+import { FieldValues, Option } from './types';
+import { mapVariablesToParamsAndSources, parseError } from './utils';
 
 import Dialog from '@components/shared/Modals/Dialog';
-import { InputText } from '@components/shared/Forms/InputText';
 import LoadingButton from '@components/shared/LoadingButton';
 import { Expression } from '@views/Calculation/types';
 import AddVariable from '@components/AddVariable/AddVariable';
@@ -38,9 +43,11 @@ import {
   operatorsConfig
 } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
 import AutocompleteGroup from '@components/shared/Autocomplete/AutocompleteGroup';
-import { DATA_DICTIONARY_LABELS } from '@constants/common';
+import {
+  DATA_DICTIONARY_GROUP,
+  DATA_DICTIONARY_LABELS
+} from '@constants/common';
 import { dataDictionaryService } from '@services/data-dictionary';
-import { parseErrorMessages } from '@utils/helpers';
 import { StyledErrorText } from '@components/shared/ErrorText/styled';
 
 const operatorsList = [
@@ -71,21 +78,22 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
 }) => {
   const expressionEditorRef: MutableRefObject<ExpressionEditorAPI | null> =
     useRef(null);
-  const [autoCompleteValue, setAutoCompleteValue] = useState<Option | null>(
-    null
-  );
 
-  const options = useMemo(
-    () =>
-      Object.entries(variables).reduce((acc: Option[], [group, items]) => {
+  const options = useMemo(() => {
+    const readWriteVariables = omit(variables, [
+      DATA_DICTIONARY_GROUP.laPMSVariables
+    ]);
+    return Object.entries(readWriteVariables).reduce(
+      (acc: Option[], [group, items]) => {
         const groupOptions = items.map((item) => ({
           group: DATA_DICTIONARY_LABELS[group],
           ...item
         }));
         return [...acc, ...groupOptions];
-      }, []),
-    [variables]
-  );
+      },
+      []
+    );
+  }, [variables]);
 
   const {
     handleSubmit,
@@ -95,19 +103,19 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     setValue,
     setError,
     formState: { errors, isSubmitting }
-  } = useForm<Expression>({
+  } = useForm({
     mode: 'onChange',
     defaultValues: {
-      outputName: '',
+      variable: {},
       expressionString: ''
-    },
-    // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
-    resolver: yupResolver(validationSchema)
+    }
+    // resolver: yupResolver(validationSchema)
   });
 
-  const onSubmit: SubmitHandler<Expression> = async (data) => {
-    const usageVariables = options.filter((option) => {
-      const regex = new RegExp(`\\b${option.name}\\b`);
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    const allValues = Object.values(variables).flat();
+    const usageVariables = allValues.filter((items) => {
+      const regex = new RegExp(`\\b${items.name}\\b`);
       return regex.test(data.expressionString);
     });
     const { params, variableSources } =
@@ -115,19 +123,28 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     try {
       await dataDictionaryService.validateExpression({
         expression: data.expressionString,
-        targetDataType: data.destinationDataType,
+        targetDataType: data.variable.dataType,
         params
       });
+      const formatData = {
+        outputName: data.variable.name,
+        expressionString: data.expressionString,
+        destinationType: data.variable.destinationType,
+        destinationDataType: data.variable.dataType,
+        variableSources
+      };
       handleAddNewBusinessRule({
-        data: { ...data, variableSources },
+        data: formatData,
         id: initialValues?.id
       });
       handleCloseModal();
-    } catch (err) {
-      const message = parseErrorMessages(err);
-      setError('expressionString', {
-        message
-      });
+    } catch (error) {
+      const dataError = error instanceof AxiosError && parseError(error);
+      if (dataError) {
+        setError('expressionString', {
+          message: dataError.message
+        });
+      }
     }
   };
 
@@ -137,15 +154,19 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   };
 
   useEffect(() => {
+    const initialData = { variable: null, expressionString: '' };
     if (initialValues) {
-      reset(initialValues);
-      const defaultValue =
-        options.find((variable) => variable.name === getValues('outputName')) ??
-        null;
-      setAutoCompleteValue(defaultValue);
+      const variable =
+        options.find(
+          (variable) => variable.name === initialValues.outputName
+        ) ?? null;
+      const initialData = {
+        variable,
+        expressionString: initialValues.expressionString
+      };
+      reset(initialData);
     } else {
-      setAutoCompleteValue(null);
-      reset(undefined);
+      reset(initialData);
     }
   }, [initialValues, modalOpen, options]);
 
@@ -154,7 +175,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
       const prev = getValues('expressionString');
       const isFunction = functionsLiterals.includes(literal);
       const newValue = prev + literal + (isFunction ? '(' : '');
-      setValue('expressionString', newValue);
+      setValue('expressionString', newValue, { shouldValidate: true });
       expressionEditorRef.current?.focus({
         selectionStart: newValue.length + 1
       });
@@ -171,25 +192,13 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         prev.slice(0, cursorPosition) +
         variable.name +
         prev.slice(cursorPosition);
-      setValue('expressionString', newValue);
+      setValue('expressionString', newValue, { shouldValidate: true });
       expressionEditorRef.current?.focus({
         selectionStart: newValue.length + 1
       });
     },
     []
   );
-
-  const handleAutoCompleteChange = (
-    _event: SyntheticEvent<Element, Event>,
-    value: Option | null
-  ) => {
-    if (value) {
-      setValue('outputName', value.name);
-      setValue('destinationType', value.destinationType);
-      setValue('destinationDataType', value.dataType);
-    }
-    setAutoCompleteValue(value);
-  };
 
   return (
     <Dialog
@@ -202,48 +211,66 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack direction="row" spacing={1}>
-          <AutocompleteGroup
-            forcePopupIcon={false}
-            disableClearable={true}
-            id="grouped-variables"
-            value={autoCompleteValue}
-            isOptionEqualToValue={(option: Option, value: Option) =>
-              option.name === value.name
-            }
-            noOptionsText="No variables"
-            options={options}
-            onChange={handleAutoCompleteChange}
-            groupBy={(option) => option.group}
-            getOptionLabel={(option: Option) => option.name || ''}
-            renderInput={(params: AutocompleteRenderInputParams) => (
-              <InputText
-                {...params}
-                size="small"
-                sx={{ width: 320 }}
-                name="outputName"
-                control={control}
-                label="Variable"
-                placeholder="Enter variable"
+          <Controller
+            control={control}
+            name="variable"
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <AutocompleteGroup
+                forcePopupIcon={false}
+                disableClearable={true}
+                id="grouped-variables"
+                value={value}
+                isOptionEqualToValue={(option: Option, value: Option) =>
+                  option.name === value.name
+                }
+                noOptionsText="No variables"
+                options={options}
+                onChange={(_e, data) => onChange(data)}
+                groupBy={(option) => option.group}
+                getOptionLabel={(option: Option) => option.name || ''}
+                renderInput={(params: AutocompleteRenderInputParams) => (
+                  <FormControl fullWidth variant="standard">
+                    <InputLabel
+                      sx={{ position: 'static' }}
+                      shrink
+                      htmlFor="variable"
+                    >
+                      Variable
+                    </InputLabel>
+                    <TextField
+                      {...params}
+                      size="small"
+                      sx={{ width: 320 }}
+                      helperText={error?.message}
+                      error={!!error}
+                      placeholder="Enter variable"
+                    />
+                  </FormControl>
+                )}
               />
             )}
           />
-          <InputText
-            fullWidth
-            minRows={1}
-            disabled
-            name="expressionString"
+          <Controller
             control={control}
-            label="Expression"
-            placeholder="Enter expression"
-            InputProps={{
-              inputComponent: (props) => (
+            name="expressionString"
+            render={({ field: { onChange, value }, fieldState }) => (
+              <FormControl fullWidth variant="standard">
+                <InputLabel
+                  sx={{ position: 'static' }}
+                  shrink
+                  htmlFor="expressionString"
+                >
+                  Expression
+                </InputLabel>
                 <ExpressionEditor
-                  {...props}
+                  value={value}
+                  onChange={onChange}
+                  name="expressionString"
                   ref={expressionEditorRef}
-                  error={!!errors?.expressionString}
+                  error={fieldState?.error?.message}
                 />
-              )
-            }}
+              </FormControl>
+            )}
           />
         </Stack>
         <Stack spacing={2} direction="row" pt={2}>

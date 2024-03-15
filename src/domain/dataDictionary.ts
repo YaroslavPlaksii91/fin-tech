@@ -49,8 +49,8 @@ export enum VARIABLE_USAGE_MODE {
 export interface DataDictionaryVariable {
   name: string;
   source: VARIABLE_SOURCE_TYPE;
-  destinationType?: string;
-  sourceType: string;
+  destinationType: string;
+  sourceType: VARIABLE_SOURCE_TYPE;
   dataType: DATA_TYPE;
   defaultValue?: string;
   isRequired?: boolean;
@@ -60,14 +60,14 @@ export interface DataDictionaryVariable {
 }
 
 export type UserDefinedVariable = {
-  dataType: DATA_TYPE;
   name: string;
+  dataType: DATA_TYPE;
   defaultValue: string;
   description: string;
+  destinationType: string;
+  sourceType: VARIABLE_SOURCE_TYPE;
   allowedValues?: string | string[];
   usageMode?: string;
-  sourceType?: string;
-  destinationType?: string;
 };
 
 // targetDataType need add data type

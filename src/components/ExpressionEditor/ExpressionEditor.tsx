@@ -125,6 +125,7 @@ const ExpressionEditor: ForwardRefRenderFunction<
           setCaretPosition(e.currentTarget.selectionStart);
         }}
       />
+      {error && <p className={`${styles.errorText}`}>{error}</p>}
       <div
         className={styles.coloredValue}
         dangerouslySetInnerHTML={{ __html: highlightChunks(value) }}

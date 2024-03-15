@@ -4,7 +4,6 @@ import { IEntity } from './entity';
 import {
   DATA_TYPE,
   UserDefinedVariable,
-  // VARIABLE_DESTINATION_TYPE,
   VARIABLE_SOURCE_TYPE
 } from './dataDictionary';
 
@@ -49,7 +48,6 @@ export type DecisionTableData = {
 export type Expression = {
   outputName: string;
   expressionString: string;
-  // Add type for destinationType
   destinationType: string;
   destinationDataType: DATA_TYPE;
   variableSources: {

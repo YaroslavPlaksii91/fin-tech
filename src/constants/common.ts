@@ -31,3 +31,8 @@ export const DATA_DICTIONARY_LABELS: { [key: string]: string } = {
   userDefined: 'User Defined',
   laPMSVariables: 'Lead and Provider Management System'
 };
+
+export enum DATA_DICTIONARY_GROUP {
+  userDefined = 'userDefined',
+  laPMSVariables = 'laPMSVariables'
+}
