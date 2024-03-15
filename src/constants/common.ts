@@ -36,3 +36,5 @@ export enum DATA_DICTIONARY_GROUP {
   userDefined = 'userDefined',
   laPMSVariables = 'laPMSVariables'
 }
+
+export const RULES_LIMIT = 10;

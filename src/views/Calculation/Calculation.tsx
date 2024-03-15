@@ -15,7 +15,7 @@ import { Expression, FieldValues, columns } from './types';
 import { FlowNode, IFlow } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
-import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
+import { MAIN_STEP_ID, RULES_LIMIT, SNACK_TYPE } from '@constants/common';
 import Dialog from '@components/shared/Modals/Dialog';
 import {
   StyledTableRow,
@@ -196,6 +196,7 @@ const Calculation: React.FC<CalculationProps> = ({
           </StyledPaper>
           <Button
             sx={{ width: '190px' }}
+            disabled={fields.length === RULES_LIMIT}
             onClick={() => {
               setInitialValue(undefined);
               setOpenExpEditorModal(true);
