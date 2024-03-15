@@ -9,7 +9,8 @@ import { CATEGORIES, CATEGORIES_WITHOUT_ELSE_ACTIONS } from './constants';
 import {
   VariableColumnData,
   SelectedCellInRowData,
-  FormFieldsProps
+  FormFieldsProps,
+  CaseEntry
 } from './types';
 import {
   StyledPaper,
@@ -58,7 +59,12 @@ const DecisionTableStep = ({
   const [noteValue, setNoteValue] = useState('');
   const [columnClickedIndex, setColumnClickedIndex] = useState(0);
 
-  const [caseEntries, setCaseEntries] = useState([
+  const [caseEntries, setCaseEntries] = useState<
+    {
+      conditions: CaseEntry[];
+      actions: CaseEntry[];
+    }[]
+  >([
     {
       conditions: [
         {
@@ -151,6 +157,32 @@ const DecisionTableStep = ({
 
   useEffect(() => {
     const { data } = step;
+
+    // if some CaseEntries were saved already into the flow
+    if (data.caseEntries?.length) {
+      const savedElseActions = data.caseEntries[0].actions;
+      const savedCaseEntries = data.caseEntries.map((row) => {
+        const serializedActions = [...row.actions];
+
+        return {
+          conditions: row.conditions,
+          actions: serializedActions.map((column) => ({
+            ...column,
+            operator: column.expression ? '=' : ''
+          }))
+        };
+      });
+
+      setCaseEntries(savedCaseEntries);
+      setElseActions(
+        savedElseActions.map((column) => ({
+          ...column,
+          operator: '',
+          expression: ''
+        }))
+      );
+    }
+
     setNoteValue(data?.note ?? '');
   }, []);
 
