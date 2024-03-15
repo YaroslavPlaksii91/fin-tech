@@ -15,10 +15,10 @@ import {
   useRef
 } from 'react';
 import { groupBy, omit } from 'lodash';
-// import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { AxiosError } from 'axios';
 
-// import validationSchema from './validationSchema';
+import validationSchema from './validationSchema';
 import { FieldValues, Option } from './types';
 import { mapVariablesToParamsAndSources, parseError } from './utils';
 
@@ -28,11 +28,8 @@ import { Expression } from '@views/Calculation/types';
 import AddVariable from '@components/AddVariable/AddVariable';
 import ExpressionOperatorsList from '@components/ExpressionForm/ExpressionOperatorsList/ExpressionOperatorsList.tsx';
 import {
-  // DATA_TYPE_WITHOUT_ENUM,
   DataDictionaryVariable,
   UserDefinedVariable
-  // VARIABLE_DESTINATION_TYPE,
-  // VARIABLE_SOURCE_TYPE
 } from '@domain/dataDictionary';
 import ExpressionEditor, {
   ExpressionEditorAPI
@@ -103,13 +100,14 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     setValue,
     setError,
     formState: { errors, isSubmitting }
-  } = useForm({
+  } = useForm<FieldValues, unknown, FieldValues>({
     mode: 'onChange',
     defaultValues: {
-      variable: {},
+      variable: undefined,
       expressionString: ''
-    }
-    // resolver: yupResolver(validationSchema)
+    },
+    // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
+    resolver: yupResolver(validationSchema)
   });
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
@@ -154,12 +152,12 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   };
 
   useEffect(() => {
-    const initialData = { variable: null, expressionString: '' };
+    const initialData = { variable: undefined, expressionString: '' };
     if (initialValues) {
       const variable =
         options.find(
           (variable) => variable.name === initialValues.outputName
-        ) ?? null;
+        ) ?? undefined;
       const initialData = {
         variable,
         expressionString: initialValues.expressionString
@@ -219,7 +217,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
                 forcePopupIcon={false}
                 disableClearable={true}
                 id="grouped-variables"
-                value={value}
+                value={value ? value : null}
                 isOptionEqualToValue={(option: Option, value: Option) =>
                   option.name === value.name
                 }
