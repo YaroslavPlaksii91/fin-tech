@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { Box, Stack, Tabs, Typography } from '@mui/material';
 
-import TabPanel from '../shared/Tabs/TabPanel';
-
 import { StyledTab } from './styled';
-import TableList from './TableList';
+import TableList from './TableList/TableList';
+import TabPanel from './Tabs/TabPanel';
 
 import {
   DataDictionaryVariable,
@@ -21,9 +20,9 @@ const DataDictionaryVariableList = ({
 }: {
   variables: Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>;
 }) => {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState('laPMSVariables');
 
-  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     setTab(newValue);
   };
 
@@ -32,27 +31,30 @@ const DataDictionaryVariableList = ({
       <Typography variant="h1" pb={3}>
         Data Dictionary
       </Typography>
+
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={tab} onChange={handleChange} aria-label="tabs">
           {Object.keys(variables).map((tabName, index) => (
             <StyledTab
               key={index}
               label={tabLabels[tabName]}
+              value={tabName}
               id={`tab-${index}`}
               aria-controls={`tabpanel-${index}`}
             />
           ))}
           <StyledTab
-            key="all-variables"
+            key="all"
             label="All"
+            value="all"
             id="tab-all"
             aria-controls="tabpanel-all"
           />
         </Tabs>
       </Box>
-      {Object.keys(variables).map((tabName, index) => (
-        <TabPanel key={tabName} value={tab} index={index}>
-          <TableList data={variables[tabName]} />
+      {Object.keys(variables).map((tabName) => (
+        <TabPanel key={tabName} value={tab} tabName={tabName}>
+          <TableList data={variables[tabName]} tabName={tabName} />
         </TabPanel>
       ))}
     </Stack>
