@@ -10,7 +10,8 @@ import {
 import { useFieldArray, useForm } from 'react-hook-form';
 import { enqueueSnackbar } from 'notistack';
 
-import { Expression, FieldValues, columns } from './types';
+import { COLUMN_IDS, Expression, FieldValues, columns } from './types';
+import { PinnedTableCell } from './styled';
 
 import { FlowNode, IFlow } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
@@ -144,15 +145,25 @@ const Calculation: React.FC<CalculationProps> = ({
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <StyledTableRow>
-                    {columns.map((column) => (
-                      <StyledTableCell
-                        key={column.id}
-                        align={column.align}
-                        style={{ width: column.width }}
-                      >
-                        {column.label}
-                      </StyledTableCell>
-                    ))}
+                    {columns.map((column) =>
+                      column.id === COLUMN_IDS.delete_edit ? (
+                        <PinnedTableCell
+                          key={column.id}
+                          align={column.align}
+                          style={{ width: column.width }}
+                        >
+                          {column.label}
+                        </PinnedTableCell>
+                      ) : (
+                        <StyledTableCell
+                          key={column.id}
+                          align={column.align}
+                          style={{ width: column.width }}
+                        >
+                          {column.label}
+                        </StyledTableCell>
+                      )
+                    )}
                   </StyledTableRow>
                 </TableHead>
                 <TableBody>
@@ -162,7 +173,12 @@ const Calculation: React.FC<CalculationProps> = ({
                       <StyledTableCell>
                         {expression.expressionString}
                       </StyledTableCell>
-                      <StyledTableCell sx={{ padding: 0 }} width={40}>
+                      <PinnedTableCell
+                        sx={{
+                          padding: 0
+                        }}
+                        width={40}
+                      >
                         <Stack direction="row">
                           <Button
                             fullWidth
@@ -187,7 +203,7 @@ const Calculation: React.FC<CalculationProps> = ({
                             <DeleteOutlineIcon />
                           </Button>
                         </Stack>
-                      </StyledTableCell>
+                      </PinnedTableCell>
                     </StyledTableRow>
                   ))}
                 </TableBody>
