@@ -1,16 +1,15 @@
 import { AxiosError } from 'axios';
 
 import {
-  DATA_TYPE,
   DataDictionaryVariable,
-  UserDefinedVariable,
-  VARIABLE_SOURCE_TYPE
+  ExpressionValidateParams,
+  UserDefinedVariable
 } from '@domain/dataDictionary';
+import { ExpressionVariableSources } from '@domain/flow';
 
-// Add correct type for params and variableSources
 interface MappingResult {
-  params: { name: string; dataType: DATA_TYPE }[];
-  variableSources: { name: string; sourceType: VARIABLE_SOURCE_TYPE }[];
+  params: ExpressionValidateParams;
+  variableSources: ExpressionVariableSources;
 }
 
 export const mapVariablesToParamsAndSources = (

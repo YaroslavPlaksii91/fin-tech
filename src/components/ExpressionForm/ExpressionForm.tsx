@@ -45,7 +45,6 @@ import {
   DATA_DICTIONARY_LABELS
 } from '@constants/common';
 import { dataDictionaryService } from '@services/data-dictionary';
-import { StyledErrorText } from '@components/shared/ErrorText/styled';
 
 const operatorsList = [
   ...Object.values(groupBy(operatorsConfig, 'category')),
@@ -99,7 +98,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     getValues,
     setValue,
     setError,
-    formState: { errors, isSubmitting }
+    formState: { isSubmitting }
   } = useForm<FieldValues, unknown, FieldValues>({
     mode: 'onChange',
     defaultValues: {
@@ -111,8 +110,8 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   });
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    const allValues = Object.values(variables).flat();
-    const usageVariables = allValues.filter((items) => {
+    const arrayOfVariables = Object.values(variables).flat();
+    const usageVariables = arrayOfVariables.filter((items) => {
       const regex = new RegExp(`\\b${items.name}\\b`);
       return regex.test(data.expressionString);
     });
@@ -278,9 +277,6 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
             onItemClick={onExpressionOperatorsListClick}
           />
         </Stack>
-        <StyledErrorText variant="body2">
-          {errors?.root?.serverError.message}
-        </StyledErrorText>
         <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
           <Button
             variant="contained"

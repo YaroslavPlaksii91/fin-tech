@@ -45,15 +45,17 @@ export type DecisionTableData = {
   variableSources?: { name: string; sourceType: VARIABLE_SOURCE_TYPE }[];
 };
 
+export type ExpressionVariableSources = {
+  name: string;
+  sourceType: VARIABLE_SOURCE_TYPE;
+}[];
+
 export type Expression = {
   outputName: string;
   expressionString: string;
   destinationType: string;
   destinationDataType: DATA_TYPE;
-  variableSources: {
-    name: string;
-    sourceType: VARIABLE_SOURCE_TYPE;
-  }[];
+  variableSources: ExpressionVariableSources;
 };
 
 export type CalculationData = {
@@ -70,7 +72,10 @@ export interface IFlow {
   edges: Edge[];
   viewport: Viewport;
   data: Omit<FlowData, 'id'>;
-  temporaryVariables: UserDefinedVariable[];
+  temporaryVariables: Pick<
+    UserDefinedVariable,
+    'dataType' | 'defaultValue' | 'description' | 'name'
+  >[];
   permanentVariables: UserDefinedVariable[];
 }
 

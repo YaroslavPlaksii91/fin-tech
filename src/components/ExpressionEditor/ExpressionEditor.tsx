@@ -106,7 +106,8 @@ const ExpressionEditor: ForwardRefRenderFunction<
   const handleOnChange = (
     e: React.FormEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
-    setCaretPosition(e.currentTarget.selectionStart);
+    e.currentTarget.selectionStart &&
+      setCaretPosition(e.currentTarget.selectionStart);
     onChange && onChange(e);
   };
 
