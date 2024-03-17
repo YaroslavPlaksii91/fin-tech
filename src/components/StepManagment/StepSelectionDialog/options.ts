@@ -13,7 +13,7 @@ export const options: {
     id: StepType.CHAMPION_CHALLENGER,
     label: 'Champion Challenger',
     helperText:
-      'A Champion Challenger is an step that allows you to split traffic into several groups and run experiment.'
+      'A Champion Challenger is a step that allows you to split traffic into several groups and run experiment.'
   },
   {
     id: StepType.CALCULATION,
