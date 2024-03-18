@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Box, Stack, Tabs, Typography } from '@mui/material';
 
 import { StyledTab } from './styled';
+import { VARIABLES_TABS } from './constants';
 import TableList from './TableList/TableList';
 import TabPanel from './Tabs/TabPanel';
 
@@ -54,7 +55,10 @@ const DataDictionaryVariableList = ({
       </Box>
       {Object.keys(variables).map((tabName) => (
         <TabPanel key={tabName} value={tab} tabName={tabName}>
-          <TableList data={variables[tabName]} tabName={tabName} />
+          <TableList
+            data={variables[tabName]}
+            tabName={tabName as VARIABLES_TABS}
+          />
         </TabPanel>
       ))}
     </Stack>

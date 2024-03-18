@@ -1,30 +1,43 @@
 //import { useEffect } from 'react';
-import { Button, Stack } from '@mui/material';
+import { Button, Stack, MenuItem } from '@mui/material';
 import { useForm } from 'react-hook-form';
-//import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-// import { validationSchema } from './validationSchema';
+import { validationSchema } from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';
-
-// type FieldsProps = {
-//   variableName: string;
-//   defaultValue: string;
-//   description: string;
-// };
+import { Textarea } from '@components/shared/Forms/Textarea';
+import { SingleSelect } from '@components/shared/Forms/SingleSelect';
+import {
+  VARIABLE_SOURCE_TYPE,
+  DATA_TYPE_WITHOUT_ENUM,
+  UserDefinedVariable
+} from '@domain/dataDictionary';
 
 type VariableFormProps = {
   title: string;
   modalOpen: boolean;
-  //handleSubmitVariableFormData: (data: FieldsProps) => void;
+  handleSubmitVariableFormData: (
+    data: Pick<
+      UserDefinedVariable,
+      'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
+    >
+  ) => void;
   handleClose: () => void;
+};
+
+// TODO: Add other sources as an array
+const variableSourceTypeOptions = {
+  key: VARIABLE_SOURCE_TYPE.TemporaryVariable,
+  value: VARIABLE_SOURCE_TYPE.TemporaryVariable
 };
 
 export const VariableForm: React.FC<VariableFormProps> = ({
   title,
   modalOpen,
+  handleSubmitVariableFormData,
   handleClose
 }) => {
   const {
@@ -32,15 +45,24 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     control,
     formState: { isSubmitting }
   } = useForm({
-    // resolver: yupResolver(validationSchema),
+    resolver: yupResolver(validationSchema),
     defaultValues: {
-      variableName: '',
+      name: '',
+      sourceType: variableSourceTypeOptions.value,
+      dataType: DATA_TYPE_WITHOUT_ENUM.String,
       defaultValue: '',
       description: ''
     }
   });
 
-  const onSubmit = () => {};
+  const onSubmit = (
+    data: Pick<
+      UserDefinedVariable,
+      'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
+    >
+  ) => {
+    handleSubmitVariableFormData(data);
+  };
 
   // useEffect(() => {
   //   setValue('note', note);
@@ -58,24 +80,66 @@ export const VariableForm: React.FC<VariableFormProps> = ({
         <Stack spacing={2}>
           <InputText
             fullWidth
-            name="variableName"
+            name="name"
             label="Variable Name"
             control={control}
-            placeholder="Enter variable name"
           />
+          <SingleSelect
+            variant="outlined"
+            name="sourceType"
+            label="Source Type"
+            control={control}
+            displayEmpty
+            fullWidth
+            disabled
+            sx={{
+              '& .MuiInputBase-root ': {
+                height: '40px'
+              }
+            }}
+          >
+            <MenuItem
+              key={variableSourceTypeOptions.key}
+              value={variableSourceTypeOptions.value}
+            >
+              {variableSourceTypeOptions.value}
+            </MenuItem>
+          </SingleSelect>
+          <SingleSelect
+            variant="outlined"
+            name="dataType"
+            label="Data Type"
+            control={control}
+            displayEmpty
+            fullWidth
+            sx={{
+              '& .MuiInputBase-root ': {
+                height: '40px'
+              }
+            }}
+          >
+            {(
+              Object.keys(DATA_TYPE_WITHOUT_ENUM) as Array<
+                keyof typeof DATA_TYPE_WITHOUT_ENUM
+              >
+            ).map((dataType, index) => (
+              <MenuItem key={index} value={dataType}>
+                {dataType}
+              </MenuItem>
+            ))}
+          </SingleSelect>
           <InputText
             fullWidth
             name="defaultValue"
             label="Default Value"
             control={control}
-            placeholder="Enter default value"
           />
-          <InputText
+          <Textarea
             fullWidth
             name="description"
             label="Description"
             control={control}
-            placeholder="Enter description"
+            minRows={4}
           />
         </Stack>
 

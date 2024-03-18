@@ -1,10 +1,3 @@
-export const VARIABLE_TYPE = {
-  Number: 'number',
-  String: 'string',
-  Enum: 'enum',
-  Boolean: 'boolean'
-};
-
 export const OPERATORS = {
   Equal: '=',
   In: 'in',

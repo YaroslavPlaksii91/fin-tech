@@ -8,7 +8,8 @@ import {
   FormControl,
   SelectProps,
   FormControlProps,
-  Select
+  Select,
+  InputLabel
 } from '@mui/material';
 
 import { StyledError } from './styled';
@@ -31,12 +32,26 @@ export const SingleSelect = <
   name,
   displayEmpty = false,
   children,
+  label,
   ...props
 }: SingleSelectProps<TFieldValues, TName> & SelectProps & FormControlProps) => {
   const { field, fieldState } = useController({ control, name });
 
   return (
     <FormControl error={!!fieldState?.error} {...props}>
+      {/* TODO: styles make re-usable */}
+      {label && (
+        <InputLabel
+          sx={{
+            position: 'relative',
+            left: '-10px',
+            top: '8px',
+            color: 'rgba(0, 0, 0, 0.6)!important'
+          }}
+        >
+          {label}
+        </InputLabel>
+      )}
       <Select {...field} displayEmpty={displayEmpty}>
         {children}
       </Select>
