@@ -4,7 +4,9 @@ import {
   TableBody,
   IconButton,
   TablePagination,
-  Divider
+  Divider,
+  Stack,
+  Button
 } from '@mui/material';
 import AddBoxOutlined from '@mui/icons-material/AddBoxOutlined';
 
@@ -13,6 +15,10 @@ import { VariableForm } from '../VariableForm/VariableForm';
 
 import { StyledPaper, StyledTableContainer, StyledTable } from './styled';
 
+import {
+  DeleteOutlineIcon,
+  EditNoteOutlinedIcon
+} from '@components/shared/Icons';
 import {
   StyledTableCell,
   StyledTableRow
@@ -29,18 +35,25 @@ const TableList = ({
   data: DataDictionaryVariable[] | UserDefinedVariable[];
   tabName: VARIABLES_TABS;
 }) => {
+  const [tableList, setTableList] = useState<
+    | DataDictionaryVariable[]
+    | Pick<
+        UserDefinedVariable,
+        'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
+      >[]
+  >(data ?? []);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openVariableForm, setOpenVariableForm] = useState(false);
 
   const visibleRows = useMemo(
-    () => data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [page, rowsPerPage]
+    () => tableList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [page, rowsPerPage, tableList.length]
   );
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableList.length) : 0;
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -85,7 +98,28 @@ const TableList = ({
                 <StyledTableCell>{variable.name}</StyledTableCell>
                 <StyledTableCell>{variable.dataType}</StyledTableCell>
                 <StyledTableCell>{variable.defaultValue}</StyledTableCell>
-                <StyledTableCell>{variable.description}</StyledTableCell>
+                <StyledTableCell sx={{ maxWidth: '150px' }}>
+                  {variable.description}
+                </StyledTableCell>
+                {tabName === VARIABLES_TABS.userDefined && (
+                  <StyledTableCell>
+                    <Stack direction="row" sx={{ maxWidth: '0px' }}>
+                      <Button sx={{}} onClick={() => {}}>
+                        <EditNoteOutlinedIcon />
+                      </Button>
+                      <Button
+                        sx={{}}
+                        onClick={() => {
+                          const newTableList = [...tableList];
+                          newTableList.splice(index, 1);
+                          setTableList(newTableList);
+                        }}
+                      >
+                        <DeleteOutlineIcon />
+                      </Button>
+                    </Stack>
+                  </StyledTableCell>
+                )}
               </StyledTableRow>
             ))}
             {emptyRows > 0 && (
@@ -100,10 +134,10 @@ const TableList = ({
           </TableBody>
         </StyledTable>
         <Divider />
-        {data.length > 10 && (
+        {tableList.length > 10 && (
           <TablePagination
             component="div"
-            count={data.length}
+            count={tableList.length}
             page={page}
             onPageChange={handleChangePage}
             rowsPerPage={rowsPerPage}
@@ -115,7 +149,19 @@ const TableList = ({
         <VariableForm
           title="Create variable"
           modalOpen={openVariableForm}
-          // handleSubmitVariableFormData={() => console.log('')}
+          handleSubmitVariableFormData={(
+            newVariable: Pick<
+              UserDefinedVariable,
+              | 'name'
+              | 'dataType'
+              | 'defaultValue'
+              | 'description'
+              | 'sourceType'
+            >
+          ) => {
+            setTableList([...tableList, newVariable]);
+            setOpenVariableForm(false);
+          }}
           handleClose={() => setOpenVariableForm(false)}
         />
       )}
