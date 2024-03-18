@@ -24,12 +24,13 @@ import FunctionsAutosuggestion, {
 
 export interface ExpressionEditorAPI {
   focus: (payload: { selectionStart: number }) => void;
+  getCursorPosition: () => number;
 }
 
 const ExpressionEditor: ForwardRefRenderFunction<
   ExpressionEditorAPI,
   ExpressionEditorProps
-> = ({ name, value, onChange }, ref) => {
+> = ({ name, value, onChange, error }, ref) => {
   const textareaRef: MutableRefObject<HTMLTextAreaElement | null> =
     useRef(null);
 
@@ -45,9 +46,12 @@ const ExpressionEditor: ForwardRefRenderFunction<
         if (payload.selectionStart) {
           setCaretPosition(payload.selectionStart);
         }
+      },
+      getCursorPosition() {
+        return caretPosition;
       }
     }),
-    [textareaRef, setCaretPosition]
+    [textareaRef, setCaretPosition, caretPosition]
   );
 
   const currentOperator = regExpHelpers.findLeftOperator(
@@ -99,20 +103,30 @@ const ExpressionEditor: ForwardRefRenderFunction<
     }
   };
 
+  const handleOnChange = (
+    e: React.FormEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    e.currentTarget.selectionStart &&
+      setCaretPosition(e.currentTarget.selectionStart);
+    onChange && onChange(e);
+  };
+
   return (
     <div className={styles.root}>
       <TextareaAutosize
         ref={textareaRef}
         value={value}
-        className={styles.textarea}
+        placeholder="Enter expression"
+        className={`${styles.textarea} ${error ? styles.error : ''}`}
         minRows={1}
         maxRows={10}
         onKeyDown={handleTextareaKeyDown}
-        onChange={onChange}
+        onChange={handleOnChange}
         onClick={(e) => {
           setCaretPosition(e.currentTarget.selectionStart);
         }}
       />
+      {error && <p className={`${styles.errorText}`}>{error}</p>}
       <div
         className={styles.coloredValue}
         dangerouslySetInnerHTML={{ __html: highlightChunks(value) }}

@@ -38,12 +38,12 @@ const validationSchema = yup.object().shape({
         if (totalPercentage > 100) {
           throw this.createError({
             path: 'splits',
-            message: 'The sum of all interest exceeds 100%'
+            message: 'The sum of all splits is above 100%'
           });
         } else if (totalPercentage < 100) {
           throw this.createError({
             path: 'splits',
-            message: 'The sum of all interest is below 100%'
+            message: 'The sum of all splits is below 100%'
           });
         }
         return true;

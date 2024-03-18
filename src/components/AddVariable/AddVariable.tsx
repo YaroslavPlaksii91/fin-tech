@@ -15,10 +15,11 @@ import {
 import { DATA_DICTIONARY_LABELS } from '@constants/common';
 
 type AddVariableType = {
+  onItemClick: (variable: DataDictionaryVariable | UserDefinedVariable) => void;
   data: Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>;
 };
 
-const AddVariable: React.FC<AddVariableType> = ({ data }) => {
+const AddVariable: React.FC<AddVariableType> = ({ data, onItemClick }) => {
   const [value, setValue] = useState(0);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -44,7 +45,7 @@ const AddVariable: React.FC<AddVariableType> = ({ data }) => {
       </Box>
       {Object.keys(data).map((tabName, index) => (
         <TabPanel key={index} value={value} index={index}>
-          <List data={data[tabName]} />
+          <List data={data[tabName]} onItemClick={onItemClick} />
         </TabPanel>
       ))}
     </StyledContainer>
