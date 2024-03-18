@@ -1,14 +1,16 @@
 import { Typography } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { enqueueSnackbar } from 'notistack';
 
 import { createDuplicateFlowData } from './createDuplicateFlowData';
 
 import Dialog from '@components/shared/Modals/Dialog';
-import Logger from '@utils/logger';
 import { IFlowListItem } from '@domain/flow';
 import { flowService } from '@services/flow-service';
 import routes from '@constants/routes';
+import { SnackbarErrorMessage } from '@components/shared/Snackbar/SnackbarMessage';
+import { SNACK_TYPE } from '@constants/common';
 
 interface DuplicateFlowProps {
   flow: IFlowListItem;
@@ -32,7 +34,9 @@ export const DuplicateFlow: React.FC<DuplicateFlowProps> = ({
       const { id } = await flowService.createFlow(flowDuplicateData);
       navigate(routes.underwriting.flow.details(id));
     } catch (error) {
-      Logger.error(error);
+      enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
+        variant: SNACK_TYPE.ERROR
+      });
     } finally {
       handleCloseModal();
       setConfirmLoading(false);
