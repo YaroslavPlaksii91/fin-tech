@@ -223,7 +223,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       <form onSubmit={handleSubmit(onSubmit)}>
         <StepDetailsHeader
           title={step.data.name}
-          details="A Champion Challenger is an step that allows you to split traffic into
+          details="A Champion Challenger is a step that allows you to split traffic into
    several groups and run experiment."
           onDiscard={() => setOpenDiscardModal(true)}
           disabled={!isEmpty(errors) || isSubmitting}

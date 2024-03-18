@@ -31,14 +31,14 @@ export const options: {
     id: StepType.CONDITION,
     label: 'Condition',
     helperText:
-      'A condition is an step that allows the User to break the flow into two mutually exclusive paths.',
+      'A condition is a step that allows the User to break the flow into two mutually exclusive paths.',
     disabled: true
   },
   {
     id: StepType.CASE,
     label: 'Case',
     helperText:
-      'A case is an step that allows to set multiple conditions. Based on the number of conditions, it breaks the flow into the corresponding number of mutually exclusive paths.',
+      'A case is a step that allows to set multiple conditions. Based on the number of conditions, it breaks the flow into the corresponding number of mutually exclusive paths.',
     disabled: true
   },
   {
