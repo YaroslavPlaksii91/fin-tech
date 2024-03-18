@@ -76,7 +76,10 @@ export interface IFlow {
     UserDefinedVariable,
     'dataType' | 'defaultValue' | 'description' | 'name'
   >[];
-  permanentVariables: UserDefinedVariable[];
+  permanentVariables: Pick<
+    UserDefinedVariable,
+    'dataType' | 'defaultValue' | 'description' | 'name'
+  >[];
 }
 
 type FlowDataCreate = Pick<FlowData, 'name' | 'createdBy' | 'editedBy'>;
