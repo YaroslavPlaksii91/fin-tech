@@ -37,7 +37,7 @@ import {
 } from '@components/shared/Table/styled';
 import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
-import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
+import { MAIN_STEP_ID, RULES_LIMIT, SNACK_TYPE } from '@constants/common';
 import {
   SnackbarErrorMessage,
   SnackbarMessage
@@ -45,7 +45,6 @@ import {
 import Dialog from '@components/shared/Modals/Dialog';
 import { flowService } from '@services/flow-service';
 
-const STEPS_LIMIT = 10;
 const DEFAULT_PERCENTAGE_SPLIT = 10;
 
 interface ChampionChallengerProps {
@@ -224,7 +223,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       <form onSubmit={handleSubmit(onSubmit)}>
         <StepDetailsHeader
           title={step.data.name}
-          details="A Champion Challenger is an step that allows you to split traffic into
+          details="A Champion Challenger is a step that allows you to split traffic into
    several groups and run experiment."
           onDiscard={() => setOpenDiscardModal(true)}
           disabled={!isEmpty(errors) || isSubmitting}
@@ -296,7 +295,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
           <ErrorMessage errors={errors} name="splits" />
           <Button
             sx={{ width: '135px' }}
-            disabled={fields.length === STEPS_LIMIT}
+            disabled={fields.length === RULES_LIMIT}
             onClick={() => {
               append({ percentage: DEFAULT_PERCENTAGE_SPLIT, value: '' });
             }}
