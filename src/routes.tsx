@@ -10,6 +10,7 @@ import Home from '@pages/Home';
 import FlowEdit from '@pages/FlowEdit';
 import FlowDetails from '@pages/FlowDetails';
 import DataDictionary from '@pages/DataDictionary';
+import ChangeHistoryPage from '@pages/ChangeHistory.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -67,7 +68,7 @@ export const router = createBrowserRouter([
         path: routes.underwriting.changeHistory,
         element: (
           <PrivateRoutes>
-            <div>Change history</div>
+            <ChangeHistoryPage />
           </PrivateRoutes>
         )
       }
