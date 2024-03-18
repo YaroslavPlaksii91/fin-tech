@@ -3,7 +3,8 @@ import { styled } from '@mui/material/styles';
 
 export const StyledTableContainer = styled(TableContainer)(() => ({
   display: 'flex',
-  overflowX: 'scroll'
+  overflowX: 'scroll',
+  flexDirection: 'column'
 }));
 
 export const StyledTable = styled(Table)(() => ({
