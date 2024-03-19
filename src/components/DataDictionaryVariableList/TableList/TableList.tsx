@@ -114,7 +114,7 @@ const TableList = ({
                   {variable.description}
                 </StyledTableCell>
                 {tabName === VARIABLES_TABS.userDefined && (
-                  <StyledTableCell>
+                  <StyledTableCell align="right" sx={{ maxWidth: '0px' }}>
                     <Stack direction="row" sx={{ maxWidth: '0px' }}>
                       <Button
                         sx={{}}
