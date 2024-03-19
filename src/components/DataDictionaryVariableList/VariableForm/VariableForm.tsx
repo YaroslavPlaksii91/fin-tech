@@ -25,6 +25,12 @@ type VariableFormProps = {
       'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
     >
   ) => void;
+  formData:
+    | (Pick<
+        UserDefinedVariable,
+        'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
+      > & { index: number })
+    | undefined;
   handleClose: () => void;
 };
 
@@ -38,7 +44,8 @@ export const VariableForm: React.FC<VariableFormProps> = ({
   title,
   modalOpen,
   handleSubmitVariableFormData,
-  handleClose
+  handleClose,
+  formData
 }) => {
   const {
     handleSubmit,
@@ -47,11 +54,11 @@ export const VariableForm: React.FC<VariableFormProps> = ({
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      name: '',
+      name: formData ? formData.name : '',
       sourceType: variableSourceTypeOptions.value,
-      dataType: DATA_TYPE_WITHOUT_ENUM.String,
-      defaultValue: '',
-      description: ''
+      dataType: formData ? formData.dataType : DATA_TYPE_WITHOUT_ENUM.String,
+      defaultValue: formData ? formData.defaultValue : '',
+      description: formData ? formData.description : ''
     }
   });
 

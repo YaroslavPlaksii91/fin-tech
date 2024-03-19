@@ -42,6 +42,15 @@ const TableList = ({
         'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
       >[]
   >(data ?? []);
+
+  const [selectedVariable, setSelectedVariable] = useState<
+    | (Pick<
+        UserDefinedVariable,
+        'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
+      > & { index: number })
+    | undefined
+  >(undefined);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openVariableForm, setOpenVariableForm] = useState(false);
@@ -81,7 +90,10 @@ const TableList = ({
               {tabName !== VARIABLES_TABS.laPMSVariables && (
                 <StyledTableCell align="right">
                   <IconButton
-                    onClick={() => setOpenVariableForm(true)}
+                    onClick={() => {
+                      setSelectedVariable(undefined);
+                      setOpenVariableForm(true);
+                    }}
                     edge="end"
                     aria-label="add"
                     sx={{ padding: 0, marginRight: 0 }}
@@ -104,7 +116,13 @@ const TableList = ({
                 {tabName === VARIABLES_TABS.userDefined && (
                   <StyledTableCell>
                     <Stack direction="row" sx={{ maxWidth: '0px' }}>
-                      <Button sx={{}} onClick={() => {}}>
+                      <Button
+                        sx={{}}
+                        onClick={() => {
+                          setSelectedVariable({ index: index, ...variable });
+                          setOpenVariableForm(true);
+                        }}
+                      >
                         <EditNoteOutlinedIcon />
                       </Button>
                       <Button
@@ -149,6 +167,7 @@ const TableList = ({
         <VariableForm
           title="Create variable"
           modalOpen={openVariableForm}
+          formData={selectedVariable}
           handleSubmitVariableFormData={(
             newVariable: Pick<
               UserDefinedVariable,
@@ -159,10 +178,23 @@ const TableList = ({
               | 'sourceType'
             >
           ) => {
-            setTableList([...tableList, newVariable]);
+            if (selectedVariable) {
+              setTableList((prev) =>
+                prev.map((row, index) =>
+                  index === selectedVariable.index ? newVariable : row
+                )
+              );
+            } else {
+              setTableList([...tableList, newVariable]);
+            }
+
+            setSelectedVariable(undefined);
             setOpenVariableForm(false);
           }}
-          handleClose={() => setOpenVariableForm(false)}
+          handleClose={() => {
+            setSelectedVariable(undefined);
+            setOpenVariableForm(false);
+          }}
         />
       )}
     </StyledPaper>
