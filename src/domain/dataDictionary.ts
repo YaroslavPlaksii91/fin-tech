@@ -20,9 +20,7 @@ export enum DATA_TYPE_WITHOUT_ENUM {
   Decimal = 'Decimal',
   String = 'String',
   Boolean = 'Boolean',
-  DateTime = 'DateTime',
-  StringArray = 'StringArray',
-  Object = 'Object'
+  DateTime = 'DateTime'
 }
 
 export type DATA_TYPE = DATA_TYPE_WITHOUT_ENUM | DATA_TYPE_WITH_ENUM_PREFIX;
@@ -62,8 +60,8 @@ export interface DataDictionaryVariable {
 export type UserDefinedVariable = {
   name: string;
   dataType: DATA_TYPE;
-  defaultValue: string;
-  description: string;
+  defaultValue?: string;
+  description?: string;
   destinationType: string;
   sourceType: VARIABLE_SOURCE_TYPE;
   allowedValues?: string | string[];

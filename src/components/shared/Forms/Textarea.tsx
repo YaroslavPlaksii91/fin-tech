@@ -15,7 +15,7 @@ interface InputProps<
   TName extends FieldPath<TFieldValues>
 > extends UseControllerProps<TFieldValues, TName> {
   label: string;
-  placeholder: string;
+  placeholder?: string;
   fullWidth?: boolean;
   type?: string;
   minRows?: number;
