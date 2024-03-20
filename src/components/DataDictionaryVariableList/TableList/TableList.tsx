@@ -114,9 +114,12 @@ const TableList = ({
     }
 
     try {
-      const resData = id && (await flowService.updateFlow(id, operations));
-      resData &&
-        setTableList(resData?.temporaryVariables as UserDefinedVariable[]);
+      const resultData = id && (await flowService.updateFlow(id, operations));
+      resultData &&
+        setTableList([
+          ...(resultData?.temporaryVariables as UserDefinedVariable[]),
+          ...(resultData.permanentVariables as UserDefinedVariable[])
+        ]);
     } catch (error) {
       Logger.error('Error updating temporary variables in the flow:', error);
     }
@@ -186,14 +189,15 @@ const TableList = ({
                           ];
 
                           try {
-                            const resData =
+                            const resultData =
                               id &&
                               (await flowService.updateFlow(id, operations));
 
-                            resData &&
-                              setTableList(
-                                resData?.temporaryVariables as UserDefinedVariable[]
-                              );
+                            resultData &&
+                              setTableList([
+                                ...(resultData?.temporaryVariables as UserDefinedVariable[]),
+                                ...(resultData.permanentVariables as UserDefinedVariable[])
+                              ]);
                           } catch (error) {
                             Logger.error(
                               'Error deleting temporary variables in the flow:',
