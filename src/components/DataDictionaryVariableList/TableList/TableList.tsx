@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   TableHead,
   TableBody,
@@ -6,14 +7,15 @@ import {
   TablePagination,
   Divider,
   Stack,
-  Button
+  Button,
+  Table
 } from '@mui/material';
 import AddBoxOutlined from '@mui/icons-material/AddBoxOutlined';
 
 import { VARIABLES_TABS } from '../constants';
 import { VariableForm } from '../VariableForm/VariableForm';
 
-import { StyledPaper, StyledTableContainer, StyledTable } from './styled';
+import { StyledPaper, StyledTableContainer } from './styled';
 
 import {
   DeleteOutlineIcon,
@@ -27,6 +29,9 @@ import {
   DataDictionaryVariable,
   UserDefinedVariable
 } from '@domain/dataDictionary';
+import { JSONPatchOperation } from '@domain/entity';
+import { flowService } from '@services/flow-service';
+import Logger from '@utils/logger';
 
 const TableList = ({
   data,
@@ -55,9 +60,11 @@ const TableList = ({
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openVariableForm, setOpenVariableForm] = useState(false);
 
+  const { id } = useParams();
+
   const visibleRows = useMemo(
     () => tableList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [page, rowsPerPage, tableList.length]
+    [page, rowsPerPage, tableList]
   );
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -77,17 +84,65 @@ const TableList = ({
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  const handleSubmitVariableFormData = async (
+    newVariable: Pick<
+      UserDefinedVariable,
+      'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
+    >
+  ) => {
+    let operations: JSONPatchOperation[];
+
+    if (selectedVariable) {
+      // operations to update variable
+      operations = [
+        {
+          value: newVariable,
+          path: `/temporaryVariables/${selectedVariable.index}`,
+          op: 'replace'
+        }
+      ];
+    } else {
+      // Patch operations to add variable
+      operations = [
+        {
+          value: newVariable,
+          path: '/temporaryVariables/-',
+          op: 'add'
+        }
+      ];
+    }
+
+    try {
+      const resultData = id && (await flowService.updateFlow(id, operations));
+      resultData &&
+        setTableList([
+          ...(resultData?.temporaryVariables as UserDefinedVariable[]),
+          ...(resultData.permanentVariables as UserDefinedVariable[])
+        ]);
+    } catch (error) {
+      Logger.error('Error updating temporary variables in the flow:', error);
+    }
+
+    setSelectedVariable(undefined);
+    setOpenVariableForm(false);
+  };
+
   return (
     <StyledPaper>
       <StyledTableContainer>
-        <StyledTable>
+        <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <StyledTableRow>
-              <StyledTableCell> Variable Name</StyledTableCell>
+              <StyledTableCell style={{ width: '20%' }}>
+                Variable Name
+              </StyledTableCell>
               <StyledTableCell> Data Type</StyledTableCell>
-              <StyledTableCell> Default value</StyledTableCell>
+              <StyledTableCell style={{ width: '20%' }}>
+                Default value
+              </StyledTableCell>
               <StyledTableCell> Description</StyledTableCell>
-              {tabName !== VARIABLES_TABS.laPMSVariables && (
+              {tabName === VARIABLES_TABS.userDefined && (
                 <StyledTableCell align="right">
                   <IconButton
                     onClick={() => {
@@ -110,11 +165,9 @@ const TableList = ({
                 <StyledTableCell>{variable.name}</StyledTableCell>
                 <StyledTableCell>{variable.dataType}</StyledTableCell>
                 <StyledTableCell>{variable.defaultValue}</StyledTableCell>
-                <StyledTableCell sx={{ maxWidth: '150px' }}>
-                  {variable.description}
-                </StyledTableCell>
+                <StyledTableCell>{variable.description}</StyledTableCell>
                 {tabName === VARIABLES_TABS.userDefined && (
-                  <StyledTableCell align="right" sx={{ maxWidth: '0px' }}>
+                  <StyledTableCell align="right" sx={{ padding: 0 }} width={70}>
                     <Stack direction="row" sx={{ maxWidth: '0px' }}>
                       <Button
                         sx={{}}
@@ -127,10 +180,30 @@ const TableList = ({
                       </Button>
                       <Button
                         sx={{}}
-                        onClick={() => {
-                          const newTableList = [...tableList];
-                          newTableList.splice(index, 1);
-                          setTableList(newTableList);
+                        onClick={async () => {
+                          const operations: JSONPatchOperation[] = [
+                            {
+                              path: `/temporaryVariables/${index}`,
+                              op: 'remove'
+                            }
+                          ];
+
+                          try {
+                            const resultData =
+                              id &&
+                              (await flowService.updateFlow(id, operations));
+
+                            resultData &&
+                              setTableList([
+                                ...(resultData?.temporaryVariables as UserDefinedVariable[]),
+                                ...(resultData.permanentVariables as UserDefinedVariable[])
+                              ]);
+                          } catch (error) {
+                            Logger.error(
+                              'Error deleting temporary variables in the flow:',
+                              error
+                            );
+                          }
                         }}
                       >
                         <DeleteOutlineIcon />
@@ -150,7 +223,7 @@ const TableList = ({
               </StyledTableRow>
             )}
           </TableBody>
-        </StyledTable>
+        </Table>
         <Divider />
         {tableList.length > 10 && (
           <TablePagination
@@ -168,29 +241,7 @@ const TableList = ({
           title="Create variable"
           modalOpen={openVariableForm}
           formData={selectedVariable}
-          handleSubmitVariableFormData={(
-            newVariable: Pick<
-              UserDefinedVariable,
-              | 'name'
-              | 'dataType'
-              | 'defaultValue'
-              | 'description'
-              | 'sourceType'
-            >
-          ) => {
-            if (selectedVariable) {
-              setTableList((prev) =>
-                prev.map((row, index) =>
-                  index === selectedVariable.index ? newVariable : row
-                )
-              );
-            } else {
-              setTableList([...tableList, newVariable]);
-            }
-
-            setSelectedVariable(undefined);
-            setOpenVariableForm(false);
-          }}
+          handleSubmitVariableFormData={handleSubmitVariableFormData}
           handleClose={() => {
             setSelectedVariable(undefined);
             setOpenVariableForm(false);

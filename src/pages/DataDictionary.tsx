@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography, Breadcrumbs, Stack, Link } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -6,13 +7,32 @@ import { palette } from '../themeConfig.ts';
 
 import { LayoutContainer } from '@components/Layouts/MainLayout';
 import DataDictionaryVariableList from '@components/DataDictionaryVariableList/DataDictionaryVariableList.tsx';
-import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
+import { IFlow } from '@domain/flow';
+import { flowService } from '@services/flow-service';
+import { useLoading } from '@contexts/LoadingContext';
 import routes from '@constants/routes';
+import Logger from '@utils/logger';
 
 export default function DataDictionary() {
   const { id } = useParams();
+  const [flow, setFlow] = useState<IFlow | null>(null);
+  const { startLoading, stopLoading } = useLoading();
 
-  const { variables } = useDataDictionaryVariables();
+  useEffect(() => {
+    const fetchInitialData = async (flowId: string) => {
+      try {
+        startLoading();
+        const flow = await flowService.getFlow(flowId);
+        setFlow(flow);
+      } catch (error) {
+        Logger.error('Error fetching flow data:', error);
+      } finally {
+        stopLoading();
+      }
+    };
+
+    id && void fetchInitialData(id);
+  }, [id]);
 
   const breadcrumbs = [
     <Link
@@ -48,7 +68,7 @@ export default function DataDictionary() {
             {breadcrumbs}
           </Breadcrumbs>
         </Stack>
-        {variables && <DataDictionaryVariableList variables={variables} />}
+        {flow && <DataDictionaryVariableList flow={flow} />}
       </Stack>
     </LayoutContainer>
   );

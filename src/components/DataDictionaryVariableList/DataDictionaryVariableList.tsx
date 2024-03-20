@@ -6,26 +6,27 @@ import { VARIABLES_TABS } from './constants';
 import TableList from './TableList/TableList';
 import TabPanel from './Tabs/TabPanel';
 
-import {
-  DataDictionaryVariable,
-  UserDefinedVariable
-} from '@domain/dataDictionary';
+import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
+import { IFlow } from '@domain/flow';
 
 const tabLabels: { [key: string]: string } = {
   laPMSVariables: 'LaPMS (Input)',
   userDefined: 'User Defined'
 };
 
-const DataDictionaryVariableList = ({
-  variables
-}: {
-  variables: Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>;
-}) => {
-  const [tab, setTab] = useState('laPMSVariables');
+const DataDictionaryVariableList = ({ flow }: { flow: IFlow }) => {
+  const [tab, setTab] = useState(VARIABLES_TABS.laPMSVariables);
 
-  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
+  const { variables } = useDataDictionaryVariables(flow);
+
+  const handleChange = (
+    _event: React.SyntheticEvent,
+    newValue: VARIABLES_TABS
+  ) => {
     setTab(newValue);
   };
+
+  if (!variables) return null;
 
   return (
     <Stack>
@@ -61,6 +62,14 @@ const DataDictionaryVariableList = ({
           />
         </TabPanel>
       ))}
+      {tab === VARIABLES_TABS.all && (
+        <TabPanel key="all" value={tab} tabName="all">
+          <TableList
+            data={[...variables['userDefined'], ...variables['laPMSVariables']]}
+            tabName={tab as VARIABLES_TABS}
+          />
+        </TabPanel>
+      )}
     </Stack>
   );
 };
