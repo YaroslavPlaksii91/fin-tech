@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { indexOf, map } from 'lodash';
 import { useParams } from 'react-router-dom';
 import {
   TableHead,
@@ -170,9 +171,16 @@ const TableList = ({
                   <StyledTableCell align="right" sx={{ padding: 0 }} width={70}>
                     <Stack direction="row" sx={{ maxWidth: '0px' }}>
                       <Button
-                        sx={{}}
                         onClick={() => {
-                          setSelectedVariable({ index: index, ...variable });
+                          const indexOfVariable = indexOf(
+                            map(tableList, 'name'),
+                            variable.name
+                          );
+
+                          setSelectedVariable({
+                            index: indexOfVariable,
+                            ...variable
+                          });
                           setOpenVariableForm(true);
                         }}
                       >
@@ -183,7 +191,10 @@ const TableList = ({
                         onClick={async () => {
                           const operations: JSONPatchOperation[] = [
                             {
-                              path: `/temporaryVariables/${index}`,
+                              path: `/temporaryVariables/${indexOf(
+                                map(tableList, 'name'),
+                                variable.name
+                              )}`,
                               op: 'remove'
                             }
                           ];
