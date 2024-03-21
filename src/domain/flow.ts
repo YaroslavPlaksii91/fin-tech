@@ -4,7 +4,6 @@ import { IEntity } from './entity';
 import {
   DATA_TYPE,
   UserDefinedVariable,
-  VARIABLE_DESTINATION_TYPE,
   VARIABLE_SOURCE_TYPE
 } from './dataDictionary';
 
@@ -46,15 +45,17 @@ export type DecisionTableData = {
   variableSources?: { name: string; sourceType: VARIABLE_SOURCE_TYPE }[];
 };
 
+export type ExpressionVariableSources = {
+  name: string;
+  sourceType: VARIABLE_SOURCE_TYPE;
+}[];
+
 export type Expression = {
-  outputVariableName: string;
+  outputName: string;
   expressionString: string;
-  destinationType: VARIABLE_DESTINATION_TYPE;
+  destinationType: string;
   destinationDataType: DATA_TYPE;
-  inputVariables: {
-    variableName: string;
-    sourceType: VARIABLE_SOURCE_TYPE;
-  }[];
+  variableSources: ExpressionVariableSources;
 };
 
 export type CalculationData = {
@@ -71,8 +72,14 @@ export interface IFlow {
   edges: Edge[];
   viewport: Viewport;
   data: Omit<FlowData, 'id'>;
-  temporaryVariables: UserDefinedVariable[];
-  permanentVariables: UserDefinedVariable[];
+  temporaryVariables: Pick<
+    UserDefinedVariable,
+    'dataType' | 'defaultValue' | 'description' | 'name'
+  >[];
+  permanentVariables: Pick<
+    UserDefinedVariable,
+    'dataType' | 'defaultValue' | 'description' | 'name'
+  >[];
 }
 
 type FlowDataCreate = Pick<FlowData, 'name' | 'createdBy' | 'editedBy'>;

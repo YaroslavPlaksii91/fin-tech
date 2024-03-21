@@ -234,3 +234,13 @@ export const TEMPORARY_VARIABLES_MOCK = [
     name: 'TotalMonthsAtBank'
   }
 ];
+
+// TODO: Remove after Data Dictionary will be implemented
+export const PERMANENT_VARIABLES_MOCK = [
+  {
+    dataType: DATA_TYPE_WITHOUT_ENUM.Integer,
+    defaultValue: '0',
+    description: '',
+    name: 'Counter'
+  }
+];

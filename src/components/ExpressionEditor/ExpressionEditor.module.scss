@@ -1,10 +1,10 @@
 .root {
   position: relative;
   display: flex;
+  flex-direction: column;
   width: 100%;
 
   .textarea {
-    width: 100%;
     resize: none;
     // uncomment when colors be ready
     //color: transparent;
@@ -20,16 +20,43 @@
     font-weight: 400;
     border: 0;
     letter-spacing: 0;
+    color: #5f6d7e;
+    border: 1px solid rgba(0, 0, 0, 0.23);
 
-    &:hover {
-      outline: 1px solid #5F6D7D; //primary color
+    &::placeholder {
+      color: rgba(0, 0, 0, 0.3);
+    }
+
+    &:hover:not(.error) {
+      outline: 1px solid #5f6d7d; //primary color
       outline-offset: -1px;
     }
 
-    &:focus {
-      outline: 2px solid #2E3646; //dark color
+    &:focus:not(.error) {
+      outline: 2px solid #2e3646; //dark color
       outline-offset: -1px;
     }
+
+    &.error {
+      outline: 1px solid #e24a4a; // error
+      outline-offset: -1px;
+      &:focus {
+        outline: 2px solid #e24a4a; // error
+      }
+    }
+  }
+
+  .errorText {
+    color: #e24a4a;
+    font-size: 12px;
+    line-height: 20px;
+    font-weight: 400;
+    font-family: Inter, sans-serif;
+    text-align: left;
+    margin-top: 4px;
+    margin-right: 14px;
+    margin-bottom: 0;
+    margin-left: 14px;
   }
 
   .coloredValue {
@@ -64,6 +91,6 @@
   }
 
   mark {
-    background-color: #ABDCB9;
+    background-color: #abdcb9;
   }
 }
