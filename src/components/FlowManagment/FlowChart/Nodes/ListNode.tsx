@@ -30,13 +30,16 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
       </div>
       <ul className={styles['node-list-container__list']}>
         {data?.splits?.map((el, idx) => (
-          <div key={`${el.edgeId}+${idx}`}>
+          <div
+            className={styles['node-list-container__row']}
+            key={`${el.edgeId}+${idx}`}
+          >
             <li>{el.percentage}%</li>
             <CustomHandler
               type="source"
               position={Position.Right}
               id={idx.toString()}
-              style={{ top: 75 + idx * 45 }}
+              style={{ top: '50%' }}
             />
           </div>
         ))}
