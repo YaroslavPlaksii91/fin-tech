@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { indexOf, map } from 'lodash';
 import { useParams } from 'react-router-dom';
 import {
   TableHead,
@@ -7,21 +6,16 @@ import {
   IconButton,
   TablePagination,
   Divider,
-  Stack,
-  Button,
   Table
 } from '@mui/material';
-import AddBoxOutlined from '@mui/icons-material/AddBoxOutlined';
+import { AddBoxOutlined } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
 import { VariableForm } from '../VariableForm/VariableForm';
 
 import { StyledPaper, StyledTableContainer } from './styled';
+import { TableRow } from './TableRow';
 
-import {
-  DeleteOutlineIcon,
-  EditNoteOutlinedIcon
-} from '@components/shared/Icons';
 import {
   StyledTableCell,
   StyledTableRow
@@ -135,6 +129,7 @@ const TableList = ({
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <StyledTableRow>
+              <StyledTableCell></StyledTableCell>
               <StyledTableCell style={{ width: '20%' }}>
                 Variable Name
               </StyledTableCell>
@@ -162,67 +157,15 @@ const TableList = ({
           </TableHead>
           <TableBody>
             {visibleRows.map((variable, index) => (
-              <StyledTableRow key={index}>
-                <StyledTableCell>{variable.name}</StyledTableCell>
-                <StyledTableCell>{variable.dataType}</StyledTableCell>
-                <StyledTableCell>{variable.defaultValue}</StyledTableCell>
-                <StyledTableCell>{variable.description}</StyledTableCell>
-                {tabName === VARIABLES_TABS.userDefined && (
-                  <StyledTableCell align="right" sx={{ padding: 0 }} width={70}>
-                    <Stack direction="row" sx={{ maxWidth: '0px' }}>
-                      <Button
-                        onClick={() => {
-                          const indexOfVariable = indexOf(
-                            map(tableList, 'name'),
-                            variable.name
-                          );
-
-                          setSelectedVariable({
-                            index: indexOfVariable,
-                            ...variable
-                          });
-                          setOpenVariableForm(true);
-                        }}
-                      >
-                        <EditNoteOutlinedIcon />
-                      </Button>
-                      <Button
-                        sx={{}}
-                        onClick={async () => {
-                          const operations: JSONPatchOperation[] = [
-                            {
-                              path: `/temporaryVariables/${indexOf(
-                                map(tableList, 'name'),
-                                variable.name
-                              )}`,
-                              op: 'remove'
-                            }
-                          ];
-
-                          try {
-                            const resultData =
-                              id &&
-                              (await flowService.updateFlow(id, operations));
-
-                            resultData &&
-                              setTableList([
-                                ...(resultData?.temporaryVariables as UserDefinedVariable[]),
-                                ...(resultData.permanentVariables as UserDefinedVariable[])
-                              ]);
-                          } catch (error) {
-                            Logger.error(
-                              'Error deleting temporary variables in the flow:',
-                              error
-                            );
-                          }
-                        }}
-                      >
-                        <DeleteOutlineIcon />
-                      </Button>
-                    </Stack>
-                  </StyledTableCell>
-                )}
-              </StyledTableRow>
+              <TableRow
+                key={index}
+                row={variable}
+                tabName={tabName}
+                tableList={tableList}
+                setTableList={setTableList}
+                setSelectedVariable={setSelectedVariable}
+                setOpenVariableForm={setOpenVariableForm}
+              />
             ))}
             {emptyRows > 0 && (
               <StyledTableRow
@@ -249,7 +192,6 @@ const TableList = ({
       </StyledTableContainer>
       {openVariableForm && (
         <VariableForm
-          title="Create variable"
           modalOpen={openVariableForm}
           formData={selectedVariable}
           handleSubmitVariableFormData={handleSubmitVariableFormData}

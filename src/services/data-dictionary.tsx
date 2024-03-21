@@ -1,7 +1,8 @@
 import api from '@utils/api';
 import {
   DataDictionaryVariable,
-  ExpressionValidate
+  ExpressionValidate,
+  VariableUsageParams
 } from '@domain/dataDictionary';
 import { userDefinedData } from '@constants/mocks';
 
@@ -25,6 +26,13 @@ class DataDictionaryService {
     return new Promise((resolve) => {
       resolve(userDefinedData);
     });
+  }
+
+  async getVariableUsage(flowId: string, variableName: string) {
+    const { data } = await api.get<VariableUsageParams>(
+      `/flows/${flowId}/variable-usage/${variableName}`
+    );
+    return data;
   }
 }
 

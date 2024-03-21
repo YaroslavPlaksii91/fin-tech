@@ -17,7 +17,6 @@ import {
 } from '@domain/dataDictionary';
 
 type VariableFormProps = {
-  title: string;
   modalOpen: boolean;
   handleSubmitVariableFormData: (
     data: Pick<
@@ -41,7 +40,6 @@ const variableSourceTypeOptions = {
 };
 
 export const VariableForm: React.FC<VariableFormProps> = ({
-  title,
   modalOpen,
   handleSubmitVariableFormData,
   handleClose,
@@ -71,13 +69,9 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     handleSubmitVariableFormData(data);
   };
 
-  // useEffect(() => {
-  //   setValue('note', note);
-  // }, [modalOpen, note]);
-
   return (
     <Dialog
-      title={title}
+      title={formData ? 'Edit variable' : 'Create variable'}
       open={modalOpen}
       maxWidth="xs"
       displayConfirmBtn={false}
