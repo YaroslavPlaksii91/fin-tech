@@ -41,7 +41,7 @@ export type DecisionTableData = {
     conditions: CaseEntry[];
     actions: CaseEntry[];
   }[];
-  elseActions?: CaseEntry[];
+  defaultActions?: CaseEntry[];
   variableSources?: { name: string; sourceType: VARIABLE_SOURCE_TYPE }[];
 };
 

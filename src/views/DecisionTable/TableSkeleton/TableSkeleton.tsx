@@ -138,7 +138,7 @@ const TableSkeleton = ({
                     value={column}
                     disableClearable={true}
                     forcePopupIcon={false}
-                    disabled={category === CATEGORIES.ElseActions}
+                    disabled={category === CATEGORIES.DefaultActions}
                     getOptionLabel={(
                       option: Pick<DataDictionaryVariable, 'name'>
                     ) => (option ? option.name : '')}

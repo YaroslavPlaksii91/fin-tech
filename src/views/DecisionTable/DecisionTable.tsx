@@ -22,7 +22,7 @@ import TableSkeleton from './TableSkeleton/TableSkeleton';
 import StepNoteSection from './StepNoteSection/StepNoteSection';
 import {
   getSerializedCaseEntries,
-  getSerializedElseActions,
+  getSerializedDefaultActions,
   setVariableSources
 } from './utils';
 
@@ -83,7 +83,8 @@ const DecisionTableStep = ({
     }
   ]);
 
-  const [elseActions, setElseActions] = useState([
+  // otherwise table obj
+  const [defaultActions, setDefaultActions] = useState([
     {
       name: '',
       operator: '',
@@ -153,14 +154,14 @@ const DecisionTableStep = ({
     keyBy(row.conditions, 'name')
   );
   const actionsRows = caseEntries.map((row) => keyBy(row.actions, 'name'));
-  const elseActionsRows = [keyBy(elseActions, 'name')];
+  const defaultActionsRows = [keyBy(defaultActions, 'name')];
 
   useEffect(() => {
     const { data } = step;
 
     // if some CaseEntries were saved already into the flow
-    if (data.caseEntries?.length) {
-      const savedElseActions = data.caseEntries[0].actions;
+    if (data.caseEntries?.length && data.defaultActions?.length) {
+      const savedDefaultActions = data.defaultActions;
       const savedCaseEntries = data.caseEntries.map((row) => {
         const serializedActions = [...row.actions];
 
@@ -174,11 +175,10 @@ const DecisionTableStep = ({
       });
 
       setCaseEntries(savedCaseEntries);
-      setElseActions(
-        savedElseActions.map((column) => ({
+      setDefaultActions(
+        savedDefaultActions.map((column) => ({
           ...column,
-          operator: '',
-          expression: ''
+          operator: column.expression ? '=' : ''
         }))
       );
     }
@@ -193,7 +193,7 @@ const DecisionTableStep = ({
           ...node.data,
           note: noteValue,
           caseEntries: getSerializedCaseEntries(caseEntries),
-          elseActions: getSerializedElseActions(elseActions),
+          defaultActions: getSerializedDefaultActions(defaultActions),
           variableSources: setVariableSources({
             caseEntry: caseEntries[0],
             variablesSourceTypes
@@ -251,13 +251,13 @@ const DecisionTableStep = ({
   }) => {
     // actions and else actions columns should be identical
     if (category === CATEGORIES.Actions) {
-      const newElseActionsEntries = [...elseActions];
-      newElseActionsEntries.splice(columnClickedIndex + 1, 0, {
+      const newDefaultActionsEntries = [...defaultActions];
+      newDefaultActionsEntries.splice(columnClickedIndex + 1, 0, {
         name: '',
         operator: '',
         expression: ''
       });
-      setElseActions(newElseActionsEntries);
+      setDefaultActions(newDefaultActionsEntries);
     }
 
     setCaseEntries((prev) =>
@@ -285,9 +285,9 @@ const DecisionTableStep = ({
     category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => {
     if (category === CATEGORIES.Actions) {
-      const newElseActionsEntries = [...elseActions];
-      newElseActionsEntries.splice(columnIndex, 1);
-      setElseActions(newElseActionsEntries);
+      const newDefaultActionsEntries = [...defaultActions];
+      newDefaultActionsEntries.splice(columnIndex, 1);
+      setDefaultActions(newDefaultActionsEntries);
     }
 
     setCaseEntries((prev) =>
@@ -313,14 +313,14 @@ const DecisionTableStep = ({
     category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   }) => {
     if (category === CATEGORIES.Actions) {
-      const newElseActionsEntries = [...elseActions];
-      newElseActionsEntries.splice(columnIndex, 1, {
+      const newDefaultActionsEntries = [...defaultActions];
+      newDefaultActionsEntries.splice(columnIndex, 1, {
         name: newVariable.name,
         operator: '',
         expression: ''
       });
 
-      setElseActions(newElseActionsEntries);
+      setDefaultActions(newDefaultActionsEntries);
     }
 
     setCaseEntries((prev) =>
@@ -348,8 +348,8 @@ const DecisionTableStep = ({
     category: CATEGORIES;
   }) => {
     const { rowIndex, variableName, operator } = formFieldData;
-    if (category === CATEGORIES.ElseActions) {
-      setElseActions((prev) =>
+    if (category === CATEGORIES.DefaultActions) {
+      setDefaultActions((prev) =>
         prev.map((column) =>
           column.name !== variableName
             ? column
@@ -396,8 +396,8 @@ const DecisionTableStep = ({
     newEnumValue: string;
     category: CATEGORIES;
   }) => {
-    if (category === CATEGORIES.ElseActions) {
-      setElseActions((prev) =>
+    if (category === CATEGORIES.DefaultActions) {
+      setDefaultActions((prev) =>
         prev.map((column) =>
           column.name !== variableName
             ? column
@@ -545,11 +545,11 @@ const DecisionTableStep = ({
           </StyledTable>
           <TableSkeleton
             columns={actionsColumns}
-            rows={elseActionsRows}
+            rows={defaultActionsRows}
             variablesOptions={combinedVariables.filter(
               (variable) => variable.usageMode !== VARIABLE_USAGE_MODE.ReadOnly
             )}
-            category={CATEGORIES.ElseActions}
+            category={CATEGORIES.DefaultActions}
             handleSubmitVariableValue={handleSubmitVariableValue}
             handleSubmitVariableValueForEnum={handleSubmitVariableValueForEnum}
           />
