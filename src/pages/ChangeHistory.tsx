@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Breadcrumbs, Grid, Link, Stack, Typography } from '@mui/material';
+import {
+  Breadcrumbs,
+  Grid,
+  Link,
+  Stack,
+  Typography,
+  Container
+} from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 import { palette } from '../themeConfig.ts';
@@ -59,41 +66,43 @@ const ChangeHistoryPage: React.FC<ChangeHistoryPageProps> = () => {
 
   return (
     <LayoutContainer>
-      <Stack paddingX={12} sx={{ width: '100%' }}>
-        <Stack spacing={2} pt={2} pb={2}>
-          <Breadcrumbs
-            separator={<NavigateNextIcon fontSize="medium" />}
-            aria-label="breadcrumb"
-          >
-            {[breadcrumbs]}
-          </Breadcrumbs>
-        </Stack>
-        <Stack paddingBottom={4}>
-          <Typography variant="h1" pb={3}>
-            Production Change History
-          </Typography>
-          <Grid container spacing={2}>
-            {list.map((item, index) => (
-              <Grid key={item.id + index} item xs={12}>
-                <ChangeHistoryItem data={item} />
-              </Grid>
-            ))}
-          </Grid>
-          {hasMore && (
-            <LoadingButton
-              sx={{ maxWidth: 180, margin: '24px auto' }}
-              loading={loading}
-              disabled={loading}
-              variant="contained"
-              color="secondary"
-              type="submit"
-              onClick={() => setPage((p) => p + 1)}
+      <Container maxWidth="xl">
+        <Stack sx={{ width: '100%' }}>
+          <Stack spacing={2} pt={2} pb={2}>
+            <Breadcrumbs
+              separator={<NavigateNextIcon fontSize="medium" />}
+              aria-label="breadcrumb"
             >
-              Show More History
-            </LoadingButton>
-          )}
+              {[breadcrumbs]}
+            </Breadcrumbs>
+          </Stack>
+          <Stack paddingBottom={4}>
+            <Typography variant="h1" pb={3}>
+              Production Change History
+            </Typography>
+            <Grid container spacing={2}>
+              {list.map((item, index) => (
+                <Grid key={item.id + index} item xs={12}>
+                  <ChangeHistoryItem data={item} />
+                </Grid>
+              ))}
+            </Grid>
+            {hasMore && (
+              <LoadingButton
+                sx={{ maxWidth: 180, margin: '24px auto' }}
+                loading={loading}
+                disabled={loading}
+                variant="contained"
+                color="secondary"
+                type="submit"
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Show More History
+              </LoadingButton>
+            )}
+          </Stack>
         </Stack>
-      </Stack>
+      </Container>
     </LayoutContainer>
   );
 };

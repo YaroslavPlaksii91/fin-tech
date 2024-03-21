@@ -38,17 +38,13 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({ data }) => {
       <Box flexGrow={1}>
         <Typography variant="body1" color="gray">
           <Typography component="span" fontWeight={600} color={palette.dark}>
-            {data.nameBefore}
+            {data.name}
           </Typography>{' '}
           was updated on{' '}
           <Typography component="span" fontWeight={600} color={palette.dark}>
             {dayjs(data.pushedOn).format(FULL_DATE_TIME_FORMAT)}
           </Typography>{' '}
           by {data.pushedBy}
-        </Typography>
-        <Typography variant="body1" color="gray">
-          Long explanation what has happened in this version that was written by
-          risk manager after saving changes.
         </Typography>
         {data.note && (
           <Typography variant="body1" color="gray">
@@ -60,9 +56,11 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({ data }) => {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>Action type</TableCell>
+                  <TableCell width="40%">Action type</TableCell>
                   <TableCell align="left">Name</TableCell>
-                  <TableCell align="left">Path</TableCell>
+                  <TableCell width="40%" align="left">
+                    Path
+                  </TableCell>
                   <TableCell />
                 </TableRow>
               </TableHead>

@@ -14,7 +14,21 @@ import TableCell from '@mui/material/TableCell';
 import ReactDiffViewer from 'react-diff-viewer';
 
 import { StyledTableCell } from '@components/ChangeHistory/styled.ts';
-import { ChangeHistoryDifference } from '@domain/changeHistory.ts';
+import {
+  ChangeHistoryDifference,
+  ChangeTypeEnum
+} from '@domain/changeHistory.ts';
+import Link from '@components/shared/Link/Link.tsx';
+import routes from '@constants/routes.ts';
+
+const getPathLink = (id: string, index: number) => {
+  if (index === 0) {
+    return routes.underwriting.flow.details(id);
+  } else {
+    // @TODO: Return link to open flow step
+    return '#';
+  }
+};
 
 export function Row(props: { row: ChangeHistoryDifference }) {
   const { row } = props;
@@ -24,11 +38,17 @@ export function Row(props: { row: ChangeHistoryDifference }) {
     <React.Fragment>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <StyledTableCell component="th" scope="row">
-          {/* @TODO: What is that? */}
-          {row.changeType}
+          {ChangeTypeEnum[row.changeType]}
         </StyledTableCell>
-        <StyledTableCell align="left">{row.name}</StyledTableCell>
-        <StyledTableCell align="left">{row.path.join(' > ')}</StyledTableCell>
+        <StyledTableCell align="left">{row.name || '-'}</StyledTableCell>
+        <StyledTableCell align="left">
+          {row.path.map((part, index) => (
+            <React.Fragment key={part.id + index}>
+              <Link path={getPathLink(part.id, index)} label={part.name} />
+              {index !== row.path.length - 1 && <span>&gt;</span>}
+            </React.Fragment>
+          ))}
+        </StyledTableCell>
         <StyledTableCell width={24}>
           <IconButton
             aria-label="expand row"

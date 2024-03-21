@@ -5,16 +5,22 @@ export interface ChangeHistoryDifference {
   before: string | null;
   id: string;
   changeType: number;
-  path: string[];
+  path: { id: string; name: string }[];
 }
 
 export interface ChangeHistoryRecord {
   id: string;
   originalFlowId: string;
-  nameAfter: string;
-  nameBefore: string;
+  name: string;
   pushedBy: string;
   pushedOn: string;
   note: string;
   diffs: ChangeHistoryDifference[];
 }
+
+export const ChangeTypeEnum: Record<string | number, string> = {
+  0: 'Created',
+  1: 'Deleted',
+  2: 'Edited',
+  3: 'Renamed'
+};
