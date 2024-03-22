@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Menu, MenuItem, Stack } from '@mui/material';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { StyledAppBar, StyledLinkText } from './styled';
 
@@ -33,6 +34,7 @@ const pages = [
 
 function Navigation() {
   const userInfo = useAppSelector(selectUserInfo);
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -75,7 +77,9 @@ function Navigation() {
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
             <MenuItem
               onClick={() => {
-                authService.logout();
+                authService.logout(() => {
+                  navigate(routes.index);
+                });
                 handleClose();
               }}
             >

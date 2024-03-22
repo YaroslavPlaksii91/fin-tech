@@ -15,7 +15,9 @@ const AccessVerificationPage = () => {
       navigate(routes.index);
     } else {
       if (code) {
-        void authService.getAccessToken(code);
+        void authService.getAccessToken(code, () => {
+          navigate(routes.index);
+        });
       } else {
         Logger.error('Auth error - code is missing');
       }
