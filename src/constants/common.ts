@@ -1,8 +1,6 @@
 export const MUI_LICENSE_KEY = import.meta.env.VITE_MUI_LICENSE_KEY;
-
-export const cookiesKeys = {
-  credentials: 'credentials'
-};
+export const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
+export const IAM_SERVICE_URL = import.meta.env.VITE_IAM_SERVICE_URL;
 
 export const FULL_DATE_TIME_FORMAT = 'MM/DD/YYYY hh:mm:ss A';
 
@@ -38,3 +36,15 @@ export enum DATA_DICTIONARY_GROUP {
 }
 
 export const RULES_LIMIT = 10;
+
+export const SCOPES_LIST = {
+  OFFLINE_ACCESS: 'offline_access',
+  ROLES: 'roles'
+};
+
+export const GRANT_TYPES = {
+  AUTH_CODE: 'authorization_code',
+  REFRESH_TOKEN: 'refresh_token',
+  PASSWORD: 'password',
+  CLIENT_CREDENTIALS: 'client_credentials'
+};

@@ -8,7 +8,6 @@ import {
 } from './initialFlowUtils';
 
 import { IFlowDataCreate } from '@domain/flow';
-import Auth from '@utils/auth';
 import {
   PERMANENT_VARIABLES_MOCK,
   TEMPORARY_VARIABLES_MOCK
@@ -26,7 +25,7 @@ export const createInitialFlowDataHelper = (name: string): IFlowDataCreate => {
   const startNodeData = createStartNodeData();
   const endNodeData = createEndNodeData();
   const edgeData = createEdgeData();
-  const username = Auth.getUsername();
+  const username = 'username';
   const viewport = getViewPort();
 
   return {

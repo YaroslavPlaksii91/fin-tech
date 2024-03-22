@@ -1,7 +1,6 @@
 import * as yup from 'yup';
 
 import { JSONPatchOperation } from '@domain/entity';
-import Auth from '@utils/auth';
 
 export const validationSchema = yup.object().shape({
   name: yup
@@ -15,7 +14,7 @@ export const updateFlowDataHelper = (
   id: string,
   name: string
 ): { id: string; operations: JSONPatchOperation[] } => {
-  const username = Auth.getUsername();
+  const username = 'username';
   return {
     id,
     operations: [

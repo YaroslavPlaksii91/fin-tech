@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import PrivateRoutes from '@components/Router/PrivateRoutes';
 import PrivateAuthRoute from '@components/Router/PrivateAuthRoute';
-import Login from '@pages/Login/Login';
+import Login from '@pages/auth/Login.tsx';
 import Layout from '@components/Layouts/Layout';
 import routes from '@constants/routes';
 import Flows from '@pages/Flows';
@@ -11,6 +11,7 @@ import FlowEdit from '@pages/FlowEdit';
 import FlowDetails from '@pages/FlowDetails';
 import DataDictionary from '@pages/DataDictionary';
 import ChangeHistoryPage from '@pages/ChangeHistory.tsx';
+import AccessVerificationPage from '@pages/auth/AccessVerification.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -75,10 +76,18 @@ export const router = createBrowserRouter([
     ]
   },
   {
-    path: routes.login,
+    path: routes.auth.login,
     element: (
       <PrivateAuthRoute>
         <Login />
+      </PrivateAuthRoute>
+    )
+  },
+  {
+    path: routes.auth.accessVerification,
+    element: (
+      <PrivateAuthRoute>
+        <AccessVerificationPage />
       </PrivateAuthRoute>
     )
   },
