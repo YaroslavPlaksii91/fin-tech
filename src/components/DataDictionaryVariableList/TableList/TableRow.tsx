@@ -1,10 +1,18 @@
 import { useState } from 'react';
 import { indexOf, map } from 'lodash';
-import { useParams } from 'react-router-dom';
-import { IconButton, Stack, Button, Collapse, Box } from '@mui/material';
+import { useParams, useNavigate } from 'react-router-dom';
+import {
+  IconButton,
+  Stack,
+  Button,
+  Collapse,
+  Box,
+  Typography
+} from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
+// import { palette } from '../../../themeConfig';
 
 import {
   DeleteOutlineIcon,
@@ -19,8 +27,10 @@ import {
   DataDictionaryVariable
 } from '@domain/dataDictionary';
 import { JSONPatchOperation } from '@domain/entity';
+import { FlowNode } from '@domain/flow';
 import { flowService } from '@services/flow-service';
-// import { dataDictionaryService } from '@services/data-dictionary';
+import { dataDictionaryService } from '@services/data-dictionary';
+import routes from '@constants/routes';
 import Logger from '@utils/logger';
 
 type TableRowProps = {
@@ -30,8 +40,9 @@ type TableRowProps = {
         UserDefinedVariable,
         'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
       >;
-  key: number;
+  index: number;
   tabName: VARIABLES_TABS;
+  flowNodes: FlowNode[];
   setSelectedVariable: (
     selectedVariable: Pick<
       UserDefinedVariable,
@@ -50,32 +61,51 @@ type TableRowProps = {
 
 export const TableRow = ({
   row,
-  key,
+  index,
   tabName,
+  flowNodes,
   setSelectedVariable,
   tableList,
   setTableList,
   setOpenVariableForm
 }: TableRowProps) => {
   const [isExpanded, setisExpanded] = useState(false);
+  const [variableUsageNodes, setVariableUsageNodes] = useState<FlowNode[]>([]);
 
+  const navigate = useNavigate();
   const { id } = useParams();
 
-  // const getVariableUsage = async (variableName: string) => {
-  //   const resultData =
-  //     id && (await dataDictionaryService.getVariableUsage(id, variableName));
+  const getVariableUsage = async (variableName: string) => {
+    const resultData: FlowNode[] = [];
+    try {
+      const responseData =
+        id && (await dataDictionaryService.getVariableUsage(id, variableName));
 
-  //   // console.log('resultData', resultData);
-  // };
+      if (responseData && responseData?.length) {
+        responseData.forEach((variable) => {
+          const node = flowNodes.find((node) => node.id === variable.path[0]);
+          node && resultData.push(node);
+        });
+      }
+
+      //console.log('variableUsageNodes', resultData);
+      setVariableUsageNodes(resultData);
+    } catch (error) {
+      Logger.error('Error fetching variable usage in the flow:', error);
+    }
+  };
 
   return (
     <>
-      <StyledTableRow key={key} sx={{ '& > *': { borderBottom: 'unset' } }}>
+      <StyledTableRow key={index} sx={{ '& > *': { borderBottom: 'unset' } }}>
         <StyledTableCell>
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={() => setisExpanded(!isExpanded)}
+            onClick={() => {
+              setisExpanded(!isExpanded);
+              !isExpanded && void getVariableUsage(row.name);
+            }}
           >
             {isExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
@@ -145,7 +175,27 @@ export const TableRow = ({
           colSpan={6}
         >
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}></Box>
+            <Box sx={{ margin: 1 }}>
+              <Typography variant="body2">This variable is used in:</Typography>
+              {variableUsageNodes.length && (
+                <Stack>
+                  {variableUsageNodes.map((flowNode) => (
+                    <Stack
+                      key={flowNode.id}
+                      //icon={<NavigateNext fontSize="medium" />}
+                      aria-label="breadcrumb"
+                      onClick={() =>
+                        navigate(routes.underwriting.flow.edit(id as string), {
+                          state: { node: flowNode }
+                        })
+                      }
+                    >
+                      {flowNode?.data?.name}
+                    </Stack>
+                  ))}
+                </Stack>
+              )}
+            </Box>
           </Collapse>
         </StyledTableCell>
       </StyledTableRow>

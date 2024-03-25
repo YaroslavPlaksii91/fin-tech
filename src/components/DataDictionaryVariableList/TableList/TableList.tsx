@@ -25,14 +25,17 @@ import {
   UserDefinedVariable
 } from '@domain/dataDictionary';
 import { JSONPatchOperation } from '@domain/entity';
+import { FlowNode } from '@domain/flow';
 import { flowService } from '@services/flow-service';
 import Logger from '@utils/logger';
 
 const TableList = ({
   data,
+  flowNodes,
   tabName
 }: {
   data: DataDictionaryVariable[] | UserDefinedVariable[];
+  flowNodes: FlowNode[];
   tabName: VARIABLES_TABS;
 }) => {
   const [tableList, setTableList] = useState<
@@ -160,8 +163,10 @@ const TableList = ({
               <TableRow
                 key={index}
                 row={variable}
+                index={index}
                 tabName={tabName}
                 tableList={tableList}
+                flowNodes={flowNodes}
                 setTableList={setTableList}
                 setSelectedVariable={setSelectedVariable}
                 setOpenVariableForm={setOpenVariableForm}

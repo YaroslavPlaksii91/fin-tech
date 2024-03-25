@@ -59,6 +59,7 @@ const DataDictionaryVariableList = ({ flow }: { flow: IFlow }) => {
           <TableList
             data={variables[tabName]}
             tabName={tabName as VARIABLES_TABS}
+            flowNodes={flow.nodes}
           />
         </TabPanel>
       ))}
@@ -67,6 +68,7 @@ const DataDictionaryVariableList = ({ flow }: { flow: IFlow }) => {
           <TableList
             data={[...variables['userDefined'], ...variables['laPMSVariables']]}
             tabName={tab as VARIABLES_TABS}
+            flowNodes={flow.nodes}
           />
         </TabPanel>
       )}
