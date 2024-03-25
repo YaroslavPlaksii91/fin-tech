@@ -59,12 +59,7 @@ const DecisionTableStep = ({
   const [noteValue, setNoteValue] = useState('');
   const [columnClickedIndex, setColumnClickedIndex] = useState(0);
 
-  const [caseEntries, setCaseEntries] = useState<
-    {
-      conditions: CaseEntry[];
-      actions: CaseEntry[];
-    }[]
-  >([
+  const [caseEntries, setCaseEntries] = useState([
     {
       conditions: [
         {
@@ -159,32 +154,60 @@ const DecisionTableStep = ({
   useEffect(() => {
     const { data } = step;
 
-    // if some CaseEntries were saved already into the flow
-    if (data.caseEntries?.length && data.defaultActions?.length) {
-      const savedDefaultActions = data.defaultActions;
-      const savedCaseEntries = data.caseEntries.map((row) => {
-        const serializedActions = [...row.actions];
+    // if some defaultActions were saved already into the flow
 
-        return {
-          conditions: row.conditions,
-          actions: serializedActions.map((column) => ({
-            ...column,
-            operator: column.expression ? '=' : ''
-          }))
-        };
-      });
-
-      setCaseEntries(savedCaseEntries);
-      setDefaultActions(
-        savedDefaultActions.map((column) => ({
+    const savedDefaultActions = data.defaultActions?.length
+      ? data.defaultActions.map((column) => ({
           ...column,
           operator: column.expression ? '=' : ''
         }))
-      );
-    }
+      : [
+          {
+            name: '',
+            operator: '',
+            expression: ''
+          }
+        ];
+
+    // if some CaseEntries were saved already into the flow
+    const savedCaseEntries = data.caseEntries?.map((row) => {
+      const serializedActions = [...row.actions];
+
+      return {
+        conditions: row.conditions.length
+          ? row.conditions
+          : [
+              {
+                name: '',
+                operator: '',
+                expression: ''
+              }
+            ],
+        actions: serializedActions.length
+          ? serializedActions.map((column) => ({
+              ...column,
+              operator: column.expression ? '=' : ''
+            }))
+          : [
+              {
+                name: '',
+                operator: '',
+                expression: ''
+              }
+            ]
+      };
+    });
+
+    setCaseEntries(
+      savedCaseEntries as {
+        conditions: CaseEntry[];
+        actions: CaseEntry[];
+      }[]
+    );
+    setDefaultActions(savedDefaultActions);
 
     setNoteValue(data?.note ?? '');
-  }, []);
+  }, [step.data]);
 
   const onApplyChangesClick = () => {
     const updatedNodes = nodes.map((node: FlowNode) => {
@@ -435,6 +458,8 @@ const DecisionTableStep = ({
 
   return (
     <>
+      {/* {console.log(caseEntries)}
+      {console.log(defaultActions)} */}
       <StepDetailsHeader
         title={step.data.name}
         details="A decision table is a step that allows to set expressions for
