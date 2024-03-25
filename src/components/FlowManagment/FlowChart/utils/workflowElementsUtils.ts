@@ -43,7 +43,7 @@ export const createNewNode = (
       newNode.data = {
         ...newNode.data,
         caseEntries: [{ conditions: [], actions: [] }],
-        elseActions: [],
+        defaultActions: [],
         variableSources: []
       };
       break;

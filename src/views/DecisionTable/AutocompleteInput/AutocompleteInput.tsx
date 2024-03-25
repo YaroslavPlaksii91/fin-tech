@@ -40,7 +40,7 @@ export const AutocompleteInput = ({
     placeholder="Choose the variable"
     InputProps={{
       ...rest.InputProps,
-      endAdornment: category !== CATEGORIES.ElseActions && (
+      endAdornment: category !== CATEGORIES.DefaultActions && (
         <>
           <IconButton
             aria-label="more"
