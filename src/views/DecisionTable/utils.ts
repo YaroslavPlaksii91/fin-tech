@@ -63,8 +63,8 @@ export const getSerializedCaseEntries = (caseEntries: CaseEntriesDate[]) =>
     };
   });
 
-export const getSerializedElseActions = (elseActions: CaseEntry[]) =>
-  elseActions.map((element) => ({
+export const getSerializedDefaultActions = (defaultActions: CaseEntry[]) =>
+  defaultActions.map((element) => ({
     ...element,
     // set variable destinationType
     destinationType: 'TemporaryVariable'

@@ -113,6 +113,8 @@ const TableSkeleton = ({
     return newOptions;
   };
 
+  // console.log('IN TABLESKELETON', columns);
+
   return (
     <>
       <StyledTable sx={{ minWidth: 650 }}>
@@ -136,7 +138,7 @@ const TableSkeleton = ({
                     value={column}
                     disableClearable={true}
                     forcePopupIcon={false}
-                    disabled={category === CATEGORIES.ElseActions}
+                    disabled={category === CATEGORIES.DefaultActions}
                     getOptionLabel={(
                       option: Pick<DataDictionaryVariable, 'name'>
                     ) => (option ? option.name : '')}
@@ -193,9 +195,10 @@ const TableSkeleton = ({
 
                   return (
                     <StyledTableCell key={columnIndex}>
-                      {Object.values(DATA_TYPE_WITHOUT_ENUM).includes(
-                        column.dataType as DATA_TYPE_WITHOUT_ENUM
-                      ) &&
+                      {column.dataType &&
+                        Object.values(DATA_TYPE_WITHOUT_ENUM).includes(
+                          column.dataType as DATA_TYPE_WITHOUT_ENUM
+                        ) &&
                         (column.dataType as DATA_TYPE_WITHOUT_ENUM) !==
                           DATA_TYPE_WITHOUT_ENUM['Boolean'] && (
                           <StyledStack
@@ -212,33 +215,35 @@ const TableSkeleton = ({
                             {cellValue}
                           </StyledStack>
                         )}
+
                       {/* Controller for the enum type of variables */}
-                      {(Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
-                        column.dataType as DATA_TYPE_WITH_ENUM_PREFIX
-                      ) ||
-                        (column.dataType as DATA_TYPE_WITHOUT_ENUM) ===
-                          DATA_TYPE_WITHOUT_ENUM.Boolean) && (
-                        <SelectComponent
-                          rowIndex={rowIndex}
-                          category={category}
-                          variableName={column.name}
-                          value={
-                            row[column.name as keyof VariableRowData]
-                              .expression ?? ''
-                          }
-                          options={
-                            (column.dataType as DATA_TYPE_WITHOUT_ENUM) !==
-                              DATA_TYPE_WITHOUT_ENUM.Boolean &&
-                            column?.allowedValues
-                              ? column?.allowedValues
-                              : BOOLEAN_OPTIONS
-                          }
-                          fullWidth
-                          handleSubmitVariableValueForEnum={
-                            handleSubmitVariableValueForEnum
-                          }
-                        />
-                      )}
+                      {column.dataType &&
+                        (Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
+                          column.dataType as DATA_TYPE_WITH_ENUM_PREFIX
+                        ) ||
+                          (column.dataType as DATA_TYPE_WITHOUT_ENUM) ===
+                            DATA_TYPE_WITHOUT_ENUM.Boolean) && (
+                          <SelectComponent
+                            rowIndex={rowIndex}
+                            category={category}
+                            variableName={column.name}
+                            value={
+                              row[column.name as keyof VariableRowData]
+                                .expression ?? ''
+                            }
+                            options={
+                              (column.dataType as DATA_TYPE_WITHOUT_ENUM) !==
+                                DATA_TYPE_WITHOUT_ENUM.Boolean &&
+                              column?.allowedValues
+                                ? column?.allowedValues
+                                : BOOLEAN_OPTIONS
+                            }
+                            fullWidth
+                            handleSubmitVariableValueForEnum={
+                              handleSubmitVariableValueForEnum
+                            }
+                          />
+                        )}
                     </StyledTableCell>
                   );
                 }
