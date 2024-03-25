@@ -1,18 +1,16 @@
 import { useState } from 'react';
 import { indexOf, map } from 'lodash';
 import { useParams, useNavigate } from 'react-router-dom';
+import { IconButton, Stack, Button, Collapse, Typography } from '@mui/material';
 import {
-  IconButton,
-  Stack,
-  Button,
-  Collapse,
-  Box,
-  Typography
-} from '@mui/material';
-import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+  NavigateNext
+} from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
-// import { palette } from '../../../themeConfig';
+
+import { StyledStack } from './styled';
 
 import {
   DeleteOutlineIcon,
@@ -175,27 +173,32 @@ export const TableRow = ({
           colSpan={6}
         >
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="body2">This variable is used in:</Typography>
-              {variableUsageNodes.length && (
-                <Stack>
-                  {variableUsageNodes.map((flowNode) => (
-                    <Stack
-                      key={flowNode.id}
-                      //icon={<NavigateNext fontSize="medium" />}
-                      aria-label="breadcrumb"
-                      onClick={() =>
-                        navigate(routes.underwriting.flow.edit(id as string), {
-                          state: { node: flowNode }
-                        })
-                      }
-                    >
-                      {flowNode?.data?.name}
-                    </Stack>
-                  ))}
+            <Stack margin={1} spacing={1}>
+              <Typography variant="body1" fontWeight={600}>
+                This variable is used in:
+              </Typography>
+
+              {variableUsageNodes.map((flowNode) => (
+                <Stack
+                  key={flowNode.id}
+                  direction="row"
+                  spacing={1}
+                  alignItems="center"
+                >
+                  <NavigateNext fontSize="medium" />
+                  <StyledStack
+                    aria-label="breadcrumb"
+                    onClick={() =>
+                      navigate(routes.underwriting.flow.edit(id as string), {
+                        state: { node: flowNode }
+                      })
+                    }
+                  >
+                    {flowNode?.data?.name}
+                  </StyledStack>
                 </Stack>
-              )}
-            </Box>
+              ))}
+            </Stack>
           </Collapse>
         </StyledTableCell>
       </StyledTableRow>
