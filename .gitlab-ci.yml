@@ -10,7 +10,8 @@ stages:
 .build:
   image: node:20-bookworm-slim
   before_script:
-    - npm config set -- '//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken' "${CI_JOB_TOKEN}"
+    - echo @eloanwarehouse:registry=https://git.gdev.group/api/v4/packages/npm/ >> .npmrc
+    - npm config set -- //git.gdev.group/:_authToken=${CI_JOB_TOKEN}
     - echo VITE_API_BASE=$(eval echo \$vite_api_base_$CI_COMMIT_REF_SLUG) > .env
     - echo VITE_MUI_LICENSE_KEY=$(eval echo \$vite_mui_license_key_$CI_COMMIT_REF_SLUG) >> .env
     - echo VITE_CLIENT_ID=$(eval echo \$vite_client_id_$CI_COMMIT_REF_SLUG) >> .env
