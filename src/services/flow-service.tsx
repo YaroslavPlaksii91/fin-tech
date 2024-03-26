@@ -1,7 +1,6 @@
 import api from '@utils/api';
 import { FlowData, IFlow, IFlowDataCreate, IFlowListItem } from '@domain/flow';
 import { JSONPatchOperation } from '@domain/entity';
-import Auth from '@utils/auth.ts';
 
 class FlowService {
   async getFlows() {
@@ -49,7 +48,8 @@ class FlowService {
   async pushProductionFlow(flow: IFlow) {
     const { data } = await api.post<FlowData>('/production-flow', flow, {
       params: {
-        pushedBy: Auth.getUsername()
+        // @TODO: Real username
+        pushedBy: 'username'
       }
     });
     return data;
