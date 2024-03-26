@@ -113,8 +113,6 @@ const TableSkeleton = ({
     return newOptions;
   };
 
-  // console.log('IN TABLESKELETON', columns);
-
   return (
     <>
       <StyledTable sx={{ minWidth: 650 }}>

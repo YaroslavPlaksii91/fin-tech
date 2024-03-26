@@ -28,7 +28,7 @@ type VariableFormProps = {
     | (Pick<
         UserDefinedVariable,
         'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-      > & { index: number })
+      > & { index: number; variableIsUsed: boolean })
     | undefined;
   handleClose: () => void;
 };
@@ -84,6 +84,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
             name="name"
             label="Variable Name"
             control={control}
+            disabled={formData && formData.variableIsUsed}
           />
           <SingleSelect
             variant="outlined"
@@ -111,6 +112,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
             name="dataType"
             label="Data Type"
             control={control}
+            disabled={formData && formData.variableIsUsed}
             displayEmpty
             fullWidth
             sx={{

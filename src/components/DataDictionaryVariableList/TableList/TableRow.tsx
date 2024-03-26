@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { indexOf, map } from 'lodash';
 import { useParams, useNavigate } from 'react-router-dom';
 import { IconButton, Stack, Button, Collapse, Typography } from '@mui/material';
@@ -45,7 +45,7 @@ type TableRowProps = {
     selectedVariable: Pick<
       UserDefinedVariable,
       'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-    > & { index: number }
+    > & { index: number; variableIsUsed: boolean }
   ) => void;
   tableList:
     | DataDictionaryVariable[]
@@ -86,12 +86,17 @@ export const TableRow = ({
         });
       }
 
-      //console.log('variableUsageNodes', resultData);
       setVariableUsageNodes(resultData);
     } catch (error) {
       Logger.error('Error fetching variable usage in the flow:', error);
     }
   };
+
+  useEffect(() => {
+    if (tabName === VARIABLES_TABS.userDefined) {
+      void getVariableUsage(row.name);
+    }
+  }, []);
 
   return (
     <>
@@ -102,7 +107,9 @@ export const TableRow = ({
             size="small"
             onClick={() => {
               setisExpanded(!isExpanded);
-              !isExpanded && void getVariableUsage(row.name);
+              !isExpanded &&
+                tabName != VARIABLES_TABS.userDefined &&
+                void getVariableUsage(row.name);
             }}
           >
             {isExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
@@ -124,6 +131,7 @@ export const TableRow = ({
 
                   setSelectedVariable({
                     index: indexOfVariable,
+                    variableIsUsed: !!variableUsageNodes.length,
                     ...row
                   });
                   setOpenVariableForm(true);
@@ -132,7 +140,7 @@ export const TableRow = ({
                 <EditNoteOutlinedIcon />
               </Button>
               <Button
-                sx={{}}
+                disabled={!!variableUsageNodes.length}
                 onClick={async () => {
                   const operations: JSONPatchOperation[] = [
                     {
