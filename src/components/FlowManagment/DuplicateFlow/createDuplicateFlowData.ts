@@ -4,6 +4,7 @@ import { IFlow } from '@domain/flow';
 
 export const createDuplicateFlowData = (flow: IFlow) => {
   const omitFlowData = omit(flow, ['id', 'data']);
+  // @TODO: Real username
   const username = 'username';
 
   return {
