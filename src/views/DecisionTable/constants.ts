@@ -55,12 +55,12 @@ export const ANY_OPERATOR = {
 export enum CATEGORIES {
   Conditions = 'conditions',
   Actions = 'actions',
-  ElseActions = 'elseActions'
+  DefaultActions = 'defaultActions'
 }
 
 export type CATEGORIES_WITHOUT_ELSE_ACTIONS = Exclude<
   CATEGORIES,
-  CATEGORIES.ElseActions
+  CATEGORIES.DefaultActions
 >;
 
 export const BOOLEAN_OPTIONS = ['true', 'false'];
