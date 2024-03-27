@@ -1,11 +1,8 @@
-import Cookie from 'js-cookie';
 import { Navigate } from 'react-router-dom';
 
-import { cookiesKeys } from '@constants/common';
+import { authService } from '@services/auth.ts';
 
-const PrivateAuthRoute = (props: { children: React.ReactNode }) => {
-  const user = Cookie.get(cookiesKeys.credentials);
-  return user ? <Navigate to="/" /> : props.children;
-};
+const PrivateAuthRoute = (props: { children: React.ReactNode }) =>
+  authService.isTokenSet() ? <Navigate to="/" /> : props.children;
 
 export default PrivateAuthRoute;

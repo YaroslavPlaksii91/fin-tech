@@ -1,8 +1,7 @@
-import axios, { AxiosInstance } from 'axios';
-import Cookie from 'js-cookie';
+import axios, { AxiosError, AxiosInstance } from 'axios';
 
 import { apiBaseUrl } from '@constants/api-urls';
-import { cookiesKeys } from '@constants/common';
+import { authService } from '@services/auth.ts';
 
 const Api: AxiosInstance = axios.create({
   baseURL: apiBaseUrl,
@@ -11,21 +10,17 @@ const Api: AxiosInstance = axios.create({
   }
 });
 
-Api.interceptors.request.use((config) => {
-  const credentialsCookie = Cookie.get(cookiesKeys.credentials);
-  if (credentialsCookie) {
-    const decodedCredentials = decodeURIComponent(credentialsCookie);
-    const [storedUsername, storedPassword] = decodedCredentials.split(':');
-    const credentials = btoa(storedUsername + ':' + storedPassword);
-    const basicAuth = 'Basic ' + credentials;
-    config.headers['Authorization'] = `${basicAuth}`;
-  }
+Api.interceptors.request.use(async (config) => {
+  await authService.axiosRequestMiddleware();
   return config;
 });
 
 Api.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error)
+  async (error: AxiosError) => {
+    authService.axiosResponseMiddleware(error);
+    return Promise.reject(error);
+  }
 );
 
 export default Api;

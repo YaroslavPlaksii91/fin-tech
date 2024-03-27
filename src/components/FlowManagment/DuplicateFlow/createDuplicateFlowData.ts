@@ -1,11 +1,11 @@
 import omit from 'lodash/omit';
 
 import { IFlow } from '@domain/flow';
-import Auth from '@utils/auth';
 
 export const createDuplicateFlowData = (flow: IFlow) => {
   const omitFlowData = omit(flow, ['id', 'data']);
-  const username = Auth.getUsername();
+  // @TODO: Real username
+  const username = 'username';
 
   return {
     ...omitFlowData,

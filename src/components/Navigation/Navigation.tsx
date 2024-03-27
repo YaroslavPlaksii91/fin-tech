@@ -3,7 +3,9 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { Stack } from '@mui/material';
+import { Menu, MenuItem, Stack } from '@mui/material';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { StyledAppBar, StyledLinkText } from './styled';
 
@@ -14,6 +16,9 @@ import {
   PersonOutlineIcon
 } from '@components/shared/Icons';
 import { StyledNavLink } from '@components/shared/Link/styled';
+import { authService } from '@services/auth.ts';
+import { useAppSelector } from '@store/hooks.ts';
+import { selectUserInfo } from '@store/auth/auth.ts';
 
 const pages = [
   {
@@ -28,6 +33,18 @@ const pages = [
 ];
 
 function Navigation() {
+  const userInfo = useAppSelector(selectUserInfo);
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <StyledAppBar position="static">
       <Container maxWidth="xl">
@@ -54,12 +71,25 @@ function Navigation() {
           <Avatar sx={{ bgcolor: 'gray', width: '24px', height: '24px' }}>
             <PersonOutlineIcon />
           </Avatar>
-          <Typography ml={1} variant="body2" color="gray">
-            Cristofer Calzoni
+          <Typography onClick={handleClick} ml={1} variant="body2" color="gray">
+            {userInfo?.userName}
           </Typography>
+          <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+            <MenuItem
+              onClick={() => {
+                authService.logout(() => {
+                  navigate(routes.index);
+                });
+                handleClose();
+              }}
+            >
+              Logout
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </Container>
     </StyledAppBar>
   );
 }
+
 export default Navigation;

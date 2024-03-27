@@ -1,6 +1,9 @@
 const routes = {
   index: '/',
-  login: '/login',
+  auth: {
+    login: '/login',
+    accessVerification: '/access-verification'
+  },
   underwriting: {
     flow: {
       list: '/flow-list',

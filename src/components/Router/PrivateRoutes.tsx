@@ -1,16 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import Cookie from 'js-cookie';
 
 import routes from '@constants/routes';
-import { cookiesKeys } from '@constants/common';
+import { authService } from '@services/auth.ts';
+import { fetchUserInfo, selectUserInfo } from '@store/auth/auth.ts';
+import { useAppDispatch, useAppSelector } from '@store/hooks.ts';
 
 const PrivateRoutes = (props: { children: React.ReactNode }) => {
   const location = useLocation();
-  const user = Cookie.get(cookiesKeys.credentials);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUserInfo);
+
+  useEffect(() => {
+    void dispatch(fetchUserInfo());
+  }, [dispatch]);
+
+  if (!authService.isTokenSet()) {
+    return <Navigate to={routes.auth.login} state={{ from: location }} />;
+  }
 
   if (!user) {
-    return <Navigate to={routes.login} state={{ from: location }} />;
+    return <div>Loader...</div>;
   }
 
   return props.children;
