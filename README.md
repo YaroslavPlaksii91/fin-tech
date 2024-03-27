@@ -11,13 +11,17 @@ The underwriting platform is a cloud solution that helps to automate and configu
     cd frontend-underwriting
     ```
 
-2. **Install dependencies:**
+2. **Setup npm registry:**
+   This project uses a custom private npm registry, so you should set it up. Create `.npmrc` file in the root directory, and add `@eloanwarehouse:registry` and your credentials to use that registry. You can find  instructions in the `@eloanwarehouse/frontend-core` package readme
+
+
+3. **Install dependencies:**
 
     ```bash
     npm install
     ```
 
-3. **Run the project:**
+4. **Run the project:**
 
     ```bash
     npm run dev
