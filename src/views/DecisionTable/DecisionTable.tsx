@@ -91,10 +91,12 @@ const DecisionTableStep = ({
   const nodes: FlowNode[] = getNodes();
 
   // temporary combine two groups of variables for autocomplete
-  const combinedVariables = [
-    ...(value?.variables?.laPMSVariables as DataDictionaryVariable[]),
-    ...(value?.variables?.userDefined as UserDefinedVariable[])
-  ];
+  const combinedVariables = value?.variables
+    ? [
+        ...(value?.variables?.laPMSVariables as DataDictionaryVariable[]),
+        ...(value?.variables?.userDefined as UserDefinedVariable[])
+      ]
+    : [];
 
   const variablesDataTypes: Record<string, string> = useMemo(
     () =>
@@ -105,7 +107,7 @@ const DecisionTableStep = ({
         }),
         {}
       ),
-    []
+    [combinedVariables]
   );
 
   const variablesSourceTypes: Record<string, VARIABLE_SOURCE_TYPE> = useMemo(
@@ -117,7 +119,7 @@ const DecisionTableStep = ({
         }),
         {}
       ),
-    []
+    [combinedVariables]
   );
 
   const getColumns = (category: CATEGORIES_WITHOUT_ELSE_ACTIONS) =>
@@ -456,10 +458,10 @@ const DecisionTableStep = ({
     }
   };
 
+  if (!value?.variables) return null;
+
   return (
     <>
-      {/* {console.log(caseEntries)}
-      {console.log(defaultActions)} */}
       <StepDetailsHeader
         title={step.data.name}
         details="A decision table is a step that allows to set expressions for

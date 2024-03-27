@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { indexOf, map } from 'lodash';
 import { useParams } from 'react-router-dom';
 import {
   TableHead,
@@ -7,21 +6,17 @@ import {
   IconButton,
   TablePagination,
   Divider,
-  Stack,
-  Button,
   Table
 } from '@mui/material';
-import AddBoxOutlined from '@mui/icons-material/AddBoxOutlined';
+import { AddBoxOutlined } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
 import { VariableForm } from '../VariableForm/VariableForm';
+import { DeleteVariable } from '../DeleteVariable/DeleteVariable';
 
 import { StyledPaper, StyledTableContainer } from './styled';
+import { TableRow } from './TableRow';
 
-import {
-  DeleteOutlineIcon,
-  EditNoteOutlinedIcon
-} from '@components/shared/Icons';
 import {
   StyledTableCell,
   StyledTableRow
@@ -30,36 +25,38 @@ import {
   DataDictionaryVariable,
   UserDefinedVariable
 } from '@domain/dataDictionary';
-import { JSONPatchOperation } from '@domain/entity';
-import { flowService } from '@services/flow-service';
-import Logger from '@utils/logger';
+import { FlowNode } from '@domain/flow';
 
 const TableList = ({
-  data,
-  tabName
+  flowNodes,
+  tabName,
+  tableList,
+  setTableList
 }: {
-  data: DataDictionaryVariable[] | UserDefinedVariable[];
+  flowNodes: FlowNode[];
   tabName: VARIABLES_TABS;
-}) => {
-  const [tableList, setTableList] = useState<
+  tableList:
     | DataDictionaryVariable[]
     | Pick<
         UserDefinedVariable,
         'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-      >[]
-  >(data ?? []);
-
+      >[];
+  setTableList: (list: UserDefinedVariable[]) => void;
+}) => {
   const [selectedVariable, setSelectedVariable] = useState<
     | (Pick<
         UserDefinedVariable,
         'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-      > & { index: number })
+      > & { index: number; variableIsUsed: boolean })
     | undefined
   >(undefined);
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openVariableForm, setOpenVariableForm] = useState(false);
+  const [deleteVariable, setDeleteVariable] = useState<
+    { name: string; variableIsUsed: boolean } | undefined
+  >(undefined);
 
   const { id } = useParams();
 
@@ -86,55 +83,13 @@ const TableList = ({
     setPage(0);
   };
 
-  const handleSubmitVariableFormData = async (
-    newVariable: Pick<
-      UserDefinedVariable,
-      'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-    >
-  ) => {
-    let operations: JSONPatchOperation[];
-
-    if (selectedVariable) {
-      // operations to update variable
-      operations = [
-        {
-          value: newVariable,
-          path: `/temporaryVariables/${selectedVariable.index}`,
-          op: 'replace'
-        }
-      ];
-    } else {
-      // Patch operations to add variable
-      operations = [
-        {
-          value: newVariable,
-          path: '/temporaryVariables/-',
-          op: 'add'
-        }
-      ];
-    }
-
-    try {
-      const resultData = id && (await flowService.updateFlow(id, operations));
-      resultData &&
-        setTableList([
-          ...(resultData?.temporaryVariables as UserDefinedVariable[]),
-          ...(resultData.permanentVariables as UserDefinedVariable[])
-        ]);
-    } catch (error) {
-      Logger.error('Error updating temporary variables in the flow:', error);
-    }
-
-    setSelectedVariable(undefined);
-    setOpenVariableForm(false);
-  };
-
   return (
     <StyledPaper>
       <StyledTableContainer>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <StyledTableRow>
+              <StyledTableCell></StyledTableCell>
               <StyledTableCell style={{ width: '20%' }}>
                 Variable Name
               </StyledTableCell>
@@ -162,67 +117,17 @@ const TableList = ({
           </TableHead>
           <TableBody>
             {visibleRows.map((variable, index) => (
-              <StyledTableRow key={index}>
-                <StyledTableCell>{variable.name}</StyledTableCell>
-                <StyledTableCell>{variable.dataType}</StyledTableCell>
-                <StyledTableCell>{variable.defaultValue}</StyledTableCell>
-                <StyledTableCell>{variable.description}</StyledTableCell>
-                {tabName === VARIABLES_TABS.userDefined && (
-                  <StyledTableCell align="right" sx={{ padding: 0 }} width={70}>
-                    <Stack direction="row" sx={{ maxWidth: '0px' }}>
-                      <Button
-                        onClick={() => {
-                          const indexOfVariable = indexOf(
-                            map(tableList, 'name'),
-                            variable.name
-                          );
-
-                          setSelectedVariable({
-                            index: indexOfVariable,
-                            ...variable
-                          });
-                          setOpenVariableForm(true);
-                        }}
-                      >
-                        <EditNoteOutlinedIcon />
-                      </Button>
-                      <Button
-                        sx={{}}
-                        onClick={async () => {
-                          const operations: JSONPatchOperation[] = [
-                            {
-                              path: `/temporaryVariables/${indexOf(
-                                map(tableList, 'name'),
-                                variable.name
-                              )}`,
-                              op: 'remove'
-                            }
-                          ];
-
-                          try {
-                            const resultData =
-                              id &&
-                              (await flowService.updateFlow(id, operations));
-
-                            resultData &&
-                              setTableList([
-                                ...(resultData?.temporaryVariables as UserDefinedVariable[]),
-                                ...(resultData.permanentVariables as UserDefinedVariable[])
-                              ]);
-                          } catch (error) {
-                            Logger.error(
-                              'Error deleting temporary variables in the flow:',
-                              error
-                            );
-                          }
-                        }}
-                      >
-                        <DeleteOutlineIcon />
-                      </Button>
-                    </Stack>
-                  </StyledTableCell>
-                )}
-              </StyledTableRow>
+              <TableRow
+                key={index}
+                row={variable}
+                index={index}
+                tabName={tabName}
+                tableList={tableList}
+                flowNodes={flowNodes}
+                setSelectedVariable={setSelectedVariable}
+                setOpenVariableForm={setOpenVariableForm}
+                setDeleteVariable={setDeleteVariable}
+              />
             ))}
             {emptyRows > 0 && (
               <StyledTableRow
@@ -247,16 +152,26 @@ const TableList = ({
           />
         )}
       </StyledTableContainer>
-      {openVariableForm && (
+      {openVariableForm && id && (
         <VariableForm
-          title="Create variable"
+          flowId={id}
           modalOpen={openVariableForm}
           formData={selectedVariable}
-          handleSubmitVariableFormData={handleSubmitVariableFormData}
           handleClose={() => {
             setSelectedVariable(undefined);
             setOpenVariableForm(false);
           }}
+          setTableList={setTableList}
+        />
+      )}
+      {!!deleteVariable && id && (
+        <DeleteVariable
+          flowId={id}
+          variable={deleteVariable}
+          tableList={tableList}
+          modalOpen={!!deleteVariable}
+          handleCloseModal={() => setDeleteVariable(undefined)}
+          setTableList={setTableList}
         />
       )}
     </StyledPaper>

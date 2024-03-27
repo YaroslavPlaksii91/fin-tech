@@ -1,4 +1,4 @@
-import { TableContainer, Table, Paper } from '@mui/material';
+import { TableContainer, Table, Paper, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 export const StyledTableContainer = styled(TableContainer)(() => ({
@@ -14,4 +14,9 @@ export const StyledTable = styled(Table)(() => ({
 export const StyledPaper = styled(Paper)(() => ({
   overflow: 'hidden',
   marginTop: '16px'
+}));
+
+export const StyledStack = styled(Stack)(() => ({
+  textDecoration: 'underline',
+  cursor: 'pointer'
 }));
