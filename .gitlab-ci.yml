@@ -10,7 +10,7 @@ stages:
 .build:
   image: node:20-bookworm-slim
   before_script:
-    - echo "//git.gdev.group/:_authToken=${CI_JOB_TOKEN}" >> ~/.npmrc
+    - echo "//git.gdev.group/:_authToken=${token}" >> ~/.npmrc
     - echo "@eloanwarehouse:registry=https://git.gdev.group/api/v4/packages/npm/" >> ~/.npmrc
     - echo VITE_API_BASE=$(eval echo \$vite_api_base_$CI_COMMIT_REF_SLUG) > .env
     - echo VITE_MUI_LICENSE_KEY=$(eval echo \$vite_mui_license_key_$CI_COMMIT_REF_SLUG) >> .env
