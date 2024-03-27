@@ -1,4 +1,3 @@
-//import { useEffect } from 'react';
 import { Button, Stack, MenuItem } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -15,15 +14,13 @@ import {
   DATA_TYPE_WITHOUT_ENUM,
   UserDefinedVariable
 } from '@domain/dataDictionary';
+import { JSONPatchOperation } from '@domain/entity';
+import { flowService } from '@services/flow-service';
+import Logger from '@utils/logger';
 
 type VariableFormProps = {
+  flowId: string;
   modalOpen: boolean;
-  handleSubmitVariableFormData: (
-    data: Pick<
-      UserDefinedVariable,
-      'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-    >
-  ) => void;
   formData:
     | (Pick<
         UserDefinedVariable,
@@ -31,6 +28,7 @@ type VariableFormProps = {
       > & { index: number; variableIsUsed: boolean })
     | undefined;
   handleClose: () => void;
+  setTableList: (list: UserDefinedVariable[]) => void;
 };
 
 // TODO: Add other sources as an array
@@ -40,10 +38,11 @@ const variableSourceTypeOptions = {
 };
 
 export const VariableForm: React.FC<VariableFormProps> = ({
+  flowId,
   modalOpen,
-  handleSubmitVariableFormData,
   handleClose,
-  formData
+  formData,
+  setTableList
 }) => {
   const {
     handleSubmit,
@@ -60,13 +59,47 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     }
   });
 
-  const onSubmit = (
+  const onSubmit = async (
     data: Pick<
       UserDefinedVariable,
       'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
     >
   ) => {
-    handleSubmitVariableFormData(data);
+    let operations: JSONPatchOperation[];
+
+    if (formData) {
+      // operations to update variable
+      operations = [
+        {
+          value: data,
+          path: `/temporaryVariables/${formData.index}`,
+          op: 'replace'
+        }
+      ];
+    } else {
+      // Patch operations to add variable
+      operations = [
+        {
+          value: data,
+          path: '/temporaryVariables/-',
+          op: 'add'
+        }
+      ];
+    }
+
+    try {
+      const resultData =
+        flowId && (await flowService.updateFlow(flowId, operations));
+      resultData &&
+        setTableList([
+          ...(resultData?.temporaryVariables as UserDefinedVariable[]),
+          ...(resultData.permanentVariables as UserDefinedVariable[])
+        ]);
+    } catch (error) {
+      Logger.error('Error updating temporary variables in the flow:', error);
+    }
+
+    handleClose();
   };
 
   return (

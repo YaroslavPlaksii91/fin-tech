@@ -2,11 +2,7 @@ import { useState, useEffect } from 'react';
 import { indexOf, map } from 'lodash';
 import { useParams, useNavigate } from 'react-router-dom';
 import { IconButton, Stack, Button, Collapse, Typography } from '@mui/material';
-import {
-  KeyboardArrowDown,
-  KeyboardArrowUp,
-  NavigateNext
-} from '@mui/icons-material';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
 
@@ -24,9 +20,7 @@ import {
   UserDefinedVariable,
   DataDictionaryVariable
 } from '@domain/dataDictionary';
-import { JSONPatchOperation } from '@domain/entity';
 import { FlowNode } from '@domain/flow';
-import { flowService } from '@services/flow-service';
 import { dataDictionaryService } from '@services/data-dictionary';
 import routes from '@constants/routes';
 import Logger from '@utils/logger';
@@ -53,8 +47,11 @@ type TableRowProps = {
         UserDefinedVariable,
         'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
       >[];
-  setTableList: (list: UserDefinedVariable[]) => void;
   setOpenVariableForm: (openVariableForm: boolean) => void;
+  setDeleteVariable: (variable: {
+    name: string;
+    variableIsUsed: boolean;
+  }) => void;
 };
 
 export const TableRow = ({
@@ -64,8 +61,8 @@ export const TableRow = ({
   flowNodes,
   setSelectedVariable,
   tableList,
-  setTableList,
-  setOpenVariableForm
+  setOpenVariableForm,
+  setDeleteVariable
 }: TableRowProps) => {
   const [isExpanded, setisExpanded] = useState(false);
   const [variableUsageNodes, setVariableUsageNodes] = useState<FlowNode[]>([]);
@@ -140,34 +137,12 @@ export const TableRow = ({
                 <EditNoteOutlinedIcon />
               </Button>
               <Button
-                disabled={!!variableUsageNodes.length}
-                onClick={async () => {
-                  const operations: JSONPatchOperation[] = [
-                    {
-                      path: `/temporaryVariables/${indexOf(
-                        map(tableList, 'name'),
-                        row.name
-                      )}`,
-                      op: 'remove'
-                    }
-                  ];
-
-                  try {
-                    const resultData =
-                      id && (await flowService.updateFlow(id, operations));
-
-                    resultData &&
-                      setTableList([
-                        ...(resultData?.temporaryVariables as UserDefinedVariable[]),
-                        ...(resultData.permanentVariables as UserDefinedVariable[])
-                      ]);
-                  } catch (error) {
-                    Logger.error(
-                      'Error deleting temporary variables in the flow:',
-                      error
-                    );
-                  }
-                }}
+                onClick={() =>
+                  setDeleteVariable({
+                    name: row.name,
+                    variableIsUsed: !!variableUsageNodes.length
+                  })
+                }
               >
                 <DeleteOutlineIcon />
               </Button>
@@ -187,24 +162,17 @@ export const TableRow = ({
               </Typography>
 
               {variableUsageNodes.map((flowNode) => (
-                <Stack
+                <StyledStack
                   key={flowNode.id}
-                  direction="row"
-                  spacing={1}
-                  alignItems="center"
+                  aria-label="breadcrumb"
+                  onClick={() =>
+                    navigate(routes.underwriting.flow.edit(id as string), {
+                      state: { node: flowNode }
+                    })
+                  }
                 >
-                  <NavigateNext fontSize="medium" />
-                  <StyledStack
-                    aria-label="breadcrumb"
-                    onClick={() =>
-                      navigate(routes.underwriting.flow.edit(id as string), {
-                        state: { node: flowNode }
-                      })
-                    }
-                  >
-                    {flowNode?.data?.name}
-                  </StyledStack>
-                </Stack>
+                  {flowNode?.data?.name}
+                </StyledStack>
               ))}
             </Stack>
           </Collapse>

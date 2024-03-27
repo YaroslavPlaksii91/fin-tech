@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Stack, Tabs, Typography } from '@mui/material';
 
 import { StyledTab } from './styled';
@@ -8,6 +8,10 @@ import TabPanel from './Tabs/TabPanel';
 
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { IFlow } from '@domain/flow';
+import {
+  DataDictionaryVariable,
+  UserDefinedVariable
+} from '@domain/dataDictionary';
 
 const tabLabels: { [key: string]: string } = {
   laPMSVariables: 'LaPMS (Input)',
@@ -16,6 +20,13 @@ const tabLabels: { [key: string]: string } = {
 
 const DataDictionaryVariableList = ({ flow }: { flow: IFlow }) => {
   const [tab, setTab] = useState(VARIABLES_TABS.laPMSVariables);
+  const [tableList, setTableList] = useState<
+    | DataDictionaryVariable[]
+    | Pick<
+        UserDefinedVariable,
+        'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
+      >[]
+  >([]);
 
   const { variables } = useDataDictionaryVariables(flow);
 
@@ -24,7 +35,14 @@ const DataDictionaryVariableList = ({ flow }: { flow: IFlow }) => {
     newValue: VARIABLES_TABS
   ) => {
     setTab(newValue);
+    variables && setTableList(variables[newValue]);
   };
+
+  useEffect(() => {
+    if (variables) {
+      setTableList(variables[tab]);
+    }
+  }, [variables]);
 
   if (!variables) return null;
 
@@ -57,7 +75,8 @@ const DataDictionaryVariableList = ({ flow }: { flow: IFlow }) => {
       {Object.keys(variables).map((tabName) => (
         <TabPanel key={tabName} value={tab} tabName={tabName}>
           <TableList
-            data={variables[tabName]}
+            tableList={tableList}
+            setTableList={setTableList}
             tabName={tabName as VARIABLES_TABS}
             flowNodes={flow.nodes}
           />
@@ -66,9 +85,13 @@ const DataDictionaryVariableList = ({ flow }: { flow: IFlow }) => {
       {tab === VARIABLES_TABS.all && (
         <TabPanel key="all" value={tab} tabName="all">
           <TableList
-            data={[...variables['userDefined'], ...variables['laPMSVariables']]}
+            tableList={[
+              ...variables['userDefined'],
+              ...variables['laPMSVariables']
+            ]}
             tabName={tab as VARIABLES_TABS}
             flowNodes={flow.nodes}
+            setTableList={setTableList}
           />
         </TabPanel>
       )}

@@ -12,6 +12,7 @@ import { AddBoxOutlined } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
 import { VariableForm } from '../VariableForm/VariableForm';
+import { DeleteVariable } from '../DeleteVariable/DeleteVariable';
 
 import { StyledPaper, StyledTableContainer } from './styled';
 import { TableRow } from './TableRow';
@@ -24,39 +25,38 @@ import {
   DataDictionaryVariable,
   UserDefinedVariable
 } from '@domain/dataDictionary';
-import { JSONPatchOperation } from '@domain/entity';
 import { FlowNode } from '@domain/flow';
-import { flowService } from '@services/flow-service';
-import Logger from '@utils/logger';
 
 const TableList = ({
-  data,
   flowNodes,
-  tabName
+  tabName,
+  tableList,
+  setTableList
 }: {
-  data: DataDictionaryVariable[] | UserDefinedVariable[];
   flowNodes: FlowNode[];
   tabName: VARIABLES_TABS;
-}) => {
-  const [tableList, setTableList] = useState<
+  tableList:
     | DataDictionaryVariable[]
     | Pick<
         UserDefinedVariable,
         'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-      >[]
-  >(data ?? []);
-
+      >[];
+  setTableList: (list: UserDefinedVariable[]) => void;
+}) => {
   const [selectedVariable, setSelectedVariable] = useState<
     | (Pick<
         UserDefinedVariable,
         'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-      > & { index: number })
+      > & { index: number; variableIsUsed: boolean })
     | undefined
   >(undefined);
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openVariableForm, setOpenVariableForm] = useState(false);
+  const [deleteVariable, setDeleteVariable] = useState<
+    { name: string; variableIsUsed: boolean } | undefined
+  >(undefined);
 
   const { id } = useParams();
 
@@ -81,49 +81,6 @@ const TableList = ({
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
-
-  const handleSubmitVariableFormData = async (
-    newVariable: Pick<
-      UserDefinedVariable,
-      'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-    >
-  ) => {
-    let operations: JSONPatchOperation[];
-
-    if (selectedVariable) {
-      // operations to update variable
-      operations = [
-        {
-          value: newVariable,
-          path: `/temporaryVariables/${selectedVariable.index}`,
-          op: 'replace'
-        }
-      ];
-    } else {
-      // Patch operations to add variable
-      operations = [
-        {
-          value: newVariable,
-          path: '/temporaryVariables/-',
-          op: 'add'
-        }
-      ];
-    }
-
-    try {
-      const resultData = id && (await flowService.updateFlow(id, operations));
-      resultData &&
-        setTableList([
-          ...(resultData?.temporaryVariables as UserDefinedVariable[]),
-          ...(resultData.permanentVariables as UserDefinedVariable[])
-        ]);
-    } catch (error) {
-      Logger.error('Error updating temporary variables in the flow:', error);
-    }
-
-    setSelectedVariable(undefined);
-    setOpenVariableForm(false);
   };
 
   return (
@@ -167,9 +124,9 @@ const TableList = ({
                 tabName={tabName}
                 tableList={tableList}
                 flowNodes={flowNodes}
-                setTableList={setTableList}
                 setSelectedVariable={setSelectedVariable}
                 setOpenVariableForm={setOpenVariableForm}
+                setDeleteVariable={setDeleteVariable}
               />
             ))}
             {emptyRows > 0 && (
@@ -195,15 +152,26 @@ const TableList = ({
           />
         )}
       </StyledTableContainer>
-      {openVariableForm && (
+      {openVariableForm && id && (
         <VariableForm
+          flowId={id}
           modalOpen={openVariableForm}
           formData={selectedVariable}
-          handleSubmitVariableFormData={handleSubmitVariableFormData}
           handleClose={() => {
             setSelectedVariable(undefined);
             setOpenVariableForm(false);
           }}
+          setTableList={setTableList}
+        />
+      )}
+      {!!deleteVariable && id && (
+        <DeleteVariable
+          flowId={id}
+          variable={deleteVariable}
+          tableList={tableList}
+          modalOpen={!!deleteVariable}
+          handleCloseModal={() => setDeleteVariable(undefined)}
+          setTableList={setTableList}
         />
       )}
     </StyledPaper>
