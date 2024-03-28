@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { indexOf, map } from 'lodash';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { IconButton, Stack, Button, Collapse, Typography } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
@@ -22,6 +22,7 @@ import {
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { dataDictionaryService } from '@services/data-dictionary';
+import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import routes from '@constants/routes';
 import Logger from '@utils/logger';
 
@@ -34,6 +35,7 @@ type TableRowProps = {
       >;
   index: number;
   tabName: VARIABLES_TABS;
+  flowId: string;
   flowNodes: FlowNode[];
   setSelectedVariable: (
     selectedVariable: Pick<
@@ -41,12 +43,6 @@ type TableRowProps = {
       'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
     > & { index: number; variableIsUsed: boolean }
   ) => void;
-  tableList:
-    | DataDictionaryVariable[]
-    | Pick<
-        UserDefinedVariable,
-        'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-      >[];
   setOpenVariableForm: (openVariableForm: boolean) => void;
   setDeleteVariable: (variable: {
     name: string;
@@ -58,23 +54,25 @@ export const TableRow = ({
   row,
   index,
   tabName,
+  flowId,
   flowNodes,
   setSelectedVariable,
-  tableList,
   setOpenVariableForm,
   setDeleteVariable
 }: TableRowProps) => {
   const [isExpanded, setisExpanded] = useState(false);
   const [variableUsageNodes, setVariableUsageNodes] = useState<FlowNode[]>([]);
 
+  const value = useContext(DataDictionaryPageContext);
   const navigate = useNavigate();
-  const { id } = useParams();
 
   const getVariableUsage = async (variableName: string) => {
     const resultData: FlowNode[] = [];
     try {
-      const responseData =
-        id && (await dataDictionaryService.getVariableUsage(id, variableName));
+      const responseData = await dataDictionaryService.getVariableUsage(
+        flowId,
+        variableName
+      );
 
       if (responseData && responseData?.length) {
         responseData.forEach((variable) => {
@@ -122,7 +120,7 @@ export const TableRow = ({
               <Button
                 onClick={() => {
                   const indexOfVariable = indexOf(
-                    map(tableList, 'name'),
+                    map(value?.temporaryVariables, 'name'),
                     row.name
                   );
 
@@ -166,7 +164,7 @@ export const TableRow = ({
                   key={flowNode.id}
                   aria-label="breadcrumb"
                   onClick={() =>
-                    navigate(routes.underwriting.flow.edit(id as string), {
+                    navigate(routes.underwriting.flow.edit(flowId), {
                       state: { node: flowNode }
                     })
                   }

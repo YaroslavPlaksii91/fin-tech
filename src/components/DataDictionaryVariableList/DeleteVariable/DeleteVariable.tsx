@@ -1,46 +1,35 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { indexOf, map } from 'lodash';
 import { Typography } from '@mui/material';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import Logger from '@utils/logger';
-import {
-  UserDefinedVariable,
-  DataDictionaryVariable
-} from '@domain/dataDictionary';
 import { JSONPatchOperation } from '@domain/entity';
 import { flowService } from '@services/flow-service';
+import { DataDictionaryPageContext } from '@pages/DataDictionary';
 
 interface DeleteVariableProps {
   flowId: string;
   variable: { name: string; variableIsUsed: boolean };
-  tableList:
-    | DataDictionaryVariable[]
-    | Pick<
-        UserDefinedVariable,
-        'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-      >[];
   modalOpen: boolean;
   handleCloseModal: () => void;
-  setTableList: (list: UserDefinedVariable[]) => void;
 }
 
 export const DeleteVariable = ({
   flowId,
   variable,
-  tableList,
   modalOpen,
-  handleCloseModal,
-  setTableList
+  handleCloseModal
 }: DeleteVariableProps) => {
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
+  const value = useContext(DataDictionaryPageContext);
 
   const handleDeleteVariable = async () => {
     try {
       const operations: JSONPatchOperation[] = [
         {
           path: `/temporaryVariables/${indexOf(
-            map(tableList, 'name'),
+            map(value?.temporaryVariables, 'name'),
             variable.name
           )}`,
           op: 'remove'
@@ -48,13 +37,9 @@ export const DeleteVariable = ({
       ];
 
       setConfirmLoading(true);
-      const resultData = await flowService.updateFlow(flowId, operations);
+      const newFlowData = await flowService.updateFlow(flowId, operations);
 
-      resultData &&
-        setTableList([
-          ...(resultData?.temporaryVariables as UserDefinedVariable[]),
-          ...(resultData.permanentVariables as UserDefinedVariable[])
-        ]);
+      newFlowData && value?.setFlow(newFlowData);
       handleCloseModal();
     } catch (error) {
       Logger.error(error);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography, Breadcrumbs, Stack, Link } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -8,10 +8,23 @@ import { palette } from '../themeConfig.ts';
 import { LayoutContainer } from '@components/Layouts/MainLayout';
 import DataDictionaryVariableList from '@components/DataDictionaryVariableList/DataDictionaryVariableList.tsx';
 import { IFlow } from '@domain/flow';
+import { UserDefinedVariable } from '@domain/dataDictionary';
 import { flowService } from '@services/flow-service';
 import { useLoading } from '@contexts/LoadingContext';
 import routes from '@constants/routes';
 import Logger from '@utils/logger';
+
+export type DataDictionaryPageContextType = {
+  temporaryVariables: Pick<
+    UserDefinedVariable,
+    'name' | 'dataType' | 'defaultValue' | 'description'
+  >[];
+  setFlow: (flow: IFlow) => void;
+};
+
+export const DataDictionaryPageContext = createContext<
+  DataDictionaryPageContextType | undefined
+>(undefined);
 
 export default function DataDictionary() {
   const { id } = useParams();
@@ -57,6 +70,14 @@ export default function DataDictionary() {
       Data dictionary
     </Typography>
   ];
+
+  if (!flow) return null;
+
+  const contextValue = {
+    temporaryVariables: flow.temporaryVariables,
+    setFlow
+  };
+
   return (
     <LayoutContainer>
       <Stack paddingX={12} sx={{ width: '100%' }}>
@@ -68,7 +89,9 @@ export default function DataDictionary() {
             {breadcrumbs}
           </Breadcrumbs>
         </Stack>
-        {flow && <DataDictionaryVariableList flow={flow} />}
+        <DataDictionaryPageContext.Provider value={contextValue}>
+          <DataDictionaryVariableList flow={flow} />
+        </DataDictionaryPageContext.Provider>
       </Stack>
     </LayoutContainer>
   );
