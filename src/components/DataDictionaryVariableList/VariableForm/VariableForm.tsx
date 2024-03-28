@@ -1,6 +1,7 @@
-import { Button, Stack, MenuItem } from '@mui/material';
+import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Button, Stack, MenuItem } from '@mui/material';
 
 import { validationSchema } from './validationSchema';
 
@@ -9,6 +10,7 @@ import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';
 import { Textarea } from '@components/shared/Forms/Textarea';
 import { SingleSelect } from '@components/shared/Forms/SingleSelect';
+import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import {
   VARIABLE_SOURCE_TYPE,
   DATA_TYPE_WITHOUT_ENUM,
@@ -28,7 +30,6 @@ type VariableFormProps = {
       > & { index: number; variableIsUsed: boolean })
     | undefined;
   handleClose: () => void;
-  setTableList: (list: UserDefinedVariable[]) => void;
 };
 
 // TODO: Add other sources as an array
@@ -41,8 +42,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
   flowId,
   modalOpen,
   handleClose,
-  formData,
-  setTableList
+  formData
 }) => {
   const {
     handleSubmit,
@@ -58,6 +58,8 @@ export const VariableForm: React.FC<VariableFormProps> = ({
       description: formData ? formData.description : ''
     }
   });
+
+  const value = useContext(DataDictionaryPageContext);
 
   const onSubmit = async (
     data: Pick<
@@ -88,13 +90,10 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     }
 
     try {
-      const resultData =
+      const newFlowData =
         flowId && (await flowService.updateFlow(flowId, operations));
-      resultData &&
-        setTableList([
-          ...(resultData?.temporaryVariables as UserDefinedVariable[]),
-          ...(resultData.permanentVariables as UserDefinedVariable[])
-        ]);
+
+      newFlowData && value?.setFlow(newFlowData);
     } catch (error) {
       Logger.error('Error updating temporary variables in the flow:', error);
     }

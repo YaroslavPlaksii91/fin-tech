@@ -30,18 +30,16 @@ import { FlowNode } from '@domain/flow';
 const TableList = ({
   flowNodes,
   tabName,
-  tableList,
-  setTableList
+  tableData
 }: {
   flowNodes: FlowNode[];
   tabName: VARIABLES_TABS;
-  tableList:
+  tableData:
     | DataDictionaryVariable[]
     | Pick<
         UserDefinedVariable,
         'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
       >[];
-  setTableList: (list: UserDefinedVariable[]) => void;
 }) => {
   const [selectedVariable, setSelectedVariable] = useState<
     | (Pick<
@@ -61,13 +59,13 @@ const TableList = ({
   const { id } = useParams();
 
   const visibleRows = useMemo(
-    () => tableList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [page, rowsPerPage, tableList]
+    () => tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [page, rowsPerPage, tableData]
   );
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableList.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0;
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -122,7 +120,7 @@ const TableList = ({
                 row={variable}
                 index={index}
                 tabName={tabName}
-                tableList={tableList}
+                flowId={id as string}
                 flowNodes={flowNodes}
                 setSelectedVariable={setSelectedVariable}
                 setOpenVariableForm={setOpenVariableForm}
@@ -141,10 +139,10 @@ const TableList = ({
           </TableBody>
         </Table>
         <Divider />
-        {tableList.length > 10 && (
+        {tableData.length > 10 && (
           <TablePagination
             component="div"
-            count={tableList.length}
+            count={tableData.length}
             page={page}
             onPageChange={handleChangePage}
             rowsPerPage={rowsPerPage}
@@ -161,17 +159,14 @@ const TableList = ({
             setSelectedVariable(undefined);
             setOpenVariableForm(false);
           }}
-          setTableList={setTableList}
         />
       )}
       {!!deleteVariable && id && (
         <DeleteVariable
           flowId={id}
           variable={deleteVariable}
-          tableList={tableList}
           modalOpen={!!deleteVariable}
           handleCloseModal={() => setDeleteVariable(undefined)}
-          setTableList={setTableList}
         />
       )}
     </StyledPaper>
