@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   TableHead,
@@ -11,6 +11,7 @@ import {
 import { AddBoxOutlined } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
+import { getUserDefinedUsage, getUserDefinedUsageNodes } from '../utils';
 import { VariableForm } from '../VariableForm/VariableForm';
 import { DeleteVariable } from '../DeleteVariable/DeleteVariable';
 
@@ -23,7 +24,8 @@ import {
 } from '@components/shared/Table/styled';
 import {
   DataDictionaryVariable,
-  UserDefinedVariable
+  UserDefinedVariable,
+  VariableUsageParams
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 
@@ -56,6 +58,11 @@ const TableList = ({
     { name: string; variableIsUsed: boolean } | undefined
   >(undefined);
 
+  // usage for userDefined variables
+  const [userDefinedUsage, setUserDefinedUsage] = useState<
+    VariableUsageParams | undefined
+  >(undefined);
+
   const { id } = useParams();
 
   const visibleRows = useMemo(
@@ -66,6 +73,14 @@ const TableList = ({
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0;
+
+  useEffect(() => {
+    if (tabName === VARIABLES_TABS.userDefined) {
+      void getUserDefinedUsage(id as string, tableData).then((data) =>
+        setUserDefinedUsage(data as VariableUsageParams)
+      );
+    }
+  }, []);
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -122,6 +137,14 @@ const TableList = ({
                 tabName={tabName}
                 flowId={id as string}
                 flowNodes={flowNodes}
+                userDefinedUsageNodes={
+                  userDefinedUsage &&
+                  getUserDefinedUsageNodes({
+                    userDefinedUsage,
+                    variable,
+                    flowNodes
+                  })
+                }
                 setSelectedVariable={setSelectedVariable}
                 setOpenVariableForm={setOpenVariableForm}
                 setDeleteVariable={setDeleteVariable}
