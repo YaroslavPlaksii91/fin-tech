@@ -1,14 +1,18 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { UserInfoModel } from '@eloanwarehouse/frontend-core';
 
-import api from '@utils/api.ts';
-import { apiUrls, authApiBaseUrl } from '@constants/api-urls.ts';
+import { authService } from '@services/auth.ts';
+import Logger from '@utils/logger.ts';
 
 export const fetchUserInfo = createAsyncThunk(
   'auth/fetchUserInfo',
   async () => {
-    const response = await api.get(authApiBaseUrl + apiUrls.currentUser);
-    return response.data as UserInfoModel;
+    try {
+      const response = await authService.fetchUserInfo();
+      return response.data;
+    } catch (e) {
+      Logger.error(e);
+    }
   }
 );
 
@@ -25,7 +29,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchUserInfo.fulfilled, (state, { payload }) => {
-      state.user = payload;
+      state.user = payload as UserInfoModel;
     });
   }
 });
