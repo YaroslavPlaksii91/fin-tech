@@ -6,7 +6,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { palette } from '../themeConfig.ts';
 
 import { LayoutContainer } from '@components/Layouts/MainLayout';
-import DataDictionaryVariableList from '@components/DataDictionaryVariableList/DataDictionaryVariableList.tsx';
+import DataDictionaryVariables from '@components/DataDictionaryVariables/DataDictionaryVariables.tsx';
 import { IFlow } from '@domain/flow';
 import { UserDefinedVariable } from '@domain/dataDictionary';
 import { flowService } from '@services/flow-service';
@@ -90,7 +90,7 @@ export default function DataDictionary() {
           </Breadcrumbs>
         </Stack>
         <DataDictionaryPageContext.Provider value={contextValue}>
-          <DataDictionaryVariableList flow={flow} />
+          <DataDictionaryVariables flow={flow} />
         </DataDictionaryPageContext.Provider>
       </Stack>
     </LayoutContainer>

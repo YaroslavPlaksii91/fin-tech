@@ -137,6 +137,7 @@ const TableList = ({
                 tabName={tabName}
                 flowId={id as string}
                 flowNodes={flowNodes}
+                // defined for userDefined variables
                 userDefinedUsageNodes={
                   userDefinedUsage &&
                   getUserDefinedUsageNodes({

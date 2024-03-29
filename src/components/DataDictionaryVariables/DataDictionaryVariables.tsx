@@ -9,7 +9,7 @@ import TabPanel from './Tabs/TabPanel';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { IFlow } from '@domain/flow';
 
-const DataDictionaryVariableList = ({ flow }: { flow: IFlow }) => {
+const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const [tab, setTab] = useState(VARIABLES_TABS.laPMSVariables);
 
   const { variables } = useDataDictionaryVariables(flow);
@@ -79,4 +79,4 @@ const DataDictionaryVariableList = ({ flow }: { flow: IFlow }) => {
   );
 };
 
-export default DataDictionaryVariableList;
+export default DataDictionaryVariables;
