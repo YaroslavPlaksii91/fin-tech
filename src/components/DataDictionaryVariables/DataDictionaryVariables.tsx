@@ -2,19 +2,14 @@ import { useState } from 'react';
 import { Box, Stack, Tabs, Typography } from '@mui/material';
 
 import { StyledTab } from './styled';
-import { VARIABLES_TABS } from './constants';
+import { VARIABLES_TABS, TABS_LABELS, SOURCES_DESCRIPTIONS } from './constants';
 import TableList from './TableList/TableList';
 import TabPanel from './Tabs/TabPanel';
 
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { IFlow } from '@domain/flow';
 
-const tabLabels: { [key: string]: string } = {
-  laPMSVariables: 'LaPMS (Input)',
-  userDefined: 'User Defined'
-};
-
-const DataDictionaryVariableList = ({ flow }: { flow: IFlow }) => {
+const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const [tab, setTab] = useState(VARIABLES_TABS.laPMSVariables);
 
   const { variables } = useDataDictionaryVariables(flow);
@@ -39,7 +34,7 @@ const DataDictionaryVariableList = ({ flow }: { flow: IFlow }) => {
           {Object.keys(variables).map((tabName, index) => (
             <StyledTab
               key={index}
-              label={tabLabels[tabName]}
+              label={TABS_LABELS[tabName]}
               value={tabName}
               id={`tab-${index}`}
               aria-controls={`tabpanel-${index}`}
@@ -56,11 +51,16 @@ const DataDictionaryVariableList = ({ flow }: { flow: IFlow }) => {
       </Box>
       {Object.keys(variables).map((tabName) => (
         <TabPanel key={tabName} value={tab} tabName={tabName}>
-          <TableList
-            tableData={variables[tabName]}
-            tabName={tabName as VARIABLES_TABS}
-            flowNodes={flow.nodes}
-          />
+          <>
+            <Typography variant="body2" color="gray" mt={2}>
+              {SOURCES_DESCRIPTIONS[tabName]}
+            </Typography>
+            <TableList
+              tableData={variables[tabName]}
+              tabName={tabName as VARIABLES_TABS}
+              flowNodes={flow.nodes}
+            />
+          </>
         </TabPanel>
       ))}
       {tab === VARIABLES_TABS.all && (
@@ -79,4 +79,4 @@ const DataDictionaryVariableList = ({ flow }: { flow: IFlow }) => {
   );
 };
 
-export default DataDictionaryVariableList;
+export default DataDictionaryVariables;

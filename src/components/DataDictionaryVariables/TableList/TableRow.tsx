@@ -43,6 +43,7 @@ type TableRowProps = {
       'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
     > & { index: number; variableIsUsed: boolean }
   ) => void;
+  userDefinedUsageNodes: FlowNode[] | undefined;
   setOpenVariableForm: (openVariableForm: boolean) => void;
   setDeleteVariable: (variable: {
     name: string;
@@ -56,6 +57,7 @@ export const TableRow = ({
   tabName,
   flowId,
   flowNodes,
+  userDefinedUsageNodes,
   setSelectedVariable,
   setOpenVariableForm,
   setDeleteVariable
@@ -88,10 +90,10 @@ export const TableRow = ({
   };
 
   useEffect(() => {
-    if (tabName === VARIABLES_TABS.userDefined) {
-      void getVariableUsage(row.name);
+    if (userDefinedUsageNodes?.length) {
+      setVariableUsageNodes(userDefinedUsageNodes);
     }
-  }, []);
+  }, [userDefinedUsageNodes]);
 
   return (
     <>

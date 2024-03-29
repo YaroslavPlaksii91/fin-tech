@@ -34,6 +34,14 @@ class DataDictionaryService {
     );
     return data;
   }
+
+  async getUserDefinedVariableUsage(flowId: string, variables: string[]) {
+    const { data } = await api.post<VariableUsageParams>(
+      `/flows/${flowId}/variables-usage`,
+      variables
+    );
+    return data;
+  }
 }
 
 export const dataDictionaryService = new DataDictionaryService();
