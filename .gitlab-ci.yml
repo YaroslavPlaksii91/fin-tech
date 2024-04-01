@@ -22,7 +22,7 @@ stages:
       - node_modules/
 
 .deploy:
-  image: awscli/steelkiwi
+  image: git.gdev.group:5005/community/docker/awscli-2-15-32
   before_script:
     - export domain=$(eval echo $(eval echo \$public_url_$CI_COMMIT_REF_SLUG) | sed 's/http[s]\?:\/\///g')
 
