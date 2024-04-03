@@ -1,4 +1,4 @@
-import api from '@utils/api.ts';
+import { api } from '@utils/api.ts';
 import { apiUrls } from '@constants/api-urls.ts';
 import { ChangeHistoryRecord } from '@domain/changeHistory.ts';
 

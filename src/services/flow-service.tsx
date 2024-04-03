@@ -1,4 +1,4 @@
-import api from '@utils/api';
+import { api } from '@utils/api';
 import { FlowData, IFlow, IFlowDataCreate, IFlowListItem } from '@domain/flow';
 import { JSONPatchOperation } from '@domain/entity';
 

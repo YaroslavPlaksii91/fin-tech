@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { UserInfoModel } from '@eloanwarehouse/frontend-core';
 
-import api from '@utils/api.ts';
+import { api } from '@utils/api.ts';
 import { apiUrls, authApiBaseUrl } from '@constants/api-urls.ts';
 
 export const fetchUserInfo = createAsyncThunk(
