@@ -16,6 +16,7 @@ import MuiCheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined'
 import MuiErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import MuiRemoveIcon from '@mui/icons-material/Remove';
 import MuiAddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import MuiRemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 
 const defaultIconSize = '18px';
@@ -23,6 +24,17 @@ const defaultIconSize = '18px';
 interface IconPros extends SvgIconProps {
   size?: string;
 }
+
+export const RemoveRedEyeOutlinedIcon = ({
+  size = defaultIconSize,
+  sx,
+  ...props
+}: IconPros) => (
+  <MuiRemoveRedEyeOutlinedIcon
+    sx={{ width: size, height: size, ...sx }}
+    {...props}
+  />
+);
 
 export const PersonOutlineIcon = ({
   size = defaultIconSize,

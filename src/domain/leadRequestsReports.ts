@@ -1,27 +1,48 @@
+export interface LeadRequestsReportsOData {
+  '@odata.context': string;
+  '@odata.count': number;
+  value: LeadRequestsReports[];
+}
+interface LeadRequestsReports {
+  id: string;
+  leadResponse: LeadResponse;
+  leadRequest: LeadRequest;
+  output: null | Output;
+  processingMetadata: null | ProcessingMetadata;
+}
+
+type LeadResponse = {
+  loanId: null | string;
+  customerId: null | string;
+  leadPrice?: null | string;
+};
+
 type LeadRequest = {
-  request_id: string;
-  lead_provider_id: string;
-  campaign_id: string;
-  affiliate_id: string;
-  requested_amount: number;
+  requestId: string;
+  leadProviderId: string;
+  campaignId: string;
+  affiliateId: string;
+  requestedAmount: number;
   ssn: string;
   email: string;
   state: string;
-  custom_fields: {
-    promo_code: string;
-  };
+  customFields: CustomFields;
 };
 
-type LeadResponse = {
-  loanId: string;
-  custimerId: string;
-  lead_price: number;
-  result: string;
-  rejection_reason: string;
+type Output = {
+  stack: string;
+  store: string;
+  decision: string;
+  denialReason: string;
 };
 
-export interface LeadRequestReport {
-  correlationId: string;
-  leadResponse: LeadResponse;
-  leadRequest: LeadRequest;
-}
+type ProcessingMetadata = {
+  processingDateTimeUtc: string;
+  apiVersion: string;
+  processingTime: string;
+  cachedConnector: string;
+};
+
+type CustomFields = {
+  promoCode: string;
+};

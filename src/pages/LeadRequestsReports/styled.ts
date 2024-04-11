@@ -1,5 +1,6 @@
-import { styled, TableContainer } from '@mui/material';
+import { Paper, styled } from '@mui/material';
 
-export const StyledTableContainer = styled(TableContainer)(() => ({
-  maxHeight: `calc(100vh - 450px)`
+export const DataGridContainer = styled(Paper)(() => ({
+  overflow: 'hidden',
+  height: `calc(100vh - 130px)`
 }));
