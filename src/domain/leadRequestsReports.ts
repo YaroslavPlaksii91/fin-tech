@@ -3,7 +3,7 @@ export interface LeadRequestsReportsOData {
   '@odata.count': number;
   value: LeadRequestsReports[];
 }
-interface LeadRequestsReports {
+export interface LeadRequestsReports {
   id: string;
   leadResponse: LeadResponse;
   leadRequest: LeadRequest;
@@ -39,7 +39,7 @@ type Output = {
 type ProcessingMetadata = {
   processingDateTimeUtc: string;
   apiVersion: string;
-  processingTime: string;
+  processingTime: number;
   cachedConnector: string;
 };
 

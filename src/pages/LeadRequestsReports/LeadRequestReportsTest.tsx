@@ -1,26 +1,21 @@
 import { useEffect, useState } from 'react';
-import {
-  DataGridPremium,
-  GridColDef,
-  gridPageCountSelector,
-  gridPageSelector,
-  GridSortModel,
-  useGridApiContext,
-  useGridSelector
-} from '@mui/x-data-grid-premium';
+import { DataGridPremium, GridColDef } from '@mui/x-data-grid-premium';
 import buildQuery from 'odata-query';
-import { MenuItem, Pagination, Select, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
 import { COLUMN_IDS } from './types';
 import { DataGridContainer } from './styled';
+import { getFormattedRows } from './utils';
 
 import { reportingService } from '@services/lead-requests-reports';
 import { LayoutContainer } from '@components/Layouts/MainLayout';
 import Logger from '@utils/logger';
 import { RemoveRedEyeOutlinedIcon } from '@components/shared/Icons';
+import DataGridPagination from '@components/shared/DataGridPagination';
 
-const pageSize = 10;
+const PAGE_SIZE = 10;
+const DEFAULT_SORT = 'correlationId desc';
 
 const dataGridColumns: GridColDef[] = [
   { field: COLUMN_IDS.requestId, headerName: 'Request ID' },
@@ -57,48 +52,25 @@ export default function LeadRequestsReportsPage() {
   const [rows, setRows] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
-  const [sort, setSort] = useState('leadRequest/requestId desc');
+  // TODO: unblock when BE fix sorting
+  // const [sort, setSort] = useState(DEFAULT_SORT);
 
   const [paginationModel, setPaginationModel] = React.useState({
-    pageSize: 10,
+    pageSize: PAGE_SIZE,
     page: 0
   });
 
-  const fetchList = async (page: number, sort: string) => {
+  const fetchList = async (page: number) => {
     try {
       setLoading(true);
       const params = buildQuery({
-        top: pageSize,
-        skip: pageSize * page,
-        orderBy: sort,
+        top: PAGE_SIZE,
+        skip: PAGE_SIZE * page,
+        orderBy: DEFAULT_SORT,
         count: true
       });
       const data = await reportingService.getLeadRequestsReports(params);
-      const rows = data.value.map((item) => ({
-        id: item.id,
-        [COLUMN_IDS.requestId]: item.leadRequest.requestId,
-        [COLUMN_IDS.loanId]: item.leadResponse.loanId ?? '-',
-        [COLUMN_IDS.leadProvider]: item.leadRequest.leadProviderId,
-        [COLUMN_IDS.leadCampaign]: item.leadRequest.campaignId,
-        [COLUMN_IDS.customerId]: item.leadResponse.customerId ?? '-',
-        [COLUMN_IDS.leadPrice]: item.leadResponse.leadPrice ?? '-',
-        [COLUMN_IDS.affiliate]: item.leadRequest.affiliateId,
-        [COLUMN_IDS.requestDate]:
-          item.processingMetadata?.processingDateTimeUtc ?? '-',
-        [COLUMN_IDS.requestedAmount]: item.leadRequest.requestedAmount ?? '-',
-        [COLUMN_IDS.stackName]: item.output?.stack ?? '-',
-        [COLUMN_IDS.promoCode]: item.leadRequest.customFields?.promoCode ?? '-',
-        [COLUMN_IDS.store]: item.output?.store ?? '-',
-        [COLUMN_IDS.ssn]: item.leadRequest.ssn,
-        [COLUMN_IDS.email]: item.leadRequest.email,
-        [COLUMN_IDS.decision]: item.output?.decision ?? '-',
-        [COLUMN_IDS.denialReason]: item.output?.denialReason ?? '-',
-        [COLUMN_IDS.state]: item.leadRequest.state,
-        [COLUMN_IDS.apiVersion]: item.processingMetadata?.apiVersion ?? '-',
-        [COLUMN_IDS.totalTime]: item.processingMetadata?.processingTime ?? '-',
-        [COLUMN_IDS.cachedConnector]:
-          item.processingMetadata?.cachedConnector ?? '-'
-      }));
+      const rows = getFormattedRows(data.value);
       setRows(rows);
       setTotalCount(data['@odata.count']);
     } catch (e) {
@@ -109,13 +81,14 @@ export default function LeadRequestsReportsPage() {
   };
 
   useEffect(() => {
-    void fetchList(paginationModel.page, sort);
-  }, [paginationModel.page, sort]);
+    void fetchList(paginationModel.page);
+  }, [paginationModel.page]);
 
-  const handleSortModelChange = (model: GridSortModel) => {
-    const sortParams = `${model[0].field} ${model[0].sort}`;
-    setSort(sortParams);
-  };
+  // TODO: unblock when BE fix sorting
+  // const handleSortModelChange = (model: GridSortModel) => {
+  //   const sortParams = `${model[0].field} ${model[0].sort}`;
+  //   setSort(sortParams);
+  // };
 
   return (
     <LayoutContainer>
@@ -131,59 +104,18 @@ export default function LeadRequestsReportsPage() {
             rowCount={totalCount}
             disableColumnMenu={true}
             paginationMode="server"
-            sortingMode="server"
-            onSortModelChange={handleSortModelChange}
+            // TODO: enable column sorting when BE fix sorting
+            disableColumnSorting={true}
+            // sortingMode="server"
+            // onSortModelChange={handleSortModelChange}
             paginationModel={paginationModel}
             onPaginationModelChange={setPaginationModel}
             slots={{
-              footer: Footer
+              footer: DataGridPagination
             }}
           />
         </DataGridContainer>
       </Stack>
     </LayoutContainer>
-  );
-}
-
-function Footer() {
-  const apiRef = useGridApiContext();
-  const page = useGridSelector(apiRef, gridPageSelector);
-  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
-
-  return (
-    <Stack
-      direction="row"
-      justifyContent="space-between"
-      sx={{ padding: '12px 24px' }}
-    >
-      <Stack direction="row" alignItems="center">
-        <Typography variant="h6" pr={1}>
-          {' '}
-          Go to
-        </Typography>
-        <Select
-          value={page + 1}
-          onChange={(event) => {
-            apiRef.current.setPage(+event.target.value - 1);
-          }}
-          size="small"
-          displayEmpty
-          inputProps={{ 'aria-label': ' Go to page' }}
-        >
-          {Array.from({ length: pageCount }, (_, i) => (
-            <MenuItem key={i + 1} value={i + 1}>
-              {i + 1}
-            </MenuItem>
-          ))}
-        </Select>
-      </Stack>
-      <Pagination
-        sx={(theme) => ({ padding: theme.spacing(1.5, 0) })}
-        color="primary"
-        count={pageCount}
-        page={page + 1}
-        onChange={(_event, value) => apiRef.current.setPage(value - 1)}
-      />
-    </Stack>
   );
 }
