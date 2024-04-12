@@ -279,13 +279,13 @@ const Calculation: React.FC<CalculationProps> = ({
         </>
       )}
       {openExpEditorView && (
-        <Stack sx={{ minHeight: '100%' }}>
+        <Box sx={{ minHeight: '100%' }}>
           <ExpressionForm
             initialValues={initialValue}
             handleAddNewBusinessRule={handleAddNewBussinesRule}
             onCancelClick={() => setOpenExpEditorView(false)}
           />
-        </Stack>
+        </Box>
       )}
     </Stack>
   );
