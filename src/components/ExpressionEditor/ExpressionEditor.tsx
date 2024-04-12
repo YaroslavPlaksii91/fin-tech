@@ -6,8 +6,12 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { TextareaAutosize } from '@mui/base';
-import { InputBaseComponentProps } from '@mui/material';
+import {
+  Button,
+  InputAdornment,
+  InputBaseComponentProps,
+  TextField
+} from '@mui/material';
 
 import styles from './ExpressionEditor.module.scss';
 
@@ -30,7 +34,7 @@ export interface ExpressionEditorAPI {
 const ExpressionEditor: ForwardRefRenderFunction<
   ExpressionEditorAPI,
   ExpressionEditorProps
-> = ({ name, value, onChange, error }, ref) => {
+> = ({ name, value, onChange, error, onAddVariableClick }, ref) => {
   const textareaRef: MutableRefObject<HTMLTextAreaElement | null> =
     useRef(null);
 
@@ -42,10 +46,14 @@ const ExpressionEditor: ForwardRefRenderFunction<
     ref,
     () => ({
       focus(payload) {
-        textareaRef.current?.focus();
         if (payload.selectionStart) {
           setCaretPosition(payload.selectionStart);
+          textareaRef.current?.setSelectionRange(
+            payload.selectionStart,
+            payload.selectionStart
+          );
         }
+        textareaRef.current?.focus();
       },
       getCursorPosition() {
         return caretPosition;
@@ -113,20 +121,32 @@ const ExpressionEditor: ForwardRefRenderFunction<
 
   return (
     <div className={styles.root}>
-      <TextareaAutosize
-        ref={textareaRef}
+      <TextField
+        inputRef={textareaRef}
         value={value}
-        placeholder="Enter expression"
-        className={`${styles.textarea} ${error ? styles.error : ''}`}
-        minRows={1}
+        placeholder="Expression"
+        multiline
+        minRows={5}
         maxRows={10}
-        onKeyDown={handleTextareaKeyDown}
+        error={error as boolean | undefined}
+        helperText={error && error}
+        inputProps={{
+          onKeyDown: handleTextareaKeyDown,
+          onClick: (e) => {
+            setCaretPosition(e.currentTarget.selectionStart as number);
+          }
+        }}
         onChange={handleOnChange}
-        onClick={(e) => {
-          setCaretPosition(e.currentTarget.selectionStart);
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <Button size="small" variant="text" onClick={onAddVariableClick}>
+                Add Input Variable
+              </Button>
+            </InputAdornment>
+          )
         }}
       />
-      {error && <p className={`${styles.errorText}`}>{error}</p>}
       <div
         className={styles.coloredValue}
         dangerouslySetInnerHTML={{ __html: highlightChunks(value) }}
@@ -151,6 +171,8 @@ const ExpressionEditor: ForwardRefRenderFunction<
 interface ExpressionEditorProps extends InputBaseComponentProps {
   name: string;
   value: string;
+  error?: string;
+  onAddVariableClick: () => void;
 }
 
 export default React.forwardRef<ExpressionEditorAPI, ExpressionEditorProps>(

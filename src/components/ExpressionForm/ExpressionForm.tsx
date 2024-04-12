@@ -1,31 +1,38 @@
 import {
-  AutocompleteRenderInputParams,
+  Box,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Divider,
   FormControl,
-  InputLabel,
+  FormHelperText,
+  InputAdornment,
+  OutlinedInput,
   Stack,
-  TextField
+  Typography
 } from '@mui/material';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
-import {
+import React, {
   MutableRefObject,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
-  useRef
+  useRef,
+  useState
 } from 'react';
-import { groupBy, omit } from 'lodash';
+import { groupBy } from 'lodash';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AxiosError } from 'axios';
+import pick from 'lodash/pick';
 
 import validationSchema from './validationSchema';
-import { FieldValues, Option } from './types';
+import { FieldValues } from './types';
 import { mapVariablesToParamsAndSources, parseError } from './utils';
 
-import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
 import { Expression } from '@views/Calculation/types';
-import AddVariable from '@components/AddVariable/AddVariable';
 import ExpressionOperatorsList from '@components/ExpressionForm/ExpressionOperatorsList/ExpressionOperatorsList.tsx';
 import {
   DataDictionaryVariable,
@@ -39,12 +46,10 @@ import {
   functionsLiterals,
   operatorsConfig
 } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
-import AutocompleteGroup from '@components/shared/Autocomplete/AutocompleteGroup';
-import {
-  DATA_DICTIONARY_GROUP,
-  DATA_DICTIONARY_LABELS
-} from '@constants/common';
 import { dataDictionaryService } from '@services/data-dictionary';
+import { DataDictionaryContext } from '@contexts/DataDictionaryContext.tsx';
+import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog.tsx';
+import { DATA_DICTIONARY_GROUP } from '@constants/common.ts';
 
 const operatorsList = [
   ...Object.values(groupBy(operatorsConfig, 'category')),
@@ -53,7 +58,6 @@ const operatorsList = [
 
 interface ExpressionFormProps {
   initialValues?: Expression & { id: string };
-  variables: Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>;
   handleAddNewBusinessRule: ({
     data,
     id
@@ -61,35 +65,25 @@ interface ExpressionFormProps {
     data: Expression;
     id?: string;
   }) => void;
-  modalOpen: boolean;
-  setModalOpen: (value: boolean) => void;
+  onCancelClick: () => void;
+}
+
+enum DataDictMode {
+  Variable = 'variable',
+  Expression = 'expression'
 }
 
 export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   initialValues,
-  variables,
   handleAddNewBusinessRule,
-  modalOpen,
-  setModalOpen
+  onCancelClick
 }) => {
+  const dataDictionary = useContext(DataDictionaryContext);
+  const variables = dataDictionary?.variables || {};
+  const [dataDictMode, setDataDictMode] = useState<DataDictMode | null>(null);
+
   const expressionEditorRef: MutableRefObject<ExpressionEditorAPI | null> =
     useRef(null);
-
-  const options = useMemo(() => {
-    const readWriteVariables = omit(variables, [
-      DATA_DICTIONARY_GROUP.laPMSVariables
-    ]);
-    return Object.entries(readWriteVariables).reduce(
-      (acc: Option[], [group, items]) => {
-        const groupOptions = items.map((item) => ({
-          group: DATA_DICTIONARY_LABELS[group],
-          ...item
-        }));
-        return [...acc, ...groupOptions];
-      },
-      []
-    );
-  }, [variables]);
 
   const {
     handleSubmit,
@@ -134,7 +128,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         data: formatData,
         id: initialValues?.id
       });
-      handleCloseModal();
+      // handleCloseModal();
     } catch (error) {
       const dataError = error instanceof AxiosError && parseError(error);
       if (dataError) {
@@ -145,27 +139,32 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     }
   };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    reset();
-  };
+  const variableFieldDataDict = useMemo(
+    () =>
+      pick(variables, [
+        DATA_DICTIONARY_GROUP.userDefined,
+        DATA_DICTIONARY_GROUP.outputVariables
+      ]),
+    [variables]
+  );
 
   useEffect(() => {
     const initialData = { variable: undefined, expressionString: '' };
     if (initialValues) {
-      const variable =
-        options.find(
-          (variable) => variable.name === initialValues.outputName
-        ) ?? undefined;
+      const variable = Object.values(variables)
+        .flat()
+        .find((o) => o.name === initialValues.outputName);
+
       const initialData = {
         variable,
         expressionString: initialValues.expressionString
       };
+
       reset(initialData);
     } else {
       reset(initialData);
     }
-  }, [initialValues, modalOpen, options]);
+  }, [initialValues, variables]);
 
   const onExpressionOperatorsListClick = useCallback(
     (literal: string) => {
@@ -173,6 +172,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
       const isFunction = functionsLiterals.includes(literal);
       const newValue = prev + literal + (isFunction ? '(' : '');
       setValue('expressionString', newValue, { shouldValidate: true });
+
       expressionEditorRef.current?.focus({
         selectionStart: newValue.length + 1
       });
@@ -190,112 +190,141 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         variable.name +
         prev.slice(cursorPosition);
       setValue('expressionString', newValue, { shouldValidate: true });
-      expressionEditorRef.current?.focus({
-        selectionStart: newValue.length + 1
+
+      setTimeout(() => {
+        expressionEditorRef.current?.focus({
+          selectionStart: cursorPosition + variable.name.length
+        });
       });
     },
     []
   );
 
   return (
-    <Dialog
-      title="Add new business rule"
-      fullWidth
-      maxWidth="md"
-      open={modalOpen}
-      displayConfirmBtn={false}
-      displayedCancelBtn={false}
-    >
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack direction="row" spacing={1}>
-          <Controller
-            control={control}
-            name="variable"
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <AutocompleteGroup
-                forcePopupIcon={false}
-                disableClearable={true}
-                id="grouped-variables"
-                value={value ? value : null}
-                isOptionEqualToValue={(option: Option, value: Option) =>
-                  option.name === value.name
-                }
-                noOptionsText="No variables"
-                options={options}
-                onChange={(_e, data) => onChange(data)}
-                groupBy={(option) => option.group}
-                getOptionLabel={(option: Option) => option.name || ''}
-                renderInput={(params: AutocompleteRenderInputParams) => (
-                  <FormControl fullWidth variant="standard">
-                    <InputLabel
-                      sx={{ position: 'static' }}
-                      shrink
-                      htmlFor="variable"
-                    >
-                      Variable
-                    </InputLabel>
-                    <TextField
-                      {...params}
-                      size="small"
-                      sx={{ width: 320 }}
-                      helperText={error?.message}
-                      error={!!error}
-                      placeholder="Enter variable"
+    <Box sx={{ minHeight: '100%' }}>
+      <form
+        style={{ minHeight: '100%', display: 'flex' }}
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <Stack flexDirection="column">
+          <Stack flexGrow={1} pl={3} pr={3} pt={2}>
+            <Typography mb={2} variant="h2">
+              Add New Expression
+            </Typography>
+            <Box flexGrow={1}>
+              <Card>
+                <CardHeader title="Expression Builder" />
+                <CardContent sx={{ paddingTop: 0 }}>
+                  <Box mb={1}>
+                    <Controller
+                      control={control}
+                      name="variable"
+                      render={({ field: { value }, fieldState: { error } }) => (
+                        <FormControl fullWidth variant="standard">
+                          <OutlinedInput
+                            size="small"
+                            error={!!error}
+                            placeholder="Variable"
+                            value={value?.name}
+                            readOnly
+                            endAdornment={
+                              <InputAdornment position="end">
+                                <Button
+                                  size="small"
+                                  variant="text"
+                                  onClick={() => {
+                                    setDataDictMode(DataDictMode.Variable);
+                                  }}
+                                >
+                                  {value?.name ? 'Change' : 'Add'} Output
+                                  Variable
+                                </Button>
+                              </InputAdornment>
+                            }
+                          />
+                          {error?.message && (
+                            <FormHelperText error>
+                              {error.message}
+                            </FormHelperText>
+                          )}
+                        </FormControl>
+                      )}
                     />
-                  </FormControl>
-                )}
-              />
-            )}
+                  </Box>
+                  <Controller
+                    control={control}
+                    name="expressionString"
+                    render={({ field: { onChange, value }, fieldState }) => (
+                      <FormControl fullWidth variant="standard">
+                        <ExpressionEditor
+                          value={value}
+                          onChange={onChange}
+                          name="expressionString"
+                          ref={expressionEditorRef}
+                          error={fieldState?.error?.message}
+                          onAddVariableClick={() => {
+                            setDataDictMode(DataDictMode.Expression);
+                          }}
+                        />
+                      </FormControl>
+                    )}
+                  />
+                  <ExpressionOperatorsList
+                    list={operatorsList}
+                    onItemClick={onExpressionOperatorsListClick}
+                  />
+                </CardContent>
+              </Card>
+            </Box>
+          </Stack>
+          <DataDictionaryDialog
+            data={
+              dataDictMode === DataDictMode.Variable
+                ? variableFieldDataDict
+                : dataDictionary?.variables
+            }
+            isOpen={Boolean(dataDictMode)}
+            onClose={() => setDataDictMode(null)}
+            onConfirm={(variable) => {
+              if (dataDictMode === DataDictMode.Variable) {
+                setValue('variable', variable);
+              }
+              if (dataDictMode === DataDictMode.Expression) {
+                onVariableListClick(variable);
+              }
+            }}
           />
-          <Controller
-            control={control}
-            name="expressionString"
-            render={({ field: { onChange, value }, fieldState }) => (
-              <FormControl fullWidth variant="standard">
-                <InputLabel
-                  sx={{ position: 'static' }}
-                  shrink
-                  htmlFor="expressionString"
+          <Box>
+            <Divider />
+            <Box px={3} py={2}>
+              <Stack
+                flexDirection="row"
+                justifyContent="end"
+                alignItems="flex-start"
+                gap={1}
+              >
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={onCancelClick}
                 >
-                  Expression
-                </InputLabel>
-                <ExpressionEditor
-                  value={value}
-                  onChange={onChange}
-                  name="expressionString"
-                  ref={expressionEditorRef}
-                  error={fieldState?.error?.message}
-                />
-              </FormControl>
-            )}
-          />
-        </Stack>
-        <Stack spacing={2} direction="row" pt={2}>
-          <AddVariable onItemClick={onVariableListClick} data={variables} />
-          <ExpressionOperatorsList
-            list={operatorsList}
-            onItemClick={onExpressionOperatorsListClick}
-          />
-        </Stack>
-        <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleCloseModal}
-          >
-            Cancel
-          </Button>
-          <LoadingButton
-            loading={isSubmitting}
-            disabled={isSubmitting}
-            variant="contained"
-            color="primary"
-            type="submit"
-          >
-            Confirm
-          </LoadingButton>
+                  Cancel
+                </Button>
+                <LoadingButton
+                  loading={isSubmitting}
+                  disabled={isSubmitting}
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                >
+                  Confirm
+                </LoadingButton>
+              </Stack>
+            </Box>
+            <Divider />
+          </Box>
         </Stack>
       </form>
-    </Dialog>
+    </Box>
   );
 };
