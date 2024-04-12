@@ -54,7 +54,7 @@ const Calculation: React.FC<CalculationProps> = ({
   const nodes: FlowNode[] = getNodes();
   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
-  const [openExpEditorModal, setOpenExpEditorModal] = useState<boolean>(false);
+  const [openExpEditorView, setOpenExpEditorView] = useState<boolean>(false);
   const [initialValue, setInitialValue] = useState<
     (Expression & { id: string }) | undefined
   >(undefined);
@@ -128,11 +128,12 @@ const Calculation: React.FC<CalculationProps> = ({
     } else {
       append(data);
     }
+    setOpenExpEditorView(false);
   };
 
   return (
     <Stack sx={{ minHeight: '100%' }} direction="column" spacing={0}>
-      {!openExpEditorModal && (
+      {!openExpEditorView && (
         <>
           <Box sx={{ flexGrow: 1 }}>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -193,7 +194,7 @@ const Calculation: React.FC<CalculationProps> = ({
                                       ...expression,
                                       id: expression.id
                                     });
-                                    setOpenExpEditorModal(true);
+                                    setOpenExpEditorView(true);
                                   }}
                                 >
                                   <EditNoteOutlinedIcon />
@@ -229,7 +230,7 @@ const Calculation: React.FC<CalculationProps> = ({
                   disabled={fields.length === RULES_LIMIT}
                   onClick={() => {
                     setInitialValue(undefined);
-                    setOpenExpEditorModal(true);
+                    setOpenExpEditorView(true);
                   }}
                   startIcon={<AddIcon />}
                 >
@@ -277,12 +278,12 @@ const Calculation: React.FC<CalculationProps> = ({
           />
         </>
       )}
-      {openExpEditorModal && (
+      {openExpEditorView && (
         <Stack sx={{ minHeight: '100%' }}>
           <ExpressionForm
             initialValues={initialValue}
             handleAddNewBusinessRule={handleAddNewBussinesRule}
-            onCancelClick={() => setOpenExpEditorModal(false)}
+            onCancelClick={() => setOpenExpEditorView(false)}
           />
         </Stack>
       )}

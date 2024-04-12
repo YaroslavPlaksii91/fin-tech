@@ -128,7 +128,6 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         data: formatData,
         id: initialValues?.id
       });
-      // handleCloseModal();
     } catch (error) {
       const dataError = error instanceof AxiosError && parseError(error);
       if (dataError) {
@@ -209,7 +208,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         <Stack flexDirection="column">
           <Stack flexGrow={1} pl={3} pr={3} pt={2}>
             <Typography mb={2} variant="h2">
-              Add New Expression
+              {initialValues?.id ? 'Change' : 'Add New'} Expression
             </Typography>
             <Box flexGrow={1}>
               <Card>
