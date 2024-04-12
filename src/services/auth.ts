@@ -3,7 +3,7 @@ import { Auth } from '@eloanwarehouse/frontend-core';
 import { router } from '../routes.tsx';
 
 import { CLIENT_ID, SCOPES_LIST } from '@constants/common.ts';
-import api from '@utils/api.ts';
+import { api } from '@utils/api.ts';
 import { authApiBaseUrl } from '@constants/api-urls.ts';
 import routes from '@constants/routes.ts';
 
