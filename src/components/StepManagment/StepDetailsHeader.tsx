@@ -8,9 +8,9 @@ interface StepDetailsHeaderProps {
   title: string;
   details: string;
   isActionContainerVisible?: boolean;
-  disabled: boolean;
-  isSubmitting: boolean;
-  onDiscard: () => void;
+  disabled?: boolean;
+  isSubmitting?: boolean;
+  onDiscard?: () => void;
   buttonType?: 'button' | 'submit' | undefined;
   onApplyChangesClick?: () => void;
 }
@@ -49,7 +49,7 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
         </Button>
         <LoadingButton
           disabled={disabled}
-          loading={isSubmitting}
+          loading={Boolean(isSubmitting)}
           type={buttonType}
           variant="contained"
           sx={{ textWrap: 'nowrap' }}

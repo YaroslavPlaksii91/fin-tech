@@ -5,10 +5,12 @@ import {
   UserDefinedVariable
 } from '@domain/dataDictionary';
 
-type DataDictionaryContextType = {
-  variables:
-    | Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>
-    | undefined;
+export type DataDictionaryVariables =
+  | Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>
+  | undefined;
+
+export type DataDictionaryContextType = {
+  variables: DataDictionaryVariables;
 };
 
 export const DataDictionaryContext = createContext<

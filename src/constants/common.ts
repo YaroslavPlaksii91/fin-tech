@@ -32,7 +32,8 @@ export const DATA_DICTIONARY_LABELS: { [key: string]: string } = {
 
 export enum DATA_DICTIONARY_GROUP {
   userDefined = 'userDefined',
-  laPMSVariables = 'laPMSVariables'
+  laPMSVariables = 'laPMSVariables',
+  outputVariables = 'outputVariables'
 }
 
 export const RULES_LIMIT = 10;

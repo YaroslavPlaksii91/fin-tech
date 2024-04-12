@@ -5,9 +5,7 @@ import {
 
 type Variable = DataDictionaryVariable | UserDefinedVariable;
 
-export type Option = Variable & { group: string };
-
 export type FieldValues = {
-  variable: Option;
+  variable: Variable;
   expressionString: string;
 };
