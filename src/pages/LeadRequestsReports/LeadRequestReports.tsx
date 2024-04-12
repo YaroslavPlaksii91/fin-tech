@@ -14,7 +14,7 @@ import Logger from '@utils/logger';
 import { RemoveRedEyeOutlinedIcon } from '@components/shared/Icons';
 import DataGridPagination from '@components/shared/DataGridPagination';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 25;
 const DEFAULT_SORT = 'correlationId desc';
 
 const dataGridColumns: GridColDef[] = [

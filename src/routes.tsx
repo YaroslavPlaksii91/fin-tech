@@ -12,8 +12,7 @@ import FlowDetails from '@pages/FlowDetails';
 import DataDictionary from '@pages/DataDictionary';
 import ChangeHistoryPage from '@pages/ChangeHistory.tsx';
 import AccessVerificationPage from '@pages/auth/AccessVerification.tsx';
-// import LeadRequestsReportsPage from '@pages/LeadRequestsReports/LeadRequestsReports';
-import Test from '@pages/LeadRequestsReports/LeadRequestReportsTest';
+import LeadRequestsReportsPage from '@pages/LeadRequestsReports/LeadRequestReports';
 
 export const router = createBrowserRouter([
   {
@@ -63,8 +62,7 @@ export const router = createBrowserRouter([
         path: routes.underwriting.leadRequest,
         element: (
           <PrivateRoutes>
-            <Test />
-            {/* <LeadRequestsReportsPage /> */}
+            <LeadRequestsReportsPage />
           </PrivateRoutes>
         )
       },
