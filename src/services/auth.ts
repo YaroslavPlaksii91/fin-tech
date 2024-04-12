@@ -1,18 +1,16 @@
 import { Auth } from '@eloanwarehouse/frontend-core';
 
+import { router } from '../routes.tsx';
+
 import { CLIENT_ID, SCOPES_LIST } from '@constants/common.ts';
-import { api } from '@utils/api.ts';
-import { apiUrls, authApiBaseUrl } from '@constants/api-urls.ts';
+import api from '@utils/api.ts';
+import { authApiBaseUrl } from '@constants/api-urls.ts';
 import routes from '@constants/routes.ts';
 
 export const authService = new Auth.IAMAuthService({
   clientId: CLIENT_ID,
   scopes: [SCOPES_LIST.OFFLINE_ACCESS, SCOPES_LIST.ROLES],
-  apiUrls: {
-    authorize: authApiBaseUrl + apiUrls.auth.authorize,
-    token: authApiBaseUrl + apiUrls.auth.token,
-    logout: authApiBaseUrl + apiUrls.auth.logout
-  },
+  apiUrl: authApiBaseUrl,
   callbackUrl: window.location.origin + routes.auth.accessVerification,
   onTokenChange(token: string | null) {
     if (token) {
@@ -20,5 +18,11 @@ export const authService = new Auth.IAMAuthService({
     } else {
       delete api.defaults.headers.Authorization;
     }
+  },
+  onLogin() {
+    void router.navigate(routes.index);
+  },
+  onLogout() {
+    void router.navigate(routes.auth.login);
   }
 });

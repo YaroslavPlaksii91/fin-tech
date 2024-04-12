@@ -76,7 +76,7 @@ const useDataDictionaryVariables = (flow?: IFlow) => {
     }
 
     setIsLoadingData(false);
-  }, []);
+  }, [flow]);
 
   useEffect(() => {
     void getVariables();

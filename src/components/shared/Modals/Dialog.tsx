@@ -24,6 +24,7 @@ interface DialogProps {
   isCloseButton?: boolean;
   fullWidth?: boolean;
   maxWidth?: Breakpoint | false;
+  isConfirmBtnDisabled?: boolean;
 }
 
 const Dialog: React.FC<DialogProps> = ({
@@ -39,7 +40,8 @@ const Dialog: React.FC<DialogProps> = ({
   displayConfirmBtn = true,
   isCloseButton = false,
   fullWidth = false,
-  maxWidth
+  maxWidth,
+  isConfirmBtnDisabled = false
 }) => (
   <MuiDialog
     open={open}
@@ -72,7 +74,7 @@ const Dialog: React.FC<DialogProps> = ({
         {displayConfirmBtn && (
           <LoadingButton
             loading={confirmLoading}
-            disabled={confirmLoading}
+            disabled={confirmLoading || isConfirmBtnDisabled}
             variant="contained"
             color="primary"
             onClick={onConfirm}

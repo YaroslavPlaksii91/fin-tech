@@ -1,7 +1,7 @@
-//import { useEffect } from 'react';
-import { Button, Stack, MenuItem } from '@mui/material';
+import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Button, Stack, MenuItem } from '@mui/material';
 
 import { validationSchema } from './validationSchema';
 
@@ -10,26 +10,24 @@ import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';
 import { Textarea } from '@components/shared/Forms/Textarea';
 import { SingleSelect } from '@components/shared/Forms/SingleSelect';
+import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import {
   VARIABLE_SOURCE_TYPE,
   DATA_TYPE_WITHOUT_ENUM,
   UserDefinedVariable
 } from '@domain/dataDictionary';
+import { JSONPatchOperation } from '@domain/entity';
+import { flowService } from '@services/flow-service';
+import Logger from '@utils/logger';
 
 type VariableFormProps = {
-  title: string;
+  flowId: string;
   modalOpen: boolean;
-  handleSubmitVariableFormData: (
-    data: Pick<
-      UserDefinedVariable,
-      'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-    >
-  ) => void;
   formData:
     | (Pick<
         UserDefinedVariable,
         'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-      > & { index: number })
+      > & { index: number; variableIsUsed: boolean })
     | undefined;
   handleClose: () => void;
 };
@@ -41,9 +39,8 @@ const variableSourceTypeOptions = {
 };
 
 export const VariableForm: React.FC<VariableFormProps> = ({
-  title,
+  flowId,
   modalOpen,
-  handleSubmitVariableFormData,
   handleClose,
   formData
 }) => {
@@ -62,22 +59,51 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     }
   });
 
-  const onSubmit = (
+  const value = useContext(DataDictionaryPageContext);
+
+  const onSubmit = async (
     data: Pick<
       UserDefinedVariable,
       'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
     >
   ) => {
-    handleSubmitVariableFormData(data);
-  };
+    let operations: JSONPatchOperation[];
 
-  // useEffect(() => {
-  //   setValue('note', note);
-  // }, [modalOpen, note]);
+    if (formData) {
+      // operations to update variable
+      operations = [
+        {
+          value: data,
+          path: `/temporaryVariables/${formData.index}`,
+          op: 'replace'
+        }
+      ];
+    } else {
+      // Patch operations to add variable
+      operations = [
+        {
+          value: data,
+          path: '/temporaryVariables/-',
+          op: 'add'
+        }
+      ];
+    }
+
+    try {
+      const newFlowData =
+        flowId && (await flowService.updateFlow(flowId, operations));
+
+      newFlowData && value?.setFlow(newFlowData);
+    } catch (error) {
+      Logger.error('Error updating temporary variables in the flow:', error);
+    }
+
+    handleClose();
+  };
 
   return (
     <Dialog
-      title={title}
+      title={formData ? 'Edit variable' : 'Create variable'}
       open={modalOpen}
       maxWidth="xs"
       displayConfirmBtn={false}
@@ -90,6 +116,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
             name="name"
             label="Variable Name"
             control={control}
+            disabled={formData && formData.variableIsUsed}
           />
           <SingleSelect
             variant="outlined"
@@ -117,6 +144,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
             name="dataType"
             label="Data Type"
             control={control}
+            disabled={formData && formData.variableIsUsed}
             displayEmpty
             fullWidth
             sx={{

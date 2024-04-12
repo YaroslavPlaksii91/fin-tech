@@ -75,3 +75,9 @@ export type ExpressionValidate = {
   targetDataType: string;
   params: ExpressionValidateParams;
 };
+
+export type VariableUsageParams = {
+  name: string;
+  path: string[];
+  place: string;
+}[];
