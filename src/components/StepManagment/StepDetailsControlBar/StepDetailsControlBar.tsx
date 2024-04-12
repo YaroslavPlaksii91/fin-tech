@@ -32,7 +32,6 @@ const StepDetailsControlBar: React.FC<StepDetailsControlBarProps> = ({
         </Button>
       </Stack>
     </Box>
-    <Divider />
   </Box>
 );
 

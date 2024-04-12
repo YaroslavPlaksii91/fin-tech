@@ -200,7 +200,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   );
 
   return (
-    <Box sx={{ minHeight: '100%' }}>
+    <Box sx={{ minHeight: '100%', display: 'flex' }}>
       <form
         style={{ minHeight: '100%', display: 'flex' }}
         onSubmit={handleSubmit(onSubmit)}

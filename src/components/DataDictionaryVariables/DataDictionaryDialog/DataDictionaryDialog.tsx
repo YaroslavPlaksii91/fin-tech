@@ -8,7 +8,9 @@ import {
   ListItemButton,
   ListItemText,
   ListSubheader,
-  TextField
+  Stack,
+  TextField,
+  Typography
 } from '@mui/material';
 import { startCase } from 'lodash';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -16,7 +18,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 
-import { theme } from '../../../themeConfig.ts';
+import { palette, theme } from '../../../themeConfig.ts';
 
 import { DataDictionaryVariables } from '@contexts/DataDictionaryContext.tsx';
 import { highlightText } from '@utils/text.ts';
@@ -42,12 +44,20 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
     setSelectedVar(null);
   }, [query]);
 
+  useEffect(() => {
+    if (!isOpen) {
+      setQuery('');
+      setSelectedDict(null);
+      setSelectedVar(null);
+    }
+  }, [isOpen]);
+
   const filteredData: Record<string, DataDictionaryVariable[]> = useMemo(
     () =>
       data
         ? Object.keys(data).reduce((acc, curr) => {
             const filteredVariables = data[curr].filter((i) =>
-              i.name.toLowerCase().includes(query)
+              i.name.toLowerCase().includes(query.toLowerCase())
             );
             if (filteredVariables.length > 0) {
               return {
@@ -60,6 +70,9 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
         : {},
     [data, query]
   );
+
+  const dictsEmptyState = Object.keys(filteredData).length === 0;
+  const variablesEmptyState = !selectedDict || !filteredData[selectedDict];
 
   return (
     <Dialog fullWidth maxWidth="sm" open={isOpen} onClose={onClose}>
@@ -79,9 +92,16 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
         <Box mt={3} mx={-3}>
           <Divider />
           <Grid container>
-            <Grid item xs={6} sx={{ position: 'relative' }}>
+            <Grid item xs={6}>
               <List
-                sx={{ padding: 0, height: 600, maxHeight: '70vh' }}
+                sx={{
+                  padding: 0,
+                  height: 350,
+                  maxHeight: '70vh',
+                  display: dictsEmptyState ? 'flex' : 'block',
+                  flexDirection: 'column',
+                  overflowY: 'auto'
+                }}
                 subheader={
                   <Box
                     sx={{ backgroundColor: theme.palette.background.default }}
@@ -91,6 +111,21 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                   </Box>
                 }
               >
+                {dictsEmptyState && (
+                  <Stack
+                    flexGrow={1}
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Typography
+                      sx={{ transform: 'translateY(-40px)' }}
+                      textAlign="center"
+                      variant="body2"
+                    >
+                      The list is empty. Try to change search query
+                    </Typography>
+                  </Stack>
+                )}
                 {Object.keys(filteredData).map((key) => (
                   <ListItemButton
                     selected={selectedDict === key}
@@ -102,31 +137,51 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                   </ListItemButton>
                 ))}
               </List>
-              <Divider
-                orientation="vertical"
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  bottom: 0,
-                  zIndex: 2
-                }}
-              />
             </Grid>
-            <Grid item xs={6}>
-              {selectedDict && filteredData[selectedDict] && (
-                <List
-                  sx={{ padding: 0, height: 300 }}
-                  subheader={
-                    <Box
-                      sx={{ backgroundColor: theme.palette.background.default }}
+            <Grid
+              item
+              xs={6}
+              sx={{
+                position: 'relative',
+                borderLeft: `1px solid ${palette.grayBorder}`
+              }}
+            >
+              <List
+                sx={{
+                  padding: 0,
+                  height: 350,
+                  maxHeight: '70vh',
+                  display: variablesEmptyState ? 'flex' : 'block',
+                  flexDirection: 'column',
+                  overflowY: 'auto'
+                }}
+                subheader={
+                  <Box
+                    sx={{ backgroundColor: theme.palette.background.default }}
+                  >
+                    <ListSubheader>Available Variables</ListSubheader>
+                    <Divider />
+                  </Box>
+                }
+              >
+                {variablesEmptyState && (
+                  <Stack
+                    flexGrow={1}
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Typography
+                      sx={{ transform: 'translateY(-40px)' }}
+                      textAlign="center"
+                      variant="body2"
                     >
-                      <ListSubheader>Available Variables</ListSubheader>
-                      <Divider />
-                    </Box>
-                  }
-                >
-                  {filteredData[selectedDict].map((variable) => (
+                      The list is empty. To fill it select item from the another
+                      list.
+                    </Typography>
+                  </Stack>
+                )}
+                {selectedDict &&
+                  filteredData[selectedDict]?.map((variable) => (
                     <ListItemButton
                       key={variable.name}
                       dense
@@ -146,8 +201,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                       />
                     </ListItemButton>
                   ))}
-                </List>
-              )}
+              </List>
             </Grid>
           </Grid>
         </Box>
