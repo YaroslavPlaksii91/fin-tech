@@ -4,11 +4,18 @@
   flex-direction: column;
   width: 100%;
 
+  //textarea {
+  //  color: transparent;
+  //  position: relative;
+  //  z-index: 2;
+  // caret-color: red;
+  //}
+
   .coloredValue {
     font-family: Inter, sans-serif;
     font-size: 16px;
     line-height: 24px;
-    padding: 8px 14px;
+    padding: 16.5px 14px;
     border-radius: 8px;
     position: absolute;
     top: 0.5px;
@@ -16,7 +23,7 @@
     right: 0;
     word-break: break-word;
     color: #5f6d7e;
-    z-index: 1;
+    //z-index: 0;
     user-select: none;
     letter-spacing: 0;
 
