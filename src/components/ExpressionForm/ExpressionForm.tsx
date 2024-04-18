@@ -200,7 +200,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   );
 
   return (
-    <Box sx={{ minHeight: '100%', display: 'flex' }}>
+    <Box sx={{ minHeight: '100%', display: 'flex', flexGrow: 1 }}>
       <form
         style={{ minHeight: '100%', display: 'flex' }}
         onSubmit={handleSubmit(onSubmit)}
@@ -211,7 +211,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
               {initialValues?.id ? 'Change' : 'Add New'} Expression
             </Typography>
             <Box flexGrow={1}>
-              <Card>
+              <Card sx={{ overflow: 'unset' }}>
                 <CardHeader title="Expression Builder" />
                 <CardContent sx={{ paddingTop: 0 }}>
                   <Box mb={1}>
