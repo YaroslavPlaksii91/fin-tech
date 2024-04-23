@@ -67,7 +67,7 @@ export const AddFlow: React.FC = () => {
         Add new flow
       </Button>
       <Dialog
-        title="Add a new flow"
+        title="Create New Flow"
         open={modalOpen}
         displayConfirmBtn={false}
         displayedCancelBtn={false}
@@ -77,26 +77,21 @@ export const AddFlow: React.FC = () => {
             fullWidth
             name="name"
             control={control}
-            label="Name"
-            placeholder="Enter name"
+            label="Flow name*"
+            placeholder="Flow Name*"
           />
           <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleCloseModal}
-            >
-              Cancel
-            </Button>
             <LoadingButton
               loading={isSubmitting}
               disabled={isSubmitting}
-              variant="contained"
-              color="primary"
+              variant="text"
               type="submit"
             >
-              Confirm
+              Create
             </LoadingButton>
+            <Button variant="text" onClick={handleCloseModal}>
+              Cancel
+            </Button>
           </Stack>
         </form>
       </Dialog>

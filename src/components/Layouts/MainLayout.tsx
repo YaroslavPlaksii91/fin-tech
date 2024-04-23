@@ -8,8 +8,8 @@ import {
   StyledSideNavFooter
 } from './styled';
 
-import { useLoading } from '@contexts/LoadingContext';
 import LoadingFullscreen from '@components/shared/LoadingFullscreen';
+import { useLoading } from '@contexts/LoadingContext';
 
 interface LayoutContainerProps {
   children: React.ReactNode;
@@ -19,7 +19,9 @@ const LayoutContainer: React.FC<LayoutContainerProps> = ({ children }) => {
 
   return (
     <StyledLayoutContainer>
-      {loading ? <LoadingFullscreen /> : children}
+      {/* {loading ? <LoadingFullscreen /> : children} */}
+      {loading && <LoadingFullscreen />}
+      {children}
     </StyledLayoutContainer>
   );
 };
@@ -60,7 +62,11 @@ interface MainContainerProps {
 
 const MainContainer: React.FC<MainContainerProps> = ({ children }) => (
   <Box
-    sx={{ width: '100%', height: '100%', position: 'relative' }}
+    sx={{
+      width: '100%',
+      height: '100%',
+      position: 'relative'
+    }}
     component="main"
   >
     {children}

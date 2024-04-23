@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { enqueueSnackbar } from 'notistack';
 
+import { theme } from '../../../themeConfig';
+
 import { createDuplicateFlowData } from './createDuplicateFlowData';
 
 import Dialog from '@components/shared/Modals/Dialog';
@@ -55,7 +57,11 @@ export const DuplicateFlow: React.FC<DuplicateFlowProps> = ({
       onConfirm={handleDuplicateFlow}
       confirmLoading={confirmLoading}
     >
-      <Typography width={416} variant="body2">
+      <Typography
+        width={396}
+        variant="body1"
+        color={theme.palette.text.secondary}
+      >
         Do you want to duplicate this flow with all existing steps and sub flows
         in it?
       </Typography>

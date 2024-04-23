@@ -1,8 +1,8 @@
 import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
-import { useReactFlow } from 'reactflow';
-import { Node } from '@reactflow/core';
+// import { useReactFlow } from 'reactflow';
+// import { Node } from '@reactflow/core';
 
 import Menu from '@components/shared/Menu/Menu';
 import Logger from '@utils/logger';
@@ -32,7 +32,7 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
   showActionMenuButton = false,
   options = defaultOptions
 }) => {
-  const { deleteElements } = useReactFlow();
+  // const { deleteElements } = useReactFlow();
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -71,7 +71,7 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
           confirmText: 'Delete'
         });
         if (answer) {
-          deleteElements({ nodes: [flowNode as Node] });
+          // deleteElements({ nodes: [flowNode as Node] });
         }
         break;
       }

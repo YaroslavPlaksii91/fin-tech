@@ -4,10 +4,12 @@ import { Box, Divider } from '@mui/material';
 import { HEADER_HEIGHT, DRAWER_WIDTH } from '@constants/themeConstants';
 
 export const StyledLayoutContainer = styled(Box)(() => ({
+  position: 'relative',
   display: 'flex',
   height: `calc(100vh - ${HEADER_HEIGHT}px)`
 }));
 
+// TODO: remove sidebar nav container
 export const StyledSideNavContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',

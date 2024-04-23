@@ -18,7 +18,6 @@ import { v4 as uuidv4 } from 'uuid';
 import debounce from 'lodash/debounce';
 import 'reactflow/dist/style.css';
 
-import FlowHeader from '../../FlowHeader';
 import { nodeTypes } from '../Nodes';
 import { edgeTypes } from '../Edges';
 import NodePositioning from '../Nodes/NodePositioning';
@@ -45,17 +44,17 @@ import { DEFAULT_SOURCE_HANDLE } from '../constants';
 import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
 import { FlowNode, IFlow } from '@domain/flow';
 import {
-  MainContainer,
-  SideNavContainer
+  MainContainer
+  // SideNavContainer
 } from '@components/Layouts/MainLayout';
-import { SelectStep } from '@components/StepManagment/StepSelectionDialog/SelectStep';
-import StepList from '@components/StepManagment/StepList/StepList';
+// import { SelectStep } from '@components/StepManagment/StepSelectionDialog/SelectStep';
+// import StepList from '@components/StepManagment/StepList/StepList';
 import { useStep } from '@contexts/StepContext';
 import StepConfigureView from '@components/StepManagment/StepConfigureView/StepConfigureView';
 import { MAIN_STEP_ID } from '@constants/common';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
-import NavigateTo from '@components/shared/Link/NavigateTo.tsx';
+// import NavigateTo from '@components/shared/Link/NavigateTo.tsx';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 import {
@@ -206,14 +205,14 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
     [setEdges, setNodes, rfInstance, nodes]
   );
 
-  const onAddNode = useCallback(
-    (type: StepType, name: string) => {
-      const newNode = createNewNode(type, name);
-      setNodes((nds) => nds.concat(newNode));
-      return newNode;
-    },
-    [setNodes]
-  );
+  // const onAddNode = useCallback(
+  //   (type: StepType, name: string) => {
+  //     const newNode = createNewNode(type, name);
+  //     setNodes((nds) => nds.concat(newNode));
+  //     return newNode;
+  //   },
+  //   [setNodes]
+  // );
 
   const onConnectNode = useCallback(
     (updatedNode: FlowNode, edgeId: string) => {
@@ -328,13 +327,14 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 
   return (
     <DataDictionaryContext.Provider value={{ variables }}>
-      <SideNavContainer
+      {/* TODO: REMOVE SIDEBAR CONTAINER HERE */}
+      {/* <SideNavContainer
         header={<NavigateTo to={-1} title="Back" />}
         footer={<SelectStep onAddNode={onAddNode} />}
       >
         <FlowHeader name={flow.data.name} />
         <StepList nodes={nodes} step={step} setStep={setStep} />
-      </SideNavContainer>
+      </SideNavContainer> */}
       <MainContainer>
         <NodePositioning
           edges={edges}

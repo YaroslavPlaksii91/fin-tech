@@ -9,10 +9,8 @@ import { StyledPanel } from './styled';
 
 import {
   BookmarksOutlinedIcon,
-  DeleteOutlineIcon,
   TaskAltOutlinedIcon
 } from '@components/shared/Icons';
-import { DeleteFlow } from '@components/FlowManagment/DeleteFlow/DeleteFlow';
 import { flowService } from '@services/flow-service';
 import { IFlow } from '@domain/flow';
 import {
@@ -34,7 +32,6 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
   isDirty,
   setFlow
 }) => {
-  const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const onSave = useCallback(async () => {
@@ -63,10 +60,6 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
       }
     }
   }, [rfInstance, flow]);
-
-  const onDelete = useCallback(() => {
-    setModalDeleteOpen(true);
-  }, []);
 
   const onPushFlow = useCallback(async () => {
     if (rfInstance && flow) {
@@ -98,16 +91,8 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
 
   return (
     <StyledPanel position="top-right">
-      <Typography variant="h2">Edit mode</Typography>
+      <Typography variant="h4">{flow.data.name}</Typography>
       <Stack spacing={1} direction="row" justifyContent="flex-end">
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={onDelete}
-          endIcon={<DeleteOutlineIcon />}
-        >
-          Delete Flow
-        </Button>
         <Button
           variant="contained"
           color="secondary"
@@ -126,12 +111,6 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
           Push changes
         </Button>
       </Stack>
-      <DeleteFlow
-        isEditMode
-        flowId={flow.id}
-        modalOpen={modalDeleteOpen}
-        setModalOpen={setModalDeleteOpen}
-      />
     </StyledPanel>
   );
 };

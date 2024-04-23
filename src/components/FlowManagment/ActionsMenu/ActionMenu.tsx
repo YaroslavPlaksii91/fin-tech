@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { RenameFlow } from '../RenameFlow/RenameFlowForm';
 import { DeleteFlow } from '../DeleteFlow/DeleteFlow';
 import { DuplicateFlow } from '../DuplicateFlow/DuplicateFlow';
+import { theme } from '../../../themeConfig';
 
 import Details from './Details';
 
@@ -12,9 +13,15 @@ import { IFlowListItem } from '@domain/flow';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
 import ActionMenuButton from '@components/shared/Buttons/ActionMenuButton';
+import {
+  Books,
+  CopyAlt,
+  Edit,
+  FileEdit,
+  Trash
+} from '@components/shared/Icons';
 
 enum ActionTypes {
-  VIEW_FLOW_DETAILS = 'viewFlowDetails',
   VIEW_DATA_DICTIONARY = 'viewDataDictionary',
   DUPLICATE_FLOW = 'duplicateFlow',
   EDIT_FLOW = 'editFlow',
@@ -23,12 +30,28 @@ enum ActionTypes {
 }
 
 const options = [
-  { label: 'View flow details', dataKey: ActionTypes.VIEW_FLOW_DETAILS },
-  { label: 'View data dictionary', dataKey: ActionTypes.VIEW_DATA_DICTIONARY },
-  { label: 'Duplicate flow', dataKey: ActionTypes.DUPLICATE_FLOW },
-  { label: 'Edit flow', dataKey: ActionTypes.EDIT_FLOW },
-  { label: 'Rename flow', dataKey: ActionTypes.RENAME_FLOW },
-  { label: 'Delete flow', dataKey: ActionTypes.DELETE_FLOW }
+  {
+    label: 'View Data Dictionary',
+    dataKey: ActionTypes.VIEW_DATA_DICTIONARY,
+    icon: <Books />
+  },
+  {
+    label: 'Duplicate',
+    dataKey: ActionTypes.DUPLICATE_FLOW,
+    icon: <CopyAlt />
+  },
+  { label: 'Edit', dataKey: ActionTypes.EDIT_FLOW, icon: <Edit /> },
+  {
+    label: 'Rename',
+    dataKey: ActionTypes.RENAME_FLOW,
+    icon: <FileEdit />
+  },
+  {
+    label: 'Delete',
+    dataKey: ActionTypes.DELETE_FLOW,
+    icon: <Trash />,
+    textColor: theme.palette.error.main
+  }
 ];
 
 const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
@@ -50,9 +73,6 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         break;
       case ActionTypes.DELETE_FLOW:
         setModalDeleteOpen(true);
-        break;
-      case ActionTypes.VIEW_FLOW_DETAILS:
-        navigate(routes.underwriting.flow.details(flow.id));
         break;
       case ActionTypes.DUPLICATE_FLOW:
         setModalDuplicateOpen(true);

@@ -2,6 +2,8 @@ import { Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 
+import { theme } from '../../../themeConfig';
+
 import Dialog from '@components/shared/Modals/Dialog';
 import Logger from '@utils/logger';
 import { useAppDispatch } from '@store/hooks';
@@ -31,6 +33,7 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
       setConfirmLoading(true);
       await dispatch(deleteFlow(flowId));
       handleCloseModal();
+      // TODO: remove as flow can only will be deleted from collapse side bar
       if (isEditMode || id === flowId) {
         navigate(`${routes.underwriting.flow.list}`);
         return;
@@ -48,14 +51,18 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
 
   return (
     <Dialog
-      title="Delete flow?"
+      title="Delete flow"
       open={modalOpen}
       onClose={handleCloseModal}
       onConfirm={handleDeleteFlow}
       confirmText="Delete"
       confirmLoading={confirmLoading}
     >
-      <Typography width={416} variant="body2">
+      <Typography
+        width={396}
+        variant="body1"
+        color={theme.palette.text.secondary}
+      >
         Are you sure you want to delete this flow with all existing steps and
         sub flows in it?
       </Typography>

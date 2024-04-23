@@ -9,6 +9,10 @@ const LoadingFullscreen = () => (
     display="flex"
     justifyContent="center"
     alignItems="center"
+    position="absolute"
+    top="0"
+    left="0"
+    sx={{ background: 'white', zIndex: '1', opacity: '0.6' }}
   >
     <CircularProgress />
   </Box>

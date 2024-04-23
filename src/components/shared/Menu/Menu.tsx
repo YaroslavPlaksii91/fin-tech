@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   MenuItem,
   ListItemIcon,
@@ -6,7 +6,6 @@ import {
 } from '@mui/material';
 
 import Link from '../Link/Link';
-import { HexagonOutlinedIcon } from '../Icons';
 
 import { StyledMenu } from './styled';
 
@@ -18,6 +17,8 @@ interface MenuProps extends Omit<MuiMenuProps, 'open'> {
     dataKey?: string;
     path?: string;
     disabled?: boolean;
+    icon?: ReactNode;
+    textColor?: string;
   }[];
   footer?: React.ReactNode;
 }
@@ -42,14 +43,13 @@ const Menu: React.FC<MenuProps> = ({
     >
       {options.map((option, index) => (
         <MenuItem
+          sx={{ color: option?.textColor }}
           key={index}
           data-key={option?.dataKey ? option.dataKey : option.label}
           onClick={(event) => handleClick(event)}
           disabled={option?.disabled}
         >
-          <ListItemIcon>
-            <HexagonOutlinedIcon size="16px" />
-          </ListItemIcon>
+          {option?.icon && <ListItemIcon>{option.icon}</ListItemIcon>}
           {option?.path ? (
             <Link path={option.path} label={option.label} />
           ) : (
