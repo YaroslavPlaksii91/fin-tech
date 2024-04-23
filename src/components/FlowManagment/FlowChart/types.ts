@@ -5,14 +5,13 @@ import { FlowNode } from '@domain/flow';
 export enum StepType {
   DECISION_TABLE = 'DecisionTable',
   CALCULATION = 'Calculation',
-  CONDITION = 'condition',
-  CASE = 'case',
   CHAMPION_CHALLENGER = 'ChampionChallenger',
   SUBFLOW = 'subflow',
   START = 'Start',
   END = 'End'
 }
 
+// TODO: Rename functional step type
 export type FunctionalStepType = Exclude<
   StepType,
   StepType.START | StepType.END

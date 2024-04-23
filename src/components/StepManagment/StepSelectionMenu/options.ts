@@ -8,16 +8,6 @@ export const options = [
     dataKey: StepType.DECISION_TABLE
   },
   {
-    label: 'Condition',
-    dataKey: StepType.CONDITION,
-    disabled: true
-  },
-  {
-    label: 'Case',
-    dataKey: StepType.CASE,
-    disabled: true
-  },
-  {
     id: StepType.SUBFLOW,
     dataKey: StepType.SUBFLOW,
     label: 'Subflow',

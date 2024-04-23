@@ -62,7 +62,7 @@ export default function DataDictionary() {
       key="main-flow"
       variant="body2"
       color={palette.gray}
-      href={routes.underwriting.flow.details(id as string)}
+      href={`${routes.underwriting.flow.list}/${id}`}
     >
       Main flow
     </Link>,

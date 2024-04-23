@@ -7,7 +7,6 @@ import Layout from '@components/Layouts/Layout';
 import routes from '@constants/routes';
 import Home from '@pages/Home';
 import FlowEdit from '@pages/FlowEdit';
-import FlowDetails from '@pages/FlowDetails';
 import DataDictionary from '@pages/DataDictionary';
 import ChangeHistoryPage from '@pages/ChangeHistory.tsx';
 import AccessVerificationPage from '@pages/auth/AccessVerification.tsx';
@@ -32,14 +31,6 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoutes>
             <FlowsNew />
-          </PrivateRoutes>
-        )
-      },
-      {
-        path: `${routes.underwriting.flow.details(':id')}`,
-        element: (
-          <PrivateRoutes>
-            <FlowDetails />
           </PrivateRoutes>
         )
       },

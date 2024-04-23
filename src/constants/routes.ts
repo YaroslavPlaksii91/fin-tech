@@ -8,7 +8,6 @@ const routes = {
     flow: {
       list: '/flow-list',
       edit: (id: string) => `/flow-list/${id}/edit`,
-      details: (id: string) => `/flow-list/${id}/details`,
       dataDictionary: (id: string) => `/flow-list/${id}/data-dictionary`
     },
     changeHistory: '/change-history',

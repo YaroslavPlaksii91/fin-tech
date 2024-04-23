@@ -23,8 +23,6 @@ const defaultValue = {
   [StepType.CHAMPION_CHALLENGER]: 'Champion Challenger',
   [StepType.CALCULATION]: 'Calculation',
   [StepType.DECISION_TABLE]: 'Decision table',
-  [StepType.CONDITION]: 'Condition',
-  [StepType.CASE]: 'Case',
   [StepType.SUBFLOW]: 'Subflow'
 };
 
@@ -33,9 +31,9 @@ interface AddStepProps {
   setSelectedStep: (value: FunctionalStepType | null) => void;
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
-  onAddNode?: (type: StepType, name: string) => FlowNode;
+  // onAddNode?: (type: StepType, name: string) => FlowNode;
   onAddNodeBetweenEdges?: (
-    type: StepType,
+    type: FunctionalStepType,
     name: string,
     edgeId: string
   ) => FlowNode;
@@ -50,8 +48,8 @@ export const AddStep: React.FC<AddStepProps> = ({
   modalOpen,
   setModalOpen,
   reopenSelectStepModal,
-  onAddNodeBetweenEdges,
-  onAddNode
+  onAddNodeBetweenEdges
+  // onAddNode
 }) => {
   const {
     handleSubmit,
@@ -68,7 +66,7 @@ export const AddStep: React.FC<AddStepProps> = ({
     if (edgeId) {
       createdStep = onAddNodeBetweenEdges?.(stepType, name, edgeId);
     } else {
-      createdStep = onAddNode?.(stepType, name);
+      // createdStep = onAddNode?.(stepType, name);
     }
     createdStep && setStep(createdStep);
     handleCloseModal();

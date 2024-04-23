@@ -4,7 +4,6 @@ import MuiHexagonOutlinedIcon from '@mui/icons-material/HexagonOutlined';
 import MuiDeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import MuiBookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import MuiTaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
-import MuiKeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import MuiBorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import MuiCircularProgress, {
   CircularProgressProps
@@ -127,17 +126,6 @@ export const TaskAltOutlinedIcon = ({
   ...props
 }: IconPros) => (
   <MuiTaskAltOutlinedIcon
-    sx={{ width: size, height: size, ...sx }}
-    {...props}
-  />
-);
-
-export const KeyboardDoubleArrowLeftIcon = ({
-  size = defaultIconSize,
-  sx,
-  ...props
-}: IconPros) => (
-  <MuiKeyboardDoubleArrowLeftIcon
     sx={{ width: size, height: size, ...sx }}
     {...props}
   />

@@ -23,7 +23,8 @@ import routes from '@constants/routes.ts';
 
 const getPathLink = (id: string, index: number) => {
   if (index === 0) {
-    return routes.underwriting.flow.details(id);
+    // return routes.underwriting.flow.details(id);
+    return `${routes.underwriting.flow.list}/${id}`;
   } else {
     // @TODO: Return link to open flow step
     return '#';

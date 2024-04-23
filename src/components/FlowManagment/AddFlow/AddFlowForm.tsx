@@ -41,7 +41,8 @@ export const AddFlow: React.FC = () => {
       const data = createInitialFlowDataHelper(name);
       const res = await flowService.createFlow(data);
       handleCloseModal();
-      navigate(routes.underwriting.flow.details(res.id));
+      // navigate(routes.underwriting.flow.details(res.id));
+      navigate(`${routes.underwriting.flow.list}/${res.id}`);
     } catch (error) {
       Logger.error(error);
     }

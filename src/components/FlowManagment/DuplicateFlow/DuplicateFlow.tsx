@@ -34,7 +34,7 @@ export const DuplicateFlow: React.FC<DuplicateFlowProps> = ({
       const flowDetails = await flowService.getFlow(flow.id);
       const flowDuplicateData = createDuplicateFlowData(flowDetails);
       const { id } = await flowService.createFlow(flowDuplicateData);
-      navigate(routes.underwriting.flow.details(id));
+      navigate(`${routes.underwriting.flow.list}/${id}`);
     } catch (error) {
       enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
         variant: SNACK_TYPE.ERROR
