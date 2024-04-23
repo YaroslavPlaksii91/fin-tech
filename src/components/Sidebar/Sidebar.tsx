@@ -43,6 +43,7 @@ import { setInitialFlow } from '@store/flow/flow';
 import StepList from '@components/StepManagment/StepList/StepListCopy';
 import { selectFlow } from '@store/flow/selectors';
 import { useLoading } from '@contexts/LoadingContext';
+import { AddFlow } from '@components/FlowManagment/AddFlow/AddFlowForm';
 
 const animationStyles = (expanded: boolean) => ({
   maxWidth: expanded ? '100%' : 0,
@@ -234,6 +235,7 @@ const Sidebar = () => {
                   </AccordionDetails>
                 </Accordion>
               ))}
+              <AddFlow />
             </AccordionDetails>
           </Accordion>
         ) : (

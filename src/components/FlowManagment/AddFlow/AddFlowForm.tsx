@@ -12,7 +12,7 @@ import {
 import { flowService } from '@services/flow-service';
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
-import { AddIcon } from '@components/shared/Icons';
+import { PlusSquare } from '@components/shared/Icons';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
 import LoadingButton from '@components/shared/LoadingButton';
@@ -60,12 +60,11 @@ export const AddFlow: React.FC = () => {
     <>
       <Button
         onClick={handleOpenModal}
-        fullWidth
-        color="primary"
-        variant="contained"
-        endIcon={<AddIcon />}
+        sx={{ fontSize: '14px' }}
+        variant="text"
+        startIcon={<PlusSquare />}
       >
-        Add new flow
+        Create New Flow
       </Button>
       <Dialog
         title="Create New Flow"
