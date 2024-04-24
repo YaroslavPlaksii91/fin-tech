@@ -23,6 +23,13 @@ export enum DATA_TYPE_WITHOUT_ENUM {
   DateTime = 'DateTime'
 }
 
+export enum DEFAULT_VALUE {
+  'Gender.Unknown' = 'Gender.Unknown',
+  'ContactTime.Morning' = 'ContactTime.Morning',
+  'WorkShift.Other' = 'WorkShift.Other',
+  English = 'English'
+}
+
 export type DATA_TYPE = DATA_TYPE_WITHOUT_ENUM | DATA_TYPE_WITH_ENUM_PREFIX;
 
 export enum VARIABLE_DESTINATION_TYPE {
