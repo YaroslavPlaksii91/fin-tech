@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+import { ReactFlowProvider } from 'reactflow';
 
 import Navigation from '../Navigation/Navigation';
 
@@ -11,14 +12,16 @@ export default function Layout() {
   return (
     <>
       <Navigation />
-      <StepProvider>
-        <LayoutContainer>
-          <Sidebar />
-          <MainContainer>
-            <Outlet />
-          </MainContainer>
-        </LayoutContainer>
-      </StepProvider>
+      <ReactFlowProvider>
+        <StepProvider>
+          <LayoutContainer>
+            <Sidebar />
+            <MainContainer>
+              <Outlet />
+            </MainContainer>
+          </LayoutContainer>
+        </StepProvider>
+      </ReactFlowProvider>
     </>
   );
 }

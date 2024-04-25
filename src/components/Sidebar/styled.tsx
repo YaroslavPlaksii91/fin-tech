@@ -1,6 +1,12 @@
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
-import { AccordionSummary, Button, Typography } from '@mui/material';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  Typography
+} from '@mui/material';
 import { ButtonProps } from '@mui/base';
 import { NavLink } from 'react-router-dom';
 
@@ -39,7 +45,7 @@ export const StyledNavLink = styled(NavLink)(({ theme: { palette } }) => ({
   flexGrow: 1,
   alignItems: 'center',
   borderRadius: '4px',
-  '&.active': {
+  '&.active, &:hover': {
     backgroundColor: palette.amber,
     color: palette.primary.main
   }
@@ -66,5 +72,16 @@ export const StyledMainAccordionSummary = styled(AccordionSummary)(() => ({
   },
   '& .MuiAccordionSummary-content': {
     margin: '0 !important'
+  }
+}));
+
+export const StyledAccordionDetails = styled(AccordionDetails)(() => ({
+  padding: '4px 0'
+}));
+
+export const StyledAccordion = styled(Accordion)(() => ({
+  padding: '2px 0',
+  '&:before': {
+    display: 'none'
   }
 }));

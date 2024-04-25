@@ -1,22 +1,23 @@
 import { useState, useEffect } from 'react';
 import {
   Accordion,
-  AccordionSummary,
-  AccordionDetails,
+  Box,
   List,
   ListItem,
   ListItemIcon,
+  ListItemSecondaryAction,
   ListItemText,
   Typography
 } from '@mui/material';
 import { NavLink, useParams } from 'react-router-dom';
-import { Box } from '@mui/system';
 
 import { theme } from '../../themeConfig';
 
 import {
   Label,
   SidebarToggle,
+  StyledAccordion,
+  StyledAccordionDetails,
   StyledMainAccordionSummary,
   StyledNavLink,
   StyledPaper,
@@ -40,10 +41,11 @@ import routes from '@constants/routes';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
 import { getProductionFlow, getFlow } from '@store/flow/asyncThunk';
 import { setInitialFlow } from '@store/flow/flow';
-import StepList from '@components/StepManagment/StepList/StepListCopy';
 import { selectFlow } from '@store/flow/selectors';
 import { useLoading } from '@contexts/LoadingContext';
 import { AddFlow } from '@components/FlowManagment/AddFlow/AddFlowForm';
+import StepListCopy from '@components/StepManagment/StepList/StepListCopy';
+import { useStep } from '@contexts/StepContext';
 
 const animationStyles = (expanded: boolean) => ({
   maxWidth: expanded ? '100%' : 0,
@@ -55,9 +57,10 @@ const animationStyles = (expanded: boolean) => ({
 const Sidebar = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
-  const { flowList } = useAppSelector(selectFlowList);
-  // const { flowList, flowProduction } = useAppSelector(selectFlowList);
+  const { resetStep } = useStep();
+  const { flowList, flowProduction } = useAppSelector(selectFlowList);
   const { flow } = useAppSelector(selectFlow);
+
   const [expanded, setExpanded] = useState(true);
   const sidebarWidth = expanded ? 400 : 70;
 
@@ -91,15 +94,14 @@ const Sidebar = () => {
   }, []);
 
   useEffect(() => {
-    const fetchFlow = async (flowId: string) => {
+    const fetchInitialData = async (flowId: string) => {
       try {
         startLoading();
-        if (flowId === PRODUCTION_FLOW_ID) {
+        if (id === PRODUCTION_FLOW_ID) {
           await dispatch(getProductionFlow());
         } else {
           await dispatch(getFlow(flowId));
         }
-        setExpandedFlow(flowId);
       } catch (error) {
         Logger.error('Error fetching initial data:', error);
       } finally {
@@ -107,10 +109,10 @@ const Sidebar = () => {
       }
     };
 
+    resetStep();
     if (id) {
-      void fetchFlow(id);
+      void fetchInitialData(id);
     } else {
-      setExpandedFlow(false);
       dispatch(setInitialFlow());
     }
   }, [id]);
@@ -148,11 +150,6 @@ const Sidebar = () => {
               aria-controls="flowList-content"
               id="flowList-header"
             >
-              {/* <Stack
-                direction="row"
-                alignItems="center"
-                sx={{ width: '100%', justifyContent: 'space-between' }}
-              > */}
               <NavLink
                 style={{
                   textDecoration: 'none',
@@ -170,9 +167,8 @@ const Sidebar = () => {
                   Flow List
                 </Typography>
               </NavLink>
-              {/* </Stack> */}
             </StyledMainAccordionSummary>
-            <AccordionDetails>
+            <StyledAccordionDetails>
               <Label variant="body2">Flow on Production</Label>
               <Accordion
                 expanded={expandedFlow === PRODUCTION_FLOW_ID}
@@ -190,53 +186,51 @@ const Sidebar = () => {
                       minHeight: '28px'
                     }}
                   >
-                    {/* <StyledNavLink
-                      to={`${routes.underwriting.flow.list}/${PRODUCTION_FLOW_ID}`}
-                    > */}
                     <ListItemIcon>
                       <Bezier />
                     </ListItemIcon>
-                    <Typography variant="body2">Main flow</Typography>
-                    {/* <Typography>{flowProduction?.name}</Typography> */}
-                    {/* </StyledNavLink> */}
+                    <Typography variant="body2">
+                      {flowProduction?.name}
+                    </Typography>
                   </StyledSubAccordionSummary>
                 </StyledNavLink>
-                <AccordionDetails>Empty here should be nodes</AccordionDetails>
+                <StyledAccordionDetails>
+                  <StepListCopy nodes={flow.nodes} />
+                </StyledAccordionDetails>
               </Accordion>
               <Label variant="body2">Draft Flows</Label>
               {flowList.map((flowItem) => (
-                <Accordion
+                <StyledAccordion
                   key={flowItem.id}
                   expanded={expandedFlow === flowItem.id}
                   onChange={handleChangeFlow(flowItem.id)}
                 >
-                  <Box display="flex">
+                  <Box sx={{ position: 'relative' }}>
                     <StyledNavLink
                       to={`${routes.underwriting.flow.list}/${flowItem.id}`}
                     >
-                      <AccordionSummary
+                      <StyledSubAccordionSummary
                         expandIcon={<ExpandMoreIcon fontSize="medium" />}
                         aria-controls="panel1a-content"
                         id="panel1a-header"
-                        sx={{
-                          flexDirection: 'row-reverse'
-                        }}
                       >
                         <ListItemIcon>
                           <Bezier />
                         </ListItemIcon>
                         <Typography variant="body2">{flowItem.name}</Typography>
-                      </AccordionSummary>
+                      </StyledSubAccordionSummary>
                     </StyledNavLink>
-                    <ActionsMenu flow={flowItem} />
+                    <ListItemSecondaryAction>
+                      <ActionsMenu flow={flowItem} />
+                    </ListItemSecondaryAction>
                   </Box>
-                  <AccordionDetails>
-                    <StepList nodes={flow.nodes} />
-                  </AccordionDetails>
-                </Accordion>
+                  <StyledAccordionDetails>
+                    <StepListCopy nodes={flow.nodes} />
+                  </StyledAccordionDetails>
+                </StyledAccordion>
               ))}
               <AddFlow />
-            </AccordionDetails>
+            </StyledAccordionDetails>
           </Accordion>
         ) : (
           <ListItem button component={NavLink} to="/flow-list">

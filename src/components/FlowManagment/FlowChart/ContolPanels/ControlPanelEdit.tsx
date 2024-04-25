@@ -18,11 +18,13 @@ import {
   SnackbarMessage
 } from '@components/shared/Snackbar/SnackbarMessage';
 import { SNACK_TYPE } from '@constants/common';
+import { useAppDispatch } from '@store/hooks';
+import { saveFlow } from '@store/flow/asyncThunk';
 
 interface ControlPanelEditProps {
   flow: IFlow;
+  setCopyFlow: (flow: IFlow) => void;
   isDirty: boolean;
-  setFlow: (flow: IFlow) => void;
   rfInstance: CustomReactFlowInstance | undefined;
 }
 
@@ -30,17 +32,20 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
   rfInstance,
   flow,
   isDirty,
-  setFlow
+  setCopyFlow
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
 
   const onSave = useCallback(async () => {
     if (rfInstance && flow) {
       try {
         setLoading(true);
         const formattedData = formatFlowOnSave({ flow, rfInstance });
-        const updatedFlow = await flowService.saveFlow(formattedData);
-        setFlow(updatedFlow);
+        // const updatedFlow = await flowService.saveFlow(formattedData);
+        const { payload } = await dispatch(saveFlow(formattedData));
+        setCopyFlow(payload);
+
         enqueueSnackbar(
           <SnackbarMessage
             message="Success"

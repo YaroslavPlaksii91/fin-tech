@@ -16,7 +16,7 @@ import TableCell from '@mui/material/TableCell';
 import { COLUMN_IDS, Expression, FieldValues, columns } from './types';
 import { PinnedTableCell } from './styled';
 
-import { FlowNode, IFlow } from '@domain/flow';
+import { FlowNode } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
 import { MAIN_STEP_ID, RULES_LIMIT, SNACK_TYPE } from '@constants/common';
@@ -43,7 +43,6 @@ interface CalculationProps {
   step: FlowNode;
   setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
   rfInstance: CustomReactFlowInstance;
-  flow: IFlow;
 }
 
 const Calculation: React.FC<CalculationProps> = ({

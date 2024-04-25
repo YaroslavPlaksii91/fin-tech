@@ -3,17 +3,19 @@ import {
   useContext,
   ReactNode,
   useState,
-  useEffect
+  useEffect,
+  useCallback
 } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { FlowNode } from '@domain/flow';
 import { MAIN_STEP_ID } from '@constants/common';
 
-export type StepContextType = {
+export interface StepContextType {
   step: FlowNode | { id: typeof MAIN_STEP_ID };
   setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
-};
+  resetStep: () => void;
+}
 
 const StepContext = createContext<StepContextType | undefined>(undefined);
 
@@ -32,6 +34,8 @@ export const StepProvider: React.FC<StepProviderProps> = ({ children }) => {
     id: MAIN_STEP_ID
   });
 
+  const resetStep = useCallback(() => setStep({ id: MAIN_STEP_ID }), [step]);
+
   useEffect(() => {
     const state = (location.state || {}) as LocationState;
     if (state.node) {
@@ -41,7 +45,8 @@ export const StepProvider: React.FC<StepProviderProps> = ({ children }) => {
 
   const contextValue = {
     step,
-    setStep
+    setStep,
+    resetStep
   };
 
   return (

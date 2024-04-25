@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IconButton } from '@mui/material';
 
 import { RenameFlow } from '../RenameFlow/RenameFlowForm';
 import { DeleteFlow } from '../DeleteFlow/DeleteFlow';
@@ -12,12 +13,12 @@ import Menu from '@components/shared/Menu/Menu';
 import { IFlowListItem } from '@domain/flow';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
-import ActionMenuButton from '@components/shared/Buttons/ActionMenuButton';
 import {
   Books,
   CopyAlt,
   Edit,
   FileEdit,
+  MoreHorizontal,
   Trash
 } from '@components/shared/Icons';
 
@@ -98,7 +99,14 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
 
   return (
     <>
-      <ActionMenuButton handleOnClick={handleOpenMenu} />
+      <IconButton
+        sx={{ padding: 0 }}
+        size="small"
+        aria-label="action-menu"
+        onClick={handleOpenMenu}
+      >
+        <MoreHorizontal />
+      </IconButton>
       <Menu
         anchorEl={anchorEl}
         handleCloseMenu={handleCloseMenu}

@@ -40,12 +40,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
       />
     )}
     {step.type === StepType.CALCULATION && (
-      <Calculation
-        flow={flow}
-        rfInstance={rfInstance}
-        setStep={setStep}
-        step={step}
-      />
+      <Calculation rfInstance={rfInstance} setStep={setStep} step={step} />
     )}
   </StyledContainer>
 );

@@ -5,7 +5,6 @@ import ReactFlow, {
   useEdgesState,
   BackgroundVariant,
   useReactFlow,
-  ReactFlowProvider,
   Controls
 } from 'reactflow';
 
@@ -19,7 +18,6 @@ import ControlPanelView from './ContolPanels/ControlPanelView';
 import { IFlow } from '@domain/flow';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
-import { StepProvider } from '@contexts/StepContext.tsx';
 
 interface FlowChartViewProps {
   flow: IFlow;
@@ -71,11 +69,7 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
 };
 
 const FlowChartReadOnlyView = (props: FlowChartViewProps) => (
-  <StepProvider>
-    <ReactFlowProvider>
-      <FlowChartReadOnlyViewLayout {...props} />
-    </ReactFlowProvider>
-  </StepProvider>
+  <FlowChartReadOnlyViewLayout {...props} />
 );
 
 export default FlowChartReadOnlyView;

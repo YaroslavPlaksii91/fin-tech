@@ -37,7 +37,7 @@ export const palette = {
   successBackground: '#EBF9F1',
   successBorder: '#C4D9CD',
   errorBackground: '#FFCCCC',
-  // error: '#E24A4A',
+  error: '#E24A4A',
   aliceBlue: '#F8F9FB',
   amber: '#FFF8E1'
 };
@@ -67,6 +67,10 @@ export const theme = createTheme({
     background: {
       default: '#F8F8FA',
       paper: '#FFFFFF'
+    },
+    error: {
+      main: '#E24A4A',
+      light: '#FFCCCC'
     },
     action: {
       active: 'rgba(0,0,0,0.56)',

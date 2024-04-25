@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles';
-import { List, ListItem, ListItemProps, ListItemText } from '@mui/material';
-import { NavLinkProps } from 'react-router-dom';
+import { List, ListItem, ListItemText } from '@mui/material';
 
+// TODO: remove all styles here
 export const StyledList = styled(List)(() => ({
   height: '100%',
   overflow: 'auto'
@@ -16,24 +16,14 @@ const GeneralListItemStyle = styled(ListItem)(({ theme }) => ({
   }
 }));
 
-export const StyledNavListItem = styled(GeneralListItemStyle)<
-  ListItemProps & NavLinkProps
->(({ theme }) => ({
-  '&.active': {
-    background: theme.palette.secondary.main
-  }
-}));
-
 export const StyledListItem = styled(GeneralListItemStyle)(({ theme }) => ({
   '&.active': {
     borderLeft: `3px solid ${theme.palette.gray}`
   }
 }));
 
-export const StyledListItemText = styled(ListItemText)(({ theme }) => ({
+export const StyledListItemText = styled(ListItemText)(() => ({
   '.MuiTypography-root': {
-    fontSize: '14px',
-    color: theme.palette.gray,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap'

@@ -9,13 +9,13 @@ import ReactFlow, {
   BackgroundVariant,
   ConnectionLineType,
   useReactFlow,
-  ReactFlowProvider,
   Edge,
   ConnectionMode,
   Controls
 } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 import debounce from 'lodash/debounce';
+
 import 'reactflow/dist/style.css';
 
 import { nodeTypes } from '../Nodes';
@@ -51,19 +51,17 @@ import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
-import {
-  editModeOptions,
-  options
-} from '@components/StepManagment/StepActionsMenu/types.ts';
+import { addNode, deleteNodes } from '@store/flow/flow';
+import { useAppDispatch } from '@store/hooks';
 
 interface FlowChartViewProps {
   flow: IFlow;
-  setFlow: (flow: IFlow) => void;
+  setCopyFlow: (flow: IFlow) => void;
 }
 
 const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   flow,
-  setFlow
+  setCopyFlow
 }) => {
   const { variables } = useDataDictionaryVariables(flow);
   const [isDirty, setIsDirty] = useState<boolean>(false);
@@ -76,6 +74,8 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { step, setStep } = useStep();
 
+  const dispatch = useAppDispatch();
+
   const { setViewport } = useReactFlow();
 
   const onAddNodeBetweenEdges = useCallback(
@@ -84,6 +84,9 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
       const newNode = createNewNode(type, name, newEdgeId);
 
       setNodes((nodes) => nodes.concat(newNode));
+
+      // For update list of steps in the sidebar
+      dispatch(addNode(newNode));
 
       setEdges((edges) =>
         updateEdges({
@@ -294,6 +297,10 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
     [rfInstance, nodes]
   );
 
+  const onNodesDelete = useCallback((deletedNodes: Node[]) => {
+    dispatch(deleteNodes(deletedNodes));
+  }, []);
+
   useEffect(() => {
     setEdges((eds: Edge<EdgeData>[]) =>
       eds.map((edge) => ({
@@ -303,12 +310,12 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
     );
   }, [startDrag]);
 
-  const stepActionsMenuOptions = useMemo(() => {
-    if (flowNode?.type === StepType.START || flowNode?.type === StepType.END) {
-      return options;
-    }
-    return editModeOptions;
-  }, [flowNode, editModeOptions, options]);
+  // const stepActionsMenuOptions = useMemo(() => {
+  //   if (flowNode?.type === StepType.START || flowNode?.type === StepType.END) {
+  //     return options;
+  //   }
+  //   return editModeOptions;
+  // }, [flowNode, editModeOptions, options]);
 
   return (
     <DataDictionaryContext.Provider value={{ variables }}>
@@ -328,6 +335,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onEdgesDelete={onEdgesDelete}
+          onNodesDelete={onNodesDelete}
           onNodeDragStart={onNodeDragStart}
           onInit={(instance) => {
             setRfInstance({
@@ -345,8 +353,8 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           <Background variant={BackgroundVariant.Lines} />
           <ControlPanelEdit
             flow={flow}
+            setCopyFlow={setCopyFlow}
             isDirty={isDirty}
-            setFlow={setFlow}
             rfInstance={rfInstance}
           />
           <Controls />
@@ -365,7 +373,8 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         flowNode={flowNode}
         isOpen={Boolean(flowNode)}
         onClose={onPaneClick}
-        options={stepActionsMenuOptions}
+        isEditMode
+        setStep={setStep}
       />
       <LeavePageConfirmationDialog isDirty={isDirty} />
     </DataDictionaryContext.Provider>
@@ -373,9 +382,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 };
 
 const FlowChartEditor = (props: FlowChartViewProps) => (
-  <ReactFlowProvider>
-    <FlowChartEditorLayout {...props} />
-  </ReactFlowProvider>
+  <FlowChartEditorLayout {...props} />
 );
 
 export default FlowChartEditor;

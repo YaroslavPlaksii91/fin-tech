@@ -30,7 +30,7 @@ export const deleteStepOption = {
   dataKey: ActionTypes.DELETE_STEP
 };
 
-export const options = [viewStepOption, renameStepOption, duplicateStepOption];
+export const options = [viewStepOption, editStepOption];
 
 export const editModeOptions = [
   viewStepOption,

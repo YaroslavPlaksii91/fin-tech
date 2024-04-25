@@ -1,19 +1,23 @@
 import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
-// import { useReactFlow } from 'reactflow';
-// import { Node } from '@reactflow/core';
+import { useReactFlow } from 'reactflow';
+import { Node } from '@reactflow/core';
 
 import Menu from '@components/shared/Menu/Menu';
 import Logger from '@utils/logger';
 import {
   ActionTypes,
+  editModeOptions,
   options as defaultOptions
 } from '@components/StepManagment/StepActionsMenu/types';
 import { FlowNode } from '@domain/flow.ts';
 import routes from '@constants/routes.ts';
-import { MoreVertIcon } from '@components/shared/Icons.tsx';
+import { MoreHorizontal } from '@components/shared/Icons.tsx';
 import { asyncConfirmDialog } from '@components/shared/Confirmation/AsyncConfirmDialog.tsx';
+import { MAIN_STEP_ID } from '@constants/common';
+import { useAppDispatch } from '@store/hooks';
+import { deleteNodes } from '@store/flow/flow';
 
 interface StepActionMenuOnNode {
   isOpen?: boolean;
@@ -21,7 +25,8 @@ interface StepActionMenuOnNode {
   anchorElement?: HTMLElement | null;
   flowNode: FlowNode | null;
   showActionMenuButton?: boolean;
-  options?: { label: string; dataKey: ActionTypes }[];
+  isEditMode?: boolean;
+  setStep?: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
 }
 
 const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
@@ -30,14 +35,18 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
   anchorElement,
   flowNode,
   showActionMenuButton = false,
-  options = defaultOptions
+  isEditMode = false,
+  setStep
 }) => {
-  // const { deleteElements } = useReactFlow();
+  const { deleteElements } = useReactFlow();
   const navigate = useNavigate();
   const { id } = useParams();
+  const dispatch = useAppDispatch();
 
   const menuRef: MutableRefObject<HTMLButtonElement | null> = useRef(null);
   const [open, setIsOpen] = useState(isOpen);
+
+  const options = isEditMode ? editModeOptions : defaultOptions;
 
   useEffect(() => {
     setIsOpen(isOpen);
@@ -54,9 +63,15 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
         Logger.info('Step text view');
         break;
       case ActionTypes.EDIT_STEP:
-        navigate(routes.underwriting.flow.edit(id as string), {
-          state: { node: flowNode }
-        });
+        if (isEditMode) {
+          setStep(flowNode);
+        } else {
+          navigate(routes.underwriting.flow.edit(id as string), {
+            state: { node: flowNode }
+          });
+        }
+        break;
+
         break;
       case ActionTypes.RENAME_STEP:
         Logger.info('Rename step');
@@ -71,7 +86,8 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
           confirmText: 'Delete'
         });
         if (answer) {
-          // deleteElements({ nodes: [flowNode as Node] });
+          deleteElements({ nodes: [flowNode as Node] });
+          dispatch(deleteNodes([flowNode as FlowNode]));
         }
         break;
       }
@@ -96,8 +112,13 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
   return (
     <>
       {showActionMenuButton && (
-        <IconButton ref={menuRef} onClick={handleMenuButtonClick}>
-          <MoreVertIcon />
+        <IconButton
+          ref={menuRef}
+          onClick={handleMenuButtonClick}
+          size="small"
+          sx={{ padding: 0 }}
+        >
+          <MoreHorizontal />
         </IconButton>
       )}
       <Menu

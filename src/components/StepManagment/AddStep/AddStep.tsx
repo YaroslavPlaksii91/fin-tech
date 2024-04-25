@@ -60,6 +60,7 @@ export const AddStep: React.FC<AddStepProps> = ({
     resolver: yupResolver(validationSchema)
   });
   const { setStep } = useStep();
+  // const dispatch = useDispatch();
 
   const onSubmit: SubmitHandler<FormData> = ({ name }) => {
     let createdStep;
@@ -68,7 +69,10 @@ export const AddStep: React.FC<AddStepProps> = ({
     } else {
       // createdStep = onAddNode?.(stepType, name);
     }
-    createdStep && setStep(createdStep);
+    if (createdStep) {
+      setStep(createdStep);
+      // dispatch(addNode(createdStep));
+    }
     handleCloseModal();
   };
 

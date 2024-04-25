@@ -11,8 +11,7 @@ import DataDictionary from '@pages/DataDictionary';
 import ChangeHistoryPage from '@pages/ChangeHistory.tsx';
 import AccessVerificationPage from '@pages/auth/AccessVerification.tsx';
 import LeadRequestsReportsPage from '@pages/LeadRequestsReports/LeadRequestReports';
-import FlowsNew from '@pages/FlowListNew';
-// import Flows from '@pages/Flows';
+import FlowList from '@pages/FlowList';
 
 export const router = createBrowserRouter([
   {
@@ -30,7 +29,7 @@ export const router = createBrowserRouter([
         path: `${routes.underwriting.flow.list}/:id?`,
         element: (
           <PrivateRoutes>
-            <FlowsNew />
+            <FlowList />
           </PrivateRoutes>
         )
       },
