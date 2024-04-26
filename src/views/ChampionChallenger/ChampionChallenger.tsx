@@ -37,7 +37,7 @@ import {
 } from '@components/shared/Table/styled';
 import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
-import { MAIN_STEP_ID, RULES_LIMIT, SNACK_TYPE } from '@constants/common';
+import { RULES_LIMIT, SNACK_TYPE } from '@constants/common';
 import {
   SnackbarErrorMessage,
   SnackbarMessage
@@ -49,14 +49,14 @@ const DEFAULT_PERCENTAGE_SPLIT = 10;
 
 interface ChampionChallengerProps {
   step: FlowNode;
-  setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
+  resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
   flow: IFlow;
 }
 
 const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   step,
-  setStep,
+  resetActiveStepId,
   flow,
   rfInstance: {
     getEdge,
@@ -111,7 +111,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     setOpenNoteModal(false);
   };
 
-  const handleDiscardChanges = () => setStep({ id: MAIN_STEP_ID });
+  const handleDiscardChanges = () => resetActiveStepId();
 
   const onSubmit = async (data: FieldValues) => {
     const existingSplitEdges =
@@ -174,7 +174,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         />,
         { variant: SNACK_TYPE.SUCCESS }
       );
-      setStep({ id: MAIN_STEP_ID });
+      resetActiveStepId();
     } catch (error) {
       setNodes(storedNodes);
       setEdges(storedEdges);

@@ -167,7 +167,7 @@ export const TableRow = ({
                   aria-label="breadcrumb"
                   onClick={() =>
                     navigate(routes.underwriting.flow.edit(flowId), {
-                      state: { node: flowNode }
+                      state: { activeStepId: flowNode.id }
                     })
                   }
                 >

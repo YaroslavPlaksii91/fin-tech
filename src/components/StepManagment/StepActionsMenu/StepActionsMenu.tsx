@@ -15,28 +15,29 @@ import { FlowNode } from '@domain/flow.ts';
 import routes from '@constants/routes.ts';
 import { MoreHorizontal } from '@components/shared/Icons.tsx';
 import { asyncConfirmDialog } from '@components/shared/Confirmation/AsyncConfirmDialog.tsx';
-import { MAIN_STEP_ID } from '@constants/common';
 import { useAppDispatch } from '@store/hooks';
 import { deleteNodes } from '@store/flow/flow';
 
-interface StepActionMenuOnNode {
+interface StepActionsMenuOnNode {
   isOpen?: boolean;
   onClose?: () => void;
   anchorElement?: HTMLElement | null;
   flowNode: FlowNode | null;
   showActionMenuButton?: boolean;
   isEditMode?: boolean;
-  setStep?: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
+  setActiveStepId?: (activeStepId: string | null) => void;
+  activeStepId: string | null;
 }
 
-const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
+const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   isOpen = false,
   onClose,
   anchorElement,
   flowNode,
   showActionMenuButton = false,
   isEditMode = false,
-  setStep
+  setActiveStepId,
+  activeStepId
 }) => {
   const { deleteElements } = useReactFlow();
   const navigate = useNavigate();
@@ -64,11 +65,12 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
         break;
       case ActionTypes.EDIT_STEP:
         if (isEditMode) {
-          setStep(flowNode);
+          flowNode && setActiveStepId?.(flowNode.id);
         } else {
-          navigate(routes.underwriting.flow.edit(id as string), {
-            state: { node: flowNode }
-          });
+          flowNode &&
+            navigate(routes.underwriting.flow.edit(id as string), {
+              state: { activeStepId: flowNode.id }
+            });
         }
         break;
 
@@ -86,6 +88,9 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
           confirmText: 'Delete'
         });
         if (answer) {
+          if (flowNode && flowNode.id === activeStepId) {
+            setActiveStepId?.(null);
+          }
           deleteElements({ nodes: [flowNode as Node] });
           dispatch(deleteNodes([flowNode as FlowNode]));
         }
@@ -131,4 +136,4 @@ const StepActionMenu: React.FC<StepActionMenuOnNode> = ({
   );
 };
 
-export default StepActionMenu;
+export default StepActionsMenu;

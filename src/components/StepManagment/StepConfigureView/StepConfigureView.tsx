@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react';
+import { cloneDeep } from 'lodash';
+
 import { StyledContainer } from './styled';
 
-import { MAIN_STEP_ID } from '@constants/common';
 import ChampionChallenger from '@views/ChampionChallenger/ChampionChallenger';
 import DecisionTableStep from '@views/DecisionTable/DecisionTable';
 import { FlowNode, IFlow } from '@domain/flow';
@@ -12,37 +14,50 @@ import Calculation from '@views/Calculation/Calculation';
 
 interface StepConfigureViewProps {
   flow: IFlow;
-  step: FlowNode;
-  setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
   rfInstance: CustomReactFlowInstance;
+  activeStepId: string;
+  resetActiveStepId: () => void;
 }
 
 const StepConfigureView: React.FC<StepConfigureViewProps> = ({
-  step,
-  setStep,
+  activeStepId,
+  resetActiveStepId,
   flow,
   rfInstance
-}) => (
-  <StyledContainer>
-    {step.type === StepType.CHAMPION_CHALLENGER && (
-      <ChampionChallenger
-        flow={flow}
-        rfInstance={rfInstance}
-        setStep={setStep}
-        step={step}
-      />
-    )}
-    {step.type === StepType.DECISION_TABLE && (
-      <DecisionTableStep
-        step={step}
-        setStep={setStep}
-        rfInstance={rfInstance}
-      />
-    )}
-    {step.type === StepType.CALCULATION && (
-      <Calculation rfInstance={rfInstance} setStep={setStep} step={step} />
-    )}
-  </StyledContainer>
-);
+}) => {
+  const [step, setStep] = useState<FlowNode>();
+
+  useEffect(() => {
+    const currentNode = rfInstance.getNode(activeStepId);
+    setStep(cloneDeep(currentNode));
+  }, [activeStepId]);
+
+  return (
+    <StyledContainer>
+      {step?.type === StepType.CHAMPION_CHALLENGER && (
+        <ChampionChallenger
+          flow={flow}
+          rfInstance={rfInstance}
+          resetActiveStepId={resetActiveStepId}
+          step={step}
+        />
+      )}
+      {step?.type === StepType.DECISION_TABLE && (
+        <DecisionTableStep
+          step={step}
+          resetActiveStepId={resetActiveStepId}
+          rfInstance={rfInstance}
+        />
+      )}
+      {step?.type === StepType.CALCULATION && (
+        <Calculation
+          rfInstance={rfInstance}
+          resetActiveStepId={resetActiveStepId}
+          step={step}
+        />
+      )}
+    </StyledContainer>
+  );
+};
 
 export default StepConfigureView;

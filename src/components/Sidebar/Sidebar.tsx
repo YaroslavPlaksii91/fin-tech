@@ -57,7 +57,7 @@ const animationStyles = (expanded: boolean) => ({
 const Sidebar = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
-  const { resetStep } = useStep();
+  const { resetActiveStepId } = useStep();
   const { flowList, flowProduction } = useAppSelector(selectFlowList);
   const { flow } = useAppSelector(selectFlow);
 
@@ -109,7 +109,7 @@ const Sidebar = () => {
       }
     };
 
-    resetStep();
+    resetActiveStepId();
     if (id) {
       void fetchInitialData(id);
     } else {

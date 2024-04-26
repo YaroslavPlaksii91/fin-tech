@@ -46,12 +46,11 @@ import { FlowNode, IFlow } from '@domain/flow';
 import { MainContainer } from '@components/Layouts/MainLayout';
 import { useStep } from '@contexts/StepContext';
 import StepConfigureView from '@components/StepManagment/StepConfigureView/StepConfigureView';
-import { MAIN_STEP_ID } from '@constants/common';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
-import { addNode, deleteNodes } from '@store/flow/flow';
+import { deleteNodes } from '@store/flow/flow';
 import { useAppDispatch } from '@store/hooks';
 
 interface FlowChartViewProps {
@@ -72,7 +71,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const { step, setStep } = useStep();
+  const { activeStepId, setActiveStepId, resetActiveStepId } = useStep();
 
   const dispatch = useAppDispatch();
 
@@ -84,9 +83,6 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
       const newNode = createNewNode(type, name, newEdgeId);
 
       setNodes((nodes) => nodes.concat(newNode));
-
-      // For update list of steps in the sidebar
-      dispatch(addNode(newNode));
 
       setEdges((edges) =>
         updateEdges({
@@ -315,7 +311,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   //     return options;
   //   }
   //   return editModeOptions;
-  // }, [flowNode, editModeOptions, options]);
+  // }, [flowNode, editModeOptions, options])
 
   return (
     <DataDictionaryContext.Provider value={{ variables }}>
@@ -359,22 +355,23 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           />
           <Controls />
         </ReactFlow>
-        {rfInstance && step.id !== MAIN_STEP_ID && (
+        {rfInstance && activeStepId && (
           <StepConfigureView
             flow={flow}
-            setStep={setStep}
+            resetActiveStepId={resetActiveStepId}
             rfInstance={rfInstance}
-            step={step as FlowNode}
+            activeStepId={activeStepId}
           />
         )}
       </MainContainer>
       <StepActionsMenu
+        activeStepId={activeStepId}
         anchorElement={nodeElement}
         flowNode={flowNode}
         isOpen={Boolean(flowNode)}
         onClose={onPaneClick}
         isEditMode
-        setStep={setStep}
+        setActiveStepId={setActiveStepId}
       />
       <LeavePageConfirmationDialog isDirty={isDirty} />
     </DataDictionaryContext.Provider>

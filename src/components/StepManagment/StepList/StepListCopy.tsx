@@ -1,7 +1,6 @@
 import { List, ListItemSecondaryAction, Typography } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useReactFlow } from 'reactflow';
 
 import { StyledListItem, StyledStepItem } from './styled';
 
@@ -21,10 +20,9 @@ const StepListCopy: React.FC<StepListProps> = ({
   nodes,
   isProductionFlow = false
 }) => {
-  const { step, setStep } = useStep();
+  const { activeStepId, setActiveStepId } = useStep();
   const location = useLocation();
   const isEditMode = location.pathname.includes('/edit');
-  const { getNode } = useReactFlow();
 
   const steps = useMemo(
     () =>
@@ -35,18 +33,13 @@ const StepListCopy: React.FC<StepListProps> = ({
     [nodes]
   );
 
-  const handleClick = useCallback((el: FlowNode) => {
-    const currentNode = getNode(el.id);
-    setStep(currentNode as FlowNode);
-  }, []);
-
   return (
     <List>
       {steps.map((el) => (
         <StyledListItem
-          className={step?.id === el.id ? 'active' : undefined}
+          className={activeStepId === el.id ? 'active' : undefined}
           key={el.id}
-          onClick={() => handleClick(el)}
+          onClick={() => setActiveStepId(el.id)}
         >
           <Bezier />
           <StyledStepItem>
@@ -61,6 +54,8 @@ const StepListCopy: React.FC<StepListProps> = ({
                 flowNode={el}
                 showActionMenuButton={true}
                 isEditMode={isEditMode}
+                setActiveStepId={setActiveStepId}
+                activeStepId={activeStepId}
               />
             </ListItemSecondaryAction>
           )}
