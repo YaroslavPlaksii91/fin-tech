@@ -21,7 +21,7 @@ const StepDetailsControlBar: React.FC<StepDetailsControlBarProps> = ({
         <LoadingButton
           disabled={disabled}
           loading={Boolean(isSubmitting)}
-          type="button"
+          type="submit"
           variant="contained"
           onClick={() => onApplyChangesClick()}
         >

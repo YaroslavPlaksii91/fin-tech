@@ -171,7 +171,9 @@ const Sidebar = () => {
             <StyledAccordionDetails>
               <Label variant="body2">Flow on Production</Label>
               <Accordion
-                expanded={expandedFlow === PRODUCTION_FLOW_ID}
+                expanded={
+                  expandedFlow === PRODUCTION_FLOW_ID && expandedFlow === id
+                }
                 onChange={handleChangeFlow(PRODUCTION_FLOW_ID)}
               >
                 <StyledNavLink
@@ -202,7 +204,7 @@ const Sidebar = () => {
               {flowList.map((flowItem) => (
                 <StyledAccordion
                   key={flowItem.id}
-                  expanded={expandedFlow === flowItem.id}
+                  expanded={expandedFlow === flowItem.id && expandedFlow === id}
                   onChange={handleChangeFlow(flowItem.id)}
                 >
                   <Box sx={{ position: 'relative' }}>

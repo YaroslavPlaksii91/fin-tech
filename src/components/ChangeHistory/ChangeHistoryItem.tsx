@@ -66,7 +66,7 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({ data }) => {
               </TableHead>
               <TableBody sx={{ backgroundColor: palette.aliceBlue }}>
                 {diffsList.map((row) => (
-                  <Row key={row.name} row={row} />
+                  <Row key={row.id} row={row} />
                 ))}
               </TableBody>
             </Table>

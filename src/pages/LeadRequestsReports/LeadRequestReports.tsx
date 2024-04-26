@@ -5,11 +5,9 @@ import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
 import { COLUMN_IDS } from './types';
-import { DataGridContainer } from './styled';
 import { getFormattedRows } from './utils';
 
 import { reportingService } from '@services/lead-requests-reports';
-import { LayoutContainer } from '@components/Layouts/MainLayout';
 import Logger from '@utils/logger';
 import { RemoveRedEyeOutlinedIcon } from '@components/shared/Icons';
 import DataGridPagination from '@components/shared/DataGridPagination';
@@ -91,31 +89,27 @@ export default function LeadRequestsReportsPage() {
   // };
 
   return (
-    <LayoutContainer>
-      <Stack sx={{ width: '100%', overflow: 'hidden', padding: '16px 32px' }}>
-        <Typography pb={3} variant="h1">
-          Lead requests
-        </Typography>
-        <DataGridContainer>
-          <DataGridPremium
-            rows={rows}
-            columns={dataGridColumns}
-            loading={loading}
-            rowCount={totalCount}
-            disableColumnMenu={true}
-            paginationMode="server"
-            // TODO: enable column sorting when BE fix sorting
-            disableColumnSorting={true}
-            // sortingMode="server"
-            // onSortModelChange={handleSortModelChange}
-            paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-            slots={{
-              footer: DataGridPagination
-            }}
-          />
-        </DataGridContainer>
-      </Stack>
-    </LayoutContainer>
+    <Stack sx={{ width: '100%', overflow: 'hidden', padding: '16px 32px' }}>
+      <Typography pb={3} variant="h4">
+        Lead requests
+      </Typography>
+      <DataGridPremium
+        rows={rows}
+        columns={dataGridColumns}
+        loading={loading}
+        rowCount={totalCount}
+        disableColumnMenu={true}
+        paginationMode="server"
+        // TODO: enable column sorting when BE fix sorting
+        disableColumnSorting={true}
+        // sortingMode="server"
+        // onSortModelChange={handleSortModelChange}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        slots={{
+          footer: DataGridPagination
+        }}
+      />
+    </Stack>
   );
 }
