@@ -110,18 +110,17 @@ export const AddStep: React.FC<AddStepProps> = ({
           placeholder="Enter name"
         />
         <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
-          <Button variant="contained" color="secondary" onClick={handleCancel}>
-            Cancel
-          </Button>
           <LoadingButton
             loading={isSubmitting}
             disabled={isSubmitting}
-            variant="contained"
-            color="primary"
+            variant="text"
             type="submit"
           >
             Confirm
           </LoadingButton>
+          <Button variant="text" onClick={handleCancel}>
+            Cancel
+          </Button>
         </Stack>
       </form>
     </Dialog>

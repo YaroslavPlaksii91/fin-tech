@@ -3,24 +3,10 @@ import Typography from '@mui/material/Typography';
 import { AppBar, IconButton, Menu, MenuItem } from '@mui/material';
 import React from 'react';
 
-// import routes from '@constants/routes';
 import { ELoanLogo, PersonOutlineIcon } from '@components/shared/Icons';
-// import { StyledNavLink } from '@components/shared/Link/styled';
 import { authService } from '@services/auth.ts';
 import { useAppSelector } from '@store/hooks.ts';
 import { selectUserInfo } from '@store/auth/auth.ts';
-
-// const pages = [
-//   {
-//     label: 'Flows List',
-//     path: routes.underwriting.flow.list
-//   },
-//   { label: 'Changes History', path: routes.underwriting.changeHistory },
-//   {
-//     label: 'Lead Requests',
-//     path: routes.underwriting.leadRequest
-//   }
-// ];
 
 function Navigation() {
   const userInfo = useAppSelector(selectUserInfo);
@@ -41,19 +27,6 @@ function Navigation() {
         <Typography variant="h6" noWrap component="a" href="/">
           <ELoanLogo />
         </Typography>
-        {/* <Box flexGrow="1" style={{ display: 'flex', justifyContent: 'center' }}>
-          <Stack direction="row" spacing={8}>
-            {pages.map(({ path, label }, index) => (
-              <StyledNavLink key={index} to={path}>
-                <HexagonOutlinedIcon />
-                {label}
-              </StyledNavLink>
-            ))}
-          </Stack>
-        </Box> */}
-        {/* <Avatar sx={{ bgcolor: 'gray', width: '24px', height: '24px' }}>
-          <PersonOutlineIcon />
-        </Avatar> */}
         <div>
           <Typography onClick={handleClick} ml={1} variant="body2" color="gray">
             {userInfo?.userName}

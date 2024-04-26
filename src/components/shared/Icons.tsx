@@ -2,19 +2,15 @@ import MuiPersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MuiAddIcon from '@mui/icons-material/Add';
 import MuiHexagonOutlinedIcon from '@mui/icons-material/HexagonOutlined';
 import MuiDeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import MuiBookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
-import MuiTaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import MuiBorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import MuiCircularProgress, {
   CircularProgressProps
 } from '@mui/material/CircularProgress';
 import MuiMoreVertIcon from '@mui/icons-material/MoreVert';
 import MuiCloseIcon from '@mui/icons-material/Close';
-import MuiArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MuiCheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import MuiErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import MuiRemoveIcon from '@mui/icons-material/Remove';
-import MuiAddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import MuiRemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import MuiKeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import MuiExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -43,17 +39,6 @@ export const PersonOutlineIcon = ({
   ...props
 }: IconPros) => (
   <MuiPersonOutlineIcon sx={{ width: size, height: size, ...sx }} {...props} />
-);
-
-export const AddCircleOutlineIcon = ({
-  size = defaultIconSize,
-  sx,
-  ...props
-}: IconPros) => (
-  <MuiAddCircleOutlineIcon
-    sx={{ width: size, height: size, ...sx }}
-    {...props}
-  />
 );
 
 export const AddIcon = ({ size = defaultIconSize, sx, ...props }: IconPros) => (
@@ -109,28 +94,6 @@ export const CheckCircleOutlinedIcon = ({
   />
 );
 
-export const BookmarksOutlinedIcon = ({
-  size = defaultIconSize,
-  sx,
-  ...props
-}: IconPros) => (
-  <MuiBookmarksOutlinedIcon
-    sx={{ width: size, height: size, ...sx }}
-    {...props}
-  />
-);
-
-export const TaskAltOutlinedIcon = ({
-  size = defaultIconSize,
-  sx,
-  ...props
-}: IconPros) => (
-  <MuiTaskAltOutlinedIcon
-    sx={{ width: size, height: size, ...sx }}
-    {...props}
-  />
-);
-
 export const EditNoteOutlinedIcon = ({
   size = defaultIconSize,
   sx,
@@ -156,14 +119,6 @@ export const CloseIcon = ({
   ...props
 }: IconPros) => (
   <MuiCloseIcon sx={{ width: size, height: size, ...sx }} {...props} />
-);
-
-export const ArrowForwardIcon = ({
-  size = defaultIconSize,
-  sx,
-  ...props
-}: IconPros) => (
-  <MuiArrowForwardIcon sx={{ width: size, height: size, ...sx }} {...props} />
 );
 
 export const CircularProgress = ({ ...props }: CircularProgressProps) => (
@@ -768,6 +723,29 @@ export const MoreHorizontal = () => (
     <path
       opacity={0.4}
       d="M20.0197 14C18.9157 14 18.0146 13.104 18.0146 12C18.0146 10.896 18.9046 10 20.0096 10H20.0197C21.1237 10 22.0197 10.896 22.0197 12C22.0197 13.104 21.1247 14 20.0197 14Z"
+      fill="black"
+      fillOpacity={0.56}
+    />
+  </svg>
+);
+
+export const FileText = () => (
+  <svg
+    width={24}
+    height={24}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      opacity={0.4}
+      d="M17 9C15 9 14 8 14 6V3H8C6 3 5 4 5 6V18C5 20 6 21 8 21H17C19 21 20 20 20 18V9H17Z"
+      fill="black"
+      fillOpacity={0.56}
+    />
+    <path d="M17 9H20L14 3V6C14 8 15 9 17 9Z" fill="black" fillOpacity={0.56} />
+    <path
+      d="M16 12.75H9C8.586 12.75 8.25 12.414 8.25 12C8.25 11.586 8.586 11.25 9 11.25H16C16.414 11.25 16.75 11.586 16.75 12C16.75 12.414 16.414 12.75 16 12.75ZM13.75 16C13.75 15.586 13.414 15.25 13 15.25H9C8.586 15.25 8.25 15.586 8.25 16C8.25 16.414 8.586 16.75 9 16.75H13C13.414 16.75 13.75 16.414 13.75 16Z"
       fill="black"
       fillOpacity={0.56}
     />

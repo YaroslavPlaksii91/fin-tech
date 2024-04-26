@@ -7,10 +7,6 @@ import { CustomReactFlowInstance } from '../types';
 
 import { StyledPanel } from './styled';
 
-import {
-  BookmarksOutlinedIcon,
-  TaskAltOutlinedIcon
-} from '@components/shared/Icons';
 import { flowService } from '@services/flow-service';
 import { IFlow } from '@domain/flow';
 import {
@@ -42,7 +38,6 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
       try {
         setLoading(true);
         const formattedData = formatFlowOnSave({ flow, rfInstance });
-        // const updatedFlow = await flowService.saveFlow(formattedData);
         const { payload } = await dispatch(saveFlow(formattedData));
         setCopyFlow(payload);
 
@@ -99,19 +94,18 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
       <Typography variant="h4">{flow.data.name}</Typography>
       <Stack spacing={1} direction="row" justifyContent="flex-end">
         <Button
-          variant="contained"
-          color="secondary"
+          size="small"
+          variant="outlined"
           onClick={onSave}
-          endIcon={<BookmarksOutlinedIcon />}
           disabled={loading}
         >
           Save changes
         </Button>
         <Button
+          size="small"
           variant="contained"
           disabled={isDirty}
           onClick={onPushFlow}
-          endIcon={<TaskAltOutlinedIcon />}
         >
           Push changes
         </Button>

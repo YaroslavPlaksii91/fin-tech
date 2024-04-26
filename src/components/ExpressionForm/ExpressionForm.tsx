@@ -302,11 +302,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
                 alignItems="flex-start"
                 gap={1}
               >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={onCancelClick}
-                >
+                <Button variant="outlined" onClick={onCancelClick}>
                   Cancel
                 </Button>
                 <LoadingButton

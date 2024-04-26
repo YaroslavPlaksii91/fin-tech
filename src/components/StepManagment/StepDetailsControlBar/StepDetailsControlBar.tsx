@@ -27,7 +27,7 @@ const StepDetailsControlBar: React.FC<StepDetailsControlBarProps> = ({
         >
           Save step
         </LoadingButton>
-        <Button variant="contained" color="secondary" onClick={onDiscard}>
+        <Button variant="outlined" onClick={onDiscard}>
           Cancel
         </Button>
       </Stack>

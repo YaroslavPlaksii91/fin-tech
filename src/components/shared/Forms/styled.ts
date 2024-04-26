@@ -9,7 +9,6 @@ export const StyledTextarea = styled(TextareaAutosize)(({ theme }) => ({
   boxSizing: 'border-box',
   borderRadius: '8px',
   border: `1px solid ${theme.palette.gray}`,
-  backgroundColor: theme.palette.lightGray,
   color: theme.palette.dark,
   width: '100%',
   resize: 'none',

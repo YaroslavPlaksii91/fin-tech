@@ -1,11 +1,8 @@
 import { createTheme } from '@mui/material/styles';
 
 interface CustomPalette {
-  lightGray: string;
   grayLine: string;
   gray: string;
-  pink: string;
-  lightGreen: string;
   white: string;
   whiteSmoke: string;
   dark: string;
@@ -21,15 +18,12 @@ interface CustomPalette {
 }
 
 export const palette = {
-  lightGray: '#F8F9FB',
   gray: '#5F6D7E',
   grayLine: '#8FA5BE',
   grayBorder: '#D1D9E2',
-  pink: '#FFB4B4',
   dark: '#2E3646',
   primary: '#2E3646',
   secondary: '#E6E9EC',
-  lightGreen: '#ABDCB9',
   white: '#FFF',
   whiteSmoke: '#F4F4F4',
   yellow: '#DDCD93',
@@ -55,14 +49,11 @@ export const theme = createTheme({
       secondary: 'rgba(0,0,0,0.6)',
       disabled: 'rgba(0,0,0,0.38)'
     },
+    secondary: { main: '#1B5E20', dark: '#1E4620', light: '#2E7D32' },
     primary: {
       main: '#1B5E20',
       dark: '#1E4620',
       light: '#2E7D32'
-    },
-    // TODO: remove secondary
-    secondary: {
-      main: 'rgba(0,0,0,0.56)'
     },
     background: {
       default: '#F8F8FA',
@@ -99,7 +90,6 @@ export const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          fontSize: '13px',
           textTransform: 'none',
           borderRadius: '6px',
           boxShadow: 'none'
@@ -131,25 +121,8 @@ export const theme = createTheme({
     MuiListItemIcon: {
       styleOverrides: {
         root: {
-          minWidth: 'auto',
+          minWidth: 'auto !important',
           paddingRight: '8px'
-        }
-      }
-    },
-    // new styles for mui icon, new theme
-    MuiMenuItem: {
-      styleOverrides: {
-        root: {
-          // padding: '6px 20px',
-          // color: palette.gray,
-          // fontSize: '14px'
-        }
-      }
-    },
-    MuiList: {
-      styleOverrides: {
-        root: {
-          // padding: '14px 0'
         }
       }
     },

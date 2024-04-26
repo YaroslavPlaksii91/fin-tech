@@ -31,9 +31,7 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
   >
     <Stack>
       <Typography variant="h4">{title}</Typography>
-      <Typography variant="body1" color="secondary">
-        {details}
-      </Typography>
+      <Typography variant="body1">{details}</Typography>
     </Stack>
     {isActionContainerVisible && (
       <>
