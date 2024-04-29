@@ -11,6 +11,7 @@ export const StyledStepItem = styled(Box)(() => ({
 
 export const StyledListItem = styled(ListItem)(({ theme: { palette } }) => ({
   borderRadius: '4px',
+  paddingLeft: '40px',
   '&.active, &:hover': {
     cursor: 'pointer',
     background: palette.amber,

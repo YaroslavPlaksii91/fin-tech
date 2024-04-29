@@ -73,7 +73,7 @@ export const AddFlow: React.FC = () => {
     <>
       <Button
         onClick={handleOpenModal}
-        sx={{ fontSize: '14px' }}
+        sx={{ marginLeft: '14px' }}
         variant="text"
         startIcon={<PlusSquare />}
       >

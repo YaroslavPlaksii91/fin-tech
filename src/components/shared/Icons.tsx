@@ -1,4 +1,3 @@
-import MuiPersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MuiAddIcon from '@mui/icons-material/Add';
 import MuiHexagonOutlinedIcon from '@mui/icons-material/HexagonOutlined';
 import MuiDeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -31,14 +30,6 @@ export const RemoveRedEyeOutlinedIcon = ({
     sx={{ width: size, height: size, ...sx }}
     {...props}
   />
-);
-
-export const PersonOutlineIcon = ({
-  size = defaultIconSize,
-  sx,
-  ...props
-}: IconPros) => (
-  <MuiPersonOutlineIcon sx={{ width: size, height: size, ...sx }} {...props} />
 );
 
 export const AddIcon = ({ size = defaultIconSize, sx, ...props }: IconPros) => (
@@ -748,6 +739,26 @@ export const FileText = () => (
       d="M16 12.75H9C8.586 12.75 8.25 12.414 8.25 12C8.25 11.586 8.586 11.25 9 11.25H16C16.414 11.25 16.75 11.586 16.75 12C16.75 12.414 16.414 12.75 16 12.75ZM13.75 16C13.75 15.586 13.414 15.25 13 15.25H9C8.586 15.25 8.25 15.586 8.25 16C8.25 16.414 8.586 16.75 9 16.75H13C13.414 16.75 13.75 16.414 13.75 16Z"
       fill="black"
       fillOpacity={0.56}
+    />
+  </svg>
+);
+
+export const User = () => (
+  <svg
+    width={24}
+    height={24}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M12.009 10.5C14.2182 10.5 16.009 8.70914 16.009 6.5C16.009 4.29086 14.2182 2.5 12.009 2.5C9.79989 2.5 8.00903 4.29086 8.00903 6.5C8.00903 8.70914 9.79989 10.5 12.009 10.5Z"
+      fill="white"
+    />
+    <path
+      opacity={0.4}
+      d="M14 12.5H10C5.94 12.5 4.5 15.473 4.5 18.019C4.5 20.296 5.71105 21.5 8.00305 21.5H15.9969C18.2889 21.5 19.5 20.296 19.5 18.019C19.5 15.473 18.06 12.5 14 12.5Z"
+      fill="white"
     />
   </svg>
 );

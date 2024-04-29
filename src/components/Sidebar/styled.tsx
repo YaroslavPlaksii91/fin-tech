@@ -27,7 +27,6 @@ export const Label = styled(Typography)(({ theme: { palette } }) => ({
 
 export const SidebarToggle = styled(Button)<ButtonProps & { rotated: number }>(
   ({ rotated }) => ({
-    // justifyContent: rotated ? 'flex-start' : 'flex-center',
     justifyContent: 'flex-start',
     padding: '6px 16px',
     '& .MuiButton-startIcon': {

@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 
 import { formatFlowOnSave } from '../utils/formatFlowOnSave';
@@ -7,7 +7,6 @@ import { CustomReactFlowInstance } from '../types';
 
 import { StyledPanel } from './styled';
 
-import { flowService } from '@services/flow-service';
 import { IFlow } from '@domain/flow';
 import {
   SnackbarErrorMessage,
@@ -16,6 +15,7 @@ import {
 import { SNACK_TYPE } from '@constants/common';
 import { useAppDispatch } from '@store/hooks';
 import { saveFlow } from '@store/flow/asyncThunk';
+import { pushProductionFlow } from '@store/flowList/asyncThunk';
 
 interface ControlPanelEditProps {
   flow: IFlow;
@@ -66,8 +66,7 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
       try {
         setLoading(true);
         const formattedData = formatFlowOnSave({ flow, rfInstance });
-
-        await flowService.pushProductionFlow(formattedData);
+        await dispatch(pushProductionFlow(formattedData));
 
         enqueueSnackbar(
           <SnackbarMessage
@@ -91,7 +90,13 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
 
   return (
     <StyledPanel position="top-right">
-      <Typography variant="h4">{flow.data.name}</Typography>
+      <Box>
+        {/* TODO: add link to flow ? */}
+        <Typography variant="body1" mb={1}>
+          {flow.data.name}
+        </Typography>
+        <Typography variant="h4">{flow.data.name}</Typography>
+      </Box>
       <Stack spacing={1} direction="row" justifyContent="flex-end">
         <Button
           size="small"

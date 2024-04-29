@@ -1,68 +1,80 @@
-// import { ListItemSecondaryAction, Typography } from '@mui/material';
-// import React, { useMemo } from 'react';
+import {
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+  Typography
+} from '@mui/material';
+import React, { useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 
-// import { StyledStepItem, StyledStepItemText } from './styled';
+import { StyledListItem, StyledStepItem } from './styled';
 
-// import { StyledList, StyledListItem } from '@components/shared/List/styled';
-// import { HexagonOutlinedIcon } from '@components/shared/Icons';
-// import { StepType } from '@components/FlowManagment/FlowChart/types';
-// import { MAIN_STEP_ID, NO_TAG_LABEL } from '@constants/common';
-// import { FlowNode } from '@domain/flow';
-// import { StepContextType } from '@contexts/StepContext';
-// import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
+import { Bezier } from '@components/shared/Icons';
+import { StepType } from '@components/FlowManagment/FlowChart/types';
+import { NO_TAG_LABEL } from '@constants/common';
+import { FlowNode } from '@domain/flow';
+import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
+import { useStep } from '@contexts/StepContext';
 
-// type StepListProps = {
-//   nodes: FlowNode[];
-//   isProductionFlow?: boolean;
-// } & StepContextType;
+type StepListProps = {
+  nodes: FlowNode[];
+  isProductionFlow?: boolean;
+};
 
-// const StepList: React.FC<StepListProps> = ({
-//   nodes,
-//   setStep,
-//   step,
-//   isProductionFlow = false
-// }) => {
-//   const steps = useMemo(
-//     () =>
-//       nodes.filter(
-//         (node) =>
-//           node.data.$type !== StepType.START && node.data.$type !== StepType.END
-//       ),
-//     [nodes]
-//   );
+const StepList: React.FC<StepListProps> = ({
+  nodes,
+  isProductionFlow = false
+}) => {
+  const { activeStepId, setActiveStepId } = useStep();
+  const location = useLocation();
+  const isEditMode = location.pathname.includes('/edit');
 
-//   return (
-//     <StyledList>
-//       <StyledListItem
-//         className={step.id === MAIN_STEP_ID ? 'active' : undefined}
-//         key={MAIN_STEP_ID}
-//         onClick={() => setStep({ id: MAIN_STEP_ID })}
-//       >
-//         <HexagonOutlinedIcon sx={{ paddingRight: 1 }} />
-//         <StyledStepItemText>Main flow</StyledStepItemText>
-//       </StyledListItem>
-//       {steps.map((el) => (
-//         <StyledListItem
-//           className={step.id === el.id ? 'active' : undefined}
-//           key={el.id}
-//           onClick={() => setStep(el)}
-//         >
-//           <HexagonOutlinedIcon sx={{ paddingRight: 1 }} />
-//           <StyledStepItem>
-//             <Typography variant="caption">
-//               {el.data.tag || NO_TAG_LABEL}
-//             </Typography>
-//             <StyledStepItemText>{el.data.name}</StyledStepItemText>
-//           </StyledStepItem>
-//           {!isProductionFlow && (
-//             <ListItemSecondaryAction>
-//               <StepActionsMenu flowNode={el} showActionMenuButton={true} />
-//             </ListItemSecondaryAction>
-//           )}
-//         </StyledListItem>
-//       ))}
-//     </StyledList>
-//   );
-// };
+  const steps = useMemo(
+    () =>
+      nodes.filter(
+        (node) =>
+          node.data.$type !== StepType.START && node.data.$type !== StepType.END
+      ),
+    [nodes]
+  );
 
-// export default StepList;
+  return (
+    <List>
+      {steps.length === 0 && (
+        <ListItem sx={{ paddingLeft: '40px' }}>
+          <StyledStepItem>
+            <Typography variant="body2">No steps</Typography>
+          </StyledStepItem>
+        </ListItem>
+      )}
+      {steps.map((el) => (
+        <StyledListItem
+          className={activeStepId === el.id ? 'active' : undefined}
+          key={el.id}
+          onClick={() => setActiveStepId(el.id)}
+        >
+          <Bezier />
+          <StyledStepItem>
+            <Typography variant="caption">
+              {el.data.tag || NO_TAG_LABEL}
+            </Typography>
+            <Typography variant="body2">{el.data.name}</Typography>
+          </StyledStepItem>
+          {!isProductionFlow && (
+            <ListItemSecondaryAction>
+              <StepActionsMenu
+                flowNode={el}
+                showActionMenuButton={true}
+                isEditMode={isEditMode}
+                setActiveStepId={setActiveStepId}
+                activeStepId={activeStepId}
+              />
+            </ListItemSecondaryAction>
+          )}
+        </StyledListItem>
+      ))}
+    </List>
+  );
+};
+
+export default StepList;

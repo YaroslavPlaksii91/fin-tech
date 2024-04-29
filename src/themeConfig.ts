@@ -78,7 +78,6 @@ export const theme = createTheme({
     }
   },
   components: {
-    // TODO: remove when themeConfig will be reade - new component styles
     MuiAppBar: {
       styleOverrides: {
         root: {
@@ -93,6 +92,13 @@ export const theme = createTheme({
           textTransform: 'none',
           borderRadius: '6px',
           boxShadow: 'none'
+        }
+      }
+    },
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: '6px'
         }
       }
     },
@@ -117,7 +123,6 @@ export const theme = createTheme({
         }
       }
     },
-    // new styles for mui icon, new theme
     MuiListItemIcon: {
       styleOverrides: {
         root: {
@@ -149,7 +154,6 @@ export const theme = createTheme({
         root: {
           borderRadius: '8px',
           boxShadow: 'none'
-          // border: `1px solid ${palette.grayBorder}`
         }
       }
     },

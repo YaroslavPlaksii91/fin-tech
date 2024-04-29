@@ -1,9 +1,11 @@
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { AppBar, IconButton, Menu, MenuItem } from '@mui/material';
+import { AppBar, Box, Menu, MenuItem } from '@mui/material';
 import React from 'react';
 
-import { ELoanLogo, PersonOutlineIcon } from '@components/shared/Icons';
+import { StyledNavButton } from './styled';
+
+import { ELoanLogo, User } from '@components/shared/Icons';
 import { authService } from '@services/auth.ts';
 import { useAppSelector } from '@store/hooks.ts';
 import { selectUserInfo } from '@store/auth/auth.ts';
@@ -23,17 +25,20 @@ function Navigation() {
   return (
     <AppBar position="static">
       <Toolbar sx={{ justifyContent: 'space-between' }}>
-        {/* TODO: add nav link */}
         <Typography variant="h6" noWrap component="a" href="/">
           <ELoanLogo />
         </Typography>
-        <div>
-          <Typography onClick={handleClick} ml={1} variant="body2" color="gray">
+        <Box display="flex" alignItems="center" gap={1}>
+          <Typography sx={{ padding: '0 5px' }} variant="body2">
             {userInfo?.userName}
           </Typography>
-          <IconButton color="default" size="medium">
-            <PersonOutlineIcon />
-          </IconButton>
+          <StyledNavButton
+            variant="outlined"
+            onClick={handleClick}
+            size="medium"
+          >
+            <User />
+          </StyledNavButton>
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
             <MenuItem
               onClick={() => {
@@ -44,7 +49,7 @@ function Navigation() {
               Logout
             </MenuItem>
           </Menu>
-        </div>
+        </Box>
       </Toolbar>
     </AppBar>
   );

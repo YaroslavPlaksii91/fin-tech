@@ -3,7 +3,7 @@ import {
   Accordion,
   Box,
   List,
-  ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
@@ -44,7 +44,7 @@ import { setInitialFlow } from '@store/flow/flow';
 import { selectFlow } from '@store/flow/selectors';
 import { useLoading } from '@contexts/LoadingContext';
 import { AddFlow } from '@components/FlowManagment/AddFlow/AddFlowForm';
-import StepListCopy from '@components/StepManagment/StepList/StepListCopy';
+import StepList from '@components/StepManagment/StepList/StepList';
 import { useStep } from '@contexts/StepContext';
 
 const animationStyles = (expanded: boolean) => ({
@@ -54,19 +54,33 @@ const animationStyles = (expanded: boolean) => ({
   whiteSpace: 'nowrap'
 });
 
+const pages = [
+  {
+    icon: <TimePast />,
+    text: 'Changes History',
+    to: routes.underwriting.changeHistory
+  },
+  {
+    icon: <DocumentList />,
+    text: 'Reports',
+    to: routes.underwriting.leadRequest
+  }
+];
+
 const Sidebar = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const { resetActiveStepId } = useStep();
+  const { startLoading, stopLoading } = useLoading();
   const { flowList, flowProduction } = useAppSelector(selectFlowList);
   const { flow } = useAppSelector(selectFlow);
 
   const [expanded, setExpanded] = useState(true);
-  const sidebarWidth = expanded ? 400 : 70;
-
-  const { startLoading, stopLoading } = useLoading();
-
   const [expandedFlow, setExpandedFlow] = useState<string | false>(false);
+
+  const [expandedFlowList, setExpandedFlowList] = useState<boolean>(false);
+
+  const sidebarWidth = expanded ? 400 : 70;
 
   const handleChangeFlow =
     (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -122,8 +136,8 @@ const Sidebar = () => {
       component="aside"
       elevation={0}
       sx={{
-        minWidth: sidebarWidth
-        // transition: 'width 0.2s ease-in-out'
+        width: sidebarWidth,
+        transition: 'width 0.2s ease-in-out'
       }}
     >
       <SidebarToggle
@@ -144,7 +158,11 @@ const Sidebar = () => {
       </SidebarToggle>
       <List component="nav">
         {expanded ? (
-          <Accordion sx={{ marginBottom: '8px' }}>
+          <Accordion
+            expanded={expandedFlowList}
+            onChange={() => setExpandedFlowList(!expandedFlowList)}
+            sx={{ marginBottom: '8px' }}
+          >
             <StyledMainAccordionSummary
               expandIcon={<ExpandMoreIcon color="primary" />}
               aria-controls="flowList-content"
@@ -183,10 +201,6 @@ const Sidebar = () => {
                     expandIcon={<ExpandMoreIcon fontSize="small" />}
                     aria-controls="panel1a-content"
                     id="panel1a-header"
-                    sx={{
-                      flexDirection: 'row-reverse',
-                      minHeight: '28px'
-                    }}
                   >
                     <ListItemIcon>
                       <Bezier />
@@ -197,7 +211,7 @@ const Sidebar = () => {
                   </StyledSubAccordionSummary>
                 </StyledNavLink>
                 <StyledAccordionDetails>
-                  <StepListCopy nodes={flow.nodes} />
+                  <StepList nodes={flow.nodes} isProductionFlow />
                 </StyledAccordionDetails>
               </Accordion>
               <Label variant="body2">Draft Flows</Label>
@@ -213,8 +227,8 @@ const Sidebar = () => {
                     >
                       <StyledSubAccordionSummary
                         expandIcon={<ExpandMoreIcon fontSize="medium" />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
+                        aria-controls={`${flowItem.name}-content`}
+                        id={flowItem.name}
                       >
                         <ListItemIcon>
                           <Bezier />
@@ -227,7 +241,7 @@ const Sidebar = () => {
                     </ListItemSecondaryAction>
                   </Box>
                   <StyledAccordionDetails>
-                    <StepListCopy nodes={flow.nodes} />
+                    <StepList nodes={flow.nodes} />
                   </StyledAccordionDetails>
                 </StyledAccordion>
               ))}
@@ -235,26 +249,18 @@ const Sidebar = () => {
             </StyledAccordionDetails>
           </Accordion>
         ) : (
-          <ListItem button component={NavLink} to="/flow-list">
+          <ListItemButton
+            sx={{ height: '32px', marginBottom: '8px' }}
+            component={NavLink}
+            to={routes.underwriting.flow.list}
+          >
             <ListItemIcon>
               <LineChartDots />
             </ListItemIcon>
-          </ListItem>
+          </ListItemButton>
         )}
-        {[
-          {
-            icon: <TimePast />,
-            text: 'Changes History',
-            to: routes.underwriting.changeHistory
-          },
-          {
-            icon: <DocumentList />,
-            text: 'Reports',
-            to: routes.underwriting.leadRequest
-          }
-        ].map((item, index) => (
-          <ListItem
-            button
+        {pages.map((item, index) => (
+          <ListItemButton
             key={index}
             component={NavLink}
             to={item.to}
@@ -262,7 +268,7 @@ const Sidebar = () => {
           >
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} sx={animationStyles(expanded)} />
-          </ListItem>
+          </ListItemButton>
         ))}
       </List>
     </StyledPaper>

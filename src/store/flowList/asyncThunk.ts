@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { flowService } from '@services/flow-service';
 import { JSONPatchOperation } from '@domain/entity';
-import { IFlowDataCreate } from '@domain/flow';
+import { IFlow, IFlowDataCreate } from '@domain/flow';
 
 export const fetchFlowList = createAsyncThunk('get/flow-list', async () => {
   const flowItemsData = await flowService.getFlows();
@@ -29,4 +29,9 @@ export const deleteFlow = createAsyncThunk(
 export const createFlow = createAsyncThunk(
   'create/flow',
   async (data: IFlowDataCreate) => await flowService.createFlow(data)
+);
+
+export const pushProductionFlow = createAsyncThunk(
+  'push/flow',
+  async (data: IFlow) => await flowService.pushProductionFlow(data)
 );
