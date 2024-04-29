@@ -133,7 +133,6 @@ const Sidebar = () => {
 
   return (
     <StyledPaper
-      component="aside"
       elevation={0}
       sx={{
         width: sidebarWidth,

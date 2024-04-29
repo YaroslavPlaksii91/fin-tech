@@ -23,7 +23,6 @@ export const InputText = <
 >({
   control,
   name,
-  // label,
   placeholder,
   type = 'text',
   fullWidth = false,
@@ -33,9 +32,6 @@ export const InputText = <
 
   return (
     <FormControl fullWidth={fullWidth} variant="standard">
-      {/* <InputLabel sx={{ position: 'static' }} shrink htmlFor={name}>
-        {label}
-      </InputLabel> */}
       <TextField
         placeholder={placeholder}
         size="small"

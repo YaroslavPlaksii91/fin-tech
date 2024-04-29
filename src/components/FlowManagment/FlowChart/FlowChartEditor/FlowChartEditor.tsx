@@ -306,13 +306,6 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
     );
   }, [startDrag]);
 
-  // const stepActionsMenuOptions = useMemo(() => {
-  //   if (flowNode?.type === StepType.START || flowNode?.type === StepType.END) {
-  //     return options;
-  //   }
-  //   return editModeOptions;
-  // }, [flowNode, editModeOptions, options])
-
   return (
     <DataDictionaryContext.Provider value={{ variables }}>
       <MainContainer>

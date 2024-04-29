@@ -34,7 +34,6 @@ interface AddStepProps {
   setSelectedStep: (value: FunctionalStepType | null) => void;
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
-  // onAddNode?: (type: StepType, name: string) => FlowNode;
   onAddNodeBetweenEdges?: (
     type: FunctionalStepType,
     name: string,
@@ -68,8 +67,6 @@ export const AddStep: React.FC<AddStepProps> = ({
     let createdStep;
     if (edgeId) {
       createdStep = onAddNodeBetweenEdges?.(stepType, name, edgeId);
-    } else {
-      // createdStep = onAddNode?.(stepType, name);
     }
     if (createdStep) {
       setActiveStepId(createdStep.id);

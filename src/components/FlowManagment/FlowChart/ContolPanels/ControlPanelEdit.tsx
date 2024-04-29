@@ -39,7 +39,8 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
         setLoading(true);
         const formattedData = formatFlowOnSave({ flow, rfInstance });
         const { payload } = await dispatch(saveFlow(formattedData));
-        setCopyFlow(payload);
+        const savedFlow = payload as IFlow;
+        setCopyFlow(savedFlow);
 
         enqueueSnackbar(
           <SnackbarMessage
