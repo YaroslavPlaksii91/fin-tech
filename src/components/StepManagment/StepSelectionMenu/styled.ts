@@ -8,7 +8,7 @@ export const StyledRhombButton = styled(Button)(({ theme: { palette } }) => ({
   transform: 'rotate(45deg)',
   borderRadius: '4px',
   background: palette.white,
-  border: `1px solid ${palette.grayLine}`,
+  border: `1px solid gray`,
   ':hover': {
     backgroundColor: '#2E3646',
     color: palette.white

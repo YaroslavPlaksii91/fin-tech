@@ -9,6 +9,7 @@ import {
   FormHelperText,
   InputAdornment,
   OutlinedInput,
+  Paper,
   Stack,
   Typography
 } from '@mui/material';
@@ -293,7 +294,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
               }
             }}
           />
-          <Box>
+          <Paper elevation={1}>
             <Divider />
             <Box px={3} py={2}>
               <Stack
@@ -317,7 +318,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
               </Stack>
             </Box>
             <Divider />
-          </Box>
+          </Paper>
         </Stack>
       </form>
     </Box>

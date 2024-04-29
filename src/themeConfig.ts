@@ -1,7 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 
 interface CustomPalette {
-  grayLine: string;
   gray: string;
   white: string;
   whiteSmoke: string;
@@ -19,7 +18,6 @@ interface CustomPalette {
 
 export const palette = {
   gray: '#5F6D7E',
-  grayLine: '#8FA5BE',
   grayBorder: '#D1D9E2',
   dark: '#2E3646',
   primary: '#2E3646',
@@ -40,7 +38,6 @@ declare module '@mui/material/styles' {
   interface Palette extends CustomPalette {}
   interface PaletteOptions extends CustomPalette {}
 }
-
 export const theme = createTheme({
   palette: {
     ...palette,
@@ -116,13 +113,6 @@ export const theme = createTheme({
         }
       }
     },
-    MuiOutlinedInput: {
-      styleOverrides: {
-        root: {
-          borderRadius: '8px'
-        }
-      }
-    },
     MuiListItemIcon: {
       styleOverrides: {
         root: {
@@ -137,15 +127,6 @@ export const theme = createTheme({
           minWidth: '444px',
           boxShadow: 'none',
           borderRadius: '12px'
-        }
-      }
-    },
-    MuiTableCell: {
-      styleOverrides: {
-        root: {
-          fontSize: '13px',
-          lineHeight: '18px',
-          padding: '12px'
         }
       }
     },
