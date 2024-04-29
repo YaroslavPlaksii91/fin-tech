@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { DataGridPremium, GridColDef } from '@mui/x-data-grid-premium';
 import buildQuery from 'odata-query';
-import { Stack, Typography } from '@mui/material';
+import { Container, Stack, Typography } from '@mui/material';
 import React from 'react';
 
 import { COLUMN_IDS } from './types';
@@ -89,27 +89,33 @@ export default function LeadRequestsReportsPage() {
   // };
 
   return (
-    <Stack sx={{ width: '100%', overflow: 'hidden', padding: '16px 32px' }}>
-      <Typography pb={3} variant="h4">
-        Lead requests
-      </Typography>
-      <DataGridPremium
-        rows={rows}
-        columns={dataGridColumns}
-        loading={loading}
-        rowCount={totalCount}
-        disableColumnMenu={true}
-        paginationMode="server"
-        // TODO: enable column sorting when BE fix sorting
-        disableColumnSorting={true}
-        // sortingMode="server"
-        // onSortModelChange={handleSortModelChange}
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        slots={{
-          footer: DataGridPagination
-        }}
-      />
-    </Stack>
+    // TODO: fix width value
+    <Container
+      maxWidth="xl"
+      sx={{ overflow: 'auto', height: '100%', width: 'calc(100vw - 300px)' }}
+    >
+      <Stack sx={{ padding: '16px 32px' }}>
+        <Typography pb={3} variant="h4">
+          Lead requests
+        </Typography>
+        <DataGridPremium
+          rows={rows}
+          columns={dataGridColumns}
+          loading={loading}
+          rowCount={totalCount}
+          disableColumnMenu={true}
+          paginationMode="server"
+          // TODO: enable column sorting when BE fix sorting
+          disableColumnSorting={true}
+          // sortingMode="server"
+          // onSortModelChange={handleSortModelChange}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          slots={{
+            footer: DataGridPagination
+          }}
+        />
+      </Stack>
+    </Container>
   );
 }
