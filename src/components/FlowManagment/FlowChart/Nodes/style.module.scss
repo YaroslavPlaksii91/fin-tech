@@ -1,73 +1,65 @@
-/* style for start end nodes type */
-.node-intial {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-}
+/* general styles */
 
-.node-start {
-  @extend .node-intial;
-
-  background-color: #ffb4b4;
-}
-
-.node-end {
-  @extend .node-intial;
-
-  background-color: #abdcb9;
+.node-container {
+  border-radius: 5px;
+  border: 1px solid rgba(0 0 0 / 12%);
+  padding: 4px 16px;
+  background-color: #f8f8fa;
 }
 
 .node-header {
-  padding-left: 4px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .node-tag {
   font-size: 12px;
-  line-height: '15px';
-  font-weight: 500;
-  color: #fff;
+  line-height: 17px;
+  font-weight: 400;
+  letter-spacing: -0.2px;
+  color: rgba(0 0 0 / 60%);
   margin: 0;
 }
 
 .node-label {
   font-size: 14px;
-  line-height: 22px;
-  font-weight: 500;
-  color: #fff;
+  font-weight: 400;
+  letter-spacing: -0.3px;
+  color: rgba(0 0 0 / 87%);
   margin: 0;
-}
-
-/* style for rectangle node type */
-.node-rectangle {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  background-color: #2e3646;
-  padding: 9px 18px;
-  border-radius: 5px;
-  color: #fff;
+  gap: 8px;
 }
 
 /* style for list node type */
+
 .node-list-container {
-  border: 1px solid #d1d9e2;
-  border-radius: 5px;
-  background-color: white;
+  border: 1px solid rgba(0 0 0 / 12%);
+  border-radius: 4px;
+  background-color: #fff;
 
   &__header {
     display: flex;
     align-items: center;
-    background-color: #0073ff;
-    padding: 9px 18px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+    background-color: #f8f8fa;
+    padding: 4px 16px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom: 1px solid rgba(0 0 0 / 12%);
+
     &__text {
-      padding-left: 4px;
+      padding-left: 8px;
     }
   }
 
   &__row {
     position: relative;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid rgba(0 0 0 / 12%);
+    }
   }
 
   &__list {
@@ -76,17 +68,14 @@
     text-indent: 0;
     list-style-type: none;
     text-align: center;
-    color: #2e3646;
+    color: rgba(0 0 0 / 87%);
 
     li {
       font-size: 14px;
-      font-weight: 600;
-      line-height: 22px;
+      font-weight: 400;
+      line-height: 20px;
+      letter-spacing: -0.3px;
       padding: 9px;
-
-      &:not(:last-child) {
-        border-bottom: 1px solid #d1d9e2;
-      }
     }
   }
 }

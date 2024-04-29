@@ -339,7 +339,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           connectionMode={ConnectionMode.Loose}
           connectionLineType={ConnectionLineType.SmoothStep}
         >
-          <Background variant={BackgroundVariant.Lines} />
+          <Background variant={BackgroundVariant.Dots} />
           <ControlPanelEdit
             flow={flow}
             setCopyFlow={setCopyFlow}

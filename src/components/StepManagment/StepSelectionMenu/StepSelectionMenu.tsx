@@ -40,7 +40,7 @@ export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
   return (
     <div>
       <StyledRhombButton onClick={handleOpenMenu}>
-        <AddIcon sx={{ transform: 'rotate(45deg)' }} />
+        <AddIcon />
       </StyledRhombButton>
       <Menu
         anchorOrigin={{

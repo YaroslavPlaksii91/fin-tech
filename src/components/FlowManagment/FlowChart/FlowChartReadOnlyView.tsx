@@ -55,7 +55,7 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
       onPaneClick={onPaneClick}
       onNodeContextMenu={isProductionFlow ? undefined : onNodeContextMenu}
     >
-      <Background variant={BackgroundVariant.Lines} />
+      <Background variant={BackgroundVariant.Dots} />
       <Controls />
       <StepActionsMenu
         activeStepId={null}
