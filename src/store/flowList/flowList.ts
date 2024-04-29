@@ -1,6 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { fetchFlowList, renameFlow, deleteFlow } from './asyncThunk';
+import {
+  fetchFlowList,
+  renameFlow,
+  deleteFlow,
+  createFlow,
+  pushProductionFlow
+} from './asyncThunk';
 
 import { IFlowListItem } from '@domain/flow';
 
@@ -37,6 +43,14 @@ export const flowListSlicer = createSlice({
     builder.addCase(deleteFlow.fulfilled, (state, action) => {
       const { id } = action.payload;
       state.flowList = state.flowList.filter((item) => item.id !== id);
+    });
+    builder.addCase(createFlow.fulfilled, (state, action) => {
+      const flowItem = { ...action.payload.data, id: action.payload.id };
+      state.flowList.unshift(flowItem);
+    });
+    builder.addCase(pushProductionFlow.fulfilled, (state, action) => {
+      const flowItem = { ...action.payload.data, id: action.payload.id };
+      state.flowProduction = flowItem;
     });
   }
 });

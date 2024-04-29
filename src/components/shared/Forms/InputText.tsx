@@ -5,7 +5,7 @@ import {
   useController
 } from 'react-hook-form';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
-import { FormControl, InputLabel } from '@mui/material';
+import { FormControl } from '@mui/material';
 
 interface InputProps<
   TFieldValues extends FieldValues,
@@ -23,7 +23,6 @@ export const InputText = <
 >({
   control,
   name,
-  label,
   placeholder,
   type = 'text',
   fullWidth = false,
@@ -33,9 +32,6 @@ export const InputText = <
 
   return (
     <FormControl fullWidth={fullWidth} variant="standard">
-      <InputLabel sx={{ position: 'static' }} shrink htmlFor={name}>
-        {label}
-      </InputLabel>
       <TextField
         placeholder={placeholder}
         size="small"

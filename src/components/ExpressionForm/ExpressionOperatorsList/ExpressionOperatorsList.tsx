@@ -6,8 +6,8 @@ const ExpressionOperatorsList: React.FC<ExpressionOperatorsListProps> = ({
   onItemClick
 }) => (
   <Stack pt={1.5} direction="row" flexWrap="wrap" gap={0.5}>
-    {list.map((category) => (
-      <>
+    {list.map((category, index) => (
+      <React.Fragment key={index}>
         {category.map(({ literal }) => (
           <Chip
             label={literal}
@@ -16,7 +16,7 @@ const ExpressionOperatorsList: React.FC<ExpressionOperatorsListProps> = ({
             key={literal}
           />
         ))}
-      </>
+      </React.Fragment>
     ))}
   </Stack>
 );

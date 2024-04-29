@@ -69,26 +69,21 @@ export const RenameFlow: React.FC<RenameFlowProps> = ({
           fullWidth
           name="name"
           control={control}
-          label="Name"
-          placeholder="Enter name"
+          label="Flow name*"
+          placeholder="Flow Name*"
         />
         <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleCloseModal}
-          >
-            Cancel
-          </Button>
           <LoadingButton
             loading={isSubmitting}
             disabled={isSubmitting}
-            variant="contained"
-            color="primary"
+            variant="text"
             type="submit"
           >
             Confirm
           </LoadingButton>
+          <Button variant="text" onClick={handleCloseModal}>
+            Cancel
+          </Button>
         </Stack>
       </form>
     </Dialog>

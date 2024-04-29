@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Divider, Stack } from '@mui/material';
+import { Box, Button, Divider, Paper, Stack } from '@mui/material';
 
 import LoadingButton from '@components/shared/LoadingButton.tsx';
 
@@ -9,7 +9,7 @@ const StepDetailsControlBar: React.FC<StepDetailsControlBarProps> = ({
   isSubmitting,
   onApplyChangesClick
 }) => (
-  <Box>
+  <Paper elevation={1}>
     <Divider />
     <Box px={3} py={2}>
       <Stack
@@ -21,18 +21,18 @@ const StepDetailsControlBar: React.FC<StepDetailsControlBarProps> = ({
         <LoadingButton
           disabled={disabled}
           loading={Boolean(isSubmitting)}
-          type="button"
+          type="submit"
           variant="contained"
           onClick={() => onApplyChangesClick()}
         >
           Save step
         </LoadingButton>
-        <Button variant="contained" color="secondary" onClick={onDiscard}>
+        <Button variant="outlined" onClick={onDiscard}>
           Cancel
         </Button>
       </Stack>
     </Box>
-  </Box>
+  </Paper>
 );
 
 interface StepDetailsControlBarProps {

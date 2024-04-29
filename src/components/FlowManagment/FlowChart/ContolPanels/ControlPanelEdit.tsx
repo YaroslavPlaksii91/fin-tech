@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 
 import { formatFlowOnSave } from '../utils/formatFlowOnSave';
@@ -7,24 +7,20 @@ import { CustomReactFlowInstance } from '../types';
 
 import { StyledPanel } from './styled';
 
-import {
-  BookmarksOutlinedIcon,
-  DeleteOutlineIcon,
-  TaskAltOutlinedIcon
-} from '@components/shared/Icons';
-import { DeleteFlow } from '@components/FlowManagment/DeleteFlow/DeleteFlow';
-import { flowService } from '@services/flow-service';
 import { IFlow } from '@domain/flow';
 import {
   SnackbarErrorMessage,
   SnackbarMessage
 } from '@components/shared/Snackbar/SnackbarMessage';
 import { SNACK_TYPE } from '@constants/common';
+import { useAppDispatch } from '@store/hooks';
+import { saveFlow } from '@store/flow/asyncThunk';
+import { pushProductionFlow } from '@store/flowList/asyncThunk';
 
 interface ControlPanelEditProps {
   flow: IFlow;
+  setCopyFlow: (flow: IFlow) => void;
   isDirty: boolean;
-  setFlow: (flow: IFlow) => void;
   rfInstance: CustomReactFlowInstance | undefined;
 }
 
@@ -32,18 +28,20 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
   rfInstance,
   flow,
   isDirty,
-  setFlow
+  setCopyFlow
 }) => {
-  const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
 
   const onSave = useCallback(async () => {
     if (rfInstance && flow) {
       try {
         setLoading(true);
         const formattedData = formatFlowOnSave({ flow, rfInstance });
-        const updatedFlow = await flowService.saveFlow(formattedData);
-        setFlow(updatedFlow);
+        const { payload } = await dispatch(saveFlow(formattedData));
+        const savedFlow = payload as IFlow;
+        setCopyFlow(savedFlow);
+
         enqueueSnackbar(
           <SnackbarMessage
             message="Success"
@@ -64,17 +62,12 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
     }
   }, [rfInstance, flow]);
 
-  const onDelete = useCallback(() => {
-    setModalDeleteOpen(true);
-  }, []);
-
   const onPushFlow = useCallback(async () => {
     if (rfInstance && flow) {
       try {
         setLoading(true);
         const formattedData = formatFlowOnSave({ flow, rfInstance });
-
-        await flowService.pushProductionFlow(formattedData);
+        await dispatch(pushProductionFlow(formattedData));
 
         enqueueSnackbar(
           <SnackbarMessage
@@ -98,40 +91,31 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
 
   return (
     <StyledPanel position="top-right">
-      <Typography variant="h2">Edit mode</Typography>
+      <Box>
+        {/* TODO: add link to flow ? */}
+        <Typography variant="body1" mb={1}>
+          {flow.data.name}
+        </Typography>
+        <Typography variant="h4">{flow.data.name}</Typography>
+      </Box>
       <Stack spacing={1} direction="row" justifyContent="flex-end">
         <Button
-          variant="contained"
-          color="secondary"
-          onClick={onDelete}
-          endIcon={<DeleteOutlineIcon />}
-        >
-          Delete Flow
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
+          size="small"
+          variant="outlined"
           onClick={onSave}
-          endIcon={<BookmarksOutlinedIcon />}
           disabled={loading}
         >
           Save changes
         </Button>
         <Button
+          size="small"
           variant="contained"
           disabled={isDirty}
           onClick={onPushFlow}
-          endIcon={<TaskAltOutlinedIcon />}
         >
           Push changes
         </Button>
       </Stack>
-      <DeleteFlow
-        isEditMode
-        flowId={flow.id}
-        modalOpen={modalDeleteOpen}
-        setModalOpen={setModalDeleteOpen}
-      />
     </StyledPanel>
   );
 };

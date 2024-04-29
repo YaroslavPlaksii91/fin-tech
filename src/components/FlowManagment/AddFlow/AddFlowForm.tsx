@@ -3,19 +3,24 @@ import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
+import { enqueueSnackbar } from 'notistack';
 
 import {
   validationSchema,
   createInitialFlowDataHelper
 } from './validationSchema';
 
-import { flowService } from '@services/flow-service';
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
-import { AddIcon } from '@components/shared/Icons';
+import { PlusSquare } from '@components/shared/Icons';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
 import LoadingButton from '@components/shared/LoadingButton';
+import { useAppDispatch } from '@store/hooks';
+import { createFlow } from '@store/flowList/asyncThunk';
+import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
+import { SNACK_TYPE } from '@constants/common';
+import { IFlow } from '@domain/flow';
 
 interface FormData {
   name: string;
@@ -23,6 +28,7 @@ interface FormData {
 
 export const AddFlow: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -39,9 +45,17 @@ export const AddFlow: React.FC = () => {
   const onSubmit: SubmitHandler<FormData> = async ({ name }): Promise<void> => {
     try {
       const data = createInitialFlowDataHelper(name);
-      const res = await flowService.createFlow(data);
+      const { payload } = await dispatch(createFlow(data));
       handleCloseModal();
-      navigate(routes.underwriting.flow.details(res.id));
+      const createdFlow = payload as IFlow;
+      navigate(`${routes.underwriting.flow.list}/${createdFlow.id}`);
+      enqueueSnackbar(
+        <SnackbarMessage
+          message="Success"
+          details={`New "${createdFlow.data.name}" was successfully created.`}
+        />,
+        { variant: SNACK_TYPE.SUCCESS }
+      );
     } catch (error) {
       Logger.error(error);
     }
@@ -59,15 +73,14 @@ export const AddFlow: React.FC = () => {
     <>
       <Button
         onClick={handleOpenModal}
-        fullWidth
-        color="primary"
-        variant="contained"
-        endIcon={<AddIcon />}
+        sx={{ marginLeft: '14px' }}
+        variant="text"
+        startIcon={<PlusSquare />}
       >
-        Add new flow
+        Create New Flow
       </Button>
       <Dialog
-        title="Add a new flow"
+        title="Create New Flow"
         open={modalOpen}
         displayConfirmBtn={false}
         displayedCancelBtn={false}
@@ -77,26 +90,21 @@ export const AddFlow: React.FC = () => {
             fullWidth
             name="name"
             control={control}
-            label="Name"
-            placeholder="Enter name"
+            label="Flow name*"
+            placeholder="Flow Name*"
           />
           <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleCloseModal}
-            >
-              Cancel
-            </Button>
             <LoadingButton
               loading={isSubmitting}
               disabled={isSubmitting}
-              variant="contained"
-              color="primary"
+              variant="text"
               type="submit"
             >
-              Confirm
+              Create
             </LoadingButton>
+            <Button variant="text" onClick={handleCloseModal}>
+              Cancel
+            </Button>
           </Stack>
         </form>
       </Dialog>

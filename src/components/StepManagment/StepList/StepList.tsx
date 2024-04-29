@@ -1,27 +1,34 @@
-import { ListItemSecondaryAction, Typography } from '@mui/material';
+import {
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+  Typography
+} from '@mui/material';
 import React, { useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 
-import { StyledStepItem, StyledStepItemText } from './styled';
+import { StyledListItem, StyledStepItem } from './styled';
 
-import { StyledList, StyledListItem } from '@components/shared/List/styled';
-import { HexagonOutlinedIcon } from '@components/shared/Icons';
+import { Bezier } from '@components/shared/Icons';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
-import { MAIN_STEP_ID, NO_TAG_LABEL } from '@constants/common';
+import { NO_TAG_LABEL } from '@constants/common';
 import { FlowNode } from '@domain/flow';
-import { StepContextType } from '@contexts/StepContext';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
+import { useStep } from '@contexts/StepContext';
 
 type StepListProps = {
   nodes: FlowNode[];
   isProductionFlow?: boolean;
-} & StepContextType;
+};
 
 const StepList: React.FC<StepListProps> = ({
   nodes,
-  setStep,
-  step,
   isProductionFlow = false
 }) => {
+  const { activeStepId, setActiveStepId } = useStep();
+  const location = useLocation();
+  const isEditMode = location.pathname.includes('/edit');
+
   const steps = useMemo(
     () =>
       nodes.filter(
@@ -32,36 +39,41 @@ const StepList: React.FC<StepListProps> = ({
   );
 
   return (
-    <StyledList>
-      <StyledListItem
-        className={step.id === MAIN_STEP_ID ? 'active' : undefined}
-        key={MAIN_STEP_ID}
-        onClick={() => setStep({ id: MAIN_STEP_ID })}
-      >
-        <HexagonOutlinedIcon sx={{ paddingRight: 1 }} />
-        <StyledStepItemText>Main flow</StyledStepItemText>
-      </StyledListItem>
+    <List>
+      {steps.length === 0 && (
+        <ListItem sx={{ paddingLeft: '40px' }}>
+          <StyledStepItem>
+            <Typography variant="body2">No steps</Typography>
+          </StyledStepItem>
+        </ListItem>
+      )}
       {steps.map((el) => (
         <StyledListItem
-          className={step.id === el.id ? 'active' : undefined}
+          className={activeStepId === el.id ? 'active' : undefined}
           key={el.id}
-          onClick={() => setStep(el)}
+          onClick={() => setActiveStepId(el.id)}
         >
-          <HexagonOutlinedIcon sx={{ paddingRight: 1 }} />
+          <Bezier />
           <StyledStepItem>
             <Typography variant="caption">
               {el.data.tag || NO_TAG_LABEL}
             </Typography>
-            <StyledStepItemText>{el.data.name}</StyledStepItemText>
+            <Typography variant="body2">{el.data.name}</Typography>
           </StyledStepItem>
           {!isProductionFlow && (
             <ListItemSecondaryAction>
-              <StepActionsMenu flowNode={el} showActionMenuButton={true} />
+              <StepActionsMenu
+                flowNode={el}
+                showActionMenuButton={true}
+                isEditMode={isEditMode}
+                setActiveStepId={setActiveStepId}
+                activeStepId={activeStepId}
+              />
             </ListItemSecondaryAction>
           )}
         </StyledListItem>
       ))}
-    </StyledList>
+    </List>
   );
 };
 

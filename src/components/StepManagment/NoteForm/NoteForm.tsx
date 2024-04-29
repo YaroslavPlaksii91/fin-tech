@@ -56,9 +56,6 @@ export const NoteForm: React.FC<NoteFormProps> = ({
           placeholder="Enter note"
         />
         <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
-          <Button variant="contained" color="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
           <LoadingButton
             loading={isSubmitting}
             disabled={isSubmitting}
@@ -68,6 +65,9 @@ export const NoteForm: React.FC<NoteFormProps> = ({
           >
             Confirm
           </LoadingButton>
+          <Button variant="outlined" onClick={handleClose}>
+            Cancel
+          </Button>
         </Stack>
       </form>
     </Dialog>

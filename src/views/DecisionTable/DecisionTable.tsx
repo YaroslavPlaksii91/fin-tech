@@ -34,7 +34,7 @@ import {
 } from '@components/shared/Table/styled';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
-import { MAIN_STEP_ID, SNACK_TYPE } from '@constants/common';
+import { SNACK_TYPE } from '@constants/common';
 import {
   DataDictionaryVariable,
   UserDefinedVariable,
@@ -47,13 +47,13 @@ import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 
 type DecisionTableStepProps = {
   step: FlowNode;
-  setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
+  resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
 };
 
 const DecisionTableStep = ({
   step,
-  setStep,
+  resetActiveStepId,
   rfInstance: { getNodes, setNodes }
 }: DecisionTableStepProps) => {
   const [noteValue, setNoteValue] = useState('');
@@ -237,7 +237,7 @@ const DecisionTableStep = ({
       />,
       { variant: SNACK_TYPE.SUCCESS }
     );
-    setStep({ id: MAIN_STEP_ID });
+    resetActiveStepId();
   };
 
   const handleAddNewLayer = () => {

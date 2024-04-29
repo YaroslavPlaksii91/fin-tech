@@ -12,7 +12,7 @@ const NoteSection: React.FC<NoteSectionProps> = ({
   children
 }) => (
   <Stack pt="18px" width="558px">
-    <Typography variant="h2" pb="16px">
+    <Typography variant="h6" pb="16px">
       Note for this step
     </Typography>
     <Box sx={{ position: 'relative' }}>

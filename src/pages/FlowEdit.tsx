@@ -1,46 +1,25 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { cloneDeep } from 'lodash';
 
-import { LayoutContainer } from '@components/Layouts/MainLayout';
-import { IFlow } from '@domain/flow';
-import { StepProvider } from '@contexts/StepContext';
-import Logger from '@utils/logger';
-import { flowService } from '@services/flow-service';
-import { useLoading } from '@contexts/LoadingContext';
 import FlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEditor/FlowChartEditor';
+import { selectFlow } from '@store/flow/selectors';
+import { useAppSelector } from '@store/hooks';
+import { IFlow } from '@domain/flow';
 
 function FlowEditMain() {
-  const { id } = useParams();
-  const [flow, setFlow] = useState<IFlow | null>(null);
-  const { startLoading, stopLoading } = useLoading();
+  const { flow } = useAppSelector(selectFlow);
+  const [copyFlow, setCopyFlow] = useState<IFlow>();
 
   useEffect(() => {
-    const fetchInitialData = async (flowId: string) => {
-      try {
-        startLoading();
-        const flow = await flowService.getFlow(flowId);
-        setFlow(flow);
-      } catch (error) {
-        Logger.error('Error fetching flow data:', error);
-      } finally {
-        stopLoading();
-      }
-    };
-
-    id && void fetchInitialData(id);
-  }, [id]);
+    const flowDeepCopy = cloneDeep(flow);
+    setCopyFlow(flowDeepCopy);
+  }, [flow.id]);
 
   return (
-    <LayoutContainer>
-      {flow && <FlowChartEditor setFlow={setFlow} flow={flow} />}
-    </LayoutContainer>
+    copyFlow && <FlowChartEditor flow={copyFlow} setCopyFlow={setCopyFlow} />
   );
 }
 
-const FlowEditor = () => (
-  <StepProvider>
-    <FlowEditMain />
-  </StepProvider>
-);
+const FlowEditor = () => <FlowEditMain />;
 
 export default FlowEditor;

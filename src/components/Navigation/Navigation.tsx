@@ -1,35 +1,14 @@
-import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { Menu, MenuItem, Stack } from '@mui/material';
+import { AppBar, Box, Menu, MenuItem } from '@mui/material';
 import React from 'react';
 
-import { StyledAppBar, StyledLinkText } from './styled';
+import { StyledNavButton } from './styled';
 
-import routes from '@constants/routes';
-import {
-  HexagonOutlinedIcon,
-  Logo,
-  PersonOutlineIcon
-} from '@components/shared/Icons';
-import { StyledNavLink } from '@components/shared/Link/styled';
+import { ELoanLogo, User } from '@components/shared/Icons';
 import { authService } from '@services/auth.ts';
 import { useAppSelector } from '@store/hooks.ts';
 import { selectUserInfo } from '@store/auth/auth.ts';
-
-const pages = [
-  {
-    label: 'Flows List',
-    path: routes.underwriting.flow.list
-  },
-  { label: 'Changes History', path: routes.underwriting.changeHistory },
-  {
-    label: 'Lead Requests',
-    path: routes.underwriting.leadRequest
-  }
-];
 
 function Navigation() {
   const userInfo = useAppSelector(selectUserInfo);
@@ -44,34 +23,22 @@ function Navigation() {
   };
 
   return (
-    <StyledAppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar variant="dense" disableGutters>
-          {/* TODO: add nav link */}
-          <Typography variant="h6" noWrap component="a" href="/">
-            <Logo />
-          </Typography>
-          <Box
-            flexGrow="1"
-            style={{ display: 'flex', justifyContent: 'center' }}
-          >
-            <Stack direction="row" spacing={8}>
-              {pages.map(({ path, label }, index) => (
-                <StyledNavLink key={index} to={path}>
-                  <StyledLinkText variant="h6">
-                    <HexagonOutlinedIcon />
-                    {label}
-                  </StyledLinkText>
-                </StyledNavLink>
-              ))}
-            </Stack>
-          </Box>
-          <Avatar sx={{ bgcolor: 'gray', width: '24px', height: '24px' }}>
-            <PersonOutlineIcon />
-          </Avatar>
-          <Typography onClick={handleClick} ml={1} variant="body2" color="gray">
+    <AppBar position="static">
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Typography variant="h6" noWrap component="a" href="/">
+          <ELoanLogo />
+        </Typography>
+        <Box display="flex" alignItems="center" gap={1}>
+          <Typography sx={{ padding: '0 5px' }} variant="body2">
             {userInfo?.userName}
           </Typography>
+          <StyledNavButton
+            variant="outlined"
+            onClick={handleClick}
+            size="medium"
+          >
+            <User />
+          </StyledNavButton>
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
             <MenuItem
               onClick={() => {
@@ -82,9 +49,9 @@ function Navigation() {
               Logout
             </MenuItem>
           </Menu>
-        </Toolbar>
-      </Container>
-    </StyledAppBar>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 }
 

@@ -25,7 +25,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
   return (
     <Stack>
-      <Typography variant="h1" pb={3}>
+      <Typography variant="h3" pb={3}>
         Data Dictionary
       </Typography>
 

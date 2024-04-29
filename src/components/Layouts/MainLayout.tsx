@@ -1,15 +1,10 @@
 import React from 'react';
-import { Box, Divider, Stack, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 
-import {
-  StyledDivider,
-  StyledLayoutContainer,
-  StyledSideNavContainer,
-  StyledSideNavFooter
-} from './styled';
+import { StyledLayoutContainer } from './styled';
 
-import { useLoading } from '@contexts/LoadingContext';
 import LoadingFullscreen from '@components/shared/LoadingFullscreen';
+import { useLoading } from '@contexts/LoadingContext';
 
 interface LayoutContainerProps {
   children: React.ReactNode;
@@ -19,52 +14,26 @@ const LayoutContainer: React.FC<LayoutContainerProps> = ({ children }) => {
 
   return (
     <StyledLayoutContainer>
-      {loading ? <LoadingFullscreen /> : children}
+      {loading && <LoadingFullscreen />}
+      {children}
     </StyledLayoutContainer>
   );
 };
-
-interface SideNavContainerProps {
-  footer: React.ReactNode;
-  header: React.ReactNode | string;
-  children: React.ReactNode;
-}
-
-const SideNavContainer: React.FC<SideNavContainerProps> = ({
-  children,
-  header,
-  footer
-}) => (
-  <StyledSideNavContainer borderTop="3px" component="nav">
-    {typeof header == 'string' ? (
-      <Typography pl={2} pr={2} variant="h5">
-        {header}
-      </Typography>
-    ) : (
-      header
-    )}
-    <StyledDivider />
-    {children}
-    <StyledSideNavFooter component="footer">
-      <Divider />
-      <Stack pt={2} pr={2} pl={2}>
-        {footer}
-      </Stack>
-    </StyledSideNavFooter>
-  </StyledSideNavContainer>
-);
-
 interface MainContainerProps {
   children: React.ReactNode;
 }
 
 const MainContainer: React.FC<MainContainerProps> = ({ children }) => (
   <Box
-    sx={{ width: '100%', height: '100%', position: 'relative' }}
+    sx={{
+      width: '100%',
+      height: '100%',
+      position: 'relative'
+    }}
     component="main"
   >
     {children}
   </Box>
 );
 
-export { SideNavContainer, LayoutContainer, MainContainer };
+export { LayoutContainer, MainContainer };
