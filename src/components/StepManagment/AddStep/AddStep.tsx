@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useDispatch } from 'react-redux/es/hooks/useDispatch';
+import { cloneDeep } from 'lodash';
 
 import { validationSchema } from './validationSchema';
 
@@ -14,6 +16,7 @@ import {
 } from '@components/FlowManagment/FlowChart/types';
 import { useStep } from '@contexts/StepContext';
 import { FlowNode } from '@domain/flow';
+import { addNode } from '@store/flow/flow';
 
 type FormData = {
   name: string;
@@ -23,8 +26,6 @@ const defaultValue = {
   [StepType.CHAMPION_CHALLENGER]: 'Champion Challenger',
   [StepType.CALCULATION]: 'Calculation',
   [StepType.DECISION_TABLE]: 'Decision table',
-  [StepType.CONDITION]: 'Condition',
-  [StepType.CASE]: 'Case',
   [StepType.SUBFLOW]: 'Subflow'
 };
 
@@ -33,9 +34,8 @@ interface AddStepProps {
   setSelectedStep: (value: FunctionalStepType | null) => void;
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
-  onAddNode?: (type: StepType, name: string) => FlowNode;
   onAddNodeBetweenEdges?: (
-    type: StepType,
+    type: FunctionalStepType,
     name: string,
     edgeId: string
   ) => FlowNode;
@@ -50,8 +50,7 @@ export const AddStep: React.FC<AddStepProps> = ({
   modalOpen,
   setModalOpen,
   reopenSelectStepModal,
-  onAddNodeBetweenEdges,
-  onAddNode
+  onAddNodeBetweenEdges
 }) => {
   const {
     handleSubmit,
@@ -61,16 +60,20 @@ export const AddStep: React.FC<AddStepProps> = ({
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema)
   });
-  const { setStep } = useStep();
+  const { setActiveStepId } = useStep();
+  const dispatch = useDispatch();
 
   const onSubmit: SubmitHandler<FormData> = ({ name }) => {
     let createdStep;
     if (edgeId) {
       createdStep = onAddNodeBetweenEdges?.(stepType, name, edgeId);
-    } else {
-      createdStep = onAddNode?.(stepType, name);
     }
-    createdStep && setStep(createdStep);
+    if (createdStep) {
+      setActiveStepId(createdStep.id);
+
+      // For update list of steps in the sidebar
+      dispatch(addNode(cloneDeep(createdStep)));
+    }
     handleCloseModal();
   };
 
@@ -104,18 +107,17 @@ export const AddStep: React.FC<AddStepProps> = ({
           placeholder="Enter name"
         />
         <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
-          <Button variant="contained" color="secondary" onClick={handleCancel}>
-            Cancel
-          </Button>
           <LoadingButton
             loading={isSubmitting}
             disabled={isSubmitting}
-            variant="contained"
-            color="primary"
+            variant="text"
             type="submit"
           >
             Confirm
           </LoadingButton>
+          <Button variant="text" onClick={handleCancel}>
+            Cancel
+          </Button>
         </Stack>
       </form>
     </Dialog>

@@ -9,6 +9,7 @@ import {
   FormHelperText,
   InputAdornment,
   OutlinedInput,
+  Paper,
   Stack,
   Typography
 } from '@mui/material';
@@ -207,7 +208,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
       >
         <Stack flexDirection="column">
           <Stack flexGrow={1} pl={3} pr={3} pt={2}>
-            <Typography mb={2} variant="h2">
+            <Typography mb={2} variant="h4">
               {initialValues?.id ? 'Change' : 'Add New'} Expression
             </Typography>
             <Box flexGrow={1}>
@@ -293,7 +294,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
               }
             }}
           />
-          <Box>
+          <Paper elevation={1}>
             <Divider />
             <Box px={3} py={2}>
               <Stack
@@ -302,11 +303,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
                 alignItems="flex-start"
                 gap={1}
               >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={onCancelClick}
-                >
+                <Button variant="outlined" onClick={onCancelClick}>
                   Cancel
                 </Button>
                 <LoadingButton
@@ -321,7 +318,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
               </Stack>
             </Box>
             <Divider />
-          </Box>
+          </Paper>
         </Stack>
       </form>
     </Box>

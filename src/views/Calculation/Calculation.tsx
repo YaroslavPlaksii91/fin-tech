@@ -16,10 +16,10 @@ import TableCell from '@mui/material/TableCell';
 import { COLUMN_IDS, Expression, FieldValues, columns } from './types';
 import { PinnedTableCell } from './styled';
 
-import { FlowNode, IFlow } from '@domain/flow';
+import { FlowNode } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
-import { MAIN_STEP_ID, RULES_LIMIT, SNACK_TYPE } from '@constants/common';
+import { RULES_LIMIT, SNACK_TYPE } from '@constants/common';
 import Dialog from '@components/shared/Modals/Dialog';
 import {
   StyledTableRow,
@@ -41,14 +41,13 @@ import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlB
 
 interface CalculationProps {
   step: FlowNode;
-  setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
+  resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
-  flow: IFlow;
 }
 
 const Calculation: React.FC<CalculationProps> = ({
   step,
-  setStep,
+  resetActiveStepId,
   rfInstance: { getNodes, setNodes }
 }) => {
   const nodes: FlowNode[] = getNodes();
@@ -86,7 +85,7 @@ const Calculation: React.FC<CalculationProps> = ({
     setOpenNoteModal(false);
   };
 
-  const handleDiscardChanges = () => setStep({ id: MAIN_STEP_ID });
+  const handleDiscardChanges = () => resetActiveStepId();
 
   const onSubmit = (data: FieldValues) => {
     const updatedNodes = nodes.map((node: FlowNode) => {
@@ -107,7 +106,7 @@ const Calculation: React.FC<CalculationProps> = ({
       />,
       { variant: SNACK_TYPE.SUCCESS }
     );
-    setStep({ id: MAIN_STEP_ID });
+    resetActiveStepId();
   };
 
   useEffect(() => {

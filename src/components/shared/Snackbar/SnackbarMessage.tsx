@@ -1,6 +1,6 @@
 import { Stack, Typography } from '@mui/material';
+import AlertTitle from '@mui/material/AlertTitle';
 
-import { palette } from '../../../themeConfig';
 import { CheckCircleOutlinedIcon, ErrorOutlineOutlinedIcon } from '../Icons';
 
 import { parseErrorMessages } from '@utils/helpers';
@@ -20,16 +20,14 @@ const SnackbarMessage: React.FC<SnackbarMessageProps> = ({
   details
 }) => (
   <Stack>
-    <Typography
-      sx={{ display: 'flex', alignItems: 'center' }}
-      pb={1}
-      variant="h4"
-      color={palette.blue}
+    <AlertTitle
+      color="primary"
+      sx={{ display: 'flex', alignItems: 'center', paddingBottom: '8px' }}
     >
       <CheckCircleOutlinedIcon sx={{ marginRight: 1 }} size="21px" />
       {message}
-    </Typography>
-    <Typography variant="h6" fontWeight={400} color={palette.gray}>
+    </AlertTitle>
+    <Typography color="primary" variant="body2">
       {details}
     </Typography>
   </Stack>
@@ -42,23 +40,16 @@ const SnackbarErrorMessage: React.FC<SnackbarErrorMessageProps> = ({
   const errors = parseErrorMessages(error);
   return (
     <Stack>
-      <Typography
-        sx={{ display: 'flex', alignItems: 'center' }}
-        pb={1}
-        variant="h4"
-        color={palette.blue}
+      <AlertTitle
+        color="error"
+        sx={{ display: 'flex', alignItems: 'center', paddingBottom: '8px' }}
       >
         <ErrorOutlineOutlinedIcon sx={{ marginRight: 1 }} size="21px" />
         {message}
-      </Typography>
+      </AlertTitle>
 
       {errors.map((err, idx) => (
-        <Typography
-          key={idx}
-          variant="h6"
-          fontWeight={400}
-          color={palette.gray}
-        >
+        <Typography key={idx} variant="body2" color="error">
           {err}
         </Typography>
       ))}

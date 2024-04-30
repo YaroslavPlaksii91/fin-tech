@@ -3,17 +3,16 @@ import {
   useContext,
   ReactNode,
   useState,
-  useEffect
+  useEffect,
+  useCallback
 } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { FlowNode } from '@domain/flow';
-import { MAIN_STEP_ID } from '@constants/common';
-
-export type StepContextType = {
-  step: FlowNode | { id: typeof MAIN_STEP_ID };
-  setStep: (step: FlowNode | { id: typeof MAIN_STEP_ID }) => void;
-};
+export interface StepContextType {
+  activeStepId: string | null;
+  setActiveStepId: (step: string | null) => void;
+  resetActiveStepId: () => void;
+}
 
 const StepContext = createContext<StepContextType | undefined>(undefined);
 
@@ -22,26 +21,30 @@ interface StepProviderProps {
 }
 
 interface LocationState {
-  node?: FlowNode;
+  activeStepId?: string;
 }
 
 export const StepProvider: React.FC<StepProviderProps> = ({ children }) => {
   const location = useLocation();
 
-  const [step, setStep] = useState<FlowNode | { id: typeof MAIN_STEP_ID }>({
-    id: MAIN_STEP_ID
-  });
+  const [activeStepId, setActiveStepId] = useState<null | string>(null);
+
+  const resetActiveStepId = useCallback(
+    () => setActiveStepId(null),
+    [activeStepId]
+  );
 
   useEffect(() => {
     const state = (location.state || {}) as LocationState;
-    if (state.node) {
-      setStep(state.node);
+    if (state.activeStepId) {
+      setActiveStepId(state.activeStepId);
     }
   }, [location]);
 
   const contextValue = {
-    step,
-    setStep
+    activeStepId,
+    setActiveStepId,
+    resetActiveStepId
   };
 
   return (

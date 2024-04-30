@@ -12,13 +12,11 @@ export const getFormattedRows = (data: LeadRequestsReports[]) => {
     ({ leadRequest, leadResponse, output, processingMetadata, id }) => ({
       id,
       [COLUMN_IDS.requestId]: leadRequest.requestId,
-      [COLUMN_IDS.loanId]: leadResponse.loanId ?? '-',
+      [COLUMN_IDS.loanId]: leadResponse?.loanId ?? '-',
       [COLUMN_IDS.leadProvider]: leadRequest.leadProviderId ?? '-',
       [COLUMN_IDS.leadCampaign]: leadRequest.campaignId ?? '-',
-      [COLUMN_IDS.customerId]: leadResponse.customerId ?? '-',
-      [COLUMN_IDS.leadPrice]: leadResponse.leadPrice
-        ? `$${leadResponse.leadPrice}`
-        : '-',
+      [COLUMN_IDS.customerId]: leadResponse?.customerId ?? '-',
+      [COLUMN_IDS.leadPrice]: leadResponse?.leadPrice ?? '-',
       [COLUMN_IDS.affiliate]: leadRequest.affiliateId ?? '-',
       [COLUMN_IDS.requestDate]: processingMetadata?.processingDateTimeUtc
         ? dayjs(processingMetadata.processingDateTimeUtc).format(

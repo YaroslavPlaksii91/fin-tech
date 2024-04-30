@@ -210,7 +210,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
         <Divider />
       </Box>
       <DialogActions>
-        <Button variant="contained" color="secondary" onClick={onClose}>
+        <Button variant="outlined" onClick={onClose}>
           Cancel
         </Button>
         <LoadingButton
