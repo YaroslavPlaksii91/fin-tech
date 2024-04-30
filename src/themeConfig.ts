@@ -144,6 +144,19 @@ export const theme = createTheme({
           fontSize: '14px'
         }
       }
+    },
+    MuiTablePagination: {
+      styleOverrides: {
+        spacer: { flex: 0 },
+        toolbar: { display: 'flex', alignItems: 'center' },
+        actions: {
+          display: 'flex',
+          justifyContent: 'flex-end',
+          flexGrow: 1
+        },
+        input: { margin: '0 8px' },
+        displayedRows: { color: 'rgba(0,0,0,0.38)', margin: 0 }
+      }
     }
   },
   typography: {

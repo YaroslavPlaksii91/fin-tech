@@ -1,17 +1,20 @@
 import { useState, useEffect, useContext } from 'react';
 import { indexOf, map } from 'lodash';
-import { useNavigate } from 'react-router-dom';
-import { IconButton, Stack, Button, Collapse, Typography } from '@mui/material';
+import {
+  IconButton,
+  Stack,
+  Button,
+  Collapse,
+  Typography,
+  Box
+} from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
 
-import { StyledStack } from './styled';
+import { StyledStack, StyledNavLink } from './styled';
 
-import {
-  DeleteOutlineIcon,
-  EditNoteOutlinedIcon
-} from '@components/shared/Icons';
+import { Edit, Trash, Bezier, Calculator } from '@components/shared/Icons';
 import {
   StyledTableCell,
   StyledTableRow
@@ -23,7 +26,6 @@ import {
 import { FlowNode } from '@domain/flow';
 import { dataDictionaryService } from '@services/data-dictionary';
 import { DataDictionaryPageContext } from '@pages/DataDictionary';
-import routes from '@constants/routes';
 import Logger from '@utils/logger';
 
 type TableRowProps = {
@@ -51,6 +53,58 @@ type TableRowProps = {
   }) => void;
 };
 
+const test = [
+  {
+    id: '3515e2f5-8d7b-4a9d-8482-3d7e4b2c8c36',
+    position: {
+      x: 1293,
+      y: 200
+    },
+    data: {
+      $type: 'Calculation',
+      expressions: [
+        {
+          outputName: 'DenialReason',
+          expressionString: '"we do no like this appllicatn"',
+          destinationType: 'Output',
+          destinationDataType: 'String',
+          variableSources: []
+        },
+        {
+          outputName: 'EmailExtension',
+          expressionString: '"gmail.com"',
+          destinationType: 'TemporaryVariable',
+          destinationDataType: 'String',
+          variableSources: []
+        },
+        {
+          outputName: 'FinalLoanAmount',
+          expressionString: '500* LeadPrice',
+          destinationType: 'Output',
+          destinationDataType: 'Decimal',
+          variableSources: [
+            {
+              name: 'LeadPrice',
+              sourceType: 'Input'
+            }
+          ]
+        }
+      ],
+      stepId: '3515e2f5-8d7b-4a9d-8482-3d7e4b2c8c36',
+      stepType: 'Calculation',
+      name: 'Calculation',
+      tag: null,
+      editedOn: null,
+      note: ''
+    },
+    type: 'Calculation',
+    draggable: true,
+    deletable: true,
+    width: 131,
+    height: 40
+  }
+];
+
 export const TableRow = ({
   row,
   index,
@@ -66,7 +120,8 @@ export const TableRow = ({
   const [variableUsageNodes, setVariableUsageNodes] = useState<FlowNode[]>([]);
 
   const value = useContext(DataDictionaryPageContext);
-  const navigate = useNavigate();
+
+  const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
 
   const getVariableUsage = async (variableName: string) => {
     const resultData: FlowNode[] = [];
@@ -97,7 +152,11 @@ export const TableRow = ({
 
   return (
     <>
-      <StyledTableRow key={index} sx={{ '& > *': { borderBottom: 'unset' } }}>
+      <StyledTableRow
+        parity={rowParity}
+        key={index}
+        sx={{ ...(isExpanded && { '& > td': { border: 'unset' } }) }}
+      >
         <StyledTableCell>
           <IconButton
             aria-label="expand row"
@@ -117,9 +176,14 @@ export const TableRow = ({
         <StyledTableCell>{row.defaultValue}</StyledTableCell>
         <StyledTableCell>{row.description}</StyledTableCell>
         {tabName === VARIABLES_TABS.userDefined && (
-          <StyledTableCell align="right" sx={{ padding: 0 }} width={70}>
-            <Stack direction="row" sx={{ maxWidth: '0px' }}>
+          <StyledTableCell>
+            <Stack spacing={1} direction="row">
               <Button
+                sx={{
+                  minWidth: 'auto',
+                  width: 'auto',
+                  p: 0
+                }}
                 onClick={() => {
                   const indexOfVariable = indexOf(
                     map(value?.temporaryVariables, 'name'),
@@ -134,9 +198,14 @@ export const TableRow = ({
                   setOpenVariableForm(true);
                 }}
               >
-                <EditNoteOutlinedIcon />
+                <Edit />
               </Button>
               <Button
+                sx={{
+                  minWidth: 'auto',
+                  width: 'auto',
+                  p: 0
+                }}
                 onClick={() =>
                   setDeleteVariable({
                     name: row.name,
@@ -144,34 +213,45 @@ export const TableRow = ({
                   })
                 }
               >
-                <DeleteOutlineIcon />
+                <Trash />
               </Button>
             </Stack>
           </StyledTableCell>
         )}
       </StyledTableRow>
-      <StyledTableRow>
+      <StyledTableRow parity={rowParity}>
         <StyledTableCell
           style={{ paddingBottom: 0, paddingTop: 0 }}
           colSpan={6}
+          sx={{ ...(!isExpanded && { border: 'unset' }) }}
         >
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>
             <Stack margin={1} spacing={1}>
               <Typography variant="body1" fontWeight={600}>
                 This variable is used in:
               </Typography>
-
-              {variableUsageNodes.map((flowNode) => (
-                <StyledStack
-                  key={flowNode.id}
-                  aria-label="breadcrumb"
-                  onClick={() =>
-                    navigate(routes.underwriting.flow.edit(flowId), {
-                      state: { activeStepId: flowNode.id }
-                    })
-                  }
-                >
-                  {flowNode?.data?.name}
+              {test.map((flowNode) => (
+                <StyledStack key={flowNode.id} aria-label="breadcrumb">
+                  {flowNode.data?.expressions.map((expression) => (
+                    <Stack
+                      key={expression.outputName}
+                      sx={{ display: 'flex', flexDirection: 'row' }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Bezier />
+                        <StyledNavLink to="">
+                          {flowNode.data.name}
+                        </StyledNavLink>
+                      </Box>
+                      <span>/</span>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Calculator />
+                        <StyledNavLink to="">
+                          {expression.outputName}
+                        </StyledNavLink>
+                      </Box>
+                    </Stack>
+                  ))}
                 </StyledStack>
               ))}
             </Stack>

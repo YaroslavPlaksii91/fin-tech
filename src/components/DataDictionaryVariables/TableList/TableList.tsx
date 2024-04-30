@@ -5,7 +5,6 @@ import {
   TableBody,
   IconButton,
   TablePagination,
-  Divider,
   Table
 } from '@mui/material';
 import { AddBoxOutlined } from '@mui/icons-material';
@@ -15,7 +14,7 @@ import { getUserDefinedUsage, getUserDefinedUsageNodes } from '../utils';
 import { VariableForm } from '../VariableForm/VariableForm';
 import { DeleteVariable } from '../DeleteVariable/DeleteVariable';
 
-import { StyledPaper, StyledTableContainer } from './styled';
+import { StyledPaper } from './styled';
 import { TableRow } from './TableRow';
 
 import {
@@ -98,82 +97,77 @@ const TableList = ({
 
   return (
     <StyledPaper>
-      <StyledTableContainer>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <StyledTableRow>
-              <StyledTableCell></StyledTableCell>
-              <StyledTableCell style={{ width: '20%' }}>
-                Variable Name
+      <Table stickyHeader size="small" aria-label="sticky table">
+        <TableHead>
+          <StyledTableRow>
+            <StyledTableCell></StyledTableCell>
+            <StyledTableCell style={{ width: '20%' }}>
+              Variable Name
+            </StyledTableCell>
+            <StyledTableCell> Data Type</StyledTableCell>
+            <StyledTableCell style={{ width: '20%' }}>
+              Default value
+            </StyledTableCell>
+            <StyledTableCell> Description</StyledTableCell>
+            {tabName === VARIABLES_TABS.userDefined && (
+              <StyledTableCell align="right">
+                <IconButton
+                  onClick={() => {
+                    setSelectedVariable(undefined);
+                    setOpenVariableForm(true);
+                  }}
+                  edge="end"
+                  aria-label="add"
+                  sx={{ padding: 0, marginRight: 0 }}
+                >
+                  <AddBoxOutlined fontSize="small" />
+                </IconButton>
               </StyledTableCell>
-              <StyledTableCell> Data Type</StyledTableCell>
-              <StyledTableCell style={{ width: '20%' }}>
-                Default value
-              </StyledTableCell>
-              <StyledTableCell> Description</StyledTableCell>
-              {tabName === VARIABLES_TABS.userDefined && (
-                <StyledTableCell align="right">
-                  <IconButton
-                    onClick={() => {
-                      setSelectedVariable(undefined);
-                      setOpenVariableForm(true);
-                    }}
-                    edge="end"
-                    aria-label="add"
-                    sx={{ padding: 0, marginRight: 0 }}
-                  >
-                    <AddBoxOutlined fontSize="small" />
-                  </IconButton>
-                </StyledTableCell>
-              )}
-            </StyledTableRow>
-          </TableHead>
-          <TableBody>
-            {visibleRows.map((variable, index) => (
-              <TableRow
-                key={index}
-                row={variable}
-                index={index}
-                tabName={tabName}
-                flowId={id as string}
-                flowNodes={flowNodes}
-                // defined for userDefined variables
-                userDefinedUsageNodes={
-                  userDefinedUsage &&
-                  getUserDefinedUsageNodes({
-                    userDefinedUsage,
-                    variable,
-                    flowNodes
-                  })
-                }
-                setSelectedVariable={setSelectedVariable}
-                setOpenVariableForm={setOpenVariableForm}
-                setDeleteVariable={setDeleteVariable}
-              />
-            ))}
-            {emptyRows > 0 && (
-              <StyledTableRow
-                style={{
-                  height: 43 * emptyRows
-                }}
-              >
-                <StyledTableCell colSpan={6} />
-              </StyledTableRow>
             )}
-          </TableBody>
-        </Table>
-        <Divider />
-        {tableData.length > 10 && (
-          <TablePagination
-            component="div"
-            count={tableData.length}
-            page={page}
-            onPageChange={handleChangePage}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        )}
-      </StyledTableContainer>
+          </StyledTableRow>
+        </TableHead>
+        <TableBody>
+          {visibleRows.map((variable, index) => (
+            <TableRow
+              key={index}
+              row={variable}
+              index={index}
+              tabName={tabName}
+              flowId={id as string}
+              flowNodes={flowNodes}
+              // defined for userDefined variables
+              userDefinedUsageNodes={
+                userDefinedUsage &&
+                getUserDefinedUsageNodes({
+                  userDefinedUsage,
+                  variable,
+                  flowNodes
+                })
+              }
+              setSelectedVariable={setSelectedVariable}
+              setOpenVariableForm={setOpenVariableForm}
+              setDeleteVariable={setDeleteVariable}
+            />
+          ))}
+          {emptyRows > 0 && (
+            <StyledTableRow style={{ height: 43 * emptyRows }}>
+              <StyledTableCell colSpan={6} />
+            </StyledTableRow>
+          )}
+        </TableBody>
+      </Table>
+      {tableData.length > 10 && (
+        <TablePagination
+          showFirstButton
+          showLastButton
+          component="div"
+          count={tableData.length}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      )}
       {openVariableForm && id && (
         <VariableForm
           flowId={id}

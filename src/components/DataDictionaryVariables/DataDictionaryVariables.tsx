@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Box, Stack, Tabs, Typography } from '@mui/material';
 
+import { theme } from '../../themeConfig';
+
 import { StyledTab } from './styled';
 import { VARIABLES_TABS, TABS_LABELS, SOURCES_DESCRIPTIONS } from './constants';
 import TableList from './TableList/TableList';
@@ -25,10 +27,9 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
   return (
     <Stack>
-      <Typography variant="h3" pb={3}>
+      <Typography variant="h4" pt={1} pb={1} color={theme.palette.text.primary}>
         Data Dictionary
       </Typography>
-
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={tab} onChange={handleChange} aria-label="tabs">
           {Object.keys(variables).map((tabName, index) => (
@@ -52,7 +53,11 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       {Object.keys(variables).map((tabName) => (
         <TabPanel key={tabName} value={tab} tabName={tabName}>
           <>
-            <Typography variant="body2" color="gray" mt={2}>
+            <Typography
+              variant="body1"
+              color={theme.palette.text.secondary}
+              mt={2}
+            >
               {SOURCES_DESCRIPTIONS[tabName]}
             </Typography>
             <TableList

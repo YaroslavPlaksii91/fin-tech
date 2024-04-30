@@ -103,9 +103,10 @@ export const VariableForm: React.FC<VariableFormProps> = ({
 
   return (
     <Dialog
+      fullWidth
       title={formData ? 'Edit variable' : 'Create variable'}
       open={modalOpen}
-      maxWidth="xs"
+      maxWidth="sm"
       displayConfirmBtn={false}
       displayedCancelBtn={false}
     >
@@ -177,20 +178,18 @@ export const VariableForm: React.FC<VariableFormProps> = ({
             minRows={4}
           />
         </Stack>
-
         <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
-          <Button variant="outlined" onClick={handleClose}>
-            Cancel
-          </Button>
           <LoadingButton
             loading={isSubmitting}
             disabled={isSubmitting}
-            variant="contained"
-            color="primary"
+            variant="text"
             type="submit"
           >
             Save Changes
           </LoadingButton>
+          <Button variant="text" onClick={handleClose}>
+            Cancel
+          </Button>
         </Stack>
       </form>
     </Dialog>
