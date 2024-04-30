@@ -8,10 +8,11 @@ import { updateFlowDataHelper, validationSchema } from './validationSchema';
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
 import Logger from '@utils/logger';
-import { IFlowListItem } from '@domain/flow';
+import { IFlow, IFlowListItem } from '@domain/flow';
 import { useAppDispatch } from '@store/hooks';
 import { renameFlow } from '@store/flowList/asyncThunk';
 import LoadingButton from '@components/shared/LoadingButton';
+import { updateFlowData } from '@store/flow/flow';
 
 type FormData = {
   name: string;
@@ -42,7 +43,9 @@ export const RenameFlow: React.FC<RenameFlowProps> = ({
   const onSubmit: SubmitHandler<FormData> = async ({ name }): Promise<void> => {
     const reqData = updateFlowDataHelper(flow.id, name);
     try {
-      await dispatch(renameFlow(reqData));
+      const { payload } = await dispatch(renameFlow(reqData));
+      const updatedFlow = payload as IFlow;
+      dispatch(updateFlowData(updatedFlow.data));
       handleCloseModal();
     } catch (error) {
       Logger.error(error);

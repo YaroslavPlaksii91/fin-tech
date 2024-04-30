@@ -64,7 +64,7 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
         isOpen={Boolean(flowNode)}
         onClose={onPaneClick}
       />
-      {showControlPanel && <ControlPanelView flowName={flow.data.name} />}
+      {showControlPanel && <ControlPanelView />}
     </ReactFlow>
   );
 };
