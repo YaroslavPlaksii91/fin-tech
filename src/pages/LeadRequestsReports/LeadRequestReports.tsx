@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { DataGridPremium, GridColDef } from '@mui/x-data-grid-premium';
+import {
+  DataGridPremium,
+  GridColDef,
+  GridSortModel
+} from '@mui/x-data-grid-premium';
 import buildQuery from 'odata-query';
 import { Container, Stack, Typography } from '@mui/material';
 import React from 'react';
@@ -13,7 +17,7 @@ import { RemoveRedEyeOutlinedIcon } from '@components/shared/Icons';
 import DataGridPagination from '@components/shared/DataGridPagination';
 
 const PAGE_SIZE = 25;
-const DEFAULT_SORT = 'correlationId desc';
+const DEFAULT_SORT = 'id asc';
 
 const dataGridColumns: GridColDef[] = [
   { field: COLUMN_IDS.requestId, headerName: 'Request ID' },
@@ -50,21 +54,20 @@ export default function LeadRequestsReportsPage() {
   const [rows, setRows] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
-  // TODO: unblock when BE fix sorting
-  // const [sort, setSort] = useState(DEFAULT_SORT);
+  const [sort, setSort] = useState(DEFAULT_SORT);
 
   const [paginationModel, setPaginationModel] = React.useState({
     pageSize: PAGE_SIZE,
     page: 0
   });
 
-  const fetchList = async (page: number) => {
+  const fetchList = async (page: number, sort: string) => {
     try {
       setLoading(true);
       const params = buildQuery({
         top: PAGE_SIZE,
         skip: PAGE_SIZE * page,
-        orderBy: DEFAULT_SORT,
+        orderBy: sort,
         count: true
       });
       const data = await reportingService.getLeadRequestsReports(params);
@@ -79,14 +82,13 @@ export default function LeadRequestsReportsPage() {
   };
 
   useEffect(() => {
-    void fetchList(paginationModel.page);
-  }, [paginationModel.page]);
+    void fetchList(paginationModel.page, sort);
+  }, [paginationModel.page, sort]);
 
-  // TODO: unblock when BE fix sorting
-  // const handleSortModelChange = (model: GridSortModel) => {
-  //   const sortParams = `${model[0].field} ${model[0].sort}`;
-  //   setSort(sortParams);
-  // };
+  const handleSortModelChange = (model: GridSortModel) => {
+    const sortParams = `${model[0].field} ${model[0].sort}`;
+    setSort(sortParams);
+  };
 
   return (
     // TODO: fix width value
@@ -105,10 +107,8 @@ export default function LeadRequestsReportsPage() {
           rowCount={totalCount}
           disableColumnMenu={true}
           paginationMode="server"
-          // TODO: enable column sorting when BE fix sorting
-          disableColumnSorting={true}
-          // sortingMode="server"
-          // onSortModelChange={handleSortModelChange}
+          sortingMode="server"
+          onSortModelChange={handleSortModelChange}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           slots={{
