@@ -1,26 +1,89 @@
-import { useState } from 'react';
-import { Box, Stack, Tabs, Typography } from '@mui/material';
+import { useState, useMemo } from 'react';
+import { Box, Stack, Tabs, Typography, Button } from '@mui/material';
+import TuneIcon from '@mui/icons-material/Tune';
 
 import { theme } from '../../themeConfig';
 
+import { IFilters } from './Filters/types';
+import { INITIAL_FILTERS } from './Filters/constants';
 import { StyledTab } from './styled';
 import { VARIABLES_TABS, TABS_LABELS, SOURCES_DESCRIPTIONS } from './constants';
 import TableList from './TableList/TableList';
 import TabPanel from './Tabs/TabPanel';
+import Filters from './Filters/Filters';
 
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { IFlow } from '@domain/flow';
 
 const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const [tab, setTab] = useState(VARIABLES_TABS.laPMSVariables);
+  const [filters, setFilters] = useState<IFilters>(INITIAL_FILTERS);
+  const [search, setSearch] = useState<string>('');
+  const [isFiltersOpen, setIsFiltersOpen] = useState<boolean>(false);
 
   const { variables } = useDataDictionaryVariables(flow);
+
+  const tableData = useMemo(() => {
+    if (!variables) return [];
+    if (tab === VARIABLES_TABS.all)
+      return [...variables['userDefined'], ...variables['laPMSVariables']];
+
+    return variables[tab];
+  }, [tab, variables]);
+
+  const filteredBySearch = useMemo(() => {
+    const filterBySearch = search.trim().toUpperCase();
+    if (filterBySearch)
+      return tableData.filter((tableEl) =>
+        tableEl.name.toUpperCase().includes(filterBySearch)
+      );
+
+    return tableData;
+  }, [tableData, search]);
+
+  const filteredBySelects = useMemo(() => {
+    const filtersEntries = Object.entries(filters) as [
+      keyof IFilters,
+      string[]
+    ][];
+
+    let filteredData = filteredBySearch;
+
+    filtersEntries.forEach(([field, activeFilters]) => {
+      if (!activeFilters.length) return;
+
+      filteredData = filteredData.filter((el) =>
+        activeFilters.includes(el[field])
+      );
+    });
+
+    return filteredData;
+  }, [filteredBySearch, filters]);
 
   const handleChange = (
     _event: React.SyntheticEvent,
     newValue: VARIABLES_TABS
   ) => {
     setTab(newValue);
+  };
+  const handleFiltersClose = () => setIsFiltersOpen(false);
+  const handleFiltersOpen = () => setIsFiltersOpen(true);
+
+  const handleFiltersReset = () => {
+    setSearch('');
+    setFilters(INITIAL_FILTERS);
+  };
+
+  const handleFiltersApply = ({
+    search,
+    filters
+  }: {
+    search: string;
+    filters: IFilters;
+  }) => {
+    setSearch(search);
+    setFilters(filters);
+    handleFiltersClose();
   };
 
   if (!variables) return null;
@@ -53,15 +116,30 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       {Object.keys(variables).map((tabName) => (
         <TabPanel key={tabName} value={tab} tabName={tabName}>
           <>
-            <Typography
-              variant="body1"
-              color={theme.palette.text.secondary}
+            <Stack
+              alignItems="flex-start"
+              justifyContent="space-between"
+              direction="row"
+              width="100%"
               mt={2}
+              spacing={4}
             >
-              {SOURCES_DESCRIPTIONS[tabName]}
-            </Typography>
+              <Typography variant="body1" color="gray">
+                {SOURCES_DESCRIPTIONS[tabName]}
+              </Typography>
+              <Button
+                size="small"
+                color="inherit"
+                variant="outlined"
+                sx={{ minWidth: '80px', borderRadius: '6px' }}
+                startIcon={<TuneIcon sx={{ transform: 'rotate(180deg)' }} />}
+                onClick={handleFiltersOpen}
+              >
+                Filters
+              </Button>
+            </Stack>
             <TableList
-              tableData={variables[tabName]}
+              tableData={filteredBySelects}
               tabName={tabName as VARIABLES_TABS}
               flowNodes={flow.nodes}
             />
@@ -70,16 +148,33 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       ))}
       {tab === VARIABLES_TABS.all && (
         <TabPanel key="all" value={tab} tabName="all">
+          <Stack alignItems="flex-end" mt={2}>
+            <Button
+              size="small"
+              color="inherit"
+              variant="outlined"
+              startIcon={<TuneIcon sx={{ transform: 'rotate(180deg)' }} />}
+              onClick={handleFiltersOpen}
+            >
+              Filters
+            </Button>
+          </Stack>
+
           <TableList
-            tableData={[
-              ...variables['userDefined'],
-              ...variables['laPMSVariables']
-            ]}
+            tableData={filteredBySelects}
             tabName={tab as VARIABLES_TABS}
             flowNodes={flow.nodes}
           />
         </TabPanel>
       )}
+      <Filters
+        isFiltersOpen={isFiltersOpen}
+        filters={filters}
+        search={search}
+        handleReset={handleFiltersReset}
+        handleApply={handleFiltersApply}
+        handleClose={handleFiltersClose}
+      />
     </Stack>
   );
 };
