@@ -14,7 +14,7 @@ import { VARIABLES_TABS } from '../constants';
 
 import { StyledStack, StyledNavLink } from './styled';
 
-import { Edit, Trash, Bezier, Calculator } from '@components/shared/Icons';
+import { Edit, Trash, Calculator } from '@components/shared/Icons';
 import {
   StyledTableCell,
   StyledTableRow
@@ -27,6 +27,7 @@ import { FlowNode } from '@domain/flow';
 import { dataDictionaryService } from '@services/data-dictionary';
 import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import Logger from '@utils/logger';
+import routes from '@constants/routes';
 
 type TableRowProps = {
   row:
@@ -52,58 +53,6 @@ type TableRowProps = {
     variableIsUsed: boolean;
   }) => void;
 };
-
-const test = [
-  {
-    id: '3515e2f5-8d7b-4a9d-8482-3d7e4b2c8c36',
-    position: {
-      x: 1293,
-      y: 200
-    },
-    data: {
-      $type: 'Calculation',
-      expressions: [
-        {
-          outputName: 'DenialReason',
-          expressionString: '"we do no like this appllicatn"',
-          destinationType: 'Output',
-          destinationDataType: 'String',
-          variableSources: []
-        },
-        {
-          outputName: 'EmailExtension',
-          expressionString: '"gmail.com"',
-          destinationType: 'TemporaryVariable',
-          destinationDataType: 'String',
-          variableSources: []
-        },
-        {
-          outputName: 'FinalLoanAmount',
-          expressionString: '500* LeadPrice',
-          destinationType: 'Output',
-          destinationDataType: 'Decimal',
-          variableSources: [
-            {
-              name: 'LeadPrice',
-              sourceType: 'Input'
-            }
-          ]
-        }
-      ],
-      stepId: '3515e2f5-8d7b-4a9d-8482-3d7e4b2c8c36',
-      stepType: 'Calculation',
-      name: 'Calculation',
-      tag: null,
-      editedOn: null,
-      note: ''
-    },
-    type: 'Calculation',
-    draggable: true,
-    deletable: true,
-    width: 131,
-    height: 40
-  }
-];
 
 export const TableRow = ({
   row,
@@ -227,31 +176,17 @@ export const TableRow = ({
         >
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>
             <Stack margin={1} spacing={1}>
-              <Typography variant="body1" fontWeight={600}>
-                This variable is used in:
-              </Typography>
-              {test.map((flowNode) => (
+              <Typography variant="body1">This variable is used in:</Typography>
+              {variableUsageNodes.map((flowNode) => (
                 <StyledStack key={flowNode.id} aria-label="breadcrumb">
-                  {flowNode.data?.expressions.map((expression) => (
-                    <Stack
-                      key={expression.outputName}
-                      sx={{ display: 'flex', flexDirection: 'row' }}
-                    >
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Bezier />
-                        <StyledNavLink to="">
-                          {flowNode.data.name}
-                        </StyledNavLink>
-                      </Box>
-                      <span>/</span>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Calculator />
-                        <StyledNavLink to="">
-                          {expression.outputName}
-                        </StyledNavLink>
-                      </Box>
-                    </Stack>
-                  ))}
+                  <Stack>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Calculator />
+                      <StyledNavLink to={routes.underwriting.flow.edit(flowId)}>
+                        {flowNode.data.name}
+                      </StyledNavLink>
+                    </Box>
+                  </Stack>
                 </StyledStack>
               ))}
             </Stack>

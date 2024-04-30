@@ -60,6 +60,11 @@ export const theme = createTheme({
       main: '#E24A4A',
       light: '#FFCCCC'
     },
+    info: {
+      main: '#0288D1',
+      dark: '#01579B',
+      light: '#03A9F4'
+    },
     action: {
       active: 'rgba(0,0,0,0.56)',
       hover: 'rgba(0,0,0,0.04)',

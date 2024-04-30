@@ -21,10 +21,11 @@ export const StyledStack = styled(Stack)(() => ({
 export const StyledNavLink = styled(NavLink)(
   ({
     theme: {
+      palette: { info },
       typography: { body1 }
     }
   }) => ({
     ...body1,
-    color: '#0288D1'
+    color: info.main
   })
 );
