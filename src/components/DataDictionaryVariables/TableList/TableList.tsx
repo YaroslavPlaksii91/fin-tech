@@ -7,7 +7,8 @@ import {
   TablePagination,
   TextField,
   Table,
-  Box
+  Box,
+  Typography
 } from '@mui/material';
 import { AddBoxOutlined } from '@mui/icons-material';
 
@@ -29,6 +30,7 @@ import {
   VariableUsageParams
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
+import { theme } from '@theme';
 
 const TableList = ({
   flowNodes,
@@ -59,6 +61,8 @@ const TableList = ({
     { name: string; variableIsUsed: boolean } | undefined
   >(undefined);
 
+  const totalPages = Math.ceil(tableData.length / rowsPerPage);
+
   // usage for userDefined variables
   const [userDefinedUsage, setUserDefinedUsage] = useState<
     VariableUsageParams | undefined
@@ -83,11 +87,18 @@ const TableList = ({
     }
   }, []);
 
-  const handleChangePage = (
+  const handlePageBySelect = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => {
     event && setPage(newPage);
+  };
+
+  const handlePageByInput = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const newPage = Number(e.target.value);
+    if (newPage <= totalPages) setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (
@@ -120,7 +131,7 @@ const TableList = ({
                   }}
                   edge="end"
                   aria-label="add"
-                  sx={{ padding: 0, marginRight: 0 }}
+                  sx={{ p: 0, mr: 0 }}
                 >
                   <AddBoxOutlined fontSize="small" />
                 </IconButton>
@@ -160,7 +171,12 @@ const TableList = ({
       </Table>
       {tableData.length > 10 && (
         <Box
-          sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            p: '8px 16px'
+          }}
         >
           <TablePagination
             sx={{ flex: 1 }}
@@ -169,18 +185,19 @@ const TableList = ({
             component="div"
             count={tableData.length}
             page={page}
-            onPageChange={handleChangePage}
+            onPageChange={handlePageBySelect}
             rowsPerPage={rowsPerPage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
           <TextField
-            sx={{ borderRadius: '8px', maxWidth: '60px' }}
-            placeholder="Search by Keyword"
+            sx={{ borderRadius: '8px', maxWidth: '64px', mr: 1 }}
             size="small"
-            type="number"
-            inputProps={{}}
-            onChange={() => {}}
+            value={page}
+            onChange={handlePageByInput}
           />
+          <Typography variant="body1" color={theme.palette.text.secondary}>
+            of {totalPages} pages
+          </Typography>
         </Box>
       )}
       {openVariableForm && id && (

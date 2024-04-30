@@ -153,7 +153,11 @@ export const theme = createTheme({
     MuiTablePagination: {
       styleOverrides: {
         spacer: { flex: 0 },
-        toolbar: { display: 'flex', alignItems: 'center' },
+        toolbar: {
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0 !important'
+        },
         actions: {
           display: 'flex',
           justifyContent: 'flex-end',

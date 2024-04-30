@@ -158,7 +158,6 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
               Filters
             </Button>
           </Stack>
-
           <TableList
             tableData={filteredBySelects}
             tabName={tab as VARIABLES_TABS}
