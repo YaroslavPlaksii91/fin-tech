@@ -129,6 +129,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
                 size="small"
                 color="inherit"
                 variant="outlined"
+                sx={{ minWidth: '80px', borderRadius: '6px' }}
                 startIcon={<TuneIcon sx={{ transform: 'rotate(180deg)' }} />}
                 onClick={handleFiltersOpen}
               >

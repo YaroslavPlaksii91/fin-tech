@@ -58,7 +58,7 @@ const Filters = ({
           <Stack spacing={1} alignItems="center" sx={{ padding: '8px 16px' }}>
             <Stack spacing={1} direction="row" alignItems="center" width="100%">
               <ChevronRightIcon sx={{ fontSize: '32px' }} />
-              <Typography variant="h4">Filters</Typography>
+              <Typography variant="h6">Filters</Typography>
               <Box
                 sx={{
                   display: 'flex',
