@@ -27,7 +27,8 @@
       "@domain/*": ["./domain/*"],
       "@constants/*": ["./constants/*"],
       "@contexts/*": ["./contexts/*"],
-      "@views/*": ["./views/*"]
+      "@views/*": ["./views/*"],
+      "@theme": ["./themeConfig"]
     },
 
     /* Linting */

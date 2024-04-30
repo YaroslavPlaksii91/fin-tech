@@ -1,6 +1,6 @@
 import { findAll } from 'highlight-words-core';
 
-import { palette } from '../themeConfig.ts';
+import { palette } from '@theme';
 
 export const highlightText = (
   searchWords: string[],

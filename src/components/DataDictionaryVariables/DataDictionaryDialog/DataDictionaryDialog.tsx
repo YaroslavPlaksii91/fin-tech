@@ -18,8 +18,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 
-import { palette, theme } from '../../../themeConfig.ts';
-
+import { palette, theme } from '@theme';
 import { DataDictionaryVariables } from '@contexts/DataDictionaryContext.tsx';
 import { highlightText } from '@utils/text.ts';
 import LoadingButton from '@components/shared/LoadingButton.tsx';

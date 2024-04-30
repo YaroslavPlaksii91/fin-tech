@@ -2,8 +2,7 @@ import { useState, useEffect, createContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography, Breadcrumbs, Stack, Link } from '@mui/material';
 
-import { theme } from '../themeConfig.ts';
-
+import { theme } from '@theme';
 import { LayoutContainer } from '@components/Layouts/MainLayout';
 import DataDictionaryVariables from '@components/DataDictionaryVariables/DataDictionaryVariables.tsx';
 import { IFlow } from '@domain/flow';

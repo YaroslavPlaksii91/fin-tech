@@ -2,8 +2,6 @@ import { useState, useMemo } from 'react';
 import { Box, Stack, Tabs, Typography, Button } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 
-import { theme } from '../../themeConfig';
-
 import { IFilters } from './Filters/types';
 import { INITIAL_FILTERS } from './Filters/constants';
 import { StyledTab } from './styled';
@@ -12,6 +10,7 @@ import TableList from './TableList/TableList';
 import TabPanel from './Tabs/TabPanel';
 import Filters from './Filters/Filters';
 
+import { theme } from '@theme';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { IFlow } from '@domain/flow';
 

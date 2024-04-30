@@ -2,7 +2,7 @@ import { Table, Paper, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { NavLink } from 'react-router-dom';
 
-import { theme } from '../../../themeConfig';
+import { theme } from '@theme';
 
 export const StyledTable = styled(Table)(() => ({
   borderRight: '1px solid rgba(209, 217, 226, 0.4)'

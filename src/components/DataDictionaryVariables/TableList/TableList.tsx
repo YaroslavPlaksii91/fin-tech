@@ -5,7 +5,9 @@ import {
   TableBody,
   IconButton,
   TablePagination,
-  Table
+  TextField,
+  Table,
+  Box
 } from '@mui/material';
 import { AddBoxOutlined } from '@mui/icons-material';
 
@@ -157,16 +159,29 @@ const TableList = ({
         </TableBody>
       </Table>
       {tableData.length > 10 && (
-        <TablePagination
-          showFirstButton
-          showLastButton
-          component="div"
-          count={tableData.length}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        <Box
+          sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+        >
+          <TablePagination
+            sx={{ flex: 1 }}
+            showFirstButton
+            showLastButton
+            component="div"
+            count={tableData.length}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+          <TextField
+            sx={{ borderRadius: '8px', maxWidth: '60px' }}
+            placeholder="Search by Keyword"
+            size="small"
+            type="number"
+            inputProps={{}}
+            onChange={() => {}}
+          />
+        </Box>
       )}
       {openVariableForm && id && (
         <VariableForm

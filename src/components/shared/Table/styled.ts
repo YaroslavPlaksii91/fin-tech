@@ -2,7 +2,7 @@ import { Paper, TableContainer, TableRow } from '@mui/material';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material/styles';
 
-import { theme } from '../../../themeConfig';
+import { theme } from '@theme';
 
 export const StyledTableCell = styled(TableCell)(({ theme }) => ({
   backgroundColor: 'rgba(248, 249, 251)',
