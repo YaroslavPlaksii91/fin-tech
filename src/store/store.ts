@@ -10,7 +10,11 @@ export const store = configureStore({
     auth: authReducer,
     flow,
     flowList
-  }
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false
+    })
 });
 
 export type RootState = ReturnType<typeof store.getState>;

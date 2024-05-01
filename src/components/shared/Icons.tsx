@@ -7,7 +7,6 @@ import MuiCircularProgress, {
 } from '@mui/material/CircularProgress';
 import MuiMoreVertIcon from '@mui/icons-material/MoreVert';
 import MuiCloseIcon from '@mui/icons-material/Close';
-import MuiCheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import MuiErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import MuiRemoveIcon from '@mui/icons-material/Remove';
 import MuiRemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
@@ -69,17 +68,6 @@ export const ErrorOutlineOutlinedIcon = ({
   ...props
 }: IconPros) => (
   <MuiErrorOutlineOutlinedIcon
-    sx={{ width: size, height: size, ...sx }}
-    {...props}
-  />
-);
-
-export const CheckCircleOutlinedIcon = ({
-  size = defaultIconSize,
-  sx,
-  ...props
-}: IconPros) => (
-  <MuiCheckCircleOutlinedIcon
     sx={{ width: size, height: size, ...sx }}
     {...props}
   />
@@ -916,6 +904,21 @@ export const ArrowLeftArrowRightSquare = () => (
     />
     <path
       d="M8.66699 12.918C8.47499 12.918 8.28296 12.845 8.13696 12.698L6.46997 11.031C6.40097 10.962 6.34708 10.8811 6.30908 10.7901C6.27108 10.6991 6.25098 10.601 6.25098 10.501C6.25098 10.401 6.27208 10.3029 6.30908 10.2119C6.34708 10.1209 6.40197 10.039 6.46997 9.96999L8.13696 8.303C8.42996 8.01 8.905 8.01 9.198 8.303C9.491 8.596 9.491 9.07104 9.198 9.36404L8.81104 9.751H15C15.414 9.751 15.75 10.087 15.75 10.501C15.75 10.915 15.414 11.251 15 11.251H8.81104L9.19702 11.637C9.49002 11.929 9.49002 12.405 9.19702 12.698C9.05102 12.845 8.85899 12.918 8.66699 12.918ZM17.75 14.4981C17.75 14.3981 17.7289 14.3 17.6919 14.209C17.6539 14.118 17.599 14.0361 17.531 13.9671L15.864 12.3001C15.571 12.0071 15.096 12.0071 14.803 12.3001C14.51 12.5931 14.51 13.0681 14.803 13.3611L15.189 13.7471H9C8.586 13.7471 8.25 14.0831 8.25 14.4971C8.25 14.9111 8.586 15.2471 9 15.2471H15.189L14.803 15.6331C14.51 15.9251 14.51 16.4011 14.803 16.6941C14.949 16.8401 15.141 16.9141 15.333 16.9141C15.524 16.9141 15.717 16.8411 15.863 16.6941L17.53 15.0271C17.599 14.9581 17.6529 14.8759 17.6909 14.7849C17.7289 14.6959 17.75 14.5981 17.75 14.4981Z"
+      fill="#1B5E20"
+    />
+  </svg>
+);
+
+export const CheckCircle = () => (
+  <svg
+    width={22}
+    height={22}
+    viewBox="0 0 22 22"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M11.0002 1.14583C5.56616 1.14583 1.146 5.56691 1.146 11C1.146 16.4331 5.56616 20.8542 11.0002 20.8542C16.4342 20.8542 20.8543 16.4331 20.8543 11C20.8543 5.56691 16.4342 1.14583 11.0002 1.14583ZM11.0002 19.4792C6.32425 19.4792 2.521 15.6759 2.521 11C2.521 6.32408 6.32425 2.52083 11.0002 2.52083C15.6761 2.52083 19.4793 6.32408 19.4793 11C19.4793 15.6759 15.6761 19.4792 11.0002 19.4792ZM14.6943 8.37465C14.9629 8.64323 14.9629 9.07868 14.6943 9.34726L10.4163 13.6253C10.2824 13.7592 10.1064 13.827 9.93042 13.827C9.75442 13.827 9.57842 13.7601 9.44459 13.6253L7.306 11.4867C7.03741 11.2182 7.03741 10.7827 7.306 10.5141C7.57458 10.2456 8.01 10.2456 8.27858 10.5141L9.93134 12.1669L13.7227 8.3756C13.9912 8.10702 14.4257 8.10698 14.6943 8.37465Z"
       fill="#1B5E20"
     />
   </svg>

@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 import { formatFlowOnSave } from '../utils/formatFlowOnSave';
 import { CustomReactFlowInstance } from '../types';
@@ -43,14 +44,14 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
           flow: { ...flow, data: flowData },
           rfInstance
         });
-        const { payload } = await dispatch(saveFlow(formattedData));
-        const savedFlow = payload as IFlow;
+        const resultAction = await dispatch(saveFlow(formattedData));
+        const savedFlow = unwrapResult(resultAction);
         setCopyFlow(savedFlow);
 
         enqueueSnackbar(
           <SnackbarMessage
             message="Success"
-            details={`Changes for the "${flowData.name}" flow were successfully saved.`}
+            details={`Changes for the "${savedFlow.data.name}" flow were successfully saved.`}
           />,
           { variant: SNACK_TYPE.SUCCESS }
         );
@@ -75,12 +76,13 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
           flow: { ...flow, data: flowData },
           rfInstance
         });
-        await dispatch(pushProductionFlow(formattedData));
+        const resultAction = await dispatch(pushProductionFlow(formattedData));
+        const pushedFlow = unwrapResult(resultAction);
 
         enqueueSnackbar(
           <SnackbarMessage
             message="Success"
-            details={`"${flowData.name}" flow is published into the production successfully.`}
+            details={`"${pushedFlow.data.name}" flow is published into the production successfully.`}
           />,
           { variant: SNACK_TYPE.SUCCESS }
         );
