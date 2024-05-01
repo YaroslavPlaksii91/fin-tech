@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { indexOf, map } from 'lodash';
 import {
   IconButton,
@@ -12,7 +13,7 @@ import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
 
-import { StyledStack, StyledNavLink } from './styled';
+import { StyledStack } from './styled';
 
 import {
   Edit,
@@ -33,6 +34,8 @@ import { dataDictionaryService } from '@services/data-dictionary';
 import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
+import { StepType } from '@components/FlowManagment/FlowChart/types';
+import { theme } from '@theme';
 
 type TableRowProps = {
   row:
@@ -73,6 +76,7 @@ export const TableRow = ({
   const [isExpanded, setisExpanded] = useState(false);
   const [variableUsageNodes, setVariableUsageNodes] = useState<FlowNode[]>([]);
 
+  const navigate = useNavigate();
   const value = useContext(DataDictionaryPageContext);
 
   const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
@@ -183,17 +187,29 @@ export const TableRow = ({
             <Stack margin={1} spacing={1}>
               <Typography variant="body1">This variable is used in:</Typography>
               {variableUsageNodes.map((flowNode) => (
-                <StyledStack key={flowNode.id} aria-label="breadcrumb">
+                <StyledStack
+                  key={flowNode.id}
+                  aria-label="breadcrumb"
+                  onClick={() =>
+                    navigate(routes.underwriting.flow.edit(flowId), {
+                      state: { activeStepId: flowNode.id }
+                    })
+                  }
+                >
                   <Stack>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      {flowNode.type === 'Calculation' ? (
+                      {flowNode.type === StepType.CALCULATION ? (
                         <CalculatorIcon />
                       ) : (
                         <DecisionTableIcon />
                       )}
-                      <StyledNavLink to={routes.underwriting.flow.edit(flowId)}>
+                      <Typography
+                        sx={{ textDecoration: 'underline' }}
+                        variant="body1"
+                        color={theme.palette.info.main}
+                      >
                         {flowNode.data.name}
-                      </StyledNavLink>
+                      </Typography>
                     </Box>
                   </Stack>
                 </StyledStack>

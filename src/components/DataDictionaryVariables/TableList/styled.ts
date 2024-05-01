@@ -1,6 +1,5 @@
 import { Table, Paper, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { NavLink } from 'react-router-dom';
 
 import { theme } from '@theme';
 
@@ -17,15 +16,3 @@ export const StyledPaper = styled(Paper)(() => ({
 export const StyledStack = styled(Stack)(() => ({
   cursor: 'pointer'
 }));
-
-export const StyledNavLink = styled(NavLink)(
-  ({
-    theme: {
-      palette: { info },
-      typography: { body1 }
-    }
-  }) => ({
-    ...body1,
-    color: info.main
-  })
-);
