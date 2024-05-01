@@ -3,10 +3,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { enqueueSnackbar } from 'notistack';
 
-import { theme } from '../../../themeConfig';
-
 import { createDuplicateFlowData } from './createDuplicateFlowData';
 
+import { theme } from '@theme';
 import Dialog from '@components/shared/Modals/Dialog';
 import { IFlow, IFlowListItem } from '@domain/flow';
 import { flowService } from '@services/flow-service';

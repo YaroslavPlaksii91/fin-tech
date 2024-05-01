@@ -38,7 +38,8 @@ module.exports = {
           '@store': './src/store',
           '@contexts': './src/contexts',
           '@views': './src/views',
-          '@public': './public'
+          '@public': './public',
+          '@theme': './src/themeConfig'
         },
         extensions: ['.js', '.jsx', '.ts', '.tsx']
       }

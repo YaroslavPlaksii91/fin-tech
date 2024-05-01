@@ -10,6 +10,7 @@ import TableList from './TableList/TableList';
 import TabPanel from './Tabs/TabPanel';
 import Filters from './Filters/Filters';
 
+import { theme } from '@theme';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { IFlow } from '@domain/flow';
 
@@ -88,7 +89,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
   return (
     <Stack>
-      <Typography variant="h3" pb={3}>
+      <Typography variant="h4" pt={1} pb={1} color={theme.palette.text.primary}>
         Data Dictionary
       </Typography>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -157,7 +158,6 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
               Filters
             </Button>
           </Stack>
-
           <TableList
             tableData={filteredBySelects}
             tabName={tab as VARIABLES_TABS}

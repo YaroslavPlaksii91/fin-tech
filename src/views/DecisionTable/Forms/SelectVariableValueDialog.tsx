@@ -3,13 +3,13 @@ import { Button, Stack, InputAdornment, MenuItem } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { palette } from '../../../themeConfig';
 import { OPERATORS, CATEGORIES } from '../constants';
 import { SelectedCellInRowData, FormFieldsProps } from '../types';
 import { getOperatorOptions } from '../utils';
 
 import validationSchema from './validationSchema';
 
+import { palette } from '@theme';
 import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';

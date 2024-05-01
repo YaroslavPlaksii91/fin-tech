@@ -1,7 +1,14 @@
 import { useState, useEffect, useContext } from 'react';
-import { indexOf, map } from 'lodash';
 import { useNavigate } from 'react-router-dom';
-import { IconButton, Stack, Button, Collapse, Typography } from '@mui/material';
+import { indexOf, map } from 'lodash';
+import {
+  IconButton,
+  Stack,
+  Button,
+  Collapse,
+  Typography,
+  Box
+} from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
@@ -9,8 +16,10 @@ import { VARIABLES_TABS } from '../constants';
 import { StyledStack } from './styled';
 
 import {
-  DeleteOutlineIcon,
-  EditNoteOutlinedIcon
+  Edit,
+  Trash,
+  CalculatorIcon,
+  DecisionTableIcon
 } from '@components/shared/Icons';
 import {
   StyledTableCell,
@@ -23,8 +32,10 @@ import {
 import { FlowNode } from '@domain/flow';
 import { dataDictionaryService } from '@services/data-dictionary';
 import { DataDictionaryPageContext } from '@pages/DataDictionary';
-import routes from '@constants/routes';
 import Logger from '@utils/logger';
+import routes from '@constants/routes';
+import { StepType } from '@components/FlowManagment/FlowChart/types';
+import { theme } from '@theme';
 
 type TableRowProps = {
   row:
@@ -65,8 +76,10 @@ export const TableRow = ({
   const [isExpanded, setisExpanded] = useState(false);
   const [variableUsageNodes, setVariableUsageNodes] = useState<FlowNode[]>([]);
 
-  const value = useContext(DataDictionaryPageContext);
   const navigate = useNavigate();
+  const value = useContext(DataDictionaryPageContext);
+
+  const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
 
   const getVariableUsage = async (variableName: string) => {
     const resultData: FlowNode[] = [];
@@ -97,7 +110,11 @@ export const TableRow = ({
 
   return (
     <>
-      <StyledTableRow key={index} sx={{ '& > *': { borderBottom: 'unset' } }}>
+      <StyledTableRow
+        parity={rowParity}
+        key={index}
+        sx={{ ...(isExpanded && { '& > td': { border: 'unset' } }) }}
+      >
         <StyledTableCell>
           <IconButton
             aria-label="expand row"
@@ -117,9 +134,14 @@ export const TableRow = ({
         <StyledTableCell>{row.defaultValue}</StyledTableCell>
         <StyledTableCell>{row.description}</StyledTableCell>
         {tabName === VARIABLES_TABS.userDefined && (
-          <StyledTableCell align="right" sx={{ padding: 0 }} width={70}>
-            <Stack direction="row" sx={{ maxWidth: '0px' }}>
+          <StyledTableCell>
+            <Stack spacing={1} direction="row">
               <Button
+                sx={{
+                  minWidth: 'auto',
+                  width: 'auto',
+                  p: 0
+                }}
                 onClick={() => {
                   const indexOfVariable = indexOf(
                     map(value?.temporaryVariables, 'name'),
@@ -134,9 +156,14 @@ export const TableRow = ({
                   setOpenVariableForm(true);
                 }}
               >
-                <EditNoteOutlinedIcon />
+                <Edit />
               </Button>
               <Button
+                sx={{
+                  minWidth: 'auto',
+                  width: 'auto',
+                  p: 0
+                }}
                 onClick={() =>
                   setDeleteVariable({
                     name: row.name,
@@ -144,23 +171,21 @@ export const TableRow = ({
                   })
                 }
               >
-                <DeleteOutlineIcon />
+                <Trash />
               </Button>
             </Stack>
           </StyledTableCell>
         )}
       </StyledTableRow>
-      <StyledTableRow>
+      <StyledTableRow parity={rowParity}>
         <StyledTableCell
           style={{ paddingBottom: 0, paddingTop: 0 }}
           colSpan={6}
+          sx={{ ...(!isExpanded && { border: 'unset' }) }}
         >
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>
             <Stack margin={1} spacing={1}>
-              <Typography variant="body1" fontWeight={600}>
-                This variable is used in:
-              </Typography>
-
+              <Typography variant="body1">This variable is used in:</Typography>
               {variableUsageNodes.map((flowNode) => (
                 <StyledStack
                   key={flowNode.id}
@@ -171,7 +196,22 @@ export const TableRow = ({
                     })
                   }
                 >
-                  {flowNode?.data?.name}
+                  <Stack>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      {flowNode.type === StepType.CALCULATION ? (
+                        <CalculatorIcon />
+                      ) : (
+                        <DecisionTableIcon />
+                      )}
+                      <Typography
+                        sx={{ textDecoration: 'underline' }}
+                        variant="body1"
+                        color={theme.palette.info.main}
+                      >
+                        {flowNode.data.name}
+                      </Typography>
+                    </Box>
+                  </Stack>
                 </StyledStack>
               ))}
             </Stack>

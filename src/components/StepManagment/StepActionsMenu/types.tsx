@@ -1,5 +1,4 @@
-import { theme } from '../../../themeConfig';
-
+import { theme } from '@theme';
 import {
   CopyAlt,
   Edit,

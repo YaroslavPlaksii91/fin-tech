@@ -59,6 +59,10 @@ export default defineConfig(() => ({
       {
         find: '@views',
         replacement: resolve(__dirname, './src/views')
+      },
+      {
+        find: '@theme',
+        replacement: resolve(__dirname, './src/themeConfig')
       }
     ]
   }

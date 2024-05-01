@@ -13,8 +13,7 @@ import {
 import dayjs from 'dayjs';
 import TripOriginIcon from '@mui/icons-material/TripOrigin';
 
-import { palette } from '../../themeConfig.ts';
-
+import { palette } from '@theme';
 import { ChangeHistoryRecord } from '@domain/changeHistory.ts';
 import { FULL_DATE_TIME_FORMAT } from '@constants/common.ts';
 import { Row } from '@components/ChangeHistory/ChangeHistory.utils.tsx';

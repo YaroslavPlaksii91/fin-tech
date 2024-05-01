@@ -3,8 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 
-import { theme } from '../../../themeConfig';
-
+import { theme } from '@theme';
 import Dialog from '@components/shared/Modals/Dialog';
 import Logger from '@utils/logger';
 import { useAppDispatch } from '@store/hooks';

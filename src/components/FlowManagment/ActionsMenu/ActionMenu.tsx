@@ -5,10 +5,10 @@ import { IconButton } from '@mui/material';
 import { RenameFlow } from '../RenameFlow/RenameFlowForm';
 import { DeleteFlow } from '../DeleteFlow/DeleteFlow';
 import { DuplicateFlow } from '../DuplicateFlow/DuplicateFlow';
-import { theme } from '../../../themeConfig';
 
 import Details from './Details';
 
+import { theme } from '@theme';
 import Menu from '@components/shared/Menu/Menu';
 import { IFlowListItem } from '@domain/flow';
 import Logger from '@utils/logger';

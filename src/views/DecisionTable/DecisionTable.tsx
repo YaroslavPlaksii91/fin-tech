@@ -3,8 +3,6 @@ import { Button, Typography, Stack, TableHead, TableBody } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { keyBy } from 'lodash';
 
-import { palette } from '../../themeConfig';
-
 import { CATEGORIES, CATEGORIES_WITHOUT_ELSE_ACTIONS } from './constants';
 import {
   VariableColumnData,
@@ -26,6 +24,7 @@ import {
   setVariableSources
 } from './utils';
 
+import { palette } from '@theme';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import { AddIcon } from '@components/shared/Icons';
 import {

@@ -60,6 +60,11 @@ export const theme = createTheme({
       main: '#E24A4A',
       light: '#FFCCCC'
     },
+    info: {
+      main: '#0288D1',
+      dark: '#01579B',
+      light: '#03A9F4'
+    },
     action: {
       active: 'rgba(0,0,0,0.56)',
       hover: 'rgba(0,0,0,0.04)',
@@ -143,6 +148,23 @@ export const theme = createTheme({
         root: {
           fontSize: '14px'
         }
+      }
+    },
+    MuiTablePagination: {
+      styleOverrides: {
+        spacer: { flex: 0 },
+        toolbar: {
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0 !important'
+        },
+        actions: {
+          display: 'flex',
+          justifyContent: 'flex-end',
+          flexGrow: 1
+        },
+        input: { margin: '0 8px' },
+        displayedRows: { color: 'rgba(0,0,0,0.38)', margin: 0 }
       }
     }
   },

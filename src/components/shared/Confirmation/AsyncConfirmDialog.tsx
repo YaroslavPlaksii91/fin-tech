@@ -2,8 +2,7 @@ import React from 'react';
 import { ThemeProvider, Typography } from '@mui/material';
 import { confirmable, createConfirmation } from 'react-confirm';
 
-import { theme } from '../../../themeConfig.ts';
-
+import { theme } from '@theme';
 import Dialog from '@components/shared/Modals/Dialog.tsx';
 
 const AsyncConfirmDialog: React.FC<AsyncConfirmDialogProps> = ({

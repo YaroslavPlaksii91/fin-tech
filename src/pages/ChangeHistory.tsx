@@ -9,8 +9,7 @@ import {
 } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
-import { palette } from '../themeConfig.ts';
-
+import { palette } from '@theme';
 import routes from '@constants/routes.ts';
 import { changeHistoryService } from '@services/change-history.tsx';
 import Logger from '@utils/logger.ts';

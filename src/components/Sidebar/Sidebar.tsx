@@ -11,8 +11,6 @@ import {
 } from '@mui/material';
 import { NavLink, useParams } from 'react-router-dom';
 
-import { theme } from '../../themeConfig';
-
 import {
   Label,
   SidebarToggle,
@@ -46,6 +44,7 @@ import { useLoading } from '@contexts/LoadingContext';
 import { AddFlow } from '@components/FlowManagment/AddFlow/AddFlowForm';
 import StepList from '@components/StepManagment/StepList/StepList';
 import { useStep } from '@contexts/StepContext';
+import { theme } from '@theme';
 
 const animationStyles = (expanded: boolean) => ({
   maxWidth: expanded ? '100%' : 0,

@@ -1,10 +1,8 @@
 import { useState, useEffect, createContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography, Breadcrumbs, Stack, Link } from '@mui/material';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
-import { palette } from '../themeConfig.ts';
-
+import { theme } from '@theme';
 import { LayoutContainer } from '@components/Layouts/MainLayout';
 import DataDictionaryVariables from '@components/DataDictionaryVariables/DataDictionaryVariables.tsx';
 import { IFlow } from '@domain/flow';
@@ -50,23 +48,18 @@ export default function DataDictionary() {
   const breadcrumbs = [
     <Link
       underline="hover"
-      key="flow-list"
-      variant="body2"
-      color={palette.gray}
-      href={routes.underwriting.flow.list}
-    >
-      Flow list
-    </Link>,
-    <Link
-      underline="hover"
       key="main-flow"
-      variant="body2"
-      color={palette.gray}
+      variant="body1"
+      color={theme.palette.text.secondary}
       href={`${routes.underwriting.flow.list}/${id}`}
     >
-      Main flow
+      {flow?.data.name}
     </Link>,
-    <Typography key="data-dictionary" variant="body2" color={palette.gray}>
+    <Typography
+      key="data-dictionary"
+      variant="body1"
+      color={theme.palette.text.primary}
+    >
       Data dictionary
     </Typography>
   ];
@@ -80,12 +73,14 @@ export default function DataDictionary() {
 
   return (
     <LayoutContainer>
-      <Stack paddingX={12} sx={{ width: '100%' }}>
-        <Stack spacing={2} pt={2} pb={2}>
-          <Breadcrumbs
-            separator={<NavigateNextIcon fontSize="medium" />}
-            aria-label="breadcrumb"
-          >
+      <Stack
+        px={3}
+        pt={2}
+        pb={3}
+        sx={{ width: '100%', background: theme.palette.background.default }}
+      >
+        <Stack spacing={2}>
+          <Breadcrumbs separator="/" aria-label="breadcrumb">
             {breadcrumbs}
           </Breadcrumbs>
         </Stack>
