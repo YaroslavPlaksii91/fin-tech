@@ -14,7 +14,12 @@ import { VARIABLES_TABS } from '../constants';
 
 import { StyledStack, StyledNavLink } from './styled';
 
-import { Edit, Trash, Calculator } from '@components/shared/Icons';
+import {
+  Edit,
+  Trash,
+  CalculatorIcon,
+  DecisionTableIcon
+} from '@components/shared/Icons';
 import {
   StyledTableCell,
   StyledTableRow
@@ -181,7 +186,11 @@ export const TableRow = ({
                 <StyledStack key={flowNode.id} aria-label="breadcrumb">
                   <Stack>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Calculator />
+                      {flowNode.type === 'Calculation' ? (
+                        <CalculatorIcon />
+                      ) : (
+                        <DecisionTableIcon />
+                      )}
                       <StyledNavLink to={routes.underwriting.flow.edit(flowId)}>
                         {flowNode.data.name}
                       </StyledNavLink>
