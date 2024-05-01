@@ -14,12 +14,9 @@ import { VARIABLES_TABS } from '../constants';
 
 import { StyledStack, StyledNavLink } from './styled';
 
-import {
-  Edit,
-  Trash,
-  CalculatorIcon,
-  DecisionTableIcon
-} from '@components/shared/Icons';
+import CalculatorIcon from '@icons/calculator.svg';
+import BlocksIcon from '@icons/blocks.svg';
+import { Edit, Trash } from '@components/shared/Icons';
 import {
   StyledTableCell,
   StyledTableRow
@@ -33,6 +30,7 @@ import { dataDictionaryService } from '@services/data-dictionary';
 import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
+import { theme } from '@theme';
 
 type TableRowProps = {
   row:
@@ -187,9 +185,9 @@ export const TableRow = ({
                   <Stack>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       {flowNode.type === 'Calculation' ? (
-                        <CalculatorIcon />
+                        <CalculatorIcon color={theme.palette.primary.main} />
                       ) : (
-                        <DecisionTableIcon />
+                        <BlocksIcon color={theme.palette.primary.main} />
                       )}
                       <StyledNavLink to={routes.underwriting.flow.edit(flowId)}>
                         {flowNode.data.name}

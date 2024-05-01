@@ -38,6 +38,7 @@ declare module '@mui/material/styles' {
   interface Palette extends CustomPalette {}
   interface PaletteOptions extends CustomPalette {}
 }
+
 export const theme = createTheme({
   palette: {
     ...palette,
