@@ -77,7 +77,7 @@ const Sidebar = () => {
   const [expanded, setExpanded] = useState(true);
   const [expandedFlow, setExpandedFlow] = useState<string | false>(false);
 
-  const [expandedFlowList, setExpandedFlowList] = useState<boolean>(false);
+  const [expandedFlowList, setExpandedFlowList] = useState<boolean>(true);
 
   const sidebarWidth = expanded ? 400 : 70;
 
@@ -91,7 +91,6 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    // Rename fetch data
     const fetchData = async () => {
       try {
         startLoading();
@@ -107,7 +106,7 @@ const Sidebar = () => {
   }, []);
 
   useEffect(() => {
-    const fetchInitialData = async (flowId: string) => {
+    const fetchFlow = async (flowId: string) => {
       try {
         startLoading();
         if (id === PRODUCTION_FLOW_ID) {
@@ -124,7 +123,7 @@ const Sidebar = () => {
 
     resetActiveStepId();
     if (id) {
-      void fetchInitialData(id);
+      void fetchFlow(id);
     } else {
       dispatch(setInitialFlow());
     }
@@ -166,23 +165,10 @@ const Sidebar = () => {
               aria-controls="flowList-content"
               id="flowList-header"
             >
-              <NavLink
-                style={{
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  display: 'flex',
-                  flexGrow: 1,
-                  alignItems: 'center'
-                }}
-                to={`${routes.underwriting.flow.list}`}
-              >
-                <ListItemIcon>
-                  <LineChartDots />
-                </ListItemIcon>
-                <Typography sx={animationStyles(expanded)}>
-                  Flow List
-                </Typography>
-              </NavLink>
+              <ListItemIcon>
+                <LineChartDots />
+              </ListItemIcon>
+              <Typography sx={animationStyles(expanded)}>Flow List</Typography>
             </StyledMainAccordionSummary>
             <StyledAccordionDetails>
               <Label variant="body2">Flow on Production</Label>
@@ -247,11 +233,7 @@ const Sidebar = () => {
             </StyledAccordionDetails>
           </Accordion>
         ) : (
-          <ListItemButton
-            sx={{ height: '32px', marginBottom: '8px' }}
-            component={NavLink}
-            to={routes.underwriting.flow.list}
-          >
+          <ListItemButton sx={{ height: '32px', marginBottom: '8px' }}>
             <ListItemIcon>
               <LineChartDots />
             </ListItemIcon>

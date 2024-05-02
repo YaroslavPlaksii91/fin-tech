@@ -4,12 +4,12 @@
   flex-direction: column;
   width: 100%;
 
-  //textarea {
-  //  color: transparent;
-  //  position: relative;
-  //  z-index: 2;
-  // caret-color: red;
-  //}
+  /* textarea {
+    color: transparent;
+    position: relative;
+    z-index: 2;
+    caret-color: red;
+  } */
 
   .coloredValue {
     font-family: Inter, sans-serif;
@@ -23,11 +23,12 @@
     right: 0;
     word-break: break-word;
     color: #5f6d7e;
-    //z-index: 0;
+
+    /* z-index: 0; */
     user-select: none;
     letter-spacing: 0;
 
-    // uncomment when colors be ready
+    /* uncomment when colors be ready; */
     display: none;
   }
 

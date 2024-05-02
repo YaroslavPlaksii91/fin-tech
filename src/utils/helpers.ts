@@ -2,13 +2,20 @@ import { AxiosError } from 'axios';
 import { FieldErrors } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
-import { GENERAL_SERVER_ERROR, PRODUCTION_FLOW_ID } from '@constants/common';
+import {
+  GENERAL_SERVER_ERROR,
+  NOT_FOUND,
+  PRODUCTION_FLOW_ID
+} from '@constants/common';
 
 type Errors = {
   [key: string]: string[];
 };
 
 const parseAxiosError = (error: AxiosError) => {
+  if (error.response && error.response.status === 404) {
+    return [NOT_FOUND];
+  }
   if (
     error.response &&
     error.response.data &&

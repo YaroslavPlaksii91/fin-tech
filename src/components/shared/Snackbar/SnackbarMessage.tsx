@@ -1,7 +1,7 @@
 import { Stack, Typography } from '@mui/material';
 import AlertTitle from '@mui/material/AlertTitle';
 
-import { CheckCircleOutlinedIcon, ErrorOutlineOutlinedIcon } from '../Icons';
+import { CheckCircle, ErrorOutlineOutlinedIcon } from '../Icons';
 
 import { parseErrorMessages } from '@utils/helpers';
 
@@ -19,17 +19,14 @@ const SnackbarMessage: React.FC<SnackbarMessageProps> = ({
   message,
   details
 }) => (
-  <Stack>
-    <AlertTitle
-      color="primary"
-      sx={{ display: 'flex', alignItems: 'center', paddingBottom: '8px' }}
-    >
-      <CheckCircleOutlinedIcon sx={{ marginRight: 1 }} size="21px" />
-      {message}
-    </AlertTitle>
-    <Typography color="primary" variant="body2">
-      {details}
-    </Typography>
+  <Stack display="flex" flexDirection="row" gap={1.5}>
+    <CheckCircle />
+    <Stack display="flex" flexDirection="column">
+      <AlertTitle color="primary">{message}</AlertTitle>
+      <Typography color="primary" variant="body2">
+        {details}
+      </Typography>
+    </Stack>
   </Stack>
 );
 
@@ -39,20 +36,16 @@ const SnackbarErrorMessage: React.FC<SnackbarErrorMessageProps> = ({
 }) => {
   const errors = parseErrorMessages(error);
   return (
-    <Stack>
-      <AlertTitle
-        color="error"
-        sx={{ display: 'flex', alignItems: 'center', paddingBottom: '8px' }}
-      >
-        <ErrorOutlineOutlinedIcon sx={{ marginRight: 1 }} size="21px" />
-        {message}
-      </AlertTitle>
-
-      {errors.map((err, idx) => (
-        <Typography key={idx} variant="body2" color="error">
-          {err}
-        </Typography>
-      ))}
+    <Stack display="flex" flexDirection="row" gap={1.5}>
+      <ErrorOutlineOutlinedIcon color="error" />
+      <Stack display="flex" flexDirection="column">
+        <AlertTitle color="error">{message}</AlertTitle>
+        {errors.map((err, idx) => (
+          <Typography key={idx} variant="body2" color="error">
+            {err}
+          </Typography>
+        ))}
+      </Stack>
     </Stack>
   );
 };

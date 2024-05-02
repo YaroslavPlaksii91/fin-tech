@@ -43,7 +43,6 @@ import { DEFAULT_SOURCE_HANDLE } from '../constants';
 
 import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
 import { FlowNode, IFlow } from '@domain/flow';
-import { MainContainer } from '@components/Layouts/MainLayout';
 import { useStep } from '@contexts/StepContext';
 import StepConfigureView from '@components/StepManagment/StepConfigureView/StepConfigureView';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
@@ -308,55 +307,49 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 
   return (
     <DataDictionaryContext.Provider value={{ variables }}>
-      <MainContainer>
-        <NodePositioning
-          edges={edges}
-          setEdges={setEdges}
-          setNodes={setNodes}
+      <NodePositioning edges={edges} setEdges={setEdges} setNodes={setNodes} />
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        autoPanOnNodeDrag
+        onPaneClick={onPaneClick}
+        onNodeContextMenu={onNodeContextMenu}
+        onNodeDragStop={onNodeDragStop}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onEdgesDelete={onEdgesDelete}
+        onNodesDelete={onNodesDelete}
+        onNodeDragStart={onNodeDragStart}
+        onInit={(instance) => {
+          setRfInstance({
+            ...instance,
+            onAddNodeBetweenEdges
+          });
+        }}
+        onConnect={onConnect}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        attributionPosition="bottom-left"
+        connectionMode={ConnectionMode.Loose}
+        connectionLineType={ConnectionLineType.SmoothStep}
+      >
+        <Background variant={BackgroundVariant.Dots} />
+        <ControlPanelEdit
+          flow={flow}
+          setCopyFlow={setCopyFlow}
+          isDirty={isDirty}
+          rfInstance={rfInstance}
         />
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          autoPanOnNodeDrag
-          onPaneClick={onPaneClick}
-          onNodeContextMenu={onNodeContextMenu}
-          onNodeDragStop={onNodeDragStop}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onEdgesDelete={onEdgesDelete}
-          onNodesDelete={onNodesDelete}
-          onNodeDragStart={onNodeDragStart}
-          onInit={(instance) => {
-            setRfInstance({
-              ...instance,
-              onAddNodeBetweenEdges
-            });
-          }}
-          onConnect={onConnect}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          attributionPosition="bottom-left"
-          connectionMode={ConnectionMode.Loose}
-          connectionLineType={ConnectionLineType.SmoothStep}
-        >
-          <Background variant={BackgroundVariant.Lines} />
-          <ControlPanelEdit
-            flow={flow}
-            setCopyFlow={setCopyFlow}
-            isDirty={isDirty}
-            rfInstance={rfInstance}
-          />
-          <Controls />
-        </ReactFlow>
-        {rfInstance && activeStepId && (
-          <StepConfigureView
-            flow={flow}
-            resetActiveStepId={resetActiveStepId}
-            rfInstance={rfInstance}
-            activeStepId={activeStepId}
-          />
-        )}
-      </MainContainer>
+        <Controls />
+      </ReactFlow>
+      {rfInstance && activeStepId && (
+        <StepConfigureView
+          flow={flow}
+          resetActiveStepId={resetActiveStepId}
+          rfInstance={rfInstance}
+          activeStepId={activeStepId}
+        />
+      )}
       <StepActionsMenu
         activeStepId={activeStepId}
         anchorElement={nodeElement}

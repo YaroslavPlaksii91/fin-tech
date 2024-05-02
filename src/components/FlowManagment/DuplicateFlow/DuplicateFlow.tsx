@@ -2,12 +2,13 @@ import { Typography } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { enqueueSnackbar } from 'notistack';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 import { createDuplicateFlowData } from './createDuplicateFlowData';
 
 import { theme } from '@theme';
 import Dialog from '@components/shared/Modals/Dialog';
-import { IFlow, IFlowListItem } from '@domain/flow';
+import { IFlowListItem } from '@domain/flow';
 import { flowService } from '@services/flow-service';
 import routes from '@constants/routes';
 import {
@@ -38,8 +39,8 @@ export const DuplicateFlow: React.FC<DuplicateFlowProps> = ({
       setConfirmLoading(true);
       const flowDetails = await flowService.getFlow(flow.id);
       const flowDuplicateData = createDuplicateFlowData(flowDetails);
-      const { payload } = await dispatch(createFlow(flowDuplicateData));
-      const createdFlow = payload as IFlow;
+      const resultAction = await dispatch(createFlow(flowDuplicateData));
+      const createdFlow = unwrapResult(resultAction);
       navigate(`${routes.underwriting.flow.list}/${createdFlow.id}`);
       enqueueSnackbar(
         <SnackbarMessage

@@ -55,7 +55,7 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
       onPaneClick={onPaneClick}
       onNodeContextMenu={isProductionFlow ? undefined : onNodeContextMenu}
     >
-      <Background variant={BackgroundVariant.Lines} />
+      <Background variant={BackgroundVariant.Dots} />
       <Controls />
       <StepActionsMenu
         activeStepId={null}
@@ -64,7 +64,7 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
         isOpen={Boolean(flowNode)}
         onClose={onPaneClick}
       />
-      {showControlPanel && <ControlPanelView flowName={flow.data.name} />}
+      {showControlPanel && <ControlPanelView />}
     </ReactFlow>
   );
 };

@@ -4,15 +4,10 @@
   "ignoreAtRules": ["function", "if", "else", "mixin", "include"],
   "rules": {
     "prettier/prettier": true,
-    "indentation": 2,
     "max-nesting-depth": 4,
     "declaration-colon-newline-after": null,
-    "block-closing-brace-newline-after": [
-      "always",
-      {
-        "ignoreAtRules": ["if", "else"]
-      }
-    ],
+    "declaration-block-no-redundant-longhand-properties": null,
+    "selector-class-pattern": null,
     "order/order": [
       "dollar-variables",
       "custom-properties",

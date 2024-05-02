@@ -46,7 +46,15 @@ export const StyledNavLink = styled(NavLink)(({ theme: { palette } }) => ({
   borderRadius: '4px',
   '&.active, &:hover': {
     backgroundColor: palette.amber,
-    color: palette.primary.main
+    color: palette.primary.main,
+    '.MuiListItemIcon-root': {
+      svg: {
+        path: {
+          fill: palette.primary.dark,
+          fillOpacity: 'unset'
+        }
+      }
+    }
   }
 }));
 
