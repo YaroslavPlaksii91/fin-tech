@@ -26,7 +26,6 @@ export const options = [
     id: StepType.SUBFLOW,
     dataKey: StepType.SUBFLOW,
     label: 'Subflow',
-    icon: <LineChartDots />,
-    disabled: true
+    icon: <LineChartDots />
   }
 ];

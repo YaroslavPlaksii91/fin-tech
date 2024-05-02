@@ -6,7 +6,7 @@ export enum StepType {
   DECISION_TABLE = 'DecisionTable',
   CALCULATION = 'Calculation',
   CHAMPION_CHALLENGER = 'ChampionChallenger',
-  SUBFLOW = 'subflow',
+  SUBFLOW = 'Subflow',
   START = 'Start',
   END = 'End'
 }

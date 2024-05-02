@@ -1,11 +1,6 @@
 import * as yup from 'yup';
 
-import {
-  createEdgeData,
-  createEndNodeData,
-  createStartNodeData,
-  getViewPort
-} from './initialFlowUtils';
+import { createInitialFlow } from './initialFlowUtils';
 
 import { IFlowDataCreate } from '@domain/flow';
 import {
@@ -22,11 +17,8 @@ export const validationSchema = yup.object().shape({
 });
 
 export const createInitialFlowDataHelper = (name: string): IFlowDataCreate => {
-  const startNodeData = createStartNodeData();
-  const endNodeData = createEndNodeData();
-  const edgeData = createEdgeData();
   const username = 'username';
-  const viewport = getViewPort();
+  const { nodes, edges, viewport } = createInitialFlow();
 
   return {
     data: {
@@ -34,8 +26,8 @@ export const createInitialFlowDataHelper = (name: string): IFlowDataCreate => {
       createdBy: username,
       editedBy: username
     },
-    nodes: [startNodeData, endNodeData],
-    edges: [edgeData],
+    nodes,
+    edges,
     viewport,
     temporaryVariables: TEMPORARY_VARIABLES_MOCK,
     permanentVariables: PERMANENT_VARIABLES_MOCK

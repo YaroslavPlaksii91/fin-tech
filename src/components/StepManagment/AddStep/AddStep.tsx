@@ -14,7 +14,7 @@ import {
   FunctionalStepType,
   StepType
 } from '@components/FlowManagment/FlowChart/types';
-import { useStep } from '@contexts/StepContext';
+// import { useStep } from '@contexts/StepContext';
 import { FlowNode } from '@domain/flow';
 import { addNode } from '@store/flow/flow';
 
@@ -60,7 +60,7 @@ export const AddStep: React.FC<AddStepProps> = ({
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema)
   });
-  const { setActiveStepId } = useStep();
+  // const { setActiveStepId } = useStep();
   const dispatch = useDispatch();
 
   const onSubmit: SubmitHandler<FormData> = ({ name }) => {
@@ -69,7 +69,7 @@ export const AddStep: React.FC<AddStepProps> = ({
       createdStep = onAddNodeBetweenEdges?.(stepType, name, edgeId);
     }
     if (createdStep) {
-      setActiveStepId(createdStep.id);
+      // setActiveStepId(createdStep.id);
 
       // For update list of steps in the sidebar
       dispatch(addNode(cloneDeep(createdStep)));
