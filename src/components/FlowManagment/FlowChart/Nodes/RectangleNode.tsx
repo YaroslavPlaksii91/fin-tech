@@ -1,8 +1,10 @@
 import { Handle, Position, NodeProps } from 'reactflow';
 
+import { StepType } from '../types';
+
 import styles from './style.module.scss';
 
-import { Calculator } from '@components/shared/Icons';
+import { Calculator, DecisionTableIcon } from '@components/shared/Icons';
 import { NodeData, DecisionTableData } from '@domain/flow';
 import { NO_TAG_LABEL } from '@constants/common';
 
@@ -12,8 +14,8 @@ const RectangleNode: React.FC<NodeProps<NodeData & DecisionTableData>> = ({
   <div id={data.stepId} className={styles['node-container']}>
     <Handle type="source" position={Position.Right} />
     <div className={styles['node-header']}>
-      {/* TODO add condition for icons DECISION_TABLE and SUBFLOW */}
-      <Calculator />
+      {data.stepType === StepType.CALCULATION && <Calculator />}
+      {data.stepType === StepType.DECISION_TABLE && <DecisionTableIcon />}
       <div>
         <p className={styles['node-tag']}>{data?.tag || NO_TAG_LABEL}</p>
         <p className={styles['node-label']}>{data.name}</p>

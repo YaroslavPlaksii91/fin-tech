@@ -1,21 +1,26 @@
 import { StepType } from '@components/FlowManagment/FlowChart/types';
-import { LineChartDots } from '@components/shared/Icons';
+import {
+  ArrowLeftArrowRightSquare,
+  Calculator,
+  DecisionTableIcon,
+  LineChartDots
+} from '@components/shared/Icons';
 
 export const options = [
   {
     label: 'Champion Challenger',
     dataKey: StepType.CHAMPION_CHALLENGER,
-    icon: <LineChartDots />
+    icon: <ArrowLeftArrowRightSquare />
   },
   {
     label: 'Calculation',
     dataKey: StepType.CALCULATION,
-    icon: <LineChartDots />
+    icon: <Calculator />
   },
   {
     label: 'Decision table',
     dataKey: StepType.DECISION_TABLE,
-    icon: <LineChartDots />
+    icon: <DecisionTableIcon />
   },
   {
     id: StepType.SUBFLOW,
