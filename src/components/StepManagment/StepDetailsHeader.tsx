@@ -1,6 +1,7 @@
 import { Button, Stack, Typography } from '@mui/material';
 
 import LoadingButton from '@components/shared/LoadingButton';
+import { theme } from '@theme';
 
 interface StepDetailsHeaderProps {
   title: string;
@@ -29,9 +30,11 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
     alignItems="flex-start"
     sx={{ padding: '16px 24px' }}
   >
-    <Stack>
+    <Stack spacing={1}>
       <Typography variant="h4">{title}</Typography>
-      <Typography variant="body1">{details}</Typography>
+      <Typography variant="body1" color={theme.palette.text.secondary}>
+        {details}
+      </Typography>
     </Stack>
     {isActionContainerVisible && (
       <>

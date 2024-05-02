@@ -13,11 +13,10 @@ import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
 
-import { StyledStack } from './styled';
-
 import CalculatorIcon from '@icons/calculator.svg';
 import BlocksIcon from '@icons/blocks.svg';
-import { Edit, Trash } from '@components/shared/Icons';
+import TrashIcon from '@icons/trash.svg';
+import { Edit } from '@components/shared/Icons';
 import {
   StyledTableCell,
   StyledTableRow
@@ -168,7 +167,7 @@ export const TableRow = ({
                   })
                 }
               >
-                <Trash />
+                <TrashIcon color={theme.palette.error.main} />
               </Button>
             </Stack>
           </StyledTableCell>
@@ -184,7 +183,8 @@ export const TableRow = ({
             <Stack margin={1} spacing={1}>
               <Typography variant="body1">This variable is used in:</Typography>
               {variableUsageNodes.map((flowNode) => (
-                <StyledStack
+                <Stack
+                  sx={{ cursor: 'pointer' }}
                   key={flowNode.id}
                   aria-label="breadcrumb"
                   onClick={() =>
@@ -209,7 +209,7 @@ export const TableRow = ({
                       </Typography>
                     </Box>
                   </Stack>
-                </StyledStack>
+                </Stack>
               ))}
             </Stack>
           </Collapse>

@@ -13,13 +13,13 @@ import Menu from '@components/shared/Menu/Menu';
 import { IFlowListItem } from '@domain/flow';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
+import TrashIcon from '@icons/trash.svg';
 import {
   Books,
   CopyAlt,
   Edit,
   FileEdit,
-  MoreHorizontal,
-  Trash
+  MoreHorizontal
 } from '@components/shared/Icons';
 
 enum ActionTypes {
@@ -50,7 +50,7 @@ const options = [
   {
     label: 'Delete',
     dataKey: ActionTypes.DELETE_FLOW,
-    icon: <Trash />,
+    icon: <TrashIcon color={theme.palette.error.main} />,
     textColor: theme.palette.error.main
   }
 ];

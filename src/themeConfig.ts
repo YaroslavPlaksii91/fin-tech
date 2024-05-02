@@ -58,8 +58,9 @@ export const theme = createTheme({
       paper: '#FFFFFF'
     },
     error: {
-      main: '#E24A4A',
-      light: '#FFCCCC'
+      main: '#D32F2F',
+      dark: '#C62828',
+      light: '#EF5350'
     },
     info: {
       main: '#0288D1',

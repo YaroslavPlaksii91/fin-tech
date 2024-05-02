@@ -1,11 +1,6 @@
 import { theme } from '@theme';
-import {
-  CopyAlt,
-  Edit,
-  FileEdit,
-  FileText,
-  Trash
-} from '@components/shared/Icons';
+import { CopyAlt, Edit, FileEdit, FileText } from '@components/shared/Icons';
+import TrashIcon from '@icons/trash.svg';
 
 export enum ActionTypes {
   STEP_TEXT_VIEW = 'StepTextView',
@@ -41,7 +36,7 @@ export const editStepOption = {
 export const deleteStepOption = {
   label: 'Delete step',
   dataKey: ActionTypes.DELETE_STEP,
-  icon: <Trash />,
+  icon: <TrashIcon color={theme.palette.error.main} />,
   textColor: theme.palette.error.main
 };
 
