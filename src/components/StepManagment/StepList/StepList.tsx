@@ -1,6 +1,7 @@
 import {
   List,
   ListItem,
+  ListItemIcon,
   ListItemSecondaryAction,
   Typography
 } from '@mui/material';
@@ -53,9 +54,11 @@ const StepList: React.FC<StepListProps> = ({
           key={el.id}
           onClick={() => setActiveStepId(el.id)}
         >
-          <Bezier />
+          <ListItemIcon>
+            <Bezier />
+          </ListItemIcon>
           <StyledStepItem>
-            <Typography variant="caption">
+            <Typography variant="caption" color="textSecondary">
               {el.data.tag || NO_TAG_LABEL}
             </Typography>
             <Typography variant="body2">{el.data.name}</Typography>

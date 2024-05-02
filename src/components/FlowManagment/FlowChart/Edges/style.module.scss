@@ -1,6 +1,10 @@
-@mixin keyframes($name) {
-  @keyframes #{$name} {
-    @content;
+@keyframes dash {
+  to {
+    background-position:
+      100% 0%,
+      0% 100%,
+      0% 0%,
+      100% 100%;
   }
 }
 
@@ -9,30 +13,21 @@
 }
 
 .edge-animation {
-  background: linear-gradient(90deg, #8FA5BE 50%, transparent 50%),
-    linear-gradient(90deg, #8FA5BE 50%, transparent 50%),
-    linear-gradient(0deg, #8FA5BE 50%, transparent 50%),
-    linear-gradient(0deg, #8FA5BE 50%, transparent 50%);
+  background: linear-gradient(90deg, rgba(0 0 0 / 50%) 50%, transparent 50%),
+    linear-gradient(90deg, rgba(0 0 0 / 50%) 50%, transparent 50%),
+    linear-gradient(0deg, rgba(0 0 0 / 50%) 50%, transparent 50%),
+    linear-gradient(0deg, rgba(0 0 0 / 50%) 50%, transparent 50%);
   background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
   background-size:
-    16px 3px,
-    16px 3px,
-    3px 16px,
-    3px 16px;
+    14px 2px,
+    14px 2px,
+    2px 14px,
+    2px 14px;
   background-position:
     0% 0%,
     100% 100%,
     0% 100%,
-    100% 0px;
+    100% 0%;
   border-radius: 5px;
   animation: dash 2s linear infinite;
-  @include keyframes(dash) {
-    to {
-      background-position:
-        100% 0%,
-        0% 100%,
-        0% 0%,
-        100% 100%;
-    }
-  }
 }

@@ -2,16 +2,18 @@ import { Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 import { theme } from '@theme';
 import Dialog from '@components/shared/Modals/Dialog';
-import Logger from '@utils/logger';
 import { useAppDispatch } from '@store/hooks';
 import { deleteFlow } from '@store/flowList/asyncThunk';
 import routes from '@constants/routes';
-import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
+import {
+  SnackbarErrorMessage,
+  SnackbarMessage
+} from '@components/shared/Snackbar/SnackbarMessage';
 import { SNACK_TYPE } from '@constants/common';
-import { IFlow } from '@domain/flow';
 
 interface DeleteFlowProps {
   flowId: string;
@@ -32,9 +34,8 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
   const handleDeleteFlow = async () => {
     try {
       setConfirmLoading(true);
-      const { payload } = await dispatch(deleteFlow(flowId));
-      const deletedFlow = payload as IFlow;
-      handleCloseModal();
+      const resultAction = await dispatch(deleteFlow(flowId));
+      const deletedFlow = unwrapResult(resultAction);
       enqueueSnackbar(
         <SnackbarMessage
           message="Success"
@@ -47,8 +48,11 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
         return;
       }
     } catch (error) {
-      Logger.error(error);
+      enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
+        variant: SNACK_TYPE.ERROR
+      });
     } finally {
+      handleCloseModal();
       setConfirmLoading(false);
     }
   };

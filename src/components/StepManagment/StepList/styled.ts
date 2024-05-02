@@ -5,8 +5,7 @@ import { ListItem } from '@mui/material';
 export const StyledStepItem = styled(Box)(() => ({
   display: 'flex',
   flexDirection: 'column',
-  overflow: 'hidden',
-  paddingLeft: '8px'
+  overflow: 'hidden'
 }));
 
 export const StyledListItem = styled(ListItem)(({ theme: { palette } }) => ({
@@ -15,6 +14,16 @@ export const StyledListItem = styled(ListItem)(({ theme: { palette } }) => ({
   '&.active, &:hover': {
     cursor: 'pointer',
     background: palette.amber,
-    color: palette.primary.main
+    '& .MuiTypography-body2': {
+      color: palette.primary.main
+    },
+    '.MuiListItemIcon-root': {
+      svg: {
+        path: {
+          fill: palette.primary.dark,
+          fillOpacity: 'unset'
+        }
+      }
+    }
   }
 }));
