@@ -5,7 +5,8 @@ import React from 'react';
 
 import { StyledNavButton } from './styled';
 
-import { ELoanLogo, User } from '@components/shared/Icons';
+import EloanLogoIcon from '@icons/eloanLogo.svg';
+import UserIcon from '@icons/user.svg';
 import { authService } from '@services/auth.ts';
 import { useAppSelector } from '@store/hooks.ts';
 import { selectUserInfo } from '@store/auth/auth.ts';
@@ -26,7 +27,7 @@ function Navigation() {
     <AppBar position="static">
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <Typography variant="h6" noWrap component="a" href="/">
-          <ELoanLogo />
+          <EloanLogoIcon color="white" />
         </Typography>
         <Box display="flex" alignItems="center" gap={1}>
           <Typography sx={{ padding: '0 5px' }} variant="body2">
@@ -37,7 +38,7 @@ function Navigation() {
             onClick={handleClick}
             size="medium"
           >
-            <User />
+            <UserIcon color="white" />
           </StyledNavButton>
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
             <MenuItem

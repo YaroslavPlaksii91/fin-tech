@@ -13,7 +13,7 @@ import {
 } from '@components/StepManagment/StepActionsMenu/types';
 import { FlowNode } from '@domain/flow.ts';
 import routes from '@constants/routes.ts';
-import { MoreHorizontal } from '@components/shared/Icons.tsx';
+import MoreHorizontalIcon from '@icons/moreHorizontal.svg';
 import { asyncConfirmDialog } from '@components/shared/Confirmation/AsyncConfirmDialog.tsx';
 import { useAppDispatch } from '@store/hooks';
 import { deleteNodes } from '@store/flow/flow';
@@ -123,7 +123,7 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
           size="small"
           sx={{ padding: 0 }}
         >
-          <MoreHorizontal />
+          <MoreHorizontalIcon />
         </IconButton>
       )}
       <Menu

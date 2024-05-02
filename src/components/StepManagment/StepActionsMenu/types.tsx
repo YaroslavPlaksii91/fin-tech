@@ -1,5 +1,8 @@
 import { theme } from '@theme';
-import { CopyAlt, Edit, FileEdit, FileText } from '@components/shared/Icons';
+import EditIcon from '@icons/editPencil.svg';
+import FileEditIcon from '@icons/fileEdit.svg';
+import DuplicateSquareIcon from '@icons/duplicateSquare.svg';
+import FileIcon from '@icons/file.svg';
 import TrashIcon from '@icons/trash.svg';
 
 export enum ActionTypes {
@@ -13,24 +16,24 @@ export enum ActionTypes {
 export const viewStepOption = {
   label: 'Step text view',
   dataKey: ActionTypes.STEP_TEXT_VIEW,
-  icon: <FileText />
+  icon: <FileIcon />
 };
 
 export const renameStepOption = {
   label: 'Rename step',
   dataKey: ActionTypes.RENAME_STEP,
-  icon: <FileEdit />
+  icon: <FileEditIcon />
 };
 export const duplicateStepOption = {
   label: 'Duplicate step',
   dataKey: ActionTypes.DUPLICATE_STEP,
-  icon: <CopyAlt />
+  icon: <DuplicateSquareIcon />
 };
 
 export const editStepOption = {
   label: 'Edit step',
   dataKey: ActionTypes.EDIT_STEP,
-  icon: <Edit />
+  icon: <EditIcon />
 };
 
 export const deleteStepOption = {

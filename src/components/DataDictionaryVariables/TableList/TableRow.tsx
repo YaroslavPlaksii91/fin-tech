@@ -16,7 +16,7 @@ import { VARIABLES_TABS } from '../constants';
 import CalculatorIcon from '@icons/calculator.svg';
 import BlocksIcon from '@icons/blocks.svg';
 import TrashIcon from '@icons/trash.svg';
-import { Edit } from '@components/shared/Icons';
+import EditIcon from '@icons/editPencil.svg';
 import {
   StyledTableCell,
   StyledTableRow
@@ -152,7 +152,7 @@ export const TableRow = ({
                   setOpenVariableForm(true);
                 }}
               >
-                <Edit />
+                <EditIcon color={theme.palette.action.active} />
               </Button>
               <Button
                 sx={{

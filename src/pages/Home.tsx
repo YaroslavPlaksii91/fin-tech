@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 
+import ChartIcon from '@icons/chart.svg';
 import { LayoutContainer } from '@components/Layouts/MainLayout';
-import { ChartIcon } from '@components/shared/Icons';
 
 export default function Home() {
   return (

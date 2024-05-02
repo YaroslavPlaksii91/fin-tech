@@ -14,13 +14,11 @@ import { IFlowListItem } from '@domain/flow';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
 import TrashIcon from '@icons/trash.svg';
-import {
-  Books,
-  CopyAlt,
-  Edit,
-  FileEdit,
-  MoreHorizontal
-} from '@components/shared/Icons';
+import EditIcon from '@icons/editPencil.svg';
+import BooksIcon from '@icons/books.svg';
+import FileEditIcon from '@icons/fileEdit.svg';
+import MoreHorizontalIcon from '@icons/moreHorizontal.svg';
+import DuplicateSquareIcon from '@icons/duplicateSquare.svg';
 
 enum ActionTypes {
   VIEW_DATA_DICTIONARY = 'viewDataDictionary',
@@ -34,18 +32,18 @@ const options = [
   {
     label: 'View Data Dictionary',
     dataKey: ActionTypes.VIEW_DATA_DICTIONARY,
-    icon: <Books />
+    icon: <BooksIcon />
   },
   {
     label: 'Duplicate',
     dataKey: ActionTypes.DUPLICATE_FLOW,
-    icon: <CopyAlt />
+    icon: <DuplicateSquareIcon color="black" />
   },
-  { label: 'Edit', dataKey: ActionTypes.EDIT_FLOW, icon: <Edit /> },
+  { label: 'Edit', dataKey: ActionTypes.EDIT_FLOW, icon: <EditIcon /> },
   {
     label: 'Rename',
     dataKey: ActionTypes.RENAME_FLOW,
-    icon: <FileEdit />
+    icon: <FileEditIcon />
   },
   {
     label: 'Delete',
@@ -105,7 +103,7 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
         aria-label="action-menu"
         onClick={handleOpenMenu}
       >
-        <MoreHorizontal />
+        <MoreHorizontalIcon color={theme.palette.action.active} />
       </IconButton>
       <Menu
         anchorEl={anchorEl}

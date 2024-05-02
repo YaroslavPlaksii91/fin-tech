@@ -22,9 +22,9 @@ import {
   StyledSubAccordionSummary
 } from './styled';
 
+import LineChartDotsIcon from '@icons/lineChartDots.svg';
 import {
   AngleLeftSquare,
-  LineChartDots,
   TimePast,
   DocumentList,
   ExpandMoreIcon,
@@ -166,7 +166,7 @@ const Sidebar = () => {
               id="flowList-header"
             >
               <ListItemIcon>
-                <LineChartDots />
+                <LineChartDotsIcon />
               </ListItemIcon>
               <Typography sx={animationStyles(expanded)}>Flow List</Typography>
             </StyledMainAccordionSummary>
@@ -235,7 +235,7 @@ const Sidebar = () => {
         ) : (
           <ListItemButton sx={{ height: '32px', marginBottom: '8px' }}>
             <ListItemIcon>
-              <LineChartDots />
+              <LineChartDotsIcon />
             </ListItemIcon>
           </ListItemButton>
         )}
