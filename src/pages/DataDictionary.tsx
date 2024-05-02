@@ -11,6 +11,7 @@ import { flowService } from '@services/flow-service';
 import { useLoading } from '@contexts/LoadingContext';
 import routes from '@constants/routes';
 import Logger from '@utils/logger';
+import { PRODUCTION_FLOW_ID } from '@constants/common';
 
 export type DataDictionaryPageContextType = {
   temporaryVariables: Pick<
@@ -33,7 +34,12 @@ export default function DataDictionary() {
     const fetchInitialData = async (flowId: string) => {
       try {
         startLoading();
-        const flow = await flowService.getFlow(flowId);
+        let flow;
+        if (flowId === PRODUCTION_FLOW_ID) {
+          flow = await flowService.getProductionFlowDetails();
+        } else {
+          flow = await flowService.getFlow(flowId);
+        }
         setFlow(flow);
       } catch (error) {
         Logger.error('Error fetching flow data:', error);
