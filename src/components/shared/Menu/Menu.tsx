@@ -9,17 +9,18 @@ import Link from '../Link/Link';
 
 import { StyledMenu } from './styled';
 
+export type Option = {
+  label: string;
+  dataKey?: string;
+  path?: string;
+  disabled?: boolean;
+  icon?: ReactNode;
+  textColor?: string;
+};
 interface MenuProps extends Omit<MuiMenuProps, 'open'> {
   anchorEl: HTMLElement | null;
   handleCloseMenu: (key?: string) => void;
-  options: {
-    label: string;
-    dataKey?: string;
-    path?: string;
-    disabled?: boolean;
-    icon?: ReactNode;
-    textColor?: string;
-  }[];
+  options: Option[];
   footer?: React.ReactNode;
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 
@@ -7,60 +7,33 @@ import { DeleteFlow } from '../DeleteFlow/DeleteFlow';
 import { DuplicateFlow } from '../DuplicateFlow/DuplicateFlow';
 
 import Details from './Details';
+import {
+  ActionTypes,
+  optionsDraftFlow,
+  optionsProductionFlow
+} from './options';
 
-import { theme } from '@theme';
 import Menu from '@components/shared/Menu/Menu';
 import { IFlowListItem } from '@domain/flow';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
-import {
-  Books,
-  CopyAlt,
-  Edit,
-  FileEdit,
-  MoreHorizontal,
-  Trash
-} from '@components/shared/Icons';
+import { MoreHorizontal } from '@components/shared/Icons';
+import { PRODUCTION_FLOW_ID } from '@constants/common';
 
-enum ActionTypes {
-  VIEW_DATA_DICTIONARY = 'viewDataDictionary',
-  DUPLICATE_FLOW = 'duplicateFlow',
-  EDIT_FLOW = 'editFlow',
-  RENAME_FLOW = 'renameFlow',
-  DELETE_FLOW = 'deleteFlow'
-}
-
-const options = [
-  {
-    label: 'View Data Dictionary',
-    dataKey: ActionTypes.VIEW_DATA_DICTIONARY,
-    icon: <Books />
-  },
-  {
-    label: 'Duplicate',
-    dataKey: ActionTypes.DUPLICATE_FLOW,
-    icon: <CopyAlt />
-  },
-  { label: 'Edit', dataKey: ActionTypes.EDIT_FLOW, icon: <Edit /> },
-  {
-    label: 'Rename',
-    dataKey: ActionTypes.RENAME_FLOW,
-    icon: <FileEdit />
-  },
-  {
-    label: 'Delete',
-    dataKey: ActionTypes.DELETE_FLOW,
-    icon: <Trash />,
-    textColor: theme.palette.error.main
-  }
-];
-
-const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
+const ActionsMenu: React.FC<{
+  flow: IFlowListItem;
+  isProductionFlow?: boolean;
+}> = ({ flow, isProductionFlow = false }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [modalRenameOpen, setModalRenameOpen] = useState<boolean>(false);
   const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
   const [modalDuplicateOpen, setModalDuplicateOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  const options = useMemo(
+    () => (isProductionFlow ? optionsProductionFlow : optionsDraftFlow),
+    [isProductionFlow]
+  );
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
@@ -78,9 +51,12 @@ const ActionsMenu: React.FC<{ flow: IFlowListItem }> = ({ flow }) => {
       case ActionTypes.DUPLICATE_FLOW:
         setModalDuplicateOpen(true);
         break;
-      case ActionTypes.VIEW_DATA_DICTIONARY:
-        navigate(routes.underwriting.flow.dataDictionary(flow.id));
+      case ActionTypes.VIEW_DATA_DICTIONARY: {
+        const id = isProductionFlow ? PRODUCTION_FLOW_ID : flow.id;
+        navigate(routes.underwriting.flow.dataDictionary(id));
         break;
+      }
+
       case ActionTypes.EDIT_FLOW: {
         navigate(routes.underwriting.flow.edit(flow.id));
         break;

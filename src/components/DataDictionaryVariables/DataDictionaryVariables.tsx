@@ -141,6 +141,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
               tableData={filteredBySelects}
               tabName={tabName as VARIABLES_TABS}
               flowNodes={flow.nodes}
+              flowId={flow.id}
             />
           </>
         </TabPanel>
@@ -162,6 +163,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
             tableData={filteredBySelects}
             tabName={tab as VARIABLES_TABS}
             flowNodes={flow.nodes}
+            flowId={flow.id}
           />
         </TabPanel>
       )}

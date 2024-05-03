@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import {
   TableHead,
   TableBody,
@@ -35,7 +34,8 @@ import { theme } from '@theme';
 const TableList = ({
   flowNodes,
   tabName,
-  tableData
+  tableData,
+  flowId
 }: {
   flowNodes: FlowNode[];
   tabName: VARIABLES_TABS;
@@ -45,6 +45,7 @@ const TableList = ({
         UserDefinedVariable,
         'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
       >[];
+  flowId: string;
 }) => {
   const [selectedVariable, setSelectedVariable] = useState<
     | (Pick<
@@ -68,8 +69,6 @@ const TableList = ({
     VariableUsageParams | undefined
   >(undefined);
 
-  const { id } = useParams();
-
   const visibleRows = useMemo(
     () => tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     [page, rowsPerPage, tableData]
@@ -81,7 +80,7 @@ const TableList = ({
 
   useEffect(() => {
     if (tabName === VARIABLES_TABS.userDefined) {
-      void getUserDefinedUsage(id as string, tableData).then((data) =>
+      void getUserDefinedUsage(flowId, tableData).then((data) =>
         setUserDefinedUsage(data as VariableUsageParams)
       );
     }
@@ -146,7 +145,7 @@ const TableList = ({
               row={variable}
               index={index}
               tabName={tabName}
-              flowId={id as string}
+              flowId={flowId}
               flowNodes={flowNodes}
               // defined for userDefined variables
               userDefinedUsageNodes={
@@ -200,9 +199,9 @@ const TableList = ({
           </Typography>
         </Box>
       )}
-      {openVariableForm && id && (
+      {openVariableForm && (
         <VariableForm
-          flowId={id}
+          flowId={flowId}
           modalOpen={openVariableForm}
           formData={selectedVariable}
           handleClose={() => {
@@ -211,9 +210,9 @@ const TableList = ({
           }}
         />
       )}
-      {!!deleteVariable && id && (
+      {!!deleteVariable && (
         <DeleteVariable
-          flowId={id}
+          flowId={flowId}
           variable={deleteVariable}
           modalOpen={!!deleteVariable}
           handleCloseModal={() => setDeleteVariable(undefined)}
