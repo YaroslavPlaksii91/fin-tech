@@ -62,15 +62,18 @@ export type CalculationData = {
   expressions?: Expression[];
 };
 
-// export type SubFlowData = {
-//   nodes: FlowNode[];
-//   edges: Edge[];
-//   viewport: Viewport;
-// };
+export type SubFlowData = {
+  nodes: FlowNode[];
+  edges: Edge[];
+  viewport: Viewport;
+};
 
 export type FlowNode = Node<
-  NodeData & ChampionChallengerData & CalculationData & DecisionTableData
-  // SubFlowData
+  NodeData &
+    ChampionChallengerData &
+    CalculationData &
+    DecisionTableData &
+    SubFlowData
 >;
 
 export interface IFlow {

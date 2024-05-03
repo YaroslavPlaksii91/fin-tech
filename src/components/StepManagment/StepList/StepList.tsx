@@ -1,20 +1,12 @@
-import {
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  Typography
-} from '@mui/material';
+import { List, ListItem, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { StyledListItem, StyledStepItem } from './styled';
+import { StyledStepItem } from './styled';
+import RecursiveStepListItem from './RecursiveStepListItem';
 
-import { Bezier } from '@components/shared/Icons';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
-import { NO_TAG_LABEL } from '@constants/common';
 import { FlowNode } from '@domain/flow';
-import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 import { useStep } from '@contexts/StepContext';
 
 type StepListProps = {
@@ -48,6 +40,40 @@ const StepList: React.FC<StepListProps> = ({
           </StyledStepItem>
         </ListItem>
       )}
+      {steps.map((step) => (
+        <RecursiveStepListItem
+          key={step.id}
+          step={step}
+          level={1}
+          isEditMode={isEditMode}
+          setActiveStepId={setActiveStepId}
+          activeStepId={activeStepId}
+          isProductionFlow={isProductionFlow}
+        />
+      ))}
+    </List>
+  );
+};
+
+{
+  /* {steps.map((step) => (
+        <RecursiveListItem
+          key={step.id}
+          node={step}
+          level={0}
+          setActiveStepId={setActiveStepId}
+          isProductionFlow={isProductionFlow}
+        />
+      ))} */
+}
+{
+  /* {steps.length === 0 && (
+        <ListItem sx={{ paddingLeft: '40px' }}>
+          <StyledStepItem>
+            <Typography variant="body2">No steps</Typography>
+          </StyledStepItem>
+        </ListItem>
+      )}
       {steps.map((el) => (
         <StyledListItem
           className={activeStepId === el.id ? 'active' : undefined}
@@ -75,9 +101,7 @@ const StepList: React.FC<StepListProps> = ({
             </ListItemSecondaryAction>
           )}
         </StyledListItem>
-      ))}
-    </List>
-  );
-};
+      ))} */
+}
 
 export default StepList;
