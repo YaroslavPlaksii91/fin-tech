@@ -178,22 +178,27 @@ const Sidebar = () => {
                 }
                 onChange={handleChangeFlow(PRODUCTION_FLOW_ID)}
               >
-                <StyledNavLink
-                  to={`${routes.underwriting.flow.list}/${PRODUCTION_FLOW_ID}`}
-                >
-                  <StyledSubAccordionSummary
-                    expandIcon={<ExpandMoreIcon fontSize="small" />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
+                <Box sx={{ position: 'relative' }}>
+                  <StyledNavLink
+                    to={`${routes.underwriting.flow.list}/${PRODUCTION_FLOW_ID}`}
                   >
-                    <ListItemIcon>
-                      <Bezier />
-                    </ListItemIcon>
-                    <Typography variant="body2">
-                      {flowProduction?.name}
-                    </Typography>
-                  </StyledSubAccordionSummary>
-                </StyledNavLink>
+                    <StyledSubAccordionSummary
+                      expandIcon={<ExpandMoreIcon fontSize="small" />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
+                      <ListItemIcon>
+                        <Bezier />
+                      </ListItemIcon>
+                      <Typography variant="body2">
+                        {flowProduction?.name}
+                      </Typography>
+                    </StyledSubAccordionSummary>
+                  </StyledNavLink>
+                  <ListItemSecondaryAction>
+                    <ActionsMenu isProductionFlow flow={flowProduction} />
+                  </ListItemSecondaryAction>
+                </Box>
                 <StyledAccordionDetails>
                   <StepList nodes={flow.nodes} isProductionFlow />
                 </StyledAccordionDetails>

@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect, useContext } from 'react';
 import { indexOf, map } from 'lodash';
-import { useParams } from 'react-router-dom';
 import {
   TableHead,
   TableBody,
@@ -50,11 +49,13 @@ export type SelectedVariable = TableEl & {
 const TableList = ({
   flowNodes,
   tabName,
-  tableData
+  tableData,
+  flowId
 }: {
   flowNodes: FlowNode[];
   tabName: VARIABLES_TABS;
   tableData: TableEl[];
+  flowId: string;
 }) => {
   const [selectedVariable, setSelectedVariable] = useState<
     SelectedVariable | undefined
@@ -73,8 +74,6 @@ const TableList = ({
   const [userDefinedUsage, setUserDefinedUsage] = useState<
     VariableUsageParams | undefined
   >(undefined);
-
-  const { id } = useParams();
 
   const visibleRows = useMemo(
     () => tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
@@ -151,7 +150,7 @@ const TableList = ({
 
   useEffect(() => {
     if (tabName === VARIABLES_TABS.userDefined) {
-      void getUserDefinedUsage(id as string, tableData).then((data) =>
+      void getUserDefinedUsage(flowId, tableData).then((data) =>
         setUserDefinedUsage(data as VariableUsageParams)
       );
     }
@@ -195,7 +194,7 @@ const TableList = ({
               row={variable}
               index={index}
               tabName={tabName}
-              flowId={id as string}
+              flowId={flowId}
               flowNodes={flowNodes}
               // defined for userDefined variables
               userDefinedUsageNodes={
@@ -248,17 +247,17 @@ const TableList = ({
           </Typography>
         </Box>
       )}
-      {id && isVariableModalOpen && (
+      {isVariableModalOpen && (
         <VariableForm
-          flowId={id}
+          flowId={flowId}
           formData={selectedVariable}
           isOpen={isVariableModalOpen}
           onClose={handleVariableModalClose}
         />
       )}
-      {id && isDeleteModalOpen && (
+      {isDeleteModalOpen && (
         <DeleteVariable
-          flowId={id}
+          flowId={flowId}
           variable={selectedVariable!}
           isOpen={isDeleteModalOpen}
           onClose={handleDeleteModalClose}
