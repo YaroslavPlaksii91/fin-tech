@@ -12,12 +12,19 @@ import { IFlowListItem } from '@domain/flow';
 
 interface initialStateInterface {
   flowList: IFlowListItem[];
-  flowProduction: IFlowListItem | Record<string, never>;
+  flowProduction: IFlowListItem;
 }
 
 const initialState: initialStateInterface = {
   flowList: [],
-  flowProduction: {}
+  flowProduction: {
+    id: '',
+    createdBy: '',
+    createdOn: '',
+    editedBy: '',
+    editedOn: '',
+    name: ''
+  }
 };
 
 export const flowListSlicer = createSlice({

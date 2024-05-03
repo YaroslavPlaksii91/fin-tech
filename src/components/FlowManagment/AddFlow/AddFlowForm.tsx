@@ -4,6 +4,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
 import { enqueueSnackbar } from 'notistack';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 import {
   validationSchema,
@@ -20,7 +21,6 @@ import { useAppDispatch } from '@store/hooks';
 import { createFlow } from '@store/flowList/asyncThunk';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import { SNACK_TYPE } from '@constants/common';
-import { IFlow } from '@domain/flow';
 
 interface FormData {
   name: string;
@@ -45,9 +45,10 @@ export const AddFlow: React.FC = () => {
   const onSubmit: SubmitHandler<FormData> = async ({ name }): Promise<void> => {
     try {
       const data = createInitialFlowDataHelper(name);
-      const { payload } = await dispatch(createFlow(data));
+      const resultAction = await dispatch(createFlow(data));
+
       handleCloseModal();
-      const createdFlow = payload as IFlow;
+      const createdFlow = unwrapResult(resultAction);
       navigate(`${routes.underwriting.flow.list}/${createdFlow.id}`);
       enqueueSnackbar(
         <SnackbarMessage

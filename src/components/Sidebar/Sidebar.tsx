@@ -31,13 +31,13 @@ import { ExpandMoreIcon } from '@components/shared/Icons';
 import { fetchFlowList } from '@store/flowList/asyncThunk';
 import Logger from '@utils/logger';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { getProductionFlow, getFlow } from '@store/flow/asyncThunk';
 import { selectFlowList } from '@store/flowList/selectors';
+import { setInitialFlow } from '@store/flow/flow';
+import { selectFlow } from '@store/flow/selectors';
 import ActionsMenu from '@components/FlowManagment/ActionsMenu/ActionMenu';
 import routes from '@constants/routes';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
-import { getProductionFlow, getFlow } from '@store/flow/asyncThunk';
-import { setInitialFlow } from '@store/flow/flow';
-import { selectFlow } from '@store/flow/selectors';
 import { useLoading } from '@contexts/LoadingContext';
 import { AddFlow } from '@components/FlowManagment/AddFlow/AddFlowForm';
 import StepList from '@components/StepManagment/StepList/StepList';
@@ -176,22 +176,27 @@ const Sidebar = () => {
                 }
                 onChange={handleChangeFlow(PRODUCTION_FLOW_ID)}
               >
-                <StyledNavLink
-                  to={`${routes.underwriting.flow.list}/${PRODUCTION_FLOW_ID}`}
-                >
-                  <StyledSubAccordionSummary
-                    expandIcon={<ExpandMoreIcon fontSize="small" />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
+                <Box sx={{ position: 'relative' }}>
+                  <StyledNavLink
+                    to={`${routes.underwriting.flow.list}/${PRODUCTION_FLOW_ID}`}
                   >
-                    <ListItemIcon>
-                      <BezierIcon />
-                    </ListItemIcon>
-                    <Typography variant="body2">
-                      {flowProduction?.name}
-                    </Typography>
-                  </StyledSubAccordionSummary>
-                </StyledNavLink>
+                    <StyledSubAccordionSummary
+                      expandIcon={<ExpandMoreIcon fontSize="small" />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
+                      <ListItemIcon>
+                        <BezierIcon />
+                      </ListItemIcon>
+                      <Typography variant="body2">
+                        {flowProduction?.name}
+                      </Typography>
+                    </StyledSubAccordionSummary>
+                  </StyledNavLink>
+                  <ListItemSecondaryAction>
+                    <ActionsMenu isProductionFlow flow={flowProduction} />
+                  </ListItemSecondaryAction>
+                </Box>
                 <StyledAccordionDetails>
                   <StepList nodes={flow.nodes} isProductionFlow />
                 </StyledAccordionDetails>
