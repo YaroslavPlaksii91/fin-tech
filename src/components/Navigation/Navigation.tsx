@@ -10,6 +10,7 @@ import UserIcon from '@icons/user.svg';
 import { authService } from '@services/auth.ts';
 import { useAppSelector } from '@store/hooks.ts';
 import { selectUserInfo } from '@store/auth/auth.ts';
+import { theme } from '@theme';
 
 function Navigation() {
   const userInfo = useAppSelector(selectUserInfo);
@@ -27,7 +28,7 @@ function Navigation() {
     <AppBar position="static">
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <Typography variant="h6" noWrap component="a" href="/">
-          <EloanLogoIcon color="white" />
+          <EloanLogoIcon color={theme.palette.common.white} />
         </Typography>
         <Box display="flex" alignItems="center" gap={1}>
           <Typography sx={{ padding: '0 5px' }} variant="body2">
@@ -38,7 +39,7 @@ function Navigation() {
             onClick={handleClick}
             size="medium"
           >
-            <UserIcon color="white" />
+            <UserIcon color={theme.palette.common.white} />
           </StyledNavButton>
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
             <MenuItem

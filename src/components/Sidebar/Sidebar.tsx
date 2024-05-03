@@ -23,13 +23,11 @@ import {
 } from './styled';
 
 import LineChartDotsIcon from '@icons/lineChartDots.svg';
-import {
-  AngleLeftSquare,
-  TimePast,
-  DocumentList,
-  ExpandMoreIcon,
-  Bezier
-} from '@components/shared/Icons';
+import AngleLeftSquareIcon from '@icons/angleLeftSquare.svg';
+import TimePastIcon from '@icons/timePast.svg';
+import DocumentPaperIcon from '@icons/documentPaper.svg';
+import BezierIcon from '@icons/bezier.svg';
+import { ExpandMoreIcon } from '@components/shared/Icons';
 import { fetchFlowList } from '@store/flowList/asyncThunk';
 import Logger from '@utils/logger';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
@@ -55,12 +53,12 @@ const animationStyles = (expanded: boolean) => ({
 
 const pages = [
   {
-    icon: <TimePast />,
+    icon: <TimePastIcon color={theme.palette.primary.dark} />,
     text: 'Changes History',
     to: routes.underwriting.changeHistory
   },
   {
-    icon: <DocumentList />,
+    icon: <DocumentPaperIcon color={theme.palette.primary.dark} />,
     text: 'Reports',
     to: routes.underwriting.leadRequest
   }
@@ -140,7 +138,7 @@ const Sidebar = () => {
       <SidebarToggle
         fullWidth
         onClick={toggleSidebar}
-        startIcon={<AngleLeftSquare />}
+        startIcon={<AngleLeftSquareIcon color={theme.palette.common.black} />}
         rotated={expanded ? 0 : 1}
       >
         <Typography
@@ -187,7 +185,7 @@ const Sidebar = () => {
                     id="panel1a-header"
                   >
                     <ListItemIcon>
-                      <Bezier />
+                      <BezierIcon />
                     </ListItemIcon>
                     <Typography variant="body2">
                       {flowProduction?.name}
@@ -215,7 +213,7 @@ const Sidebar = () => {
                         id={flowItem.name}
                       >
                         <ListItemIcon>
-                          <Bezier />
+                          <BezierIcon />
                         </ListItemIcon>
                         <Typography variant="body2">{flowItem.name}</Typography>
                       </StyledSubAccordionSummary>
