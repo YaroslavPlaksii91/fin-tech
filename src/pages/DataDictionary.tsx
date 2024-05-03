@@ -12,11 +12,14 @@ import { useLoading } from '@contexts/LoadingContext';
 import routes from '@constants/routes';
 import Logger from '@utils/logger';
 
+type Variable = Pick<
+  UserDefinedVariable,
+  'name' | 'dataType' | 'defaultValue' | 'description'
+>[];
+
 export type DataDictionaryPageContextType = {
-  temporaryVariables: Pick<
-    UserDefinedVariable,
-    'name' | 'dataType' | 'defaultValue' | 'description'
-  >[];
+  temporaryVariables: Variable;
+  permanentVariables: Variable;
   setFlow: (flow: IFlow) => void;
 };
 
@@ -68,6 +71,7 @@ export default function DataDictionary() {
 
   const contextValue = {
     temporaryVariables: flow.temporaryVariables,
+    permanentVariables: flow.permanentVariables,
     setFlow
   };
 
