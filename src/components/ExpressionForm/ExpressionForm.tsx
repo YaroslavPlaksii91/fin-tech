@@ -10,12 +10,12 @@ import {
   InputAdornment,
   OutlinedInput,
   Paper,
-  Stack,
-  Typography
+  Stack
 } from '@mui/material';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import React, {
   MutableRefObject,
+  ReactElement,
   useCallback,
   useContext,
   useEffect,
@@ -67,6 +67,7 @@ interface ExpressionFormProps {
     id?: string;
   }) => void;
   onCancelClick: () => void;
+  renderTitle?: () => ReactElement;
 }
 
 enum DataDictMode {
@@ -77,7 +78,8 @@ enum DataDictMode {
 export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   initialValues,
   handleAddNewBusinessRule,
-  onCancelClick
+  onCancelClick,
+  renderTitle
 }) => {
   const dataDictionary = useContext(DataDictionaryContext);
   const variables = dataDictionary?.variables || {};
@@ -207,12 +209,10 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         onSubmit={handleSubmit(onSubmit)}
       >
         <Stack flexDirection="column">
-          <Stack flexGrow={1} pl={3} pr={3} pt={2}>
-            <Typography mb={2} variant="h4">
-              {initialValues?.id ? 'Change' : 'Add New'} Expression
-            </Typography>
-            <Box flexGrow={1}>
-              <Card sx={{ overflow: 'unset' }}>
+          <Stack flexGrow={1}>
+            {renderTitle && renderTitle()}
+            <Box flexGrow={1} pl={3} pr={3}>
+              <Card variant="outlined" sx={{ overflow: 'unset' }}>
                 <CardHeader title="Expression Builder" />
                 <CardContent sx={{ paddingTop: 0 }}>
                   <Box mb={1}>
@@ -224,7 +224,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
                           <OutlinedInput
                             size="small"
                             error={!!error}
-                            placeholder="Variable"
+                            placeholder="Variable*"
                             value={value?.name}
                             readOnly
                             endAdornment={
@@ -258,6 +258,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
                       <FormControl fullWidth variant="standard">
                         <ExpressionEditor
                           value={value}
+                          placeholder="Expression*"
                           onChange={onChange}
                           name="expressionString"
                           ref={expressionEditorRef}
@@ -283,6 +284,11 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
                 ? variableFieldDataDict
                 : dataDictionary?.variables
             }
+            title={
+              dataDictMode === DataDictMode.Variable
+                ? 'Add Output Variable'
+                : 'Add Input Variable'
+            }
             isOpen={Boolean(dataDictMode)}
             onClose={() => setDataDictMode(null)}
             onConfirm={(variable) => {
@@ -303,9 +309,6 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
                 alignItems="flex-start"
                 gap={1}
               >
-                <Button variant="outlined" onClick={onCancelClick}>
-                  Cancel
-                </Button>
                 <LoadingButton
                   loading={isSubmitting}
                   disabled={isSubmitting}
@@ -313,8 +316,11 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
                   color="primary"
                   type="submit"
                 >
-                  Confirm
+                  Save Expression
                 </LoadingButton>
+                <Button variant="outlined" onClick={onCancelClick}>
+                  Cancel
+                </Button>
               </Stack>
             </Box>
             <Divider />

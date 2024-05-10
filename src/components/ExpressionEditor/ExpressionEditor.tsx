@@ -34,7 +34,17 @@ export interface ExpressionEditorAPI {
 const ExpressionEditor: ForwardRefRenderFunction<
   ExpressionEditorAPI,
   ExpressionEditorProps
-> = ({ name, value, onChange, error, onAddVariableClick }, ref) => {
+> = (
+  {
+    name,
+    value,
+    onChange,
+    error,
+    onAddVariableClick,
+    placeholder = 'Expression'
+  },
+  ref
+) => {
   const textareaRef: MutableRefObject<HTMLTextAreaElement | null> =
     useRef(null);
 
@@ -124,7 +134,7 @@ const ExpressionEditor: ForwardRefRenderFunction<
       <TextField
         inputRef={textareaRef}
         value={value}
-        placeholder="Expression"
+        placeholder={placeholder}
         multiline
         minRows={5}
         maxRows={10}
@@ -173,6 +183,7 @@ interface ExpressionEditorProps extends InputBaseComponentProps {
   value: string;
   error?: string;
   onAddVariableClick: () => void;
+  placeholder?: string;
 }
 
 export default React.forwardRef<ExpressionEditorAPI, ExpressionEditorProps>(
