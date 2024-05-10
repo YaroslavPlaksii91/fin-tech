@@ -11,7 +11,6 @@ const ExpressionOperatorsList: React.FC<ExpressionOperatorsListProps> = ({
         {category.map(({ literal }) => (
           <Chip
             label={literal}
-            variant="outlined"
             onClick={() => onItemClick(literal)}
             key={literal}
           />
