@@ -13,6 +13,13 @@ import Filters from './Filters/Filters';
 import { theme } from '@theme';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { IFlow } from '@domain/flow';
+import { Variable } from '@domain/dataDictionary';
+
+export interface TableHeader {
+  key: keyof Variable;
+  label?: string;
+  render?: (row: Variable) => void;
+}
 
 const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const [tab, setTab] = useState(VARIABLES_TABS.laPMSVariables);
@@ -25,10 +32,32 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const tableData = useMemo(() => {
     if (!variables) return [];
     if (tab === VARIABLES_TABS.all)
-      return [...variables['userDefined'], ...variables['laPMSVariables']];
+      return [
+        ...variables['userDefined'],
+        ...variables['laPMSVariables'],
+        ...variables['craReportVariables']
+      ];
 
     return variables[tab];
   }, [tab, variables]);
+
+  const defaultHeaders: TableHeader[] = [
+    { key: 'name', label: 'Variable Name' },
+    { key: 'dataType', label: 'Data Type' },
+    { key: 'defaultValue', label: 'Default Value' },
+    { key: 'description', label: 'Description' }
+  ];
+
+  const craReportsHeaders: TableHeader[] = [
+    { key: 'source', label: 'CRA' },
+    { key: 'sourceType', label: 'ReportName' },
+    ...defaultHeaders
+  ];
+
+  const headers =
+    tab === VARIABLES_TABS.craReportVariables
+      ? craReportsHeaders
+      : defaultHeaders;
 
   const filteredBySearch = useMemo(() => {
     const filterBySearch = search.trim().toUpperCase();
@@ -93,7 +122,12 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
         Data Dictionary
       </Typography>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={tab} onChange={handleChange} aria-label="tabs">
+        <Tabs
+          value={tab}
+          onChange={handleChange}
+          aria-label="tabs"
+          variant="scrollable"
+        >
           {Object.keys(variables).map((tabName, index) => (
             <StyledTab
               key={index}
@@ -138,6 +172,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
               </Button>
             </Stack>
             <TableList
+              headers={headers}
               tableData={filteredBySelects}
               tabName={tabName as VARIABLES_TABS}
               flowNodes={flow.nodes}
@@ -160,6 +195,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
             </Button>
           </Stack>
           <TableList
+            headers={headers}
             tableData={filteredBySelects}
             tabName={tab as VARIABLES_TABS}
             flowNodes={flow.nodes}

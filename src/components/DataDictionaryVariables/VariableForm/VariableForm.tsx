@@ -14,7 +14,8 @@ import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import {
   VARIABLE_SOURCE_TYPE,
   DATA_TYPE_WITHOUT_ENUM,
-  UserDefinedVariable
+  UserDefinedVariable,
+  Variable
 } from '@domain/dataDictionary';
 import { JSONPatchOperation } from '@domain/entity';
 import { flowService } from '@services/flow-service';
@@ -23,12 +24,7 @@ import Logger from '@utils/logger';
 type VariableFormProps = {
   flowId: string;
   modalOpen: boolean;
-  formData:
-    | (Pick<
-        UserDefinedVariable,
-        'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-      > & { index: number; variableIsUsed: boolean })
-    | undefined;
+  formData?: Variable & { index: number; variableIsUsed: boolean };
   handleClose: () => void;
 };
 

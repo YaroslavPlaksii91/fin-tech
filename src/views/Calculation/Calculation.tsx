@@ -55,8 +55,8 @@ const Calculation: React.FC<CalculationProps> = ({
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
   const [openExpEditorView, setOpenExpEditorView] = useState<boolean>(false);
   const [initialValue, setInitialValue] = useState<
-    (Expression & { id: string }) | undefined
-  >(undefined);
+    Expression & { id: string }
+  >();
 
   const {
     handleSubmit,

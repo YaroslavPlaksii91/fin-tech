@@ -15,59 +15,50 @@ import { VARIABLES_TABS } from '../constants';
 import { getUserDefinedUsage, getUserDefinedUsageNodes } from '../utils';
 import { VariableForm } from '../VariableForm/VariableForm';
 import { DeleteVariable } from '../DeleteVariable/DeleteVariable';
+import { TableHeader } from '../DataDictionaryVariables';
 
-import { StyledPaper } from './styled';
+import { StyledPaper, StyledTableContainer } from './styled';
 import { TableRow } from './TableRow';
 
 import {
   StyledTableCell,
   StyledTableRow
 } from '@components/shared/Table/styled';
-import {
-  DataDictionaryVariable,
-  UserDefinedVariable,
-  VariableUsageParams
-} from '@domain/dataDictionary';
+import { Variable, VariableUsageParams } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { theme } from '@theme';
+
+interface TableListProps {
+  flowNodes: FlowNode[];
+  tabName: VARIABLES_TABS;
+  headers: TableHeader[];
+  tableData: Variable[];
+  flowId: string;
+}
 
 const TableList = ({
   flowNodes,
   tabName,
+  headers,
   tableData,
   flowId
-}: {
-  flowNodes: FlowNode[];
-  tabName: VARIABLES_TABS;
-  tableData:
-    | DataDictionaryVariable[]
-    | Pick<
-        UserDefinedVariable,
-        'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-      >[];
-  flowId: string;
-}) => {
+}: TableListProps) => {
   const [selectedVariable, setSelectedVariable] = useState<
-    | (Pick<
-        UserDefinedVariable,
-        'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-      > & { index: number; variableIsUsed: boolean })
-    | undefined
-  >(undefined);
+    Variable & { index: number; variableIsUsed: boolean }
+  >();
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openVariableForm, setOpenVariableForm] = useState(false);
-  const [deleteVariable, setDeleteVariable] = useState<
-    { name: string; variableIsUsed: boolean } | undefined
-  >(undefined);
+  const [deleteVariable, setDeleteVariable] = useState<{
+    name: string;
+    variableIsUsed: boolean;
+  }>();
 
   const totalPages = Math.ceil(tableData.length / rowsPerPage);
 
-  // usage for userDefined variables
-  const [userDefinedUsage, setUserDefinedUsage] = useState<
-    VariableUsageParams | undefined
-  >(undefined);
+  const [userDefinedUsage, setUserDefinedUsage] =
+    useState<VariableUsageParams>();
 
   const visibleRows = useMemo(
     () => tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
@@ -109,65 +100,63 @@ const TableList = ({
 
   return (
     <StyledPaper>
-      <Table stickyHeader size="small" aria-label="sticky table">
-        <TableHead>
-          <StyledTableRow>
-            <StyledTableCell></StyledTableCell>
-            <StyledTableCell style={{ width: '20%' }}>
-              Variable Name
-            </StyledTableCell>
-            <StyledTableCell> Data Type</StyledTableCell>
-            <StyledTableCell style={{ width: '20%' }}>
-              Default value
-            </StyledTableCell>
-            <StyledTableCell> Description</StyledTableCell>
-            {tabName === VARIABLES_TABS.userDefined && (
-              <StyledTableCell align="right">
-                <IconButton
-                  onClick={() => {
-                    setSelectedVariable(undefined);
-                    setOpenVariableForm(true);
-                  }}
-                  edge="end"
-                  aria-label="add"
-                  sx={{ p: 0, mr: 0 }}
-                >
-                  <AddBoxOutlined fontSize="small" />
-                </IconButton>
-              </StyledTableCell>
-            )}
-          </StyledTableRow>
-        </TableHead>
-        <TableBody>
-          {visibleRows.map((variable, index) => (
-            <TableRow
-              key={index}
-              row={variable}
-              index={index}
-              tabName={tabName}
-              flowId={flowId}
-              flowNodes={flowNodes}
-              // defined for userDefined variables
-              userDefinedUsageNodes={
-                userDefinedUsage &&
-                getUserDefinedUsageNodes({
-                  userDefinedUsage,
-                  variable,
-                  flowNodes
-                })
-              }
-              setSelectedVariable={setSelectedVariable}
-              setOpenVariableForm={setOpenVariableForm}
-              setDeleteVariable={setDeleteVariable}
-            />
-          ))}
-          {emptyRows > 0 && (
-            <StyledTableRow style={{ height: 43 * emptyRows }}>
-              <StyledTableCell colSpan={6} />
+      <StyledTableContainer>
+        <Table stickyHeader size="small" aria-label="sticky table">
+          <TableHead>
+            <StyledTableRow>
+              <StyledTableCell></StyledTableCell>
+              {headers.map(({ key, label }) => (
+                <StyledTableCell key={key}>{label}</StyledTableCell>
+              ))}
+              {tabName === VARIABLES_TABS.userDefined && (
+                <StyledTableCell align="right">
+                  <IconButton
+                    onClick={() => {
+                      setSelectedVariable(undefined);
+                      setOpenVariableForm(true);
+                    }}
+                    edge="end"
+                    aria-label="add"
+                    sx={{ p: 0, mr: 0 }}
+                  >
+                    <AddBoxOutlined fontSize="small" />
+                  </IconButton>
+                </StyledTableCell>
+              )}
             </StyledTableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {visibleRows.map((variable, index) => (
+              <TableRow
+                key={index}
+                headers={headers}
+                row={variable}
+                index={index}
+                tabName={tabName}
+                flowId={flowId}
+                flowNodes={flowNodes}
+                // defined for userDefined variables
+                userDefinedUsageNodes={
+                  userDefinedUsage &&
+                  getUserDefinedUsageNodes({
+                    userDefinedUsage,
+                    variable,
+                    flowNodes
+                  })
+                }
+                setSelectedVariable={setSelectedVariable}
+                setOpenVariableForm={setOpenVariableForm}
+                setDeleteVariable={setDeleteVariable}
+              />
+            ))}
+            {emptyRows > 0 && (
+              <StyledTableRow style={{ height: 43 * emptyRows }}>
+                <StyledTableCell colSpan={6} />
+              </StyledTableRow>
+            )}
+          </TableBody>
+        </Table>
+      </StyledTableContainer>
       {tableData.length > 10 && (
         <Box
           sx={{

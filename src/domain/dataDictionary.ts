@@ -44,6 +44,8 @@ export enum VARIABLE_USAGE_MODE {
   ReadWrite = 'ReadWrite'
 }
 
+export enum INTEGRATION_VARIABLE_SOURCE_TYPE {}
+
 export interface DataDictionaryVariable {
   name: string;
   source: VARIABLE_SOURCE_TYPE;
@@ -57,16 +59,36 @@ export interface DataDictionaryVariable {
   description?: string;
 }
 
+export interface DataDictionaryIntegrationVariable
+  extends Omit<DataDictionaryVariable, 'sourceType' | 'source'> {
+  source: string;
+  sourceType: string;
+}
+
 export type UserDefinedVariable = {
   name: string;
   dataType: DATA_TYPE;
   defaultValue?: string;
   description?: string;
   destinationType: string;
+  source: VARIABLE_SOURCE_TYPE;
   sourceType: VARIABLE_SOURCE_TYPE;
   allowedValues?: string | string[];
   usageMode?: string;
 };
+
+export type Variable =
+  | DataDictionaryVariable
+  | UserDefinedVariable
+  | DataDictionaryIntegrationVariable;
+
+export interface DataDictionaryVariableRecord {
+  [key: string]: (
+    | DataDictionaryVariable
+    | UserDefinedVariable
+    | DataDictionaryIntegrationVariable
+  )[];
+}
 
 export type ExpressionValidateParams = { name: string; dataType: DATA_TYPE }[];
 

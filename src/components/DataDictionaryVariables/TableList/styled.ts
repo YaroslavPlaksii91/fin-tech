@@ -1,4 +1,4 @@
-import { Table, Paper, Stack } from '@mui/material';
+import { Table, Paper, Stack, TableContainer } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import { theme } from '@theme';
@@ -15,4 +15,9 @@ export const StyledPaper = styled(Paper)(() => ({
 
 export const StyledStack = styled(Stack)(() => ({
   cursor: 'pointer'
+}));
+
+export const StyledTableContainer = styled(TableContainer)(() => ({
+  display: 'flex',
+  overflowX: 'scroll'
 }));

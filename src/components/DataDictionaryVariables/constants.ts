@@ -2,7 +2,8 @@ export const TABS_LABELS: { [key: string]: string } = {
   laPMSVariables: 'LaPMS (Input)',
   userDefined: 'User Defined',
   outputVariables: 'Output',
-  historicDataVariables: 'Underwriting History'
+  historicDataVariables: 'Underwriting History',
+  craReportVariables: 'CRA Reports'
 };
 
 export const SOURCES_DESCRIPTIONS: { [key: string]: string } = {
@@ -21,5 +22,6 @@ export enum VARIABLES_TABS {
   userDefined = 'userDefined',
   outputVariables = 'outputVariables',
   historicDataVariables = 'historicDataVariables',
+  craReportVariables = 'craReportVariables',
   all = 'all'
 }

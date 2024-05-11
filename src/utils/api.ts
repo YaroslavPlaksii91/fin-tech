@@ -1,6 +1,10 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 
-import { apiBaseUrl, apiReportBaseUrl } from '@constants/api-urls';
+import {
+  apiBaseUrl,
+  apiReportBaseUrl,
+  apiIntegrationBaseUrl
+} from '@constants/api-urls';
 import { authService } from '@services/auth.ts';
 
 // API Client factory
@@ -31,3 +35,6 @@ const createAPIClient = ({ baseURL }: { baseURL: string }) => {
 
 export const api = createAPIClient({ baseURL: apiBaseUrl });
 export const reportApi = createAPIClient({ baseURL: apiReportBaseUrl });
+export const integrationApi = createAPIClient({
+  baseURL: apiIntegrationBaseUrl
+});

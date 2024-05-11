@@ -2,8 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 
 import { dataDictionaryService } from '@services/data-dictionary';
 import {
-  DataDictionaryVariable,
-  UserDefinedVariable,
+  DataDictionaryVariableRecord,
   VARIABLE_SOURCE_TYPE,
   VARIABLE_USAGE_MODE
 } from '@domain/dataDictionary';
@@ -21,10 +20,7 @@ const isFulfilled = function <T>(
 };
 
 const useDataDictionaryVariables = (flow?: IFlow) => {
-  const [variables, setVariables] =
-    useState<
-      Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>
-    >();
+  const [variables, setVariables] = useState<DataDictionaryVariableRecord>();
   const [isLoadingData, setIsLoadingData] = useState(false);
 
   const getVariables = useCallback(async () => {
@@ -32,7 +28,8 @@ const useDataDictionaryVariables = (flow?: IFlow) => {
 
     // TODO: extends with new endpoints for getting data dictionary variables
     const results = await Promise.allSettled([
-      dataDictionaryService.getDataDictionaryVariables()
+      dataDictionaryService.getDataDictionaryVariables(),
+      dataDictionaryService.getIntegrationVariables()
     ]);
 
     const temporaryVariables =
@@ -53,15 +50,27 @@ const useDataDictionaryVariables = (flow?: IFlow) => {
         destinationType: VARIABLE_SOURCE_TYPE.PermanentVariable
       })) ?? [];
 
-    const extendedVariables: Record<
-      string,
-      DataDictionaryVariable[] | UserDefinedVariable[]
-    > = {};
+    const extendedVariables: DataDictionaryVariableRecord = {};
 
     const fulfilledValues = results.filter(isFulfilled).map((p) => p.value);
 
     fulfilledValues.forEach((obj) => {
       Object.keys(obj).forEach((key) => {
+        if (
+          [
+            'craClarityReportVariables',
+            'craFactorTrustReportVariables'
+          ].includes(key)
+        ) {
+          const { craReportVariables } = extendedVariables;
+
+          extendedVariables.craReportVariables = craReportVariables
+            ? [...craReportVariables, ...obj[key]]
+            : obj[key];
+
+          return;
+        }
+
         extendedVariables[key] = obj[key];
       });
     });
@@ -71,9 +80,7 @@ const useDataDictionaryVariables = (flow?: IFlow) => {
       ...permanentVariables
     ];
 
-    if (fulfilledValues.length) {
-      setVariables(extendedVariables);
-    }
+    if (fulfilledValues.length) setVariables(extendedVariables);
 
     setIsLoadingData(false);
   }, [flow]);
