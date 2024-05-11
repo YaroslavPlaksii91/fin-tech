@@ -11,8 +11,8 @@ const NoteSection: React.FC<NoteSectionProps> = ({
   handleOpenNoteModal,
   children
 }) => (
-  <Stack pt="18px" width="558px">
-    <Typography variant="h6" pb="16px">
+  <Stack width="558px">
+    <Typography variant="h6" pb={1}>
       Note for this step
     </Typography>
     <Box sx={{ position: 'relative' }}>

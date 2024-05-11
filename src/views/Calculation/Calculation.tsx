@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import {
   Box,
   Button,
+  Card,
+  CardContent,
+  IconButton,
   Stack,
   Table,
   TableBody,
@@ -14,24 +17,15 @@ import { enqueueSnackbar } from 'notistack';
 import TableCell from '@mui/material/TableCell';
 
 import { COLUMN_IDS, Expression, FieldValues, columns } from './types';
-import { PinnedTableCell } from './styled';
 
-import { FlowNode } from '@domain/flow';
+import TrashIcon from '@icons/trash.svg';
+import EditIcon from '@icons/editPencil.svg';
+import PlusSquareIcon from '@icons/plusSquare.svg';
+import { FlowNode, IFlow } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
 import { RULES_LIMIT, SNACK_TYPE } from '@constants/common';
 import Dialog from '@components/shared/Modals/Dialog';
-import {
-  StyledTableRow,
-  StyledTableCell,
-  StyledPaper,
-  StyledTableContainer
-} from '@components/shared/Table/styled';
-import {
-  AddIcon,
-  DeleteOutlineIcon,
-  EditNoteOutlinedIcon
-} from '@components/shared/Icons';
 import { ExpressionForm } from '@components/ExpressionForm/ExpressionForm.tsx';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
@@ -43,9 +37,11 @@ interface CalculationProps {
   step: FlowNode;
   resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
+  flow: IFlow;
 }
 
 const Calculation: React.FC<CalculationProps> = ({
+  flow,
   step,
   resetActiveStepId,
   rfInstance: { getNodes, setNodes }
@@ -137,125 +133,142 @@ const Calculation: React.FC<CalculationProps> = ({
           <Box sx={{ flexGrow: 1 }}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <StepDetailsHeader
+                flow={flow}
                 title={step.data.name}
                 details="Calculation is a step that allows the User to set a value for the parameter."
                 disabled={isSubmitting}
                 isActionContainerVisible={false}
               />
               <Stack pl={3} pr={3}>
-                <StyledPaper>
-                  <StyledTableContainer>
-                    <Table stickyHeader aria-label="sticky table">
-                      <TableHead>
-                        <StyledTableRow>
-                          {columns.map((column) =>
-                            column.id === COLUMN_IDS.delete_edit ? (
-                              <PinnedTableCell
-                                key={column.id}
-                                align={column.align}
-                                style={{ width: column.width }}
-                              >
-                                {column.label}
-                              </PinnedTableCell>
-                            ) : (
-                              <StyledTableCell
-                                key={column.id}
-                                align={column.align}
-                                style={{ width: column.width }}
-                              >
-                                {column.label}
-                              </StyledTableCell>
-                            )
-                          )}
-                        </StyledTableRow>
-                      </TableHead>
-                      <TableBody>
-                        {fields.map((expression, index) => (
-                          <StyledTableRow key={index}>
-                            <StyledTableCell>
-                              {expression.outputName}
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              {expression.expressionString}
-                            </StyledTableCell>
-                            <PinnedTableCell
-                              sx={{
-                                padding: 0
-                              }}
-                              width={40}
-                            >
-                              <Stack direction="row">
-                                <Button
-                                  fullWidth
-                                  sx={{ padding: '10px' }}
-                                  onClick={() => {
-                                    setInitialValue({
-                                      ...expression,
-                                      id: expression.id
-                                    });
-                                    setOpenExpEditorView(true);
-                                  }}
-                                >
-                                  <EditNoteOutlinedIcon />
-                                </Button>
-                                <Button
-                                  fullWidth
-                                  sx={{ padding: '10px' }}
-                                  onClick={() => {
-                                    remove(index);
-                                  }}
-                                >
-                                  <DeleteOutlineIcon />
-                                </Button>
-                              </Stack>
-                            </PinnedTableCell>
-                          </StyledTableRow>
-                        ))}
-                        {!fields.length && (
+                <Box mb={1}>
+                  <Card variant="outlined">
+                    <CardContent
+                      sx={{ padding: '0px !important', overflow: 'hidden' }}
+                    >
+                      <Table
+                        size="small"
+                        stickyHeader
+                        aria-label="sticky table"
+                      >
+                        <TableHead>
                           <TableRow>
-                            <TableCell colSpan={6}>
-                              <Typography variant="body2" textAlign="center">
-                                No Expressions Yet.
-                              </Typography>
-                            </TableCell>
+                            {columns.map((column) =>
+                              column.id === COLUMN_IDS.delete_edit ? (
+                                <TableCell
+                                  key={column.id}
+                                  align={column.align}
+                                  style={{ width: column.width }}
+                                >
+                                  {column.label}
+                                </TableCell>
+                              ) : (
+                                <TableCell
+                                  key={column.id}
+                                  align={column.align}
+                                  style={{ width: column.width }}
+                                >
+                                  {column.label}
+                                </TableCell>
+                              )
+                            )}
                           </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </StyledTableContainer>
-                </StyledPaper>
+                        </TableHead>
+                        <TableBody>
+                          {fields.map((expression, index) => (
+                            <TableRow key={index}>
+                              <TableCell>{expression.outputName}</TableCell>
+                              <TableCell>
+                                {expression.expressionString}
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  padding: 0
+                                }}
+                                width={40}
+                              >
+                                <Stack direction="row">
+                                  <IconButton
+                                    onClick={() => {
+                                      setInitialValue({
+                                        ...expression,
+                                        id: expression.id
+                                      });
+                                      setOpenExpEditorView(true);
+                                    }}
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                  <IconButton
+                                    onClick={() => {
+                                      remove(index);
+                                    }}
+                                  >
+                                    <TrashIcon />
+                                  </IconButton>
+                                </Stack>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                          {!fields.length && (
+                            <TableRow>
+                              <TableCell sx={{ borderBottom: 0 }} colSpan={6}>
+                                <Box py={2}>
+                                  <Typography
+                                    variant="body2"
+                                    textAlign="center"
+                                  >
+                                    No Expressions Yet.
+                                  </Typography>
+                                </Box>
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </Box>
                 <Button
-                  sx={{ width: '190px' }}
                   disabled={fields.length === RULES_LIMIT}
+                  variant="outlined"
+                  size="small"
+                  sx={{ maxWidth: 180 }}
                   onClick={() => {
                     setInitialValue(undefined);
                     setOpenExpEditorView(true);
                   }}
-                  startIcon={<AddIcon />}
+                  startIcon={<PlusSquareIcon />}
                 >
-                  Add new business rule
+                  Add New Expression
                 </Button>
-                <NoteSection handleOpenNoteModal={handleOpenNoteModal}>
-                  <InputText
-                    fullWidth
-                    name="note"
-                    control={control}
-                    label="Note"
-                    disabled
-                    placeholder="Enter note here"
-                  />
-                </NoteSection>
+                <Box mt={2}>
+                  <Card variant="outlined">
+                    <CardContent>
+                      <NoteSection handleOpenNoteModal={handleOpenNoteModal}>
+                        <InputText
+                          fullWidth
+                          name="note"
+                          control={control}
+                          label="Note"
+                          disabled
+                          placeholder="Enter note here"
+                        />
+                      </NoteSection>
+                    </CardContent>
+                  </Card>
+                </Box>
               </Stack>
             </form>
             <Dialog
-              title="Discard changes"
+              title="Cancel Changes"
               open={openDiscardModal}
               onConfirm={handleDiscardChanges}
               onClose={() => setOpenDiscardModal(false)}
-              confirmText="Discard changes"
+              confirmText="Yes"
+              cancelText="No"
             >
               <Typography sx={{ maxWidth: '416px' }} variant="body2">
-                Discarding changes will delete all edits in this step, this
+                Canceling changes will delete all edits in this step, this
                 action cannot be canceled. Are you sure you want to cancel the
                 changes?
               </Typography>
@@ -287,6 +300,16 @@ const Calculation: React.FC<CalculationProps> = ({
           }}
         >
           <ExpressionForm
+            renderTitle={() => (
+              <StepDetailsHeader
+                flow={flow}
+                title={
+                  (initialValue?.id ? 'Change' : 'Add New') + ' Expression'
+                }
+                disabled
+                isActionContainerVisible={false}
+              />
+            )}
             initialValues={initialValue}
             handleAddNewBusinessRule={handleAddNewBussinesRule}
             onCancelClick={() => setOpenExpEditorView(false)}
