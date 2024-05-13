@@ -28,7 +28,6 @@ import {
   EdgeData,
   StepType
 } from '../types';
-import ControlPanelEdit from '../ContolPanels/ControlPanelEdit';
 import {
   checkIfFlowIsEdit,
   checkIfNodeHasConnection,
@@ -40,10 +39,11 @@ import {
 } from '../utils/workflowElementsUtils';
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
 import { DEFAULT_SOURCE_HANDLE } from '../constants';
+import ControlPanelSubflowEdit from '../ContolPanels/ControlPanelEditSubflow';
 
 import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
 import { FlowNode, IFlow } from '@domain/flow';
-import { useStep, useSubflow } from '@contexts/StepContext';
+import { useStep } from '@contexts/StepContext';
 import StepConfigureView from '@components/StepManagment/StepConfigureView/StepConfigureView';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
@@ -51,14 +51,13 @@ import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 import { addNode, deleteNodes } from '@store/flow/flow';
 import { useAppDispatch } from '@store/hooks';
-import Subflow from '@views/Subflow/Subflow';
 
 interface FlowChartViewProps {
   flow: IFlow;
   setCopyFlow: (flow: IFlow) => void;
 }
 
-const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
+const FlowChartEditorSubflow: React.FC<FlowChartViewProps> = ({
   flow,
   setCopyFlow
 }) => {
@@ -72,7 +71,6 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { activeStepId, setActiveStepId, resetActiveStepId } = useStep();
-  const { activeSubflowId, resetActiveSubflowId } = useSubflow();
 
   const dispatch = useAppDispatch();
 
@@ -337,27 +335,19 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         connectionLineType={ConnectionLineType.SmoothStep}
       >
         <Background variant={BackgroundVariant.Dots} />
-        <ControlPanelEdit
+        <ControlPanelSubflowEdit
           flow={flow}
           setCopyFlow={setCopyFlow}
-          isDirty={isDirty}
           rfInstance={rfInstance}
         />
         <Controls />
       </ReactFlow>
-      {rfInstance && activeStepId && !activeSubflowId && (
+      {rfInstance && activeStepId && (
         <StepConfigureView
           flow={flow}
           resetActiveStepId={resetActiveStepId}
           rfInstance={rfInstance}
           activeStepId={activeStepId}
-        />
-      )}
-      {rfInstance && activeSubflowId && (
-        <Subflow
-          resetActiveStepId={resetActiveSubflowId}
-          activeStepId={activeSubflowId}
-          rfInstance={rfInstance}
         />
       )}
       <StepActionsMenu
@@ -375,7 +365,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 };
 
 const FlowChartEditor = (props: FlowChartViewProps) => (
-  <FlowChartEditorLayout {...props} />
+  <FlowChartEditorSubflow {...props} />
 );
 
 export default FlowChartEditor;

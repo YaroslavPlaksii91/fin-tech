@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
 
 import { getFlow, getProductionFlow, saveFlow } from './asyncThunk';
 
@@ -28,6 +28,27 @@ const initialState: initialStateInterface = {
   flow: initialFlow
 };
 
+const addNodeToSubflowHelper = (
+  nodes: FlowNode[],
+  subflowId: string,
+  newNode: FlowNode
+): FlowNode[] =>
+  nodes.map((node) => {
+    if (node.id === subflowId && node.data.nodes) {
+      return {
+        ...node,
+        nodes: [...node.data.nodes, newNode]
+      };
+    }
+    if (node.data.nodes) {
+      return {
+        ...node,
+        nodes: addNodeToSubflowHelper(node.data.nodes, subflowId, newNode)
+      };
+    }
+    return node;
+  });
+
 export const flowSlicer = createSlice({
   name: 'flow',
   initialState,
@@ -35,9 +56,23 @@ export const flowSlicer = createSlice({
     setInitialFlow: create.reducer((state) => {
       state.flow = initialFlow;
     }),
-    addNode: create.reducer((state, action: PayloadAction<FlowNode>) => {
-      state.flow.nodes.push(action.payload);
-    }),
+    addNode: create.reducer(
+      (state, action: PayloadAction<{ node: FlowNode; flowId: string }>) => {
+        if (state.flow.id === action.payload.flowId) {
+          state.flow.nodes.push(action.payload.node);
+        } else {
+          const nodes = addNodeToSubflowHelper(
+            current(state.flow.nodes),
+            action.payload.flowId,
+            action.payload.node
+          );
+          state.flow = {
+            ...state.flow,
+            nodes
+          };
+        }
+      }
+    ),
     deleteNodes: create.reducer((state, action: PayloadAction<FlowNode[]>) => {
       state.flow.nodes = state.flow.nodes.filter((node) =>
         action.payload.find((item) => item.id !== node.id)

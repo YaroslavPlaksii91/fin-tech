@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { cloneDeep } from 'lodash';
 
-import { StyledContainer } from './styled';
-
 import ChampionChallenger from '@views/ChampionChallenger/ChampionChallenger';
 import DecisionTableStep from '@views/DecisionTable/DecisionTable';
 import { FlowNode, IFlow } from '@domain/flow';
@@ -33,7 +31,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
   }, [activeStepId]);
 
   return (
-    <StyledContainer>
+    <>
       {step?.type === StepType.CHAMPION_CHALLENGER && (
         <ChampionChallenger
           flow={flow}
@@ -56,7 +54,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
           step={step}
         />
       )}
-    </StyledContainer>
+    </>
   );
 };
 

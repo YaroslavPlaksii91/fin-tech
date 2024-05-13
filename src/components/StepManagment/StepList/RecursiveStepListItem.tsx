@@ -19,6 +19,7 @@ import {
   StyledSubAccordionSummary
 } from '@components/Sidebar/styled';
 import { FlowNode } from '@domain/flow';
+import { useSubflow } from '@contexts/StepContext';
 
 interface RecursiveStepListItemProps {
   step: FlowNode;
@@ -37,6 +38,8 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
   isProductionFlow,
   level
 }) => {
+  const { activeSubflowId, setActiveSubflowId } = useSubflow();
+
   if (step.data.$type !== StepType.SUBFLOW) {
     return (
       <StepListItem
@@ -63,8 +66,8 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
     <StyledAccordion key={step.id}>
       <StyledListItem
         sx={{ paddingLeft: `${level * 40}px` }}
-        className={activeStepId === step.id ? 'active' : undefined}
-        onClick={() => setActiveStepId(step.id)}
+        className={activeSubflowId === step.id ? 'active' : undefined}
+        onClick={() => setActiveSubflowId(step.id)}
       >
         <StyledSubAccordionSummary
           sx={{ paddingLeft: 0 }}
@@ -82,8 +85,8 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
             flowNode={step}
             showActionMenuButton={true}
             isEditMode={isEditMode}
-            setActiveStepId={setActiveStepId}
-            activeStepId={activeStepId}
+            setActiveStepId={setActiveSubflowId}
+            activeStepId={activeSubflowId}
           />
         </ListItemSecondaryAction>
       </StyledListItem>

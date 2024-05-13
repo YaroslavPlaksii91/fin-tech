@@ -43,6 +43,7 @@ import {
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
+import { StepContainer } from '@views/styled';
 
 type DecisionTableStepProps = {
   step: FlowNode;
@@ -460,7 +461,7 @@ const DecisionTableStep = ({
   if (!value?.variables) return null;
 
   return (
-    <>
+    <StepContainer>
       <StepDetailsHeader
         title={step.data.name}
         details="A decision table is a step that allows to set expressions for
@@ -583,7 +584,7 @@ const DecisionTableStep = ({
       </StyledPaper>
 
       <StepNoteSection noteValue={noteValue} setNoteValue={setNoteValue} />
-    </>
+    </StepContainer>
   );
 };
 
