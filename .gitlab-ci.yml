@@ -17,6 +17,7 @@ stages:
     - echo VITE_CLIENT_ID=$(eval echo \$vite_client_id_$CI_COMMIT_REF_SLUG) >> .env
     - echo VITE_IAM_SERVICE_URL=$(eval echo \$vite_iam_service_url_$CI_COMMIT_REF_SLUG) >> .env
     - echo VITE_API_REPORTING_BASE=$(eval echo \$vite_api_reporting_base_$CI_COMMIT_REF_SLUG) >> .env
+    - echo VITE_API_INTEGRATION_BASE=$(eval echo \$vite_api_integration_base_$CI_COMMIT_REF_SLUG) >> .env
   cache:
     key: $CI_PROJECT_NAMESPACE-$CI_COMMIT_REF_NAME
     paths:
