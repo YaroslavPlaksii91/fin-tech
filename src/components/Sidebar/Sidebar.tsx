@@ -43,7 +43,7 @@ import { selectFlow } from '@store/flow/selectors';
 import { useLoading } from '@contexts/LoadingContext';
 import { AddFlow } from '@components/FlowManagment/AddFlow/AddFlowForm';
 import StepList from '@components/StepManagment/StepList/StepList';
-import { useStep } from '@contexts/StepContext';
+import { useActiveStep } from '@contexts/StepContext';
 import { theme } from '@theme';
 
 const animationStyles = (expanded: boolean) => ({
@@ -69,7 +69,7 @@ const pages = [
 const Sidebar = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
-  const { resetActiveStepId } = useStep();
+  const { resetActive } = useActiveStep();
   const { startLoading, stopLoading } = useLoading();
   const { flowList, flowProduction } = useAppSelector(selectFlowList);
   const { flow } = useAppSelector(selectFlow);
@@ -121,7 +121,7 @@ const Sidebar = () => {
       }
     };
 
-    resetActiveStepId();
+    resetActive();
     if (id) {
       void fetchFlow(id);
     } else {

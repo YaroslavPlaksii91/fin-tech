@@ -43,7 +43,7 @@ import { DEFAULT_SOURCE_HANDLE } from '../constants';
 
 import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
 import { FlowNode, IFlow } from '@domain/flow';
-import { useStep, useSubflow } from '@contexts/StepContext';
+import { useActiveStep } from '@contexts/StepContext';
 import StepConfigureView from '@components/StepManagment/StepConfigureView/StepConfigureView';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
@@ -71,8 +71,8 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const { activeStepId, setActiveStepId, resetActiveStepId } = useStep();
-  const { activeSubflowId, resetActiveSubflowId } = useSubflow();
+
+  const { activeStep, setActiveStep, resetActive } = useActiveStep();
 
   const dispatch = useAppDispatch();
 
@@ -345,29 +345,29 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
         />
         <Controls />
       </ReactFlow>
-      {rfInstance && activeStepId && !activeSubflowId && (
+      {rfInstance && activeStep.stepId && !activeStep.subFlowId && (
         <StepConfigureView
           flow={flow}
-          resetActiveStepId={resetActiveStepId}
+          resetActiveStepId={resetActive}
           rfInstance={rfInstance}
-          activeStepId={activeStepId}
+          activeStepId={activeStep.stepId}
         />
       )}
-      {rfInstance && activeSubflowId && (
+      {rfInstance && activeStep.subFlowId && (
         <Subflow
-          resetActiveStepId={resetActiveSubflowId}
-          activeStepId={activeSubflowId}
+          resetActiveStepId={resetActive}
+          activeStepId={activeStep.subFlowId}
           rfInstance={rfInstance}
         />
       )}
       <StepActionsMenu
-        activeStepId={activeStepId}
+        activeStep={activeStep}
         anchorElement={nodeElement}
         flowNode={flowNode}
         isOpen={Boolean(flowNode)}
         onClose={onPaneClick}
         isEditMode
-        setActiveStepId={setActiveStepId}
+        setActiveStep={setActiveStep}
       />
       <LeavePageConfirmationDialog isDirty={isDirty} />
     </DataDictionaryContext.Provider>

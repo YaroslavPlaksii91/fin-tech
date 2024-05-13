@@ -11,29 +11,32 @@ import { StyledListItem, StyledStepItem } from './styled';
 import { Bezier } from '@components/shared/Icons';
 import { NO_TAG_LABEL } from '@constants/common';
 import { FlowNode } from '@domain/flow';
+import { ActiveStep } from '@contexts/StepContext';
 
 interface StepListItemProps {
   step: FlowNode;
   level: number;
-  activeStepId: null | string;
-  setActiveStepId: (step: string | null) => void;
+  subFlowId?: string;
+  activeStep: ActiveStep;
+  setActiveStep: (value: ActiveStep) => void;
   isEditMode: boolean;
   isProductionFlow: boolean;
 }
 
 const StepListItem: React.FC<StepListItemProps> = ({
   step,
-  activeStepId,
-  setActiveStepId,
+  activeStep,
+  setActiveStep,
   isEditMode,
+  subFlowId = null,
   isProductionFlow,
   level
 }) => (
   <StyledListItem
     sx={{ paddingLeft: `${level * 40}px` }}
     key={step.id}
-    className={activeStepId === step.id ? 'active' : undefined}
-    onClick={() => setActiveStepId(step.id)}
+    className={activeStep.stepId === step.id ? 'active' : undefined}
+    onClick={() => setActiveStep({ subFlowId, stepId: step.id })}
   >
     <ListItemIcon>
       <Bezier />
@@ -47,11 +50,12 @@ const StepListItem: React.FC<StepListItemProps> = ({
     {!isProductionFlow && (
       <ListItemSecondaryAction>
         <StepActionsMenu
+          subFlowId={subFlowId}
+          activeStep={activeStep}
+          setActiveStep={setActiveStep}
           flowNode={step}
           showActionMenuButton={true}
           isEditMode={isEditMode}
-          setActiveStepId={setActiveStepId}
-          activeStepId={activeStepId}
         />
       </ListItemSecondaryAction>
     )}

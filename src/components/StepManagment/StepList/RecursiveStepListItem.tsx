@@ -19,33 +19,34 @@ import {
   StyledSubAccordionSummary
 } from '@components/Sidebar/styled';
 import { FlowNode } from '@domain/flow';
-import { useSubflow } from '@contexts/StepContext';
+import { ActiveStep } from '@contexts/StepContext';
 
 interface RecursiveStepListItemProps {
   step: FlowNode;
   level: number;
-  activeStepId: null | string;
-  setActiveStepId: (step: string | null) => void;
+  activeStep: ActiveStep;
+  setActiveStep: (value: ActiveStep) => void;
+  subFlowId?: string;
   isEditMode: boolean;
   isProductionFlow: boolean;
 }
 
 const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
   step,
-  activeStepId,
-  setActiveStepId,
+  activeStep,
+  setActiveStep,
   isEditMode,
+  subFlowId = null,
   isProductionFlow,
   level
 }) => {
-  const { activeSubflowId, setActiveSubflowId } = useSubflow();
-
   if (step.data.$type !== StepType.SUBFLOW) {
     return (
       <StepListItem
+        subFlowId={subFlowId}
         level={level}
-        activeStepId={activeStepId}
-        setActiveStepId={setActiveStepId}
+        activeStep={activeStep}
+        setActiveStep={setActiveStep}
         isEditMode={isEditMode}
         isProductionFlow={isProductionFlow}
         step={step}
@@ -66,8 +67,10 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
     <StyledAccordion key={step.id}>
       <StyledListItem
         sx={{ paddingLeft: `${level * 40}px` }}
-        className={activeSubflowId === step.id ? 'active' : undefined}
-        onClick={() => setActiveSubflowId(step.id)}
+        className={activeStep.subFlowId === step.id ? 'active' : undefined}
+        onClick={() => {
+          setActiveStep({ subFlowId: step.id, stepId: null });
+        }}
       >
         <StyledSubAccordionSummary
           sx={{ paddingLeft: 0 }}
@@ -82,11 +85,12 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
         </StyledSubAccordionSummary>
         <ListItemSecondaryAction>
           <StepActionsMenu
+            subFlowId={step.id}
             flowNode={step}
             showActionMenuButton={true}
             isEditMode={isEditMode}
-            setActiveStepId={setActiveSubflowId}
-            activeStepId={activeSubflowId}
+            setActiveStep={setActiveStep}
+            activeStep={activeStep}
           />
         </ListItemSecondaryAction>
       </StyledListItem>
@@ -100,11 +104,12 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
         )}
         {stepsSubflow.map((node) => (
           <RecursiveStepListItem
+            subFlowId={step.id}
             key={node.id}
             step={node}
             level={level + 1}
-            activeStepId={activeStepId}
-            setActiveStepId={setActiveStepId}
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
             isEditMode={isEditMode}
             isProductionFlow={isProductionFlow}
           />

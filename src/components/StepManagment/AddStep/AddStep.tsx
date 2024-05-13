@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDispatch } from 'react-redux/es/hooks/useDispatch';
-import { cloneDeep } from 'lodash';
+// import { useDispatch } from 'react-redux/es/hooks/useDispatch';
+// import { cloneDeep } from 'lodash';
 
 import { validationSchema } from './validationSchema';
 
@@ -14,9 +14,8 @@ import {
   FunctionalStepType,
   StepType
 } from '@components/FlowManagment/FlowChart/types';
-// import { useStep } from '@contexts/StepContext';
 import { FlowNode } from '@domain/flow';
-import { addNode } from '@store/flow/flow';
+// import { addNode } from '@store/flow/flow';
 
 type FormData = {
   name: string;
@@ -60,8 +59,7 @@ export const AddStep: React.FC<AddStepProps> = ({
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema)
   });
-  // const { setActiveStepId } = useStep();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const onSubmit: SubmitHandler<FormData> = ({ name }) => {
     let createdStep;
@@ -70,9 +68,8 @@ export const AddStep: React.FC<AddStepProps> = ({
     }
     if (createdStep) {
       // setActiveStepId(createdStep.id);
-
       // For update list of steps in the sidebar
-      dispatch(addNode(cloneDeep(createdStep)));
+      // dispatch(addNode(cloneDeep(createdStep)));
     }
     handleCloseModal();
   };

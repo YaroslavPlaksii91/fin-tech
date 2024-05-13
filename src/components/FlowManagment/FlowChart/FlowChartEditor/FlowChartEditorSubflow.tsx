@@ -43,7 +43,7 @@ import ControlPanelSubflowEdit from '../ContolPanels/ControlPanelEditSubflow';
 
 import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
 import { FlowNode, IFlow } from '@domain/flow';
-import { useStep } from '@contexts/StepContext';
+import { useActiveStep } from '@contexts/StepContext';
 import StepConfigureView from '@components/StepManagment/StepConfigureView/StepConfigureView';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
@@ -70,7 +70,8 @@ const FlowChartEditorSubflow: React.FC<FlowChartViewProps> = ({
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const { activeStepId, setActiveStepId, resetActiveStepId } = useStep();
+
+  const { activeStep, setActiveStep } = useActiveStep();
 
   const dispatch = useAppDispatch();
 
@@ -342,22 +343,25 @@ const FlowChartEditorSubflow: React.FC<FlowChartViewProps> = ({
         />
         <Controls />
       </ReactFlow>
-      {rfInstance && activeStepId && (
+      {rfInstance && activeStep.stepId && (
         <StepConfigureView
           flow={flow}
-          resetActiveStepId={resetActiveStepId}
+          resetActiveStepId={() =>
+            setActiveStep({ subFlowId: flow.id, stepId: null })
+          }
           rfInstance={rfInstance}
-          activeStepId={activeStepId}
+          activeStepId={activeStep.stepId}
         />
       )}
       <StepActionsMenu
-        activeStepId={activeStepId}
+        subFlowId={flow.id}
+        activeStep={activeStep}
+        setActiveStep={setActiveStep}
         anchorElement={nodeElement}
         flowNode={flowNode}
         isOpen={Boolean(flowNode)}
         onClose={onPaneClick}
         isEditMode
-        setActiveStepId={setActiveStepId}
       />
       <LeavePageConfirmationDialog isDirty={isDirty} />
     </DataDictionaryContext.Provider>

@@ -17,16 +17,18 @@ import { MoreHorizontal } from '@components/shared/Icons.tsx';
 import { asyncConfirmDialog } from '@components/shared/Confirmation/AsyncConfirmDialog.tsx';
 import { useAppDispatch } from '@store/hooks';
 import { deleteNodes } from '@store/flow/flow';
+import { ActiveStep } from '@contexts/StepContext';
 
 interface StepActionsMenuOnNode {
   isOpen?: boolean;
   onClose?: () => void;
+  subFlowId?: string;
   anchorElement?: HTMLElement | null;
   flowNode: FlowNode | null;
   showActionMenuButton?: boolean;
   isEditMode?: boolean;
-  setActiveStepId?: (activeStepId: string | null) => void;
-  activeStepId: string | null;
+  activeStep?: ActiveStep;
+  setActiveStep?: (value: ActiveStep) => void;
 }
 
 const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
@@ -36,8 +38,9 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   flowNode,
   showActionMenuButton = false,
   isEditMode = false,
-  setActiveStepId,
-  activeStepId
+  subFlowId = null,
+  setActiveStep,
+  activeStep
 }) => {
   const { deleteElements } = useReactFlow();
   const navigate = useNavigate();
@@ -65,16 +68,15 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
         break;
       case ActionTypes.EDIT_STEP:
         if (isEditMode) {
-          flowNode && setActiveStepId?.(flowNode.id);
+          flowNode && setActiveStep?.({ subFlowId, stepId: flowNode.id });
         } else {
           flowNode &&
             navigate(routes.underwriting.flow.edit(id as string), {
-              state: { activeStepId: flowNode.id }
+              state: { subFlowId, stepId: flowNode.id }
             });
         }
         break;
 
-        break;
       case ActionTypes.RENAME_STEP:
         Logger.info('Rename step');
         break;
@@ -88,8 +90,8 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
           confirmText: 'Delete'
         });
         if (answer) {
-          if (flowNode && flowNode.id === activeStepId) {
-            setActiveStepId?.(null);
+          if (flowNode && flowNode.id === activeStep?.stepId) {
+            setActiveStep?.({ subFlowId, stepId: null });
           }
           deleteElements({ nodes: [flowNode as Node] });
           dispatch(deleteNodes([flowNode as FlowNode]));
