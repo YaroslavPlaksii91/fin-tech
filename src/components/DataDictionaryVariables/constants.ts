@@ -14,7 +14,9 @@ export const SOURCES_DESCRIPTIONS: { [key: string]: string } = {
   historicDataVariables:
     'This source contains variables that are calculated from the underwriting history and decision engine reporting.',
   outputVariables:
-    'This source contains variables that the Risk Manager must initialize and the Underwriting Platform must include in the request to the Loan Management System (LMS), otherwise the flow will not be production-ready.'
+    'This source contains variables that the Risk Manager must initialize and the Underwriting Platform must include in the request to the Loan Management System (LMS), otherwise the flow will not be production-ready.',
+  craReportVariables:
+    'This source contains the data about the leads we may receive from multiple Credit Rating Agencies (CRAs). When designing the flow the Risk Manager must fetch this data explicitly via the GET_REPORT function in the calculation step.'
 };
 
 export enum VARIABLES_TABS {
