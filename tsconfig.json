@@ -28,7 +28,8 @@
       "@constants/*": ["./constants/*"],
       "@contexts/*": ["./contexts/*"],
       "@views/*": ["./views/*"],
-      "@theme": ["./themeConfig"]
+      "@theme": ["./themeConfig"],
+      "@icons": ["./assets/icons"]
     },
 
     /* Linting */

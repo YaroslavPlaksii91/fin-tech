@@ -1,3 +1,4 @@
+import { Box, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import {
   Controller,
@@ -11,6 +12,7 @@ import { AddIcon, RemoveIcon } from '../Icons';
 import { StyledInputAdornment, StyledTextField } from './styled';
 
 import { SPECIAL_KEY_CODES } from '@constants/common';
+import { theme } from '@theme';
 
 const MIN_VALUE = 1;
 const MAX_VALUE = 100;
@@ -66,31 +68,41 @@ const NumberRangeInput = <
         InputProps={{
           startAdornment: (
             <StyledInputAdornment position="start">
-              <IconButton
-                aria-label="Decrement"
-                disabled={+value <= rangeMin}
-                onClick={() => {
-                  onChange(+value - 1);
-                  onChangeCb?.();
-                }}
+              <Box
+                sx={{ borderRight: `1px solid ${theme.palette.action.active}` }}
               >
-                <RemoveIcon fontSize="small" />
-              </IconButton>
+                <IconButton
+                  aria-label="Decrement"
+                  disabled={+value <= rangeMin}
+                  onClick={() => {
+                    onChange(+value - 1);
+                    onChangeCb?.();
+                  }}
+                >
+                  <RemoveIcon fontSize="small" />
+                </IconButton>
+              </Box>
             </StyledInputAdornment>
           ),
           endAdornment: (
             <StyledInputAdornment position="end">
-              %
-              <IconButton
-                aria-label="Increment"
-                disabled={!(+value < rangeMax)}
-                onClick={() => {
-                  onChange(+value + 1);
-                  onChangeCb?.();
+              <Typography sx={{ mr: '2px' }}>%</Typography>
+              <Box
+                sx={{
+                  borderLeft: `1px solid ${theme.palette.action.active}`
                 }}
               >
-                <AddIcon fontSize="small" />
-              </IconButton>
+                <IconButton
+                  aria-label="Increment"
+                  disabled={!(+value < rangeMax)}
+                  onClick={() => {
+                    onChange(+value + 1);
+                    onChangeCb?.();
+                  }}
+                >
+                  <AddIcon fontSize="small" />
+                </IconButton>
+              </Box>
             </StyledInputAdornment>
           )
         }}

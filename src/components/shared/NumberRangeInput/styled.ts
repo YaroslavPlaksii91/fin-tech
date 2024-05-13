@@ -2,15 +2,14 @@ import { styled } from '@mui/material/styles';
 import { InputAdornment, TextField } from '@mui/material';
 
 export const StyledTextField = styled(TextField)(({ theme }) => ({
+  ...theme.typography.body2,
   width: '111px',
   '& .MuiInputBase-root': {
     borderRadius: '6px',
-    padding: '0 8px',
-    color: theme.palette.gray,
-    fontWeight: 600
+    padding: '0 8px'
   },
   '& .MuiOutlinedInput-notchedOutline': {
-    border: `1px solid ${theme.palette.gray}`
+    border: `1px solid ${theme.palette.action.active}`
   },
   '& .MuiOutlinedInput-input': {
     padding: '2.5px 2px',

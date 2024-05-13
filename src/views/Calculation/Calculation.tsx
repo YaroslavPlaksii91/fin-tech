@@ -18,12 +18,14 @@ import TableCell from '@mui/material/TableCell';
 
 import { COLUMN_IDS, Expression, FieldValues, columns } from './types';
 
+import TrashIcon from '@icons/trash.svg';
+import EditIcon from '@icons/editPencil.svg';
+import PlusSquareIcon from '@icons/plusSquare.svg';
 import { FlowNode, IFlow } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
 import { RULES_LIMIT, SNACK_TYPE } from '@constants/common';
 import Dialog from '@components/shared/Modals/Dialog';
-import { Edit, PlusSquare, Trash } from '@components/shared/Icons';
 import { ExpressionForm } from '@components/ExpressionForm/ExpressionForm.tsx';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
@@ -194,14 +196,14 @@ const Calculation: React.FC<CalculationProps> = ({
                                       setOpenExpEditorView(true);
                                     }}
                                   >
-                                    <Edit />
+                                    <EditIcon />
                                   </IconButton>
                                   <IconButton
                                     onClick={() => {
                                       remove(index);
                                     }}
                                   >
-                                    <Trash />
+                                    <TrashIcon />
                                   </IconButton>
                                 </Stack>
                               </TableCell>
@@ -235,7 +237,7 @@ const Calculation: React.FC<CalculationProps> = ({
                     setInitialValue(undefined);
                     setOpenExpEditorView(true);
                   }}
-                  startIcon={<PlusSquare />}
+                  startIcon={<PlusSquareIcon />}
                 >
                   Add New Expression
                 </Button>
