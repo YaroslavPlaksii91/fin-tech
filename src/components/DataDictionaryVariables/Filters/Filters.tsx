@@ -17,12 +17,13 @@ import {
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import { IFilters } from './types';
-import { FILTERS_GROUPS } from './constants';
+import { IFilterGroups, IFilters } from './types';
+import { INITIAL_FILTERS } from './constants';
 
 interface FiltersProps {
   isFiltersOpen: boolean;
   filters: IFilters;
+  filterGroupsToShow: IFilterGroups[];
   search: string;
   handleReset: () => void;
   handleApply: (data: { search: string; filters: IFilters }) => void;
@@ -32,6 +33,7 @@ interface FiltersProps {
 const Filters = ({
   isFiltersOpen,
   filters,
+  filterGroupsToShow,
   search,
   handleReset,
   handleApply,
@@ -41,10 +43,7 @@ const Filters = ({
     search: string;
     filters: IFilters;
   }>({
-    defaultValues: {
-      search: '',
-      filters: { dataType: [] }
-    }
+    defaultValues: { search: '', filters: INITIAL_FILTERS }
   });
 
   useEffect(() => {
@@ -101,7 +100,7 @@ const Filters = ({
               />
             </Stack>
             <Stack alignItems="center" width="100%">
-              {FILTERS_GROUPS.map(({ filterBy, fields, title }) => (
+              {filterGroupsToShow.map(({ filterBy, fields, title }) => (
                 <Accordion
                   key={filterBy}
                   disableGutters

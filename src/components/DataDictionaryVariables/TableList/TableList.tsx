@@ -88,12 +88,10 @@ const TableList = ({
     let variables;
 
     switch (row.sourceType) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
       case VARIABLE_SOURCE_TYPE.PermanentVariable: {
         variables = value?.permanentVariables;
         break;
       }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
       case VARIABLE_SOURCE_TYPE.TemporaryVariable: {
         variables = value?.temporaryVariables;
         break;

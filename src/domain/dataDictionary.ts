@@ -44,13 +44,27 @@ export enum VARIABLE_USAGE_MODE {
   ReadWrite = 'ReadWrite'
 }
 
-export enum INTEGRATION_VARIABLE_SOURCE_TYPE {}
+export enum INTEGRATION_VARIABLE_SOURCE_TYPE {
+  CraClarity = 'CraClarity',
+  CraFactorTrust = 'CraFactorTrust'
+}
+
+export enum INTEGRATION_VARIABLE_SOURCE_SUB_TYPE {
+  OFAC = 'OFAC',
+  ClearCreditRisk = 'ClearCreditRisk',
+  ClearFraudInsight = 'ClearFraudInsight',
+  ClearRecentHistory = 'ClearRecentHistory'
+}
+
+export type INTEGRATION_VARIABLE_DATA_TYPE =
+  | INTEGRATION_VARIABLE_SOURCE_TYPE
+  | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
 
 export interface DataDictionaryVariable {
   name: string;
-  source: VARIABLE_SOURCE_TYPE;
+  source: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_TYPE;
   destinationType: string;
-  sourceType: VARIABLE_SOURCE_TYPE;
+  sourceType: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
   dataType: DATA_TYPE;
   defaultValue?: string;
   isRequired?: boolean;
@@ -60,10 +74,7 @@ export interface DataDictionaryVariable {
 }
 
 export interface DataDictionaryIntegrationVariable
-  extends Omit<DataDictionaryVariable, 'sourceType' | 'source'> {
-  source: string;
-  sourceType: string;
-}
+  extends DataDictionaryVariable {}
 
 export type UserDefinedVariable = {
   name: string;
