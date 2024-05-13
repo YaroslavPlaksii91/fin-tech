@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Stack, MenuItem } from '@mui/material';
 
+import { SelectedVariable } from '../TableList/TableList';
+
 import { validationSchema } from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
@@ -19,29 +21,30 @@ import {
 import { JSONPatchOperation } from '@domain/entity';
 import { flowService } from '@services/flow-service';
 import Logger from '@utils/logger';
+import { modifyFirstLetter } from '@utils/text';
 
 type VariableFormProps = {
   flowId: string;
-  modalOpen: boolean;
-  formData:
-    | (Pick<
-        UserDefinedVariable,
-        'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-      > & { index: number; variableIsUsed: boolean })
-    | undefined;
-  handleClose: () => void;
+  isOpen: boolean;
+  formData?: SelectedVariable;
+  onClose: () => void;
 };
 
-// TODO: Add other sources as an array
-const variableSourceTypeOptions = {
-  key: VARIABLE_SOURCE_TYPE.TemporaryVariable,
-  value: VARIABLE_SOURCE_TYPE.TemporaryVariable
-};
+const VARIABLE_SOURCE_TYPE_OPTIONS = [
+  {
+    key: VARIABLE_SOURCE_TYPE.TemporaryVariable,
+    value: VARIABLE_SOURCE_TYPE.TemporaryVariable
+  },
+  {
+    key: VARIABLE_SOURCE_TYPE.PermanentVariable,
+    value: VARIABLE_SOURCE_TYPE.PermanentVariable
+  }
+];
 
 export const VariableForm: React.FC<VariableFormProps> = ({
   flowId,
-  modalOpen,
-  handleClose,
+  isOpen,
+  onClose,
   formData
 }) => {
   const {
@@ -52,7 +55,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       name: formData ? formData.name : '',
-      sourceType: variableSourceTypeOptions.value,
+      sourceType: VARIABLE_SOURCE_TYPE_OPTIONS[0].value,
       dataType: formData ? formData.dataType : DATA_TYPE_WITHOUT_ENUM.String,
       defaultValue: formData ? formData.defaultValue : '',
       description: formData ? formData.description : ''
@@ -60,34 +63,21 @@ export const VariableForm: React.FC<VariableFormProps> = ({
   });
 
   const value = useContext(DataDictionaryPageContext);
-
   const onSubmit = async (
     data: Pick<
       UserDefinedVariable,
       'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
     >
   ) => {
-    let operations: JSONPatchOperation[];
-
-    if (formData) {
-      // operations to update variable
-      operations = [
-        {
-          value: data,
-          path: `/temporaryVariables/${formData.index}`,
-          op: 'replace'
-        }
-      ];
-    } else {
-      // Patch operations to add variable
-      operations = [
-        {
-          value: data,
-          path: '/temporaryVariables/-',
-          op: 'add'
-        }
-      ];
-    }
+    const operations: JSONPatchOperation[] = [
+      {
+        value: data,
+        path: formData
+          ? `/${modifyFirstLetter(formData.sourceType)}s/${formData.index}`
+          : `/${modifyFirstLetter(data.sourceType)}s/-`,
+        op: formData ? 'replace' : 'add'
+      }
+    ];
 
     try {
       const newFlowData =
@@ -98,14 +88,14 @@ export const VariableForm: React.FC<VariableFormProps> = ({
       Logger.error('Error updating temporary variables in the flow:', error);
     }
 
-    handleClose();
+    onClose();
   };
 
   return (
     <Dialog
       fullWidth
       title={formData ? 'Edit variable' : 'Create variable'}
-      open={modalOpen}
+      open={isOpen}
       maxWidth="sm"
       displayConfirmBtn={false}
       displayedCancelBtn={false}
@@ -126,19 +116,18 @@ export const VariableForm: React.FC<VariableFormProps> = ({
             control={control}
             displayEmpty
             fullWidth
-            disabled
+            disabled={Boolean(formData)}
             sx={{
               '& .MuiInputBase-root ': {
                 height: '40px'
               }
             }}
           >
-            <MenuItem
-              key={variableSourceTypeOptions.key}
-              value={variableSourceTypeOptions.value}
-            >
-              {variableSourceTypeOptions.value}
-            </MenuItem>
+            {VARIABLE_SOURCE_TYPE_OPTIONS.map((sourceType) => (
+              <MenuItem key={sourceType.key} value={sourceType.value}>
+                {sourceType.value}
+              </MenuItem>
+            ))}
           </SingleSelect>
           <SingleSelect
             variant="outlined"
@@ -187,7 +176,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
           >
             Save Changes
           </LoadingButton>
-          <Button variant="text" onClick={handleClose}>
+          <Button variant="text" onClick={onClose}>
             Cancel
           </Button>
         </Stack>

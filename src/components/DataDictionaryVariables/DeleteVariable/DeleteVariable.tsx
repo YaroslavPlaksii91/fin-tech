@@ -1,25 +1,27 @@
 import { useState, useContext } from 'react';
-import { indexOf, map } from 'lodash';
 import { Typography } from '@mui/material';
+
+import { SelectedVariable } from '../TableList/TableList';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import Logger from '@utils/logger';
 import { JSONPatchOperation } from '@domain/entity';
 import { flowService } from '@services/flow-service';
 import { DataDictionaryPageContext } from '@pages/DataDictionary';
+import { modifyFirstLetter } from '@utils/text';
 
 interface DeleteVariableProps {
   flowId: string;
-  variable: { name: string; variableIsUsed: boolean };
-  modalOpen: boolean;
-  handleCloseModal: () => void;
+  variable: SelectedVariable;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export const DeleteVariable = ({
   flowId,
   variable,
-  modalOpen,
-  handleCloseModal
+  isOpen,
+  onClose
 }: DeleteVariableProps) => {
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
   const value = useContext(DataDictionaryPageContext);
@@ -28,10 +30,7 @@ export const DeleteVariable = ({
     try {
       const operations: JSONPatchOperation[] = [
         {
-          path: `/temporaryVariables/${indexOf(
-            map(value?.temporaryVariables, 'name'),
-            variable.name
-          )}`,
+          path: `/${modifyFirstLetter(variable.sourceType)}s/${variable.index}`,
           op: 'remove'
         }
       ];
@@ -40,7 +39,7 @@ export const DeleteVariable = ({
       const newFlowData = await flowService.updateFlow(flowId, operations);
 
       newFlowData && value?.setFlow(newFlowData);
-      handleCloseModal();
+      onClose();
     } catch (error) {
       Logger.error(error);
     } finally {
@@ -51,8 +50,8 @@ export const DeleteVariable = ({
   return (
     <Dialog
       title={variable.variableIsUsed ? 'Error' : 'Delete variable'}
-      open={modalOpen}
-      onClose={handleCloseModal}
+      open={isOpen}
+      onClose={onClose}
       onConfirm={handleDeleteVariable}
       confirmText="Delete"
       confirmLoading={confirmLoading}

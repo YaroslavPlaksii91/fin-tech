@@ -1,6 +1,5 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { indexOf, map } from 'lodash';
 import {
   IconButton,
   Stack,
@@ -13,6 +12,8 @@ import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
 
+import { TableEl } from './TableList';
+
 import CalculatorIcon from '@icons/calculator.svg';
 import BlocksIcon from '@icons/blocks.svg';
 import TrashIcon from '@icons/trash.svg';
@@ -21,41 +22,22 @@ import {
   StyledTableCell,
   StyledTableRow
 } from '@components/shared/Table/styled';
-import {
-  UserDefinedVariable,
-  DataDictionaryVariable
-} from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { dataDictionaryService } from '@services/data-dictionary';
-import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { theme } from '@theme';
 
 type TableRowProps = {
-  row:
-    | DataDictionaryVariable
-    | Pick<
-        UserDefinedVariable,
-        'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-      >;
+  row: TableEl;
   index: number;
   tabName: VARIABLES_TABS;
   flowId: string;
   flowNodes: FlowNode[];
-  setSelectedVariable: (
-    selectedVariable: Pick<
-      UserDefinedVariable,
-      'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-    > & { index: number; variableIsUsed: boolean }
-  ) => void;
   userDefinedUsageNodes: FlowNode[] | undefined;
-  setOpenVariableForm: (openVariableForm: boolean) => void;
-  setDeleteVariable: (variable: {
-    name: string;
-    variableIsUsed: boolean;
-  }) => void;
+  onDelete: (row: TableEl, variableUsageNodes: FlowNode[]) => void;
+  onEdit: (row: TableEl, variableUsageNodes: FlowNode[]) => void;
 };
 
 export const TableRow = ({
@@ -65,15 +47,13 @@ export const TableRow = ({
   flowId,
   flowNodes,
   userDefinedUsageNodes,
-  setSelectedVariable,
-  setOpenVariableForm,
-  setDeleteVariable
+  onDelete,
+  onEdit
 }: TableRowProps) => {
   const [isExpanded, setisExpanded] = useState(false);
   const [variableUsageNodes, setVariableUsageNodes] = useState<FlowNode[]>([]);
 
   const navigate = useNavigate();
-  const value = useContext(DataDictionaryPageContext);
 
   const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
 
@@ -138,19 +118,7 @@ export const TableRow = ({
                   width: 'auto',
                   p: 0
                 }}
-                onClick={() => {
-                  const indexOfVariable = indexOf(
-                    map(value?.temporaryVariables, 'name'),
-                    row.name
-                  );
-
-                  setSelectedVariable({
-                    index: indexOfVariable,
-                    variableIsUsed: !!variableUsageNodes.length,
-                    ...row
-                  });
-                  setOpenVariableForm(true);
-                }}
+                onClick={() => onEdit(row, variableUsageNodes)}
               >
                 <EditIcon color={theme.palette.action.active} />
               </Button>
@@ -160,12 +128,7 @@ export const TableRow = ({
                   width: 'auto',
                   p: 0
                 }}
-                onClick={() =>
-                  setDeleteVariable({
-                    name: row.name,
-                    variableIsUsed: !!variableUsageNodes.length
-                  })
-                }
+                onClick={() => onDelete(row, variableUsageNodes)}
               >
                 <TrashIcon color={theme.palette.error.main} />
               </Button>
