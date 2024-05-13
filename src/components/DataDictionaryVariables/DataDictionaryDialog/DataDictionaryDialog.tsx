@@ -18,7 +18,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 
-import { palette, theme } from '@theme';
+import { palette } from '@theme';
 import { DataDictionaryVariables } from '@contexts/DataDictionaryContext.tsx';
 import { highlightText } from '@utils/text.ts';
 import LoadingButton from '@components/shared/LoadingButton.tsx';
@@ -28,6 +28,7 @@ import {
 } from '@domain/dataDictionary.ts';
 
 const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
+  title = 'Add Input Variable',
   data,
   isOpen,
   onClose,
@@ -75,7 +76,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
 
   return (
     <Dialog fullWidth maxWidth="sm" open={isOpen} onClose={onClose}>
-      <DialogTitle sx={{ paddingBottom: 1 }}>Add Input Variable</DialogTitle>
+      <DialogTitle sx={{ paddingBottom: 1 }}>{title}</DialogTitle>
       <DialogContent sx={{ paddingBottom: 0 }}>
         <Box pt={1}>
           <TextField
@@ -102,10 +103,10 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                   overflowY: 'auto'
                 }}
                 subheader={
-                  <Box
-                    sx={{ backgroundColor: theme.palette.background.default }}
-                  >
-                    <ListSubheader>Select Source</ListSubheader>
+                  <Box>
+                    <ListSubheader sx={{ lineHeight: '40px' }}>
+                      Select Source
+                    </ListSubheader>
                     <Divider />
                   </Box>
                 }
@@ -120,6 +121,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                       sx={{ transform: 'translateY(-40px)' }}
                       textAlign="center"
                       variant="body2"
+                      color="gray"
                     >
                       The list is empty. Try to change search query
                     </Typography>
@@ -155,10 +157,10 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                   overflowY: 'auto'
                 }}
                 subheader={
-                  <Box
-                    sx={{ backgroundColor: theme.palette.background.default }}
-                  >
-                    <ListSubheader>Available Variables</ListSubheader>
+                  <Box>
+                    <ListSubheader sx={{ lineHeight: '40px' }}>
+                      Available Variables
+                    </ListSubheader>
                     <Divider />
                   </Box>
                 }
@@ -173,6 +175,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                       sx={{ transform: 'translateY(-40px)' }}
                       textAlign="center"
                       variant="body2"
+                      color="gray"
                     >
                       The list is empty. To fill it select item from the another
                       list.
@@ -205,17 +208,14 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
           </Grid>
         </Box>
       </DialogContent>
-      <Box pb={3}>
+      <Box>
         <Divider />
       </Box>
-      <DialogActions>
-        <Button variant="outlined" onClick={onClose}>
-          Cancel
-        </Button>
+      <DialogActions sx={{ paddingBottom: '16px' }}>
         <LoadingButton
           disabled={!selectedVar}
           loading={false}
-          variant="contained"
+          variant="text"
           color="primary"
           onClick={() => {
             onConfirm(selectedVar as DataDictionaryVariable);
@@ -224,12 +224,16 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
         >
           Confirm
         </LoadingButton>
+        <Button variant="text" onClick={onClose}>
+          Cancel
+        </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
 interface DataDictionaryDialogProps {
+  title?: string;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (variable: DataDictionaryVariable | UserDefinedVariable) => void;

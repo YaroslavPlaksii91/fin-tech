@@ -39,7 +39,8 @@ module.exports = {
           '@contexts': './src/contexts',
           '@views': './src/views',
           '@public': './public',
-          '@theme': './src/themeConfig'
+          '@theme': './src/themeConfig',
+          '@icons': './src/assets/icons'
         },
         extensions: ['.js', '.jsx', '.ts', '.tsx']
       }

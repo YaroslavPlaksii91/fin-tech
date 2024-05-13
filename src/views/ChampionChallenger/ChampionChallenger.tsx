@@ -19,9 +19,10 @@ import { getConnectableNodes } from './utils';
 import validationSchema from './validationSchema';
 import { FieldValues, columns } from './types';
 
+import TrashIcon from '@icons/trash.svg';
+import AddIcon from '@icons/plusSquare.svg';
 import { FlowNode, IFlow } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
-import { AddIcon, DeleteOutlineIcon } from '@components/shared/Icons';
 import NumberRangeInput from '@components/shared/NumberRangeInput/NumberRangeInput';
 import SearchableSelect from '@components/shared/SearchableSelect/SearchableSelect';
 import {
@@ -46,6 +47,7 @@ import {
 import Dialog from '@components/shared/Modals/Dialog';
 import { flowService } from '@services/flow-service';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
+import { theme } from '@theme';
 
 const DEFAULT_PERCENTAGE_SPLIT = 10;
 
@@ -226,8 +228,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <StepDetailsHeader
             title={step.data.name}
-            details="A Champion Challenger is a step that allows you to split traffic into
-   several groups and run experiment."
+            details="A Champion Challenger is a step that allows you to split traffic into several groups and run experiment."
             isActionContainerVisible={false}
           />
           <Stack pl={3} pr={3}>
@@ -249,15 +250,18 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                   </TableHead>
                   <TableBody>
                     {fields.map((field, index) => (
-                      <StyledTableRow key={field.id}>
-                        <StyledTableCell sx={{ padding: '0 12px' }}>
+                      <StyledTableRow
+                        key={field.id}
+                        parity={(index + 1) % 2 === 0 ? 'even' : 'odd'}
+                      >
+                        <StyledTableCell sx={{ p: '0 12px' }}>
                           <NumberRangeInput
                             control={control}
                             name={`splits.${index}.percentage`}
                             onChangeCb={() => clearErrors()}
                           />
                         </StyledTableCell>
-                        <StyledTableCell sx={{ padding: 0 }}>
+                        <StyledTableCell sx={{ p: 0 }}>
                           <SearchableSelect
                             index={index}
                             control={control}
@@ -268,10 +272,10 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                             setSelectedOptions={setSelectedOptions}
                           />
                         </StyledTableCell>
-                        <StyledTableCell sx={{ padding: 0 }} width={40}>
+                        <StyledTableCell sx={{ p: 0 }} width={40}>
                           <Button
                             fullWidth
-                            sx={{ padding: '10px' }}
+                            sx={{ p: '10px' }}
                             onClick={() => {
                               clearErrors();
                               const removedOption = fields[index].value;
@@ -283,11 +287,18 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                               remove(index);
                             }}
                           >
-                            <DeleteOutlineIcon />
+                            <TrashIcon color={theme.palette.error.main} />
                           </Button>
                         </StyledTableCell>
                       </StyledTableRow>
                     ))}
+                    {!fields.length ? (
+                      <StyledTableRow parity="odd">
+                        <StyledTableCell colSpan={3} align="center">
+                          <Typography variant="body2">No Split Yet.</Typography>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ) : null}
                   </TableBody>
                 </Table>
               </StyledTableContainer>
@@ -296,6 +307,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
             <Button
               sx={{ width: '135px' }}
               disabled={fields.length === RULES_LIMIT}
+              variant="outlined"
+              size="small"
               onClick={() => {
                 append({ percentage: DEFAULT_PERCENTAGE_SPLIT, value: '' });
               }}

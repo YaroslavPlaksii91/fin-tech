@@ -17,13 +17,13 @@ import { getUserDefinedUsage, getUserDefinedUsageNodes } from '../utils';
 import { VariableForm } from '../VariableForm/VariableForm';
 import { DeleteVariable } from '../DeleteVariable/DeleteVariable';
 
-import { StyledPaper } from './styled';
 import { TableRow } from './TableRow';
 
 import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import {
   StyledTableCell,
-  StyledTableRow
+  StyledTableRow,
+  StyledPaper
 } from '@components/shared/Table/styled';
 import {
   DataDictionaryVariable,

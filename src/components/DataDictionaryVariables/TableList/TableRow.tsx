@@ -12,15 +12,12 @@ import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
 
-import { StyledStack } from './styled';
 import { TableEl } from './TableList';
 
-import {
-  Edit,
-  Trash,
-  CalculatorIcon,
-  DecisionTableIcon
-} from '@components/shared/Icons';
+import CalculatorIcon from '@icons/calculator.svg';
+import BlocksIcon from '@icons/blocks.svg';
+import TrashIcon from '@icons/trash.svg';
+import EditIcon from '@icons/editPencil.svg';
 import {
   StyledTableCell,
   StyledTableRow
@@ -123,7 +120,7 @@ export const TableRow = ({
                 }}
                 onClick={() => onEdit(row, variableUsageNodes)}
               >
-                <Edit />
+                <EditIcon color={theme.palette.action.active} />
               </Button>
               <Button
                 sx={{
@@ -133,7 +130,7 @@ export const TableRow = ({
                 }}
                 onClick={() => onDelete(row, variableUsageNodes)}
               >
-                <Trash />
+                <TrashIcon color={theme.palette.error.main} />
               </Button>
             </Stack>
           </StyledTableCell>
@@ -149,7 +146,8 @@ export const TableRow = ({
             <Stack margin={1} spacing={1}>
               <Typography variant="body1">This variable is used in:</Typography>
               {variableUsageNodes.map((flowNode) => (
-                <StyledStack
+                <Stack
+                  sx={{ cursor: 'pointer' }}
                   key={flowNode.id}
                   aria-label="breadcrumb"
                   onClick={() =>
@@ -161,9 +159,9 @@ export const TableRow = ({
                   <Stack>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       {flowNode.type === StepType.CALCULATION ? (
-                        <CalculatorIcon />
+                        <CalculatorIcon color={theme.palette.primary.main} />
                       ) : (
-                        <DecisionTableIcon />
+                        <BlocksIcon color={theme.palette.primary.main} />
                       )}
                       <Typography
                         sx={{ textDecoration: 'underline' }}
@@ -174,7 +172,7 @@ export const TableRow = ({
                       </Typography>
                     </Box>
                   </Stack>
-                </StyledStack>
+                </Stack>
               ))}
             </Stack>
           </Collapse>

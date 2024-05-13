@@ -22,24 +22,22 @@ import {
   StyledSubAccordionSummary
 } from './styled';
 
-import {
-  AngleLeftSquare,
-  LineChartDots,
-  TimePast,
-  DocumentList,
-  ExpandMoreIcon,
-  Bezier
-} from '@components/shared/Icons';
+import LineChartDotsIcon from '@icons/lineChartDots.svg';
+import AngleLeftSquareIcon from '@icons/angleLeftSquare.svg';
+import TimePastIcon from '@icons/timePast.svg';
+import DocumentPaperIcon from '@icons/documentPaper.svg';
+import BezierIcon from '@icons/bezier.svg';
+import { ExpandMoreIcon } from '@components/shared/Icons';
 import { fetchFlowList } from '@store/flowList/asyncThunk';
 import Logger from '@utils/logger';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { getProductionFlow, getFlow } from '@store/flow/asyncThunk';
 import { selectFlowList } from '@store/flowList/selectors';
+import { setInitialFlow } from '@store/flow/flow';
+import { selectFlow } from '@store/flow/selectors';
 import ActionsMenu from '@components/FlowManagment/ActionsMenu/ActionMenu';
 import routes from '@constants/routes';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
-import { getProductionFlow, getFlow } from '@store/flow/asyncThunk';
-import { setInitialFlow } from '@store/flow/flow';
-import { selectFlow } from '@store/flow/selectors';
 import { useLoading } from '@contexts/LoadingContext';
 import { AddFlow } from '@components/FlowManagment/AddFlow/AddFlowForm';
 import StepList from '@components/StepManagment/StepList/StepList';
@@ -55,12 +53,12 @@ const animationStyles = (expanded: boolean) => ({
 
 const pages = [
   {
-    icon: <TimePast />,
+    icon: <TimePastIcon color={theme.palette.primary.dark} />,
     text: 'Changes History',
     to: routes.underwriting.changeHistory
   },
   {
-    icon: <DocumentList />,
+    icon: <DocumentPaperIcon color={theme.palette.primary.dark} />,
     text: 'Reports',
     to: routes.underwriting.leadRequest
   }
@@ -140,7 +138,7 @@ const Sidebar = () => {
       <SidebarToggle
         fullWidth
         onClick={toggleSidebar}
-        startIcon={<AngleLeftSquare />}
+        startIcon={<AngleLeftSquareIcon color={theme.palette.common.black} />}
         rotated={expanded ? 0 : 1}
       >
         <Typography
@@ -166,7 +164,7 @@ const Sidebar = () => {
               id="flowList-header"
             >
               <ListItemIcon>
-                <LineChartDots />
+                <LineChartDotsIcon />
               </ListItemIcon>
               <Typography sx={animationStyles(expanded)}>Flow List</Typography>
             </StyledMainAccordionSummary>
@@ -188,7 +186,7 @@ const Sidebar = () => {
                       id="panel1a-header"
                     >
                       <ListItemIcon>
-                        <Bezier />
+                        <BezierIcon />
                       </ListItemIcon>
                       <Typography variant="body2">
                         {flowProduction?.name}
@@ -220,7 +218,7 @@ const Sidebar = () => {
                         id={flowItem.name}
                       >
                         <ListItemIcon>
-                          <Bezier />
+                          <BezierIcon />
                         </ListItemIcon>
                         <Typography variant="body2">{flowItem.name}</Typography>
                       </StyledSubAccordionSummary>
@@ -240,7 +238,7 @@ const Sidebar = () => {
         ) : (
           <ListItemButton sx={{ height: '32px', marginBottom: '8px' }}>
             <ListItemIcon>
-              <LineChartDots />
+              <LineChartDotsIcon />
             </ListItemIcon>
           </ListItemButton>
         )}

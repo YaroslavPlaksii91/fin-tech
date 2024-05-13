@@ -10,7 +10,7 @@ import { useLocation } from 'react-router-dom';
 
 import { StyledListItem, StyledStepItem } from './styled';
 
-import { Bezier } from '@components/shared/Icons';
+import BezierIcon from '@icons/bezier.svg';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { NO_TAG_LABEL } from '@constants/common';
 import { FlowNode } from '@domain/flow';
@@ -55,7 +55,7 @@ const StepList: React.FC<StepListProps> = ({
           onClick={() => setActiveStepId(el.id)}
         >
           <ListItemIcon>
-            <Bezier />
+            <BezierIcon />
           </ListItemIcon>
           <StyledStepItem>
             <Typography variant="caption" color="textSecondary">
