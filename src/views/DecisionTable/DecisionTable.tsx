@@ -474,7 +474,7 @@ const DecisionTableStep = ({
       />
       <StyledPaper>
         <StyledTableContainer>
-          <Stack sx={{ width: 'auto' }}>
+          <Stack>
             <StyledStack
               sx={{
                 borderRight: '1px solid rgba(209, 217, 226, 0.4)',
@@ -581,7 +581,6 @@ const DecisionTableStep = ({
           />
         </StyledTableContainer>
       </StyledPaper>
-
       <StepNoteSection noteValue={noteValue} setNoteValue={setNoteValue} />
     </>
   );

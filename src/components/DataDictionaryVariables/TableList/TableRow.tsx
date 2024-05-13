@@ -1,6 +1,5 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { indexOf, map } from 'lodash';
 import {
   IconButton,
   Stack,
@@ -14,14 +13,10 @@ import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { VARIABLES_TABS } from '../constants';
 import { TableHeader } from '../DataDictionaryVariables';
 
-import { StyledStack } from './styled';
-
-import {
-  Edit,
-  Trash,
-  CalculatorIcon,
-  DecisionTableIcon
-} from '@components/shared/Icons';
+import CalculatorIcon from '@icons/calculator.svg';
+import BlocksIcon from '@icons/blocks.svg';
+import TrashIcon from '@icons/trash.svg';
+import EditIcon from '@icons/editPencil.svg';
 import {
   StyledTableCell,
   StyledTableRow
@@ -29,7 +24,6 @@ import {
 import { Variable } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { dataDictionaryService } from '@services/data-dictionary';
-import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
@@ -42,15 +36,9 @@ type TableRowProps = {
   tabName: VARIABLES_TABS;
   flowId: string;
   flowNodes: FlowNode[];
-  setSelectedVariable: (
-    selectedVariable: Variable & { index: number; variableIsUsed: boolean }
-  ) => void;
   userDefinedUsageNodes: FlowNode[] | undefined;
-  setOpenVariableForm: (openVariableForm: boolean) => void;
-  setDeleteVariable: (variable: {
-    name: string;
-    variableIsUsed: boolean;
-  }) => void;
+  onDelete: (row: Variable, variableUsageNodes: FlowNode[]) => void;
+  onEdit: (row: Variable, variableUsageNodes: FlowNode[]) => void;
 };
 
 export const TableRow = ({
@@ -61,15 +49,13 @@ export const TableRow = ({
   flowId,
   flowNodes,
   userDefinedUsageNodes,
-  setSelectedVariable,
-  setOpenVariableForm,
-  setDeleteVariable
+  onDelete,
+  onEdit
 }: TableRowProps) => {
   const [isExpanded, setisExpanded] = useState(false);
   const [variableUsageNodes, setVariableUsageNodes] = useState<FlowNode[]>([]);
 
   const navigate = useNavigate();
-  const value = useContext(DataDictionaryPageContext);
 
   const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
 
@@ -133,21 +119,9 @@ export const TableRow = ({
                   width: 'auto',
                   p: 0
                 }}
-                onClick={() => {
-                  const indexOfVariable = indexOf(
-                    map(value?.temporaryVariables, 'name'),
-                    row.name
-                  );
-
-                  setSelectedVariable({
-                    index: indexOfVariable,
-                    variableIsUsed: !!variableUsageNodes.length,
-                    ...row
-                  });
-                  setOpenVariableForm(true);
-                }}
+                onClick={() => onEdit(row, variableUsageNodes)}
               >
-                <Edit />
+                <EditIcon color={theme.palette.action.active} />
               </Button>
               <Button
                 sx={{
@@ -155,14 +129,9 @@ export const TableRow = ({
                   width: 'auto',
                   p: 0
                 }}
-                onClick={() =>
-                  setDeleteVariable({
-                    name: row.name,
-                    variableIsUsed: !!variableUsageNodes.length
-                  })
-                }
+                onClick={() => onDelete(row, variableUsageNodes)}
               >
-                <Trash />
+                <TrashIcon color={theme.palette.error.main} />
               </Button>
             </Stack>
           </StyledTableCell>
@@ -179,7 +148,8 @@ export const TableRow = ({
             <Stack margin={1} spacing={1}>
               <Typography variant="body1">This variable is used in:</Typography>
               {variableUsageNodes.map((flowNode) => (
-                <StyledStack
+                <Stack
+                  sx={{ cursor: 'pointer' }}
                   key={flowNode.id}
                   aria-label="breadcrumb"
                   onClick={() =>
@@ -191,9 +161,9 @@ export const TableRow = ({
                   <Stack>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       {flowNode.type === StepType.CALCULATION ? (
-                        <CalculatorIcon />
+                        <CalculatorIcon color={theme.palette.primary.main} />
                       ) : (
-                        <DecisionTableIcon />
+                        <BlocksIcon color={theme.palette.primary.main} />
                       )}
                       <Typography
                         sx={{ textDecoration: 'underline' }}
@@ -204,7 +174,7 @@ export const TableRow = ({
                       </Typography>
                     </Box>
                   </Stack>
-                </StyledStack>
+                </Stack>
               ))}
             </Stack>
           </Collapse>

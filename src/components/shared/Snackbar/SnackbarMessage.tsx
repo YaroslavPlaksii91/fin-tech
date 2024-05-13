@@ -1,9 +1,11 @@
 import { Stack, Typography } from '@mui/material';
 import AlertTitle from '@mui/material/AlertTitle';
 
-import { CheckCircle, ErrorOutlineOutlinedIcon } from '../Icons';
+import { ErrorOutlineOutlinedIcon } from '../Icons';
 
+import CheckCircleIcon from '@icons/checkCircle.svg';
 import { parseErrorMessages } from '@utils/helpers';
+import { theme } from '@theme';
 
 interface SnackbarMessageProps {
   message: string;
@@ -20,7 +22,7 @@ const SnackbarMessage: React.FC<SnackbarMessageProps> = ({
   details
 }) => (
   <Stack display="flex" flexDirection="row" gap={1.5}>
-    <CheckCircle />
+    <CheckCircleIcon color={theme.palette.primary.main} />
     <Stack display="flex" flexDirection="column">
       <AlertTitle color="primary">{message}</AlertTitle>
       <Typography color="primary" variant="body2">

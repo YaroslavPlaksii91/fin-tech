@@ -17,8 +17,9 @@ import Menu from '@components/shared/Menu/Menu';
 import { IFlowListItem } from '@domain/flow';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
-import { MoreHorizontal } from '@components/shared/Icons';
+import MoreHorizontalIcon from '@icons/moreHorizontal.svg';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
+import { theme } from '@theme';
 
 const ActionsMenu: React.FC<{
   flow: IFlowListItem;
@@ -81,7 +82,7 @@ const ActionsMenu: React.FC<{
         aria-label="action-menu"
         onClick={handleOpenMenu}
       >
-        <MoreHorizontal />
+        <MoreHorizontalIcon color={theme.palette.action.active} />
       </IconButton>
       <Menu
         anchorEl={anchorEl}

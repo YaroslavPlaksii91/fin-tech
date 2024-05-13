@@ -27,3 +27,17 @@ export const highlightText = (
     return textToHighlight;
   }
 };
+
+export const modifyFirstLetter = (
+  string: string,
+  action: 'capitalize' | 'lower' = 'lower'
+) => {
+  switch (action) {
+    case 'capitalize':
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    case 'lower':
+      return string.charAt(0).toLowerCase() + string.slice(1);
+    default:
+      return string;
+  }
+};

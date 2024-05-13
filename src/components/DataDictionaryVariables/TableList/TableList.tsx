@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useContext } from 'react';
+import { indexOf, map } from 'lodash';
 import {
   TableHead,
   TableBody,
@@ -17,14 +18,19 @@ import { VariableForm } from '../VariableForm/VariableForm';
 import { DeleteVariable } from '../DeleteVariable/DeleteVariable';
 import { TableHeader } from '../DataDictionaryVariables';
 
-import { StyledPaper, StyledTableContainer } from './styled';
 import { TableRow } from './TableRow';
 
+import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import {
   StyledTableCell,
-  StyledTableRow
+  StyledTableRow,
+  StyledPaper
 } from '@components/shared/Table/styled';
-import { Variable, VariableUsageParams } from '@domain/dataDictionary';
+import {
+  Variable,
+  VariableUsageParams,
+  VARIABLE_SOURCE_TYPE
+} from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { theme } from '@theme';
 
@@ -49,11 +55,10 @@ const TableList = ({
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [openVariableForm, setOpenVariableForm] = useState(false);
-  const [deleteVariable, setDeleteVariable] = useState<{
-    name: string;
-    variableIsUsed: boolean;
-  }>();
+  const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const value = useContext(DataDictionaryPageContext);
 
   const totalPages = Math.ceil(tableData.length / rowsPerPage);
 
@@ -69,13 +74,50 @@ const TableList = ({
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0;
 
-  useEffect(() => {
-    if (tabName === VARIABLES_TABS.userDefined) {
-      void getUserDefinedUsage(flowId, tableData).then((data) =>
-        setUserDefinedUsage(data as VariableUsageParams)
-      );
+  const handleVariableModalClose = () => {
+    setSelectedVariable(undefined);
+    setIsVariableModalOpen(false);
+  };
+
+  const handleDeleteModalClose = () => {
+    setSelectedVariable(undefined);
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleVariable = (row: Variable, variableUsageNodes: FlowNode[]) => {
+    let variables;
+
+    switch (row.sourceType) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+      case VARIABLE_SOURCE_TYPE.PermanentVariable: {
+        variables = value?.permanentVariables;
+        break;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+      case VARIABLE_SOURCE_TYPE.TemporaryVariable: {
+        variables = value?.temporaryVariables;
+        break;
+      }
     }
-  }, []);
+
+    const indexOfVariable = indexOf(map(variables, 'name'), row.name);
+
+    setSelectedVariable({
+      index: indexOfVariable,
+      variableIsUsed: !!variableUsageNodes.length,
+      ...row
+    });
+  };
+
+  const handleEditClick = (row: Variable, variableUsageNodes: FlowNode[]) => {
+    handleVariable(row, variableUsageNodes);
+    setIsVariableModalOpen(true);
+  };
+
+  const handleDeleteClick = (row: Variable, variableUsageNodes: FlowNode[]) => {
+    handleVariable(row, variableUsageNodes);
+    setIsDeleteModalOpen(true);
+  };
 
   const handlePageBySelect = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -85,9 +127,9 @@ const TableList = ({
   };
 
   const handlePageByInput = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const newPage = Number(e.target.value);
+    const newPage = Number(event.target.value);
     if (newPage <= totalPages) setPage(newPage);
   };
 
@@ -98,65 +140,70 @@ const TableList = ({
     setPage(0);
   };
 
+  useEffect(() => {
+    if (tabName === VARIABLES_TABS.userDefined) {
+      void getUserDefinedUsage(flowId, tableData).then((data) =>
+        setUserDefinedUsage(data as VariableUsageParams)
+      );
+    }
+  }, []);
+
   return (
     <StyledPaper>
-      <StyledTableContainer>
-        <Table stickyHeader size="small" aria-label="sticky table">
-          <TableHead>
-            <StyledTableRow>
-              <StyledTableCell></StyledTableCell>
-              {headers.map(({ key, label }) => (
-                <StyledTableCell key={key}>{label}</StyledTableCell>
-              ))}
-              {tabName === VARIABLES_TABS.userDefined && (
-                <StyledTableCell align="right">
-                  <IconButton
-                    onClick={() => {
-                      setSelectedVariable(undefined);
-                      setOpenVariableForm(true);
-                    }}
-                    edge="end"
-                    aria-label="add"
-                    sx={{ p: 0, mr: 0 }}
-                  >
-                    <AddBoxOutlined fontSize="small" />
-                  </IconButton>
-                </StyledTableCell>
-              )}
-            </StyledTableRow>
-          </TableHead>
-          <TableBody>
-            {visibleRows.map((variable, index) => (
-              <TableRow
-                key={index}
-                headers={headers}
-                row={variable}
-                index={index}
-                tabName={tabName}
-                flowId={flowId}
-                flowNodes={flowNodes}
-                // defined for userDefined variables
-                userDefinedUsageNodes={
-                  userDefinedUsage &&
-                  getUserDefinedUsageNodes({
-                    userDefinedUsage,
-                    variable,
-                    flowNodes
-                  })
-                }
-                setSelectedVariable={setSelectedVariable}
-                setOpenVariableForm={setOpenVariableForm}
-                setDeleteVariable={setDeleteVariable}
-              />
+      <Table stickyHeader size="small" aria-label="sticky table">
+        <TableHead>
+          <StyledTableRow>
+            <StyledTableCell></StyledTableCell>
+            {headers.map(({ key, label }) => (
+              <StyledTableCell key={key}>{label}</StyledTableCell>
             ))}
-            {emptyRows > 0 && (
-              <StyledTableRow style={{ height: 43 * emptyRows }}>
-                <StyledTableCell colSpan={6} />
-              </StyledTableRow>
+            {tabName === VARIABLES_TABS.userDefined && (
+              <StyledTableCell align="right">
+                <IconButton
+                  onClick={() => {
+                    setSelectedVariable(undefined);
+                    setIsVariableModalOpen(true);
+                  }}
+                  edge="end"
+                  aria-label="add"
+                  sx={{ p: 0, mr: 0 }}
+                >
+                  <AddBoxOutlined fontSize="small" />
+                </IconButton>
+              </StyledTableCell>
             )}
-          </TableBody>
-        </Table>
-      </StyledTableContainer>
+          </StyledTableRow>
+        </TableHead>
+        <TableBody>
+          {visibleRows.map((variable, index) => (
+            <TableRow
+              key={index}
+              headers={headers}
+              row={variable}
+              index={index}
+              tabName={tabName}
+              flowId={flowId}
+              flowNodes={flowNodes}
+              // defined for userDefined variables
+              userDefinedUsageNodes={
+                userDefinedUsage &&
+                getUserDefinedUsageNodes({
+                  userDefinedUsage,
+                  variable,
+                  flowNodes
+                })
+              }
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
+            />
+          ))}
+          {emptyRows > 0 && (
+            <StyledTableRow style={{ height: 43 * emptyRows }}>
+              <StyledTableCell colSpan={6} />
+            </StyledTableRow>
+          )}
+        </TableBody>
+      </Table>
       {tableData.length > 10 && (
         <Box
           sx={{
@@ -188,23 +235,20 @@ const TableList = ({
           </Typography>
         </Box>
       )}
-      {openVariableForm && (
+      {isVariableModalOpen && (
         <VariableForm
           flowId={flowId}
-          modalOpen={openVariableForm}
           formData={selectedVariable}
-          handleClose={() => {
-            setSelectedVariable(undefined);
-            setOpenVariableForm(false);
-          }}
+          isOpen={isVariableModalOpen}
+          onClose={handleVariableModalClose}
         />
       )}
-      {!!deleteVariable && (
+      {isDeleteModalOpen && (
         <DeleteVariable
           flowId={flowId}
-          variable={deleteVariable}
-          modalOpen={!!deleteVariable}
-          handleCloseModal={() => setDeleteVariable(undefined)}
+          variable={selectedVariable!}
+          isOpen={isDeleteModalOpen}
+          onClose={handleDeleteModalClose}
         />
       )}
     </StyledPaper>

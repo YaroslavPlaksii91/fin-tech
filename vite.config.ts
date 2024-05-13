@@ -2,10 +2,17 @@ import { resolve } from 'path';
 
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import svgr from 'vite-plugin-svgr';
 
 // https://vitejs.dev/config/
 export default defineConfig(() => ({
-  plugins: [react()],
+  plugins: [
+    react(),
+    svgr({
+      svgrOptions: { exportType: 'default' },
+      include: '**/*.svg'
+    })
+  ],
   server: {
     host: 'localhost',
     port: 3000
@@ -63,6 +70,10 @@ export default defineConfig(() => ({
       {
         find: '@theme',
         replacement: resolve(__dirname, './src/themeConfig')
+      },
+      {
+        find: '@icons',
+        replacement: resolve(__dirname, './src/assets/icons')
       }
     ]
   }

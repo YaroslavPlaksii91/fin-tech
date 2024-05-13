@@ -2,7 +2,8 @@ import { Handle, Position } from 'reactflow';
 
 import styles from './style.module.scss';
 
-import { FlagTriangle } from '@components/shared/Icons';
+import FlagTriangleIcon from '@icons/flagTriangle.svg';
+import { theme } from '@theme';
 
 export function StartNode() {
   return (
@@ -10,7 +11,7 @@ export function StartNode() {
       <Handle type="source" position={Position.Right} />
       <div className={styles['node-container']}>
         <p className={styles['node-label']}>
-          <FlagTriangle />
+          <FlagTriangleIcon color={theme.palette.primary.main} />
           Starting point
         </p>
       </div>
@@ -24,7 +25,7 @@ export function EndNode() {
       <Handle type="target" position={Position.Left} />
       <div className={styles['node-container']}>
         <p className={styles['node-label']}>
-          <FlagTriangle fill="#D32F2F" />
+          <FlagTriangleIcon color={theme.palette.error.main} />
           Ending point
         </p>
       </div>
