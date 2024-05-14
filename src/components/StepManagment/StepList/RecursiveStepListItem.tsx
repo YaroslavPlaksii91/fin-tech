@@ -11,8 +11,9 @@ import StepActionsMenu from '../StepActionsMenu/StepActionsMenu';
 import StepListItem from './StepListItem';
 import { StyledListItem, StyledStepItem } from './styled';
 
+import BezierIcon from '@icons/bezier.svg';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
-import { Bezier, ExpandMoreIcon } from '@components/shared/Icons';
+import { ExpandMoreIcon } from '@components/shared/Icons';
 import {
   StyledAccordion,
   StyledAccordionDetails,
@@ -79,7 +80,7 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
           id={step.data.name}
         >
           <ListItemIcon>
-            <Bezier />
+            <BezierIcon />
           </ListItemIcon>
           <Typography variant="body2"> {step.data.name}</Typography>
         </StyledSubAccordionSummary>

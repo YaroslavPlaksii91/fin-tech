@@ -11,12 +11,16 @@ import { flowService } from '@services/flow-service';
 import { useLoading } from '@contexts/LoadingContext';
 import routes from '@constants/routes';
 import Logger from '@utils/logger';
+import { PRODUCTION_FLOW_ID } from '@constants/common';
+
+type Variable = Pick<
+  UserDefinedVariable,
+  'name' | 'dataType' | 'defaultValue' | 'description'
+>[];
 
 export type DataDictionaryPageContextType = {
-  temporaryVariables: Pick<
-    UserDefinedVariable,
-    'name' | 'dataType' | 'defaultValue' | 'description'
-  >[];
+  temporaryVariables: Variable;
+  permanentVariables: Variable;
   setFlow: (flow: IFlow) => void;
 };
 
@@ -33,7 +37,12 @@ export default function DataDictionary() {
     const fetchInitialData = async (flowId: string) => {
       try {
         startLoading();
-        const flow = await flowService.getFlow(flowId);
+        let flow;
+        if (flowId === PRODUCTION_FLOW_ID) {
+          flow = await flowService.getProductionFlowDetails();
+        } else {
+          flow = await flowService.getFlow(flowId);
+        }
         setFlow(flow);
       } catch (error) {
         Logger.error('Error fetching flow data:', error);
@@ -68,6 +77,7 @@ export default function DataDictionary() {
 
   const contextValue = {
     temporaryVariables: flow.temporaryVariables,
+    permanentVariables: flow.permanentVariables,
     setFlow
   };
 

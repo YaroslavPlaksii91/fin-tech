@@ -8,7 +8,7 @@ import StepActionsMenu from '../StepActionsMenu/StepActionsMenu';
 
 import { StyledListItem, StyledStepItem } from './styled';
 
-import { Bezier } from '@components/shared/Icons';
+import BezierIcon from '@icons/bezier.svg';
 import { NO_TAG_LABEL } from '@constants/common';
 import { FlowNode } from '@domain/flow';
 import { ActiveStep } from '@contexts/StepContext';
@@ -39,7 +39,7 @@ const StepListItem: React.FC<StepListItemProps> = ({
     onClick={() => setActiveStep({ subFlowId, stepId: step.id })}
   >
     <ListItemIcon>
-      <Bezier />
+      <BezierIcon />
     </ListItemIcon>
     <StyledStepItem>
       <Typography variant="caption" color="textSecondary">

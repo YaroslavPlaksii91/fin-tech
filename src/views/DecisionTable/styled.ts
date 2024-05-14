@@ -11,8 +11,8 @@ export const StyledTable = styled(Table)(() => ({
 }));
 
 export const StyledPaper = styled(Paper)(() => ({
-  overflow: 'hidden',
-  margin: '16px'
+  margin: '16px',
+  overflowY: 'unset'
 }));
 
 export const StyledStack = styled(Stack)(() => ({

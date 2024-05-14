@@ -49,6 +49,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
       )}
       {step?.type === StepType.CALCULATION && (
         <Calculation
+          flow={flow}
           rfInstance={rfInstance}
           resetActiveStepId={resetActiveStepId}
           step={step}
