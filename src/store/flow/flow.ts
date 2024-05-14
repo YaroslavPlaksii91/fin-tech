@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { getFlow, getProductionFlow, saveFlow } from './asyncThunk';
 
@@ -28,26 +28,47 @@ const initialState: initialStateInterface = {
   flow: initialFlow
 };
 
-const addNodeToSubflowHelper = (
+function addNodeToSubflow(
   nodes: FlowNode[],
   subflowId: string,
   newNode: FlowNode
-): FlowNode[] =>
-  nodes.map((node) => {
-    if (node.id === subflowId && node.data.nodes) {
-      return {
-        ...node,
-        nodes: [...node.data.nodes, newNode]
-      };
+): void {
+  for (const node of nodes) {
+    if (node.id === subflowId) {
+      node.data.nodes.push(newNode);
+      return;
     }
     if (node.data.nodes) {
+      addNodeToSubflow(node.data.nodes, subflowId, newNode);
+    }
+  }
+}
+
+function removeNodesInSubflow(
+  nodes: FlowNode[],
+  deleteNodes: FlowNode[],
+  subflowId: string
+): FlowNode[] {
+  return nodes.map((node) => {
+    if (node.id === subflowId) {
       return {
         ...node,
-        nodes: addNodeToSubflowHelper(node.data.nodes, subflowId, newNode)
+        data: {
+          ...node.data,
+          nodes: node.data.nodes.filter(
+            (node) => !deleteNodes.find((item) => item.id === node.id)
+          )
+        }
+      };
+    } else if (node.data.nodes) {
+      return {
+        ...node,
+        nodes: removeNodesInSubflow(node.data.nodes, deleteNodes, subflowId)
       };
     }
     return node;
   });
+}
 
 export const flowSlicer = createSlice({
   name: 'flow',
@@ -61,23 +82,30 @@ export const flowSlicer = createSlice({
         if (state.flow.id === action.payload.flowId) {
           state.flow.nodes.push(action.payload.node);
         } else {
-          const nodes = addNodeToSubflowHelper(
-            current(state.flow.nodes),
-            action.payload.flowId,
-            action.payload.node
-          );
-          state.flow = {
-            ...state.flow,
-            nodes
-          };
+          const { nodes } = state.flow;
+          addNodeToSubflow(nodes, action.payload.flowId, action.payload.node);
         }
       }
     ),
-    deleteNodes: create.reducer((state, action: PayloadAction<FlowNode[]>) => {
-      state.flow.nodes = state.flow.nodes.filter((node) =>
-        action.payload.find((item) => item.id !== node.id)
-      );
-    }),
+    deleteNodes: create.reducer(
+      (
+        state,
+        action: PayloadAction<{ deletedNodes: FlowNode[]; flowId: string }>
+      ) => {
+        if (state.flow.id === action.payload.flowId) {
+          state.flow.nodes = state.flow.nodes.filter((node) =>
+            action.payload.deletedNodes.find((item) => item.id !== node.id)
+          );
+        } else {
+          const { nodes } = state.flow;
+          state.flow.nodes = removeNodesInSubflow(
+            nodes,
+            action.payload.deletedNodes,
+            action.payload.flowId
+          );
+        }
+      }
+    ),
     updateFlowData: create.reducer(
       (state, action: PayloadAction<Omit<FlowData, 'id'>>) => {
         state.flow.data = action.payload;

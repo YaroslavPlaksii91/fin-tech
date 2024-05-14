@@ -296,7 +296,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   );
 
   const onNodesDelete = useCallback((deletedNodes: Node[]) => {
-    dispatch(deleteNodes(deletedNodes));
+    dispatch(deleteNodes({ deletedNodes, flowId: flow.id }));
   }, []);
 
   useEffect(() => {

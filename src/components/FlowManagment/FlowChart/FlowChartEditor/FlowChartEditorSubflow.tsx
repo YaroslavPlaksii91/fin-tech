@@ -97,7 +97,7 @@ const FlowChartEditorSubflow: React.FC<FlowChartViewProps> = ({
 
       return newNode;
     },
-    [setNodes, setEdges]
+    [setNodes, setEdges, flow.id]
   );
 
   const initialElements = useMemo(() => {
@@ -294,9 +294,12 @@ const FlowChartEditorSubflow: React.FC<FlowChartViewProps> = ({
     [rfInstance, nodes]
   );
 
-  const onNodesDelete = useCallback((deletedNodes: Node[]) => {
-    dispatch(deleteNodes(deletedNodes));
-  }, []);
+  const onNodesDelete = useCallback(
+    (deletedNodes: Node[]) => {
+      dispatch(deleteNodes({ deletedNodes, flowId: flow.id }));
+    },
+    [flow.id]
+  );
 
   useEffect(() => {
     setEdges((eds: Edge<EdgeData>[]) =>

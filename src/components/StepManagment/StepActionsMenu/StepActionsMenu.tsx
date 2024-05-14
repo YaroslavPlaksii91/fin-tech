@@ -94,7 +94,12 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
             setActiveStep?.({ subFlowId, stepId: null });
           }
           deleteElements({ nodes: [flowNode as Node] });
-          dispatch(deleteNodes([flowNode as FlowNode]));
+          dispatch(
+            deleteNodes({
+              deletedNodes: [flowNode as FlowNode],
+              flowId: subFlowId
+            })
+          );
         }
         break;
       }
