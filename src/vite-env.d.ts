@@ -5,4 +5,5 @@ interface ImportMetaEnv {
   VITE_MUI_LICENSE_KEY: string;
   VITE_CLIENT_ID: string;
   VITE_IAM_SERVICE_URL: string;
+  VITE_API_INTEGRATION_BASE: string;
 }

@@ -1,5 +1,6 @@
-import { api } from '@utils/api';
+import { api, integrationApi } from '@utils/api';
 import {
+  DataDictionaryIntegrationVariable,
   DataDictionaryVariable,
   ExpressionValidate,
   VariableUsageParams
@@ -10,6 +11,14 @@ class DataDictionaryService {
     const { data } = await api.get<Record<string, DataDictionaryVariable[]>>(
       '/expression-builder/data-dictionary-variables'
     );
+    return data;
+  }
+
+  async getIntegrationVariables() {
+    const { data } =
+      await integrationApi.get<
+        Record<string, DataDictionaryIntegrationVariable[]>
+      >('/data-dictionary');
     return data;
   }
 

@@ -3,8 +3,6 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Stack, MenuItem } from '@mui/material';
 
-import { SelectedVariable } from '../TableList/TableList';
-
 import { validationSchema } from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
@@ -16,7 +14,8 @@ import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import {
   VARIABLE_SOURCE_TYPE,
   DATA_TYPE_WITHOUT_ENUM,
-  UserDefinedVariable
+  UserDefinedVariable,
+  Variable
 } from '@domain/dataDictionary';
 import { JSONPatchOperation } from '@domain/entity';
 import { flowService } from '@services/flow-service';
@@ -26,7 +25,7 @@ import { modifyFirstLetter } from '@utils/text';
 type VariableFormProps = {
   flowId: string;
   isOpen: boolean;
-  formData?: SelectedVariable;
+  formData?: Variable & { index: number; variableIsUsed: boolean };
   onClose: () => void;
 };
 

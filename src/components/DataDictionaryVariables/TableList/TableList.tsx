@@ -16,6 +16,7 @@ import { VARIABLES_TABS } from '../constants';
 import { getUserDefinedUsage, getUserDefinedUsageNodes } from '../utils';
 import { VariableForm } from '../VariableForm/VariableForm';
 import { DeleteVariable } from '../DeleteVariable/DeleteVariable';
+import { TableHeader } from '../DataDictionaryVariables';
 
 import { TableRow } from './TableRow';
 
@@ -26,40 +27,31 @@ import {
   StyledPaper
 } from '@components/shared/Table/styled';
 import {
-  DataDictionaryVariable,
-  UserDefinedVariable,
-  VARIABLE_SOURCE_TYPE,
-  VariableUsageParams
+  Variable,
+  VariableUsageParams,
+  VARIABLE_SOURCE_TYPE
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { theme } from '@theme';
 
-export type TableEl =
-  | DataDictionaryVariable
-  | Pick<
-      UserDefinedVariable,
-      'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-    >;
-
-export type SelectedVariable = TableEl & {
-  index: number;
-  variableIsUsed: boolean;
-};
+interface TableListProps {
+  flowNodes: FlowNode[];
+  tabName: VARIABLES_TABS;
+  headers: TableHeader[];
+  tableData: Variable[];
+  flowId: string;
+}
 
 const TableList = ({
   flowNodes,
   tabName,
+  headers,
   tableData,
   flowId
-}: {
-  flowNodes: FlowNode[];
-  tabName: VARIABLES_TABS;
-  tableData: TableEl[];
-  flowId: string;
-}) => {
+}: TableListProps) => {
   const [selectedVariable, setSelectedVariable] = useState<
-    SelectedVariable | undefined
-  >(undefined);
+    Variable & { index: number; variableIsUsed: boolean }
+  >();
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -70,10 +62,8 @@ const TableList = ({
 
   const totalPages = Math.ceil(tableData.length / rowsPerPage);
 
-  // usage for userDefined variables
-  const [userDefinedUsage, setUserDefinedUsage] = useState<
-    VariableUsageParams | undefined
-  >(undefined);
+  const [userDefinedUsage, setUserDefinedUsage] =
+    useState<VariableUsageParams>();
 
   const visibleRows = useMemo(
     () => tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
@@ -94,7 +84,7 @@ const TableList = ({
     setIsDeleteModalOpen(false);
   };
 
-  const handleVariable = (row: TableEl, variableUsageNodes: FlowNode[]) => {
+  const handleVariable = (row: Variable, variableUsageNodes: FlowNode[]) => {
     let variables;
 
     switch (row.sourceType) {
@@ -117,12 +107,12 @@ const TableList = ({
     });
   };
 
-  const handleEditClick = (row: TableEl, variableUsageNodes: FlowNode[]) => {
+  const handleEditClick = (row: Variable, variableUsageNodes: FlowNode[]) => {
     handleVariable(row, variableUsageNodes);
     setIsVariableModalOpen(true);
   };
 
-  const handleDeleteClick = (row: TableEl, variableUsageNodes: FlowNode[]) => {
+  const handleDeleteClick = (row: Variable, variableUsageNodes: FlowNode[]) => {
     handleVariable(row, variableUsageNodes);
     setIsDeleteModalOpen(true);
   };
@@ -162,14 +152,9 @@ const TableList = ({
         <TableHead>
           <StyledTableRow>
             <StyledTableCell></StyledTableCell>
-            <StyledTableCell style={{ width: '20%' }}>
-              Variable Name
-            </StyledTableCell>
-            <StyledTableCell> Data Type</StyledTableCell>
-            <StyledTableCell style={{ width: '20%' }}>
-              Default value
-            </StyledTableCell>
-            <StyledTableCell> Description</StyledTableCell>
+            {headers.map(({ key, label }) => (
+              <StyledTableCell key={key}>{label}</StyledTableCell>
+            ))}
             {tabName === VARIABLES_TABS.userDefined && (
               <StyledTableCell align="right">
                 <IconButton
@@ -191,6 +176,7 @@ const TableList = ({
           {visibleRows.map((variable, index) => (
             <TableRow
               key={index}
+              headers={headers}
               row={variable}
               index={index}
               tabName={tabName}

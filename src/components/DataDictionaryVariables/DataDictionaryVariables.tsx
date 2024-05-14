@@ -3,7 +3,7 @@ import { Box, Stack, Tabs, Typography, Button } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 
 import { IFilters } from './Filters/types';
-import { INITIAL_FILTERS } from './Filters/constants';
+import { FILTER_GROUPS, INITIAL_FILTERS } from './Filters/constants';
 import { StyledTab } from './styled';
 import { VARIABLES_TABS, TABS_LABELS, SOURCES_DESCRIPTIONS } from './constants';
 import TableList from './TableList/TableList';
@@ -13,6 +13,13 @@ import Filters from './Filters/Filters';
 import { theme } from '@theme';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { IFlow } from '@domain/flow';
+import { Variable } from '@domain/dataDictionary';
+
+export interface TableHeader {
+  key: keyof Variable;
+  label?: string;
+  render?: (row: Variable) => void;
+}
 
 const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const [tab, setTab] = useState(VARIABLES_TABS.laPMSVariables);
@@ -25,13 +32,41 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const tableData = useMemo(() => {
     if (!variables) return [];
     if (tab === VARIABLES_TABS.all)
-      return [...variables['userDefined'], ...variables['laPMSVariables']];
+      return [
+        ...variables['userDefined'],
+        ...variables['laPMSVariables'],
+        ...variables['craReportVariables']
+      ];
 
     return variables[tab];
   }, [tab, variables]);
 
+  const defaultHeaders: TableHeader[] = [
+    { key: 'name', label: 'Variable Name' },
+    { key: 'dataType', label: 'Data Type' },
+    { key: 'defaultValue', label: 'Default Value' },
+    { key: 'description', label: 'Description' }
+  ];
+
+  const craReportsHeaders: TableHeader[] = [
+    { key: 'source', label: 'CRA' },
+    { key: 'sourceType', label: 'ReportName' },
+    ...defaultHeaders
+  ];
+
+  const headers =
+    tab === VARIABLES_TABS.craReportVariables
+      ? craReportsHeaders
+      : defaultHeaders;
+
+  const filterGroupsToShow = useMemo(
+    () => FILTER_GROUPS.filter(({ applyFor }) => applyFor.includes(tab)),
+    [tab]
+  );
+
   const filteredBySearch = useMemo(() => {
     const filterBySearch = search.trim().toUpperCase();
+
     if (filterBySearch)
       return tableData.filter((tableEl) =>
         tableEl.name.toUpperCase().includes(filterBySearch)
@@ -49,7 +84,11 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     let filteredData = filteredBySearch;
 
     filtersEntries.forEach(([field, activeFilters]) => {
-      if (!activeFilters.length) return;
+      if (
+        !activeFilters.length ||
+        !filterGroupsToShow.find(({ filterBy }) => filterBy === field)
+      )
+        return;
 
       filteredData = filteredData.filter((el) =>
         activeFilters.includes(el[field])
@@ -65,6 +104,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   ) => {
     setTab(newValue);
   };
+
   const handleFiltersClose = () => setIsFiltersOpen(false);
   const handleFiltersOpen = () => setIsFiltersOpen(true);
 
@@ -93,7 +133,12 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
         Data Dictionary
       </Typography>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={tab} onChange={handleChange} aria-label="tabs">
+        <Tabs
+          value={tab}
+          onChange={handleChange}
+          aria-label="tabs"
+          variant="scrollable"
+        >
           {Object.keys(variables).map((tabName, index) => (
             <StyledTab
               key={index}
@@ -120,7 +165,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
               justifyContent="space-between"
               direction="row"
               width="100%"
-              mt={2}
+              my={2}
               spacing={4}
             >
               <Typography variant="body1" color="gray">
@@ -138,6 +183,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
               </Button>
             </Stack>
             <TableList
+              headers={headers}
               tableData={filteredBySelects}
               tabName={tabName as VARIABLES_TABS}
               flowNodes={flow.nodes}
@@ -148,7 +194,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       ))}
       {tab === VARIABLES_TABS.all && (
         <TabPanel key="all" value={tab} tabName="all">
-          <Stack alignItems="flex-end" mt={2}>
+          <Stack alignItems="flex-end" my={2}>
             <Button
               size="small"
               color="inherit"
@@ -160,6 +206,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
             </Button>
           </Stack>
           <TableList
+            headers={headers}
             tableData={filteredBySelects}
             tabName={tab as VARIABLES_TABS}
             flowNodes={flow.nodes}
@@ -171,6 +218,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
         isFiltersOpen={isFiltersOpen}
         filters={filters}
         search={search}
+        filterGroupsToShow={filterGroupsToShow}
         handleReset={handleFiltersReset}
         handleApply={handleFiltersApply}
         handleClose={handleFiltersClose}

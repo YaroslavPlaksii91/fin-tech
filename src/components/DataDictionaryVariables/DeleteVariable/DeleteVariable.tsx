@@ -1,18 +1,17 @@
 import { useState, useContext } from 'react';
 import { Typography } from '@mui/material';
 
-import { SelectedVariable } from '../TableList/TableList';
-
 import Dialog from '@components/shared/Modals/Dialog';
 import Logger from '@utils/logger';
 import { JSONPatchOperation } from '@domain/entity';
 import { flowService } from '@services/flow-service';
 import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import { modifyFirstLetter } from '@utils/text';
+import { Variable } from '@domain/dataDictionary';
 
 interface DeleteVariableProps {
   flowId: string;
-  variable: SelectedVariable;
+  variable: Variable & { index: number; variableIsUsed: boolean };
   isOpen: boolean;
   onClose: () => void;
 }
