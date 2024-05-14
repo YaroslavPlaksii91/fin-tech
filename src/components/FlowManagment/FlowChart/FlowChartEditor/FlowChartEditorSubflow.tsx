@@ -47,8 +47,6 @@ import { useActiveStep } from '@contexts/StepContext';
 import StepConfigureView from '@components/StepManagment/StepConfigureView/StepConfigureView';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
-import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
-import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 import { addNode, deleteNodes } from '@store/flow/flow';
 import { useAppDispatch } from '@store/hooks';
 
@@ -61,7 +59,6 @@ const FlowChartEditorSubflow: React.FC<FlowChartViewProps> = ({
   flow,
   setCopyFlow
 }) => {
-  const { variables } = useDataDictionaryVariables(flow);
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
   const [startDrag, setStartDrag] = useState<boolean>(false);
@@ -311,7 +308,7 @@ const FlowChartEditorSubflow: React.FC<FlowChartViewProps> = ({
   }, [startDrag]);
 
   return (
-    <DataDictionaryContext.Provider value={{ variables }}>
+    <>
       <NodePositioning edges={edges} setEdges={setEdges} setNodes={setNodes} />
       <ReactFlow
         nodes={nodes}
@@ -367,7 +364,7 @@ const FlowChartEditorSubflow: React.FC<FlowChartViewProps> = ({
         isEditMode
       />
       <LeavePageConfirmationDialog isDirty={isDirty} />
-    </DataDictionaryContext.Provider>
+    </>
   );
 };
 
