@@ -6,7 +6,7 @@ import LoadingButton from '@components/shared/LoadingButton';
 import { theme } from '@theme';
 import routes from '@constants/routes.ts';
 import { IFlow } from '@domain/flow.ts';
-// import { useStep } from '@contexts/StepContext.tsx';
+import { useActiveStep } from '@contexts/StepContext.tsx';
 
 interface StepDetailsHeaderProps {
   title: string;
@@ -31,7 +31,7 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
   buttonType,
   onApplyChangesClick
 }) => {
-  // const { setActiveStepId } = useStep();
+  const { setActiveStep } = useActiveStep();
 
   const breadcrumbs = useMemo(
     () =>
@@ -54,7 +54,7 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
             component={RRLink}
             color={theme.palette.text.secondary}
             to={routes.underwriting.flow.edit(flow.id)}
-            // onClick={() => setActiveStepId(null)}
+            onClick={() => setActiveStep({ subFlowId: null, stepId: null })}
           >
             {flow.data.name}
           </Link>
@@ -67,8 +67,7 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
           Edit Step: {title}
         </Typography>
       ].filter((i) => i),
-    [flow?.data?.name, flow?.id]
-    // [flow?.data?.name, flow?.id, setActiveStepId]
+    [flow?.data?.name, flow?.id, setActiveStep]
   );
 
   return (
