@@ -1,5 +1,6 @@
 import { ReactFlowProvider } from 'reactflow';
 import { useMemo } from 'react';
+import { cloneDeep } from 'lodash';
 
 import { FlowNode, IFlow } from '@domain/flow';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
@@ -54,7 +55,7 @@ const Subflow: React.FC<SubflowProps> = ({
   };
 
   const subflow = useMemo(() => {
-    const subflowNode = findNodeById(activeStepId, nodes);
+    const subflowNode = cloneDeep(findNodeById(activeStepId, nodes));
     if (subflowNode) {
       return {
         id: subflowNode.id,
@@ -68,7 +69,7 @@ const Subflow: React.FC<SubflowProps> = ({
         },
         nodes: subflowNode.data.nodes,
         edges: subflowNode.data.edges,
-        viewport: { x: 0, y: 0, zoom: 1 },
+        viewport: subflowNode.data.viewport,
         temporaryVariables: [],
         permanentVariables: []
       };

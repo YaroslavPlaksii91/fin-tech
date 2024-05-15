@@ -14,9 +14,9 @@ import ReactFlow, {
   Controls
 } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
-import debounce from 'lodash/debounce';
-
 import 'reactflow/dist/style.css';
+import cloneDeep from 'lodash/cloneDeep';
+import debounce from 'lodash/debounce';
 
 import { nodeTypes } from '../Nodes';
 import { edgeTypes } from '../Edges';
@@ -82,7 +82,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
       const newNode = createNewNode(type, name, newEdgeId);
 
       setNodes((nodes) => nodes.concat(newNode));
-      dispatch(addNode({ node: newNode, flowId: flow.id }));
+      dispatch(addNode({ node: cloneDeep(newNode), flowId: flow.id }));
 
       setEdges((edges) =>
         updateEdges({

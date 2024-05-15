@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { cloneDeep } from 'lodash';
 
 import ChampionChallenger from '@views/ChampionChallenger/ChampionChallenger';
 import DecisionTableStep from '@views/DecisionTable/DecisionTable';
-import { FlowNode, IFlow } from '@domain/flow';
+import { IFlow } from '@domain/flow';
 import {
   CustomReactFlowInstance,
   StepType
@@ -23,11 +23,9 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
   flow,
   rfInstance
 }) => {
-  const [step, setStep] = useState<FlowNode>();
-
-  useEffect(() => {
+  const step = useMemo(() => {
     const currentNode = rfInstance.getNode(activeStepId);
-    setStep(cloneDeep(currentNode));
+    return cloneDeep(currentNode);
   }, [activeStepId]);
 
   return (
