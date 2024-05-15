@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Accordion,
   Box,
@@ -13,6 +13,7 @@ import { NavLink, useParams } from 'react-router-dom';
 
 import {
   Label,
+  Resizer,
   SidebarToggle,
   StyledAccordion,
   StyledAccordionDetails,
@@ -51,6 +52,9 @@ const animationStyles = (expanded: boolean) => ({
   whiteSpace: 'nowrap'
 });
 
+const DEFAULT_SIDEBAR_WIDTH = 256;
+const MIN_SIDEBAR_WIDTH = 70;
+
 const pages = [
   {
     icon: <TimePastIcon color={theme.palette.primary.dark} />,
@@ -72,21 +76,52 @@ const Sidebar = () => {
   const { flowList, flowProduction } = useAppSelector(selectFlowList);
   const { flow } = useAppSelector(selectFlow);
 
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const [isResizing, setIsResizing] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
   const [expanded, setExpanded] = useState(true);
   const [expandedFlow, setExpandedFlow] = useState<string | false>(false);
-
   const [expandedFlowList, setExpandedFlowList] = useState<boolean>(true);
-
-  const sidebarWidth = expanded ? 400 : 70;
 
   const handleChangeFlow =
     (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpandedFlow(newExpanded ? panel : false);
     };
 
-  const toggleSidebar = () => {
+  const toggleSidebar = useCallback(() => {
     setExpanded(!expanded);
-  };
+    const width = expanded ? MIN_SIDEBAR_WIDTH : DEFAULT_SIDEBAR_WIDTH;
+    setSidebarWidth(width);
+  }, [expanded]);
+
+  const startResizing = useCallback(() => {
+    setIsResizing(true);
+  }, []);
+
+  const stopResizing = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  const resize = useCallback(
+    (mouseMoveEvent: MouseEvent) => {
+      if (isResizing && sidebarRef.current) {
+        setSidebarWidth(
+          mouseMoveEvent.clientX -
+            sidebarRef.current.getBoundingClientRect()?.left
+        );
+      }
+    },
+    [isResizing]
+  );
+
+  useEffect(() => {
+    window.addEventListener('mousemove', resize);
+    window.addEventListener('mouseup', stopResizing);
+    return () => {
+      window.removeEventListener('mousemove', resize);
+      window.removeEventListener('mouseup', stopResizing);
+    };
+  }, [resize, stopResizing]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -130,11 +165,14 @@ const Sidebar = () => {
   return (
     <StyledPaper
       elevation={0}
-      sx={{
+      ref={sidebarRef}
+      style={{
         width: sidebarWidth,
-        transition: 'width 0.2s ease-in-out'
+        transition: !isResizing ? 'width 0.2s ease-in-out' : ''
       }}
+      onMouseDown={(e) => e.preventDefault()}
     >
+      {expanded && <Resizer onMouseDown={startResizing} />}
       <SidebarToggle
         fullWidth
         onClick={toggleSidebar}
