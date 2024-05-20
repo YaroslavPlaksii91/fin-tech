@@ -60,7 +60,6 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   flow,
   setCopyFlow
 }) => {
-  // const { variables } = useDataDictionaryVariables(flow);
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
   const [startDrag, setStartDrag] = useState<boolean>(false);
