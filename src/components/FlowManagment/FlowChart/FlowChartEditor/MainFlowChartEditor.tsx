@@ -1,4 +1,5 @@
 import { CustomReactFlowInstance } from '../types';
+import ControlPanelEdit from '../ContolPanels/ControlPanelEdit';
 
 import withFlowChartEditor from './withFlowChartEditor';
 
@@ -38,6 +39,9 @@ const StepConfigureViewMainFlow: React.FC<StepConfigureViewProps> = ({
   );
 };
 
-const MainFlowChartEditor = withFlowChartEditor(StepConfigureViewMainFlow);
+const MainFlowChartEditor = withFlowChartEditor(
+  StepConfigureViewMainFlow,
+  ControlPanelEdit
+);
 
 export default MainFlowChartEditor;

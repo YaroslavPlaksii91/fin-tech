@@ -28,7 +28,6 @@ import {
   EdgeData,
   StepType
 } from '../types';
-import ControlPanelEdit from '../ContolPanels/ControlPanelEdit';
 import {
   checkIfFlowIsEdit,
   checkIfNodeHasConnection,
@@ -54,8 +53,12 @@ type FlowChartEditorProps = {
   setCopyFlow: (flow: IFlow) => void;
 };
 
+// type FlowChartEditorParams = {
+//   WrappedComponent: React.ReactNode;
+// };
+
 // eslint-disable-next-line arrow-body-style
-const withFlowChartEditor = (WrappedComponent) => {
+const withFlowChartEditor = (StepConfigureView, ControlPanel) => {
   // eslint-disable-next-line react/display-name
   return (props: FlowChartEditorProps) => {
     const { flow, setCopyFlow } = props;
@@ -335,7 +338,7 @@ const withFlowChartEditor = (WrappedComponent) => {
           connectionLineType={ConnectionLineType.SmoothStep}
         >
           <Background variant={BackgroundVariant.Dots} />
-          <ControlPanelEdit
+          <ControlPanel
             flow={flow}
             setCopyFlow={setCopyFlow}
             isDirty={isDirty}
@@ -343,7 +346,7 @@ const withFlowChartEditor = (WrappedComponent) => {
           />
           <Controls />
         </ReactFlow>
-        <WrappedComponent flow={flow} rfInstance={rfInstance} />
+        <StepConfigureView flow={flow} rfInstance={rfInstance} />
         <StepActionsMenu
           activeStep={activeStep}
           anchorElement={nodeElement}
