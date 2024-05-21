@@ -9,6 +9,13 @@ import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/typ
 import { StepContainer } from '@views/styled';
 import SubFlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEditor/SubFlowChartEditor';
 
+interface SubFlowProps {
+  mainFlow: IFlow;
+  activeStepId: string;
+  resetActiveStepId: () => void;
+  rfInstance: CustomReactFlowInstance;
+}
+
 const SubFlow: React.FC<SubFlowProps> = ({
   mainFlow,
   rfInstance: { getNodes, setNodes },
@@ -69,10 +76,3 @@ const SubFlow: React.FC<SubFlowProps> = ({
 };
 
 export default SubFlow;
-
-interface SubFlowProps {
-  mainFlow: IFlow;
-  activeStepId: string;
-  resetActiveStepId: () => void;
-  rfInstance: CustomReactFlowInstance;
-}

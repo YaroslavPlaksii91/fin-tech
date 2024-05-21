@@ -15,7 +15,6 @@ import ReactFlow, {
 } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 import 'reactflow/dist/style.css';
-import cloneDeep from 'lodash/cloneDeep';
 import debounce from 'lodash/debounce';
 
 import { nodeTypes } from '../Nodes';
@@ -45,21 +44,21 @@ import { FlowNode, IFlow } from '@domain/flow';
 import { useActiveStep } from '@contexts/StepContext';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
-import { addNode, deleteNodes } from '@store/flow/flow';
+import { deleteNodes } from '@store/flow/flow';
 import { useAppDispatch } from '@store/hooks';
 
 type FlowChartEditorProps = {
   flow: IFlow;
   mainFlow: IFlow;
   setCopyFlow: (flow: IFlow) => void;
-  updateNodesInMainFlow: (newNode: IFlow, subFlow: IFlow) => void;
+  updateNodesInMainFlow?: (newNode: FlowNode, subFlow: IFlow) => void;
 };
 
 const withFlowChartEditor =
   (StepConfigureView, ControlPanel) =>
   // eslint-disable-next-line react/display-name
   (props: FlowChartEditorProps) => {
-    const { flow, mainFlow, setCopyFlow } = props;
+    const { flow, mainFlow, setCopyFlow, updateNodesInMainFlow } = props;
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
     const [startDrag, setStartDrag] = useState<boolean>(false);
@@ -81,9 +80,10 @@ const withFlowChartEditor =
         const newNode = createNewNode(type, name, newEdgeId);
 
         setNodes((nodes) => nodes.concat(newNode));
-        dispatch(addNode({ node: cloneDeep(newNode), flowId: flow.id }));
 
-        props?.updateNodesInMainFlow(newNode, flow);
+        if (updateNodesInMainFlow) {
+          updateNodesInMainFlow(newNode, flow);
+        }
 
         setEdges((edges) =>
           updateEdges({
@@ -95,7 +95,7 @@ const withFlowChartEditor =
           })
         );
 
-        return newNode;
+        return { newNode, flowId: flow.id };
       },
       [setNodes, setEdges]
     );

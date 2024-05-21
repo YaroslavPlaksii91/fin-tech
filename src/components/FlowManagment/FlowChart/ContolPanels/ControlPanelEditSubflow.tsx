@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 
@@ -13,6 +13,8 @@ import {
   SnackbarMessage
 } from '@components/shared/Snackbar/SnackbarMessage';
 import { SNACK_TYPE } from '@constants/common';
+import { useActiveStep } from '@contexts/StepContext';
+import Dialog from '@components/shared/Modals/Dialog';
 
 interface ControlPanelEditProps {
   flow: IFlow;
@@ -25,6 +27,11 @@ const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
   flow,
   setCopyFlow
 }) => {
+  const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
+  const { resetActive } = useActiveStep();
+
+  const handleDiscardChanges = () => resetActive();
+
   const onSave = useCallback(() => {
     if (rfInstance && flow) {
       try {
@@ -60,7 +67,12 @@ const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
         </Typography>
         <Typography variant="h4">{flow.data.name}</Typography>
       </Box>
-      <Stack spacing={1} direction="row" justifyContent="flex-end">
+      <Stack
+        onClick={() => setOpenDiscardModal(true)}
+        spacing={1}
+        direction="row"
+        justifyContent="flex-end"
+      >
         <Button size="small" variant="outlined">
           Cancel
         </Button>
@@ -68,6 +80,19 @@ const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
           Save changes
         </Button>
       </Stack>
+      <Dialog
+        title="Cancel Changes"
+        open={openDiscardModal}
+        onConfirm={handleDiscardChanges}
+        onClose={() => setOpenDiscardModal(false)}
+        confirmText="Yes"
+        cancelText="No"
+      >
+        <Typography sx={{ maxWidth: '416px' }} variant="body2">
+          Canceling changes will delete all edits in this step, this action
+          cannot be canceled. Are you sure you want to cancel the changes?
+        </Typography>
+      </Dialog>
     </StyledPanel>
   );
 };

@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// import { useDispatch } from 'react-redux/es/hooks/useDispatch';
-// import { cloneDeep } from 'lodash';
+import { useDispatch } from 'react-redux/es/hooks/useDispatch';
+import { cloneDeep } from 'lodash';
 
 import { validationSchema } from './validationSchema';
 
@@ -15,7 +15,7 @@ import {
   StepType
 } from '@components/FlowManagment/FlowChart/types';
 import { FlowNode } from '@domain/flow';
-// import { addNode } from '@store/flow/flow';
+import { addNode } from '@store/flow/flow';
 
 type FormData = {
   name: string;
@@ -33,23 +33,21 @@ interface AddStepProps {
   setSelectedStep: (value: FunctionalStepType | null) => void;
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
-  onAddNodeBetweenEdges?: (
+  edgeId: string;
+  onAddNodeBetweenEdges: (
     type: FunctionalStepType,
     name: string,
     edgeId: string
-  ) => FlowNode;
-  edgeId?: string;
-  reopenSelectStepModal?: () => void;
+  ) => { newNode: FlowNode; flowId: string };
 }
 
 export const AddStep: React.FC<AddStepProps> = ({
-  edgeId,
   stepType,
   setSelectedStep,
   modalOpen,
   setModalOpen,
-  reopenSelectStepModal,
-  onAddNodeBetweenEdges
+  onAddNodeBetweenEdges,
+  edgeId
 }) => {
   const {
     handleSubmit,
@@ -59,17 +57,14 @@ export const AddStep: React.FC<AddStepProps> = ({
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema)
   });
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const onSubmit: SubmitHandler<FormData> = ({ name }) => {
-    let createdStep;
-    if (edgeId) {
-      createdStep = onAddNodeBetweenEdges?.(stepType, name, edgeId);
-    }
-    if (createdStep) {
-      // setActiveStepId(createdStep.id);
+    const { newNode, flowId } = onAddNodeBetweenEdges(stepType, name, edgeId);
+
+    if (newNode && flowId) {
       // For update list of steps in the sidebar
-      // dispatch(addNode(cloneDeep(createdStep)));
+      dispatch(addNode({ node: cloneDeep(newNode), flowId: flowId }));
     }
     handleCloseModal();
   };
@@ -81,7 +76,6 @@ export const AddStep: React.FC<AddStepProps> = ({
 
   const handleCancel = () => {
     handleCloseModal();
-    reopenSelectStepModal?.();
   };
 
   useEffect(() => {
