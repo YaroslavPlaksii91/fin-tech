@@ -2,7 +2,7 @@ import { ReactFlowProvider } from 'reactflow';
 import { useMemo } from 'react';
 import { cloneDeep } from 'lodash';
 
-import { findSubFlow, updateNodesInSubFlow } from './utils';
+import { addNodeInSubFlow, findSubFlow, updateNodesInSubFlow } from './utils';
 
 import { FlowNode, IFlow } from '@domain/flow';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
@@ -45,12 +45,21 @@ const SubFlow: React.FC<SubFlowProps> = ({
     return undefined;
   }, [activeStepId]);
 
+  const updateNodesInMainFlow = (newNode: FlowNode, subFlow: IFlow) => {
+    const updatedNodes = addNodeInSubFlow(nodes, subFlow, newNode);
+    setNodes(updatedNodes);
+  };
+
   return (
     // As subFlow is sub instance main flow, it needs own flow provider
     <StepContainer>
       {subFlow && (
         <ReactFlowProvider>
-          <SubFlowChartEditor flow={subFlow} setCopyFlow={saveSubflow} />
+          <SubFlowChartEditor
+            flow={subFlow}
+            setCopyFlow={saveSubflow}
+            updateNodesInMainFlow={updateNodesInMainFlow}
+          />
         </ReactFlowProvider>
       )}
     </StepContainer>

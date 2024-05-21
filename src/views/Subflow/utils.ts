@@ -32,3 +32,17 @@ export const updateNodesInSubFlow = (
     }
     return node;
   });
+
+export const addNodeInSubFlow = (
+  nodes: FlowNode[],
+  subFlow: IFlow,
+  newNode: FlowNode
+): FlowNode[] =>
+  nodes.map((node: FlowNode) => {
+    if (node.id === subFlow.id) {
+      node.data.nodes = node.data.nodes.concat(newNode);
+    } else if (node.data?.nodes) {
+      node.data.nodes = updateNodesInSubFlow(node.data.nodes, subFlow);
+    }
+    return node;
+  });

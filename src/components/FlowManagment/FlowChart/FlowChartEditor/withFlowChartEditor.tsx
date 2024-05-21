@@ -49,6 +49,7 @@ import { addNode, deleteNodes } from '@store/flow/flow';
 import { useAppDispatch } from '@store/hooks';
 
 type FlowChartEditorProps = {
+  updateNodesInMainFlow: (newNode: IFlow, subFlow: IFlow) => void;
   flow: IFlow;
   setCopyFlow: (flow: IFlow) => void;
 };
@@ -84,6 +85,8 @@ const withFlowChartEditor = (StepConfigureView, ControlPanel) => {
 
         setNodes((nodes) => nodes.concat(newNode));
         dispatch(addNode({ node: cloneDeep(newNode), flowId: flow.id }));
+
+        props?.updateNodesInMainFlow(newNode, flow);
 
         setEdges((edges) =>
           updateEdges({
