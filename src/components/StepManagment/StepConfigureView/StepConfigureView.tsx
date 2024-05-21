@@ -12,6 +12,7 @@ import Calculation from '@views/Calculation/Calculation';
 
 interface StepConfigureViewProps {
   flow: IFlow;
+  mainFlow?: IFlow;
   rfInstance: CustomReactFlowInstance;
   activeStepId: string;
   resetActiveStepId: () => void;
@@ -21,6 +22,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
   activeStepId,
   resetActiveStepId,
   flow,
+  mainFlow,
   rfInstance
 }) => {
   const step = useMemo(() => {
@@ -32,6 +34,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
     <>
       {step?.type === StepType.CHAMPION_CHALLENGER && (
         <ChampionChallenger
+          mainFlow={mainFlow}
           flow={flow}
           rfInstance={rfInstance}
           resetActiveStepId={resetActiveStepId}

@@ -1,6 +1,6 @@
 import { ReactFlowInstance } from 'reactflow';
 
-import { FlowNode } from '@domain/flow';
+import { FlowNode, IFlow } from '@domain/flow';
 
 export enum StepType {
   DECISION_TABLE = 'DecisionTable',
@@ -29,3 +29,9 @@ export type EdgeData = {
 export type CustomReactFlowInstance = ReactFlowInstance & {
   onAddNodeBetweenEdges: (type: StepType, name: string, edgeId: string) => void;
 };
+
+export interface StepConfigureViewProps {
+  flow: IFlow;
+  mainFlow?: IFlow;
+  rfInstance: CustomReactFlowInstance;
+}

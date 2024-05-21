@@ -15,7 +15,7 @@ import isEmpty from 'lodash/isEmpty';
 import { enqueueSnackbar } from 'notistack';
 import { cloneDeep } from 'lodash';
 
-import { getConnectableNodes } from './utils';
+import { formatFlowDataForValidation, getConnectableNodes } from './utils';
 import validationSchema from './validationSchema';
 import { FieldValues, columns } from './types';
 
@@ -57,12 +57,14 @@ interface ChampionChallengerProps {
   resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
   flow: IFlow;
+  mainFlow?: IFlow;
 }
 
 const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   step,
   resetActiveStepId,
   flow,
+  mainFlow,
   rfInstance: {
     getEdge,
     getNodes,
@@ -163,13 +165,14 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       }
       return node;
     });
-
     try {
-      await flowService.validateFlow({
-        ...flow,
-        nodes: updatedNodes,
-        edges: newEdges
-      });
+      const data = formatFlowDataForValidation(
+        mainFlow,
+        flow,
+        updatedNodes,
+        newEdges
+      );
+      await flowService.validateFlow(data);
       setNodes(updatedNodes);
       setEdges(newEdges);
       enqueueSnackbar(

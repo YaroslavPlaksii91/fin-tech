@@ -49,20 +49,17 @@ import { addNode, deleteNodes } from '@store/flow/flow';
 import { useAppDispatch } from '@store/hooks';
 
 type FlowChartEditorProps = {
-  updateNodesInMainFlow: (newNode: IFlow, subFlow: IFlow) => void;
   flow: IFlow;
+  mainFlow: IFlow;
   setCopyFlow: (flow: IFlow) => void;
+  updateNodesInMainFlow: (newNode: IFlow, subFlow: IFlow) => void;
 };
 
-// type FlowChartEditorParams = {
-//   WrappedComponent: React.ReactNode;
-// };
-
-// eslint-disable-next-line arrow-body-style
-const withFlowChartEditor = (StepConfigureView, ControlPanel) => {
+const withFlowChartEditor =
+  (StepConfigureView, ControlPanel) =>
   // eslint-disable-next-line react/display-name
-  return (props: FlowChartEditorProps) => {
-    const { flow, setCopyFlow } = props;
+  (props: FlowChartEditorProps) => {
+    const { flow, mainFlow, setCopyFlow } = props;
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
     const [startDrag, setStartDrag] = useState<boolean>(false);
@@ -349,7 +346,11 @@ const withFlowChartEditor = (StepConfigureView, ControlPanel) => {
           />
           <Controls />
         </ReactFlow>
-        <StepConfigureView flow={flow} rfInstance={rfInstance} />
+        <StepConfigureView
+          mainFlow={mainFlow}
+          flow={flow}
+          rfInstance={rfInstance}
+        />
         <StepActionsMenu
           activeStep={activeStep}
           anchorElement={nodeElement}
@@ -363,6 +364,4 @@ const withFlowChartEditor = (StepConfigureView, ControlPanel) => {
       </>
     );
   };
-};
-
 export default withFlowChartEditor;
