@@ -22,11 +22,11 @@ export const ADD_BUTTON_ON_EDGE = 'add-button-on-edge';
 export const DEFAULT_EDGE_TYPE = 'smoothstep';
 
 export type EdgeData = {
-  onAdd?: (
+  onAdd: (
     type: StepType,
     name: string,
     id: string
-  ) => { node: FlowNode; flowId: string };
+  ) => { newNode: FlowNode; flowId: string };
   animated?: boolean;
 };
 
@@ -36,6 +36,14 @@ export type CustomReactFlowInstance = ReactFlowInstance & {
 
 export interface StepConfigureViewProps {
   flow: IFlow;
-  mainFlow?: IFlow;
+  mainFlow: IFlow;
   rfInstance: CustomReactFlowInstance;
+}
+
+export interface ControlPanelEditProps {
+  flow: IFlow;
+  mainFlow: IFlow;
+  isDirty: boolean;
+  setCopyFlow: (flow: IFlow) => void;
+  rfInstance: CustomReactFlowInstance | undefined;
 }

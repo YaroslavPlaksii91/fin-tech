@@ -22,7 +22,7 @@ import { ActiveStep } from '@contexts/StepContext';
 interface StepActionsMenuOnNode {
   isOpen?: boolean;
   onClose?: () => void;
-  subFlowId?: string;
+  subFlowId: string | null;
   anchorElement?: HTMLElement | null;
   flowNode: FlowNode | null;
   showActionMenuButton?: boolean;
@@ -92,6 +92,9 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
         if (answer) {
           if (flowNode && flowNode.id === activeStep?.stepId) {
             setActiveStep?.({ subFlowId, stepId: null });
+          }
+          if (flowNode && flowNode.id === activeStep?.subFlowId) {
+            setActiveStep?.({ subFlowId: null, stepId: null });
           }
           deleteElements({ nodes: [flowNode as Node] });
           dispatch(

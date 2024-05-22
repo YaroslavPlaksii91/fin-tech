@@ -73,8 +73,10 @@ export type FlowNode = Node<
     ChampionChallengerData &
     CalculationData &
     DecisionTableData &
-    SubFlowData
+    Optional<SubFlowData, 'nodes' | 'edges' | 'viewport'>
 >;
+
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
 export interface IFlow {
   id: string;

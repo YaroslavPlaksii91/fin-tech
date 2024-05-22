@@ -43,9 +43,9 @@ const SubFlow: React.FC<SubFlowProps> = ({
           editedBy: '',
           editedOn: ''
         },
-        nodes: subFlowNode.data.nodes,
-        edges: subFlowNode.data.edges,
-        viewport: subFlowNode.data.viewport,
+        nodes: subFlowNode.data.nodes || [],
+        edges: subFlowNode.data.edges || [],
+        viewport: subFlowNode.data.viewport || { x: 0, y: 0, zoom: 1 },
         temporaryVariables: [],
         permanentVariables: []
       };

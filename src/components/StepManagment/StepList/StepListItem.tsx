@@ -16,7 +16,7 @@ import { ActiveStep } from '@contexts/StepContext';
 interface StepListItemProps {
   step: FlowNode;
   level: number;
-  subFlowId?: string;
+  subFlowId: string | null;
   activeStep: ActiveStep;
   setActiveStep: (value: ActiveStep) => void;
   isEditMode: boolean;

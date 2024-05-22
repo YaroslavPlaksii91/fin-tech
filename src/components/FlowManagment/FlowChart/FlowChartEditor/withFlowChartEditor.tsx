@@ -23,8 +23,10 @@ import NodePositioning from '../Nodes/NodePositioning';
 import '../overview.css';
 import {
   ADD_BUTTON_ON_EDGE,
+  ControlPanelEditProps,
   CustomReactFlowInstance,
   EdgeData,
+  StepConfigureViewProps,
   StepType
 } from '../types';
 import {
@@ -55,7 +57,10 @@ type FlowChartEditorProps = {
 };
 
 const withFlowChartEditor =
-  (StepConfigureView, ControlPanel) =>
+  (
+    StepConfigureView: React.ComponentType<StepConfigureViewProps>,
+    ControlPanel: React.ComponentType<ControlPanelEditProps>
+  ) =>
   // eslint-disable-next-line react/display-name
   (props: FlowChartEditorProps) => {
     const { flow, mainFlow, setCopyFlow, updateNodesInMainFlow } = props;
@@ -347,12 +352,15 @@ const withFlowChartEditor =
           />
           <Controls />
         </ReactFlow>
-        <StepConfigureView
-          mainFlow={mainFlow}
-          flow={flow}
-          rfInstance={rfInstance}
-        />
+        {rfInstance && (
+          <StepConfigureView
+            mainFlow={mainFlow}
+            flow={flow}
+            rfInstance={rfInstance}
+          />
+        )}
         <StepActionsMenu
+          subFlowId={null}
           activeStep={activeStep}
           anchorElement={nodeElement}
           flowNode={flowNode}

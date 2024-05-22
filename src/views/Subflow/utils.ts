@@ -40,7 +40,7 @@ export const addNodeInSubFlow = (
 ): FlowNode[] =>
   nodes.map((node: FlowNode) => {
     if (node.id === subFlow.id) {
-      node.data.nodes = node.data.nodes.concat(newNode);
+      node.data.nodes = node.data?.nodes?.concat(newNode);
     } else if (node.data?.nodes) {
       node.data.nodes = updateNodesInSubFlow(node.data.nodes, subFlow);
     }

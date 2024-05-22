@@ -58,6 +58,7 @@ const FlowChartReadOnlyView: React.FC<FlowChartViewProps> = ({
       <Background variant={BackgroundVariant.Dots} />
       <Controls />
       <StepActionsMenu
+        subFlowId={null}
         anchorElement={nodeElement}
         flowNode={flowNode}
         isOpen={Boolean(flowNode)}

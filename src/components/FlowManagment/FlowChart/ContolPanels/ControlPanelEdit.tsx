@@ -4,11 +4,10 @@ import { enqueueSnackbar } from 'notistack';
 import { unwrapResult } from '@reduxjs/toolkit';
 
 import { formatFlowOnSave } from '../utils/formatFlowOnSave';
-import { CustomReactFlowInstance } from '../types';
+import { ControlPanelEditProps } from '../types';
 
 import { StyledPanel } from './styled';
 
-import { IFlow } from '@domain/flow';
 import {
   SnackbarErrorMessage,
   SnackbarMessage
@@ -18,13 +17,6 @@ import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { saveFlow } from '@store/flow/asyncThunk';
 import { pushProductionFlow } from '@store/flowList/asyncThunk';
 import { selectFlowData } from '@store/flow/selectors';
-
-interface ControlPanelEditProps {
-  flow: IFlow;
-  setCopyFlow: (flow: IFlow) => void;
-  isDirty: boolean;
-  rfInstance: CustomReactFlowInstance | undefined;
-}
 
 const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
   rfInstance,

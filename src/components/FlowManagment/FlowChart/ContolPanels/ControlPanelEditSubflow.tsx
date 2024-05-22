@@ -3,11 +3,10 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 
 import { formatFlowOnSave } from '../utils/formatFlowOnSave';
-import { CustomReactFlowInstance } from '../types';
+import { ControlPanelEditProps } from '../types';
 
 import { StyledPanel } from './styled';
 
-import { IFlow } from '@domain/flow';
 import {
   SnackbarErrorMessage,
   SnackbarMessage
@@ -16,13 +15,6 @@ import { SNACK_TYPE } from '@constants/common';
 import { useActiveStep } from '@contexts/StepContext';
 import Dialog from '@components/shared/Modals/Dialog';
 import StepBreadcrumbs from '@components/StepManagment/StepDetailsHeader/StepBreadcrumbs';
-
-interface ControlPanelEditProps {
-  flow: IFlow;
-  mainFlow: IFlow;
-  setCopyFlow: (flow: IFlow) => void;
-  rfInstance: CustomReactFlowInstance | undefined;
-}
 
 const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
   rfInstance,

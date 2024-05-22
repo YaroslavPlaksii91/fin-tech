@@ -1,17 +1,11 @@
-import { CustomReactFlowInstance } from '../types';
+import { StepConfigureViewProps } from '../types';
 import ControlPanelEdit from '../ContolPanels/ControlPanelEdit';
 
 import withFlowChartEditor from './withFlowChartEditor';
 
 import StepConfigureView from '@components/StepManagment/StepConfigureView/StepConfigureView';
 import { useActiveStep } from '@contexts/StepContext';
-import { IFlow } from '@domain/flow';
 import Subflow from '@views/Subflow/Subflow';
-
-interface StepConfigureViewProps {
-  flow: IFlow;
-  rfInstance: CustomReactFlowInstance;
-}
 
 const StepConfigureViewMainFlow: React.FC<StepConfigureViewProps> = ({
   flow,

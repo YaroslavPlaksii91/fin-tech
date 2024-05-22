@@ -55,9 +55,9 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
     );
   }
 
-  const stepsSubflow: FlowNode[] = useMemo(
+  const stepsSubflow = useMemo(
     () =>
-      step.data?.nodes.filter(
+      step.data?.nodes?.filter(
         (node) =>
           node.data.$type !== StepType.START && node.data.$type !== StepType.END
       ),
@@ -103,7 +103,7 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
             </StyledStepItem>
           </ListItem>
         )}
-        {stepsSubflow.map((node) => (
+        {stepsSubflow?.map((node) => (
           <RecursiveStepListItem
             subFlowId={step.id}
             key={node.id}

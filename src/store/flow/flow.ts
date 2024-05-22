@@ -39,7 +39,7 @@ function addNodeToSubflow(
         ...node,
         data: {
           ...node.data,
-          nodes: [...node.data.nodes, newNode]
+          nodes: [...(node.data.nodes ?? []), newNode]
         }
       };
     }
@@ -59,7 +59,7 @@ function addNodeToSubflow(
 function removeNodesInSubflow(
   nodes: FlowNode[],
   deleteNodes: FlowNode[],
-  subflowId: string
+  subflowId: string | null
 ): FlowNode[] {
   return nodes.map((node) => {
     if (node.id === subflowId) {
@@ -67,7 +67,7 @@ function removeNodesInSubflow(
         ...node,
         data: {
           ...node.data,
-          nodes: node.data.nodes.filter(
+          nodes: node.data?.nodes?.filter(
             (node) => !deleteNodes.find((item) => item.id === node.id)
           )
         }
@@ -106,7 +106,10 @@ export const flowSlicer = createSlice({
     deleteNodes: create.reducer(
       (
         state,
-        action: PayloadAction<{ deletedNodes: FlowNode[]; flowId: string }>
+        action: PayloadAction<{
+          deletedNodes: FlowNode[];
+          flowId: string | null;
+        }>
       ) => {
         if (state.flow.id === action.payload.flowId) {
           state.flow.nodes = state.flow.nodes.filter((node) =>
