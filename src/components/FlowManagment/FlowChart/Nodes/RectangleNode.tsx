@@ -23,9 +23,6 @@ const RectangleNode: React.FC<NodeProps<NodeData & DecisionTableData>> = ({
       {data.stepType === StepType.DECISION_TABLE && (
         <BlocksIcon color={theme.palette.primary.main} />
       )}
-      {data.stepType === StepType.DECISION_TABLE && (
-        <BlocksIcon color={theme.palette.primary.main} />
-      )}
       {data.stepType === StepType.SUBFLOW && (
         <LineChartDotsSquareIcon color={theme.palette.primary.main} />
       )}
