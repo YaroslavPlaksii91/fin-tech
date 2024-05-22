@@ -25,7 +25,7 @@ import {
 } from './utils';
 
 import { palette } from '@theme';
-import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
+import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
 import { AddIcon } from '@components/shared/Icons';
 import {
   StyledTableCell,
@@ -41,11 +41,13 @@ import {
   VARIABLE_USAGE_MODE,
   VARIABLE_SOURCE_TYPE
 } from '@domain/dataDictionary';
-import { FlowNode } from '@domain/flow';
+import { FlowNode, IFlow } from '@domain/flow';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 import { StepContainer } from '@views/styled';
 
 type DecisionTableStepProps = {
+  flow: IFlow;
+  mainFlow?: IFlow;
   step: FlowNode;
   resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
@@ -53,6 +55,8 @@ type DecisionTableStepProps = {
 
 const DecisionTableStep = ({
   step,
+  flow,
+  mainFlow,
   resetActiveStepId,
   rfInstance: { getNodes, setNodes }
 }: DecisionTableStepProps) => {
@@ -463,7 +467,9 @@ const DecisionTableStep = ({
   return (
     <StepContainer>
       <StepDetailsHeader
-        title={step.data.name}
+        flow={mainFlow ?? flow}
+        step={step}
+        title={`Edit Step: ${step.data.name}`}
         details="A decision table is a step that allows to set expressions for
         columns and rows. The system will go through the table and analyze the
         values."
@@ -541,15 +547,7 @@ const DecisionTableStep = ({
           Add new layer
         </Typography>
       </Button>
-      <StepDetailsHeader
-        title="Otherwise condition"
-        details="A condition used when no rule from previous table was not executed."
-        isActionContainerVisible={false}
-        onDiscard={() => {}}
-        disabled={false}
-        isSubmitting={false}
-      />
-      {/* Otherwise table */}
+      {/* Otherwise table  */}
       <StyledPaper>
         <StyledTableContainer
           sx={{

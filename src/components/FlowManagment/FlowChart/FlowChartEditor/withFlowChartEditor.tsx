@@ -97,7 +97,7 @@ const withFlowChartEditor =
 
         return { newNode, flowId: flow.id };
       },
-      [setNodes, setEdges]
+      [setNodes, setEdges, flow.id]
     );
 
     const initialElements = useMemo(() => {
@@ -339,6 +339,7 @@ const withFlowChartEditor =
         >
           <Background variant={BackgroundVariant.Dots} />
           <ControlPanel
+            mainFlow={mainFlow}
             flow={flow}
             setCopyFlow={setCopyFlow}
             isDirty={isDirty}

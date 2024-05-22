@@ -16,8 +16,8 @@ const StepConfigureViewSubFlow: React.FC<StepConfigureViewProps> = ({
     rfInstance &&
     activeStep.stepId && (
       <StepConfigureView
-        mainFlow={mainFlow}
         flow={flow}
+        mainFlow={mainFlow}
         resetActiveStepId={() =>
           setActiveStep({ subFlowId: flow.id, stepId: null })
         }

@@ -22,7 +22,7 @@ import { FieldValues, columns } from './types';
 import TrashIcon from '@icons/trash.svg';
 import AddIcon from '@icons/plusSquare.svg';
 import { FlowNode, IFlow } from '@domain/flow';
-import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
+import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
 import NumberRangeInput from '@components/shared/NumberRangeInput/NumberRangeInput';
 import SearchableSelect from '@components/shared/SearchableSelect/SearchableSelect';
 import {
@@ -232,7 +232,9 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         <Box sx={{ flexGrow: 1 }}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <StepDetailsHeader
-              title={step.data.name}
+              flow={mainFlow ?? flow}
+              step={step}
+              title={`Edit Step: ${step.data.name}`}
               details="A Champion Challenger is a step that allows you to split traffic into several groups and run experiment."
               isActionContainerVisible={false}
             />

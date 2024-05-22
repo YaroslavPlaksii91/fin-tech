@@ -15,9 +15,11 @@ import {
 import { SNACK_TYPE } from '@constants/common';
 import { useActiveStep } from '@contexts/StepContext';
 import Dialog from '@components/shared/Modals/Dialog';
+import StepBreadcrumbs from '@components/StepManagment/StepDetailsHeader/StepBreadcrumbs';
 
 interface ControlPanelEditProps {
   flow: IFlow;
+  mainFlow: IFlow;
   setCopyFlow: (flow: IFlow) => void;
   rfInstance: CustomReactFlowInstance | undefined;
 }
@@ -25,6 +27,7 @@ interface ControlPanelEditProps {
 const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
   rfInstance,
   flow,
+  mainFlow,
   setCopyFlow
 }) => {
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
@@ -62,9 +65,11 @@ const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
   return (
     <StyledPanel position="top-right">
       <Box>
-        <Typography variant="body1" mb={1}>
-          {flow.data.name}
-        </Typography>
+        <StepBreadcrumbs
+          flow={mainFlow}
+          stepId={flow.id}
+          title={flow.data.name}
+        />
         <Typography variant="h4">{flow.data.name}</Typography>
       </Box>
       <Stack

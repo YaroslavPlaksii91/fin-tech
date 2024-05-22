@@ -34,8 +34,8 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
     <>
       {step?.type === StepType.CHAMPION_CHALLENGER && (
         <ChampionChallenger
-          mainFlow={mainFlow}
           flow={flow}
+          mainFlow={mainFlow}
           rfInstance={rfInstance}
           resetActiveStepId={resetActiveStepId}
           step={step}
@@ -43,6 +43,8 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
       )}
       {step?.type === StepType.DECISION_TABLE && (
         <DecisionTableStep
+          flow={flow}
+          mainFlow={mainFlow}
           step={step}
           resetActiveStepId={resetActiveStepId}
           rfInstance={rfInstance}
@@ -51,6 +53,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
       {step?.type === StepType.CALCULATION && (
         <Calculation
           flow={flow}
+          mainFlow={mainFlow}
           rfInstance={rfInstance}
           resetActiveStepId={resetActiveStepId}
           step={step}

@@ -102,7 +102,6 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
   return (
     <StyledPanel position="top-right">
       <Box>
-        {/* TODO: add link to flow ? */}
         <Typography variant="body1" mb={1}>
           {flowData.name}
         </Typography>

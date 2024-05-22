@@ -32,16 +32,28 @@ function addNodeToSubflow(
   nodes: FlowNode[],
   subflowId: string,
   newNode: FlowNode
-): void {
-  for (const node of nodes) {
+): FlowNode[] {
+  return nodes.map((node) => {
     if (node.id === subflowId) {
-      node.data.nodes.push(newNode);
-      return;
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          nodes: [...node.data.nodes, newNode]
+        }
+      };
     }
     if (node.data.nodes) {
-      addNodeToSubflow(node.data.nodes, subflowId, newNode);
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          nodes: addNodeToSubflow(node.data.nodes, subflowId, newNode)
+        }
+      };
     }
-  }
+    return node;
+  });
 }
 
 function removeNodesInSubflow(
@@ -83,7 +95,11 @@ export const flowSlicer = createSlice({
           state.flow.nodes.push(action.payload.node);
         } else {
           const { nodes } = state.flow;
-          addNodeToSubflow(nodes, action.payload.flowId, action.payload.node);
+          state.flow.nodes = addNodeToSubflow(
+            nodes,
+            action.payload.flowId,
+            action.payload.node
+          );
         }
       }
     ),

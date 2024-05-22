@@ -22,7 +22,7 @@ import TrashIcon from '@icons/trash.svg';
 import EditIcon from '@icons/editPencil.svg';
 import PlusSquareIcon from '@icons/plusSquare.svg';
 import { FlowNode, IFlow } from '@domain/flow';
-import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
+import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
 import { RULES_LIMIT, SNACK_TYPE } from '@constants/common';
 import Dialog from '@components/shared/Modals/Dialog';
@@ -35,14 +35,16 @@ import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlB
 import { StepContainer } from '@views/styled';
 
 interface CalculationProps {
+  flow: IFlow;
+  mainFlow?: IFlow;
   step: FlowNode;
   resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
-  flow: IFlow;
 }
 
 const Calculation: React.FC<CalculationProps> = ({
   flow,
+  mainFlow,
   step,
   resetActiveStepId,
   rfInstance: { getNodes, setNodes }
@@ -135,8 +137,9 @@ const Calculation: React.FC<CalculationProps> = ({
             <Box sx={{ flexGrow: 1 }}>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <StepDetailsHeader
-                  flow={flow}
-                  title={step.data.name}
+                  flow={mainFlow ?? flow}
+                  step={step}
+                  title={`Edit Step: ${step.data.name}`}
                   details="Calculation is a step that allows the User to set a value for the parameter."
                   disabled={isSubmitting}
                   isActionContainerVisible={false}
@@ -304,10 +307,9 @@ const Calculation: React.FC<CalculationProps> = ({
             <ExpressionForm
               renderTitle={() => (
                 <StepDetailsHeader
-                  flow={flow}
-                  title={
-                    (initialValue?.id ? 'Change' : 'Add New') + ' Expression'
-                  }
+                  flow={mainFlow ?? flow}
+                  step={step}
+                  title={`Edit step: ${(initialValue?.id ? 'Change' : 'Add New') + ' Expression'}`}
                   disabled
                   isActionContainerVisible={false}
                 />
