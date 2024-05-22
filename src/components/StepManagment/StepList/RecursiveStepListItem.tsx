@@ -97,7 +97,7 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
       </StyledListItem>
       <StyledAccordionDetails>
         {stepsSubflow?.length === 0 && (
-          <ListItem sx={{ paddingLeft: '40px' }}>
+          <ListItem sx={{ paddingLeft: `${level * 40}px` }}>
             <StyledStepItem>
               <Typography variant="body2">No steps</Typography>
             </StyledStepItem>
