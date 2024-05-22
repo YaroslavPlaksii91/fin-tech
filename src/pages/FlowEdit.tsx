@@ -21,11 +21,7 @@ function FlowEdit() {
   return (
     <DataDictionaryContext.Provider value={{ variables }}>
       {copyFlow && (
-        <MainFlowChartEditor
-          mainFlow={copyFlow}
-          flow={copyFlow}
-          setCopyFlow={setCopyFlow}
-        />
+        <MainFlowChartEditor flow={copyFlow} setCopyFlow={setCopyFlow} />
       )}
     </DataDictionaryContext.Provider>
   );

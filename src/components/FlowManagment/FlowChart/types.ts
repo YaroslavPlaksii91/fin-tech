@@ -36,14 +36,14 @@ export type CustomReactFlowInstance = ReactFlowInstance & {
 
 export interface StepConfigureViewProps {
   flow: IFlow;
-  mainFlow: IFlow;
+  mainFlow?: IFlow;
   rfInstance: CustomReactFlowInstance;
 }
 
 export interface ControlPanelEditProps {
   flow: IFlow;
-  mainFlow: IFlow;
+  mainFlow?: IFlow;
   isDirty: boolean;
   setCopyFlow: (flow: IFlow) => void;
-  rfInstance: CustomReactFlowInstance | undefined;
+  rfInstance: CustomReactFlowInstance;
 }

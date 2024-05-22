@@ -51,7 +51,7 @@ import { useAppDispatch } from '@store/hooks';
 
 type FlowChartEditorProps = {
   flow: IFlow;
-  mainFlow: IFlow;
+  mainFlow?: IFlow;
   setCopyFlow: (flow: IFlow) => void;
   updateNodesInMainFlow?: (newNode: FlowNode, subFlow: IFlow) => void;
 };
@@ -343,13 +343,15 @@ const withFlowChartEditor =
           connectionLineType={ConnectionLineType.SmoothStep}
         >
           <Background variant={BackgroundVariant.Dots} />
-          <ControlPanel
-            mainFlow={mainFlow}
-            flow={flow}
-            setCopyFlow={setCopyFlow}
-            isDirty={isDirty}
-            rfInstance={rfInstance}
-          />
+          {rfInstance && (
+            <ControlPanel
+              mainFlow={mainFlow}
+              flow={flow}
+              setCopyFlow={setCopyFlow}
+              isDirty={isDirty}
+              rfInstance={rfInstance}
+            />
+          )}
           <Controls />
         </ReactFlow>
         {rfInstance && (

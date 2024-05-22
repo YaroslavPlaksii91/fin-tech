@@ -58,7 +58,7 @@ const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
     <StyledPanel position="top-right">
       <Box>
         <StepBreadcrumbs
-          flow={mainFlow}
+          flow={mainFlow ?? flow}
           stepId={flow.id}
           title={flow.data.name}
         />

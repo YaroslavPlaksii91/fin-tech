@@ -14,7 +14,7 @@ const StepConfigureViewMainFlow: React.FC<StepConfigureViewProps> = ({
   const { activeStep, resetActive } = useActiveStep();
   return (
     <>
-      {rfInstance && activeStep?.stepId && !activeStep?.subFlowId && (
+      {activeStep.stepId && !activeStep.subFlowId && (
         <StepConfigureView
           flow={flow}
           resetActiveStepId={resetActive}
@@ -22,12 +22,12 @@ const StepConfigureViewMainFlow: React.FC<StepConfigureViewProps> = ({
           activeStepId={activeStep.stepId}
         />
       )}
-      {rfInstance && activeStep?.subFlowId && (
+      {activeStep.subFlowId && (
         <Subflow
+          mainFlow={flow}
           resetActiveStepId={resetActive}
           activeStepId={activeStep.subFlowId}
           rfInstance={rfInstance}
-          mainFlow={flow}
         />
       )}
     </>
