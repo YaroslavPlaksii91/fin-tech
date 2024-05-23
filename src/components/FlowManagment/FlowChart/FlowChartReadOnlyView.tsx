@@ -25,7 +25,7 @@ interface FlowChartViewProps {
   showControlPanel?: boolean;
 }
 
-const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
+const FlowChartReadOnlyView: React.FC<FlowChartViewProps> = ({
   flow,
   isProductionFlow,
   showControlPanel = false
@@ -58,7 +58,7 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
       <Background variant={BackgroundVariant.Dots} />
       <Controls />
       <StepActionsMenu
-        activeStepId={null}
+        subFlowId={null}
         anchorElement={nodeElement}
         flowNode={flowNode}
         isOpen={Boolean(flowNode)}
@@ -68,9 +68,5 @@ const FlowChartReadOnlyViewLayout: React.FC<FlowChartViewProps> = ({
     </ReactFlow>
   );
 };
-
-const FlowChartReadOnlyView = (props: FlowChartViewProps) => (
-  <FlowChartReadOnlyViewLayout {...props} />
-);
 
 export default FlowChartReadOnlyView;

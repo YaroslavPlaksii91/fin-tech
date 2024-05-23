@@ -13,7 +13,7 @@ export const options = [
   {
     label: 'Champion Challenger',
     dataKey: StepType.CHAMPION_CHALLENGER,
-    icon: <LineChartDotsSquareIcon />
+    icon: <ArrowLeftAndRightSquareIcon />
   },
   {
     label: 'Decision table',
@@ -24,7 +24,6 @@ export const options = [
     id: StepType.SUBFLOW,
     dataKey: StepType.SUBFLOW,
     label: 'Subflow',
-    icon: <ArrowLeftAndRightSquareIcon />,
-    disabled: true
+    icon: <LineChartDotsSquareIcon />
   }
 ];

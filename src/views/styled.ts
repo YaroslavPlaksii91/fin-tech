@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
-export const StyledContainer = styled(Box)(({ theme }) => ({
+export const StepContainer = styled(Box)(({ theme }) => ({
   position: 'absolute',
   top: 0,
   left: 0,
