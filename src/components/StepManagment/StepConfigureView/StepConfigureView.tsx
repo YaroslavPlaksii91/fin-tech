@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { cloneDeep } from 'lodash';
 
 import ChampionChallenger from '@views/ChampionChallenger/ChampionChallenger';
@@ -25,10 +24,8 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
   mainFlow,
   rfInstance
 }) => {
-  const step = useMemo(() => {
-    const currentNode = rfInstance.getNode(activeStepId);
-    return cloneDeep(currentNode);
-  }, [activeStepId]);
+  const currentNode = rfInstance.getNode(activeStepId);
+  const step = cloneDeep(currentNode);
 
   return (
     <>
