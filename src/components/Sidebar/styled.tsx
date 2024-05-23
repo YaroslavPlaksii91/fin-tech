@@ -10,13 +10,6 @@ import {
 import { ButtonProps } from '@mui/base';
 import { NavLink } from 'react-router-dom';
 
-export const StyledPaper = styled(Paper)(({ theme: { palette } }) => ({
-  padding: '16px 8px',
-  borderRadius: 0,
-  borderRight: `1px solid ${palette.divider}`,
-  overflow: 'auto'
-}));
-
 export const Label = styled(Typography)(({ theme: { palette } }) => ({
   borderRadius: '4px',
   padding: '2px 24px',
@@ -90,5 +83,34 @@ export const StyledAccordion = styled(Accordion)(() => ({
   padding: '2px 0',
   '&:before': {
     display: 'none'
+  }
+}));
+
+export const StyledPaper = styled(Paper)(({ theme: { palette } }) => ({
+  padding: '16px 8px',
+  borderRadius: 0,
+  borderRight: `1px solid ${palette.divider}`,
+  overflow: 'auto',
+  position: 'relative',
+  flexGrow: 0,
+  flexShrink: 0,
+
+  minWidth: '70px',
+  maxWidth: '30%'
+}));
+
+export const Resizer = styled('div')(({ theme: { palette } }) => ({
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  right: 0,
+  width: '1px',
+
+  cursor: 'col-resize',
+  resize: 'horizontal',
+
+  '&:hover': {
+    width: '2px',
+    background: `${palette.divider}`
   }
 }));

@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { getFlow, getProductionFlow, saveFlow } from './asyncThunk';
+import { removeNodesInSubflow, addNodeToSubflow } from './utils';
 
 import { FlowData, FlowNode, IFlow } from '@domain/flow';
 
@@ -35,14 +36,42 @@ export const flowSlicer = createSlice({
     setInitialFlow: create.reducer((state) => {
       state.flow = initialFlow;
     }),
-    addNode: create.reducer((state, action: PayloadAction<FlowNode>) => {
-      state.flow.nodes.push(action.payload);
-    }),
-    deleteNodes: create.reducer((state, action: PayloadAction<FlowNode[]>) => {
-      state.flow.nodes = state.flow.nodes.filter((node) =>
-        action.payload.find((item) => item.id !== node.id)
-      );
-    }),
+    addNode: create.reducer(
+      (state, action: PayloadAction<{ node: FlowNode; flowId: string }>) => {
+        if (state.flow.id === action.payload.flowId) {
+          state.flow.nodes.push(action.payload.node);
+        } else {
+          const { nodes } = state.flow;
+          state.flow.nodes = addNodeToSubflow(
+            nodes,
+            action.payload.flowId,
+            action.payload.node
+          );
+        }
+      }
+    ),
+    deleteNodes: create.reducer(
+      (
+        state,
+        action: PayloadAction<{
+          deletedNodes: FlowNode[];
+          flowId: string | null;
+        }>
+      ) => {
+        if (state.flow.id === action.payload.flowId) {
+          state.flow.nodes = state.flow.nodes.filter((node) =>
+            action.payload.deletedNodes.find((item) => item.id !== node.id)
+          );
+        } else {
+          const { nodes } = state.flow;
+          state.flow.nodes = removeNodesInSubflow(
+            nodes,
+            action.payload.deletedNodes,
+            action.payload.flowId
+          );
+        }
+      }
+    ),
     updateFlowData: create.reducer(
       (state, action: PayloadAction<Omit<FlowData, 'id'>>) => {
         state.flow.data = action.payload;

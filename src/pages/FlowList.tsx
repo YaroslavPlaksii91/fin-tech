@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 import { useState, useEffect } from 'react';
 
-import FlowChartView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyView';
+import FlowChartReadOnlyView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyView';
 import { IFlow } from '@domain/flow';
 import { selectFlow } from '@store/flow/selectors';
 import { useAppSelector } from '@store/hooks';
@@ -19,7 +19,7 @@ export default function FlowsNew() {
 
   return (
     copyFlow && (
-      <FlowChartView
+      <FlowChartReadOnlyView
         showControlPanel={!!copyFlow.id}
         flow={copyFlow}
         isProductionFlow={isProductionFlow}

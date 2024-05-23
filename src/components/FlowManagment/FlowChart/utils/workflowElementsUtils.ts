@@ -5,6 +5,7 @@ import pick from 'lodash/pick';
 import { ADD_BUTTON_ON_EDGE, StepType } from '../types';
 
 import { FlowNode } from '@domain/flow';
+import { createInitialFlow } from '@components/FlowManagment/AddFlow/initialFlowUtils';
 
 const defaultPosition = { x: 0, y: 0 };
 
@@ -50,6 +51,11 @@ export const createNewNode = (
     case StepType.CALCULATION:
       newNode.data = { ...newNode.data, expressions: [] };
       break;
+    case StepType.SUBFLOW: {
+      const { nodes, edges, viewport } = createInitialFlow();
+      newNode.data = { ...newNode.data, nodes, edges, viewport };
+      break;
+    }
     default:
       break;
   }
@@ -85,7 +91,7 @@ type updateEdgesParams = {
     type: StepType,
     name: string,
     edgeId: string
-  ) => FlowNode;
+  ) => { newNode: FlowNode; flowId: string };
 };
 
 export const updateEdges = ({

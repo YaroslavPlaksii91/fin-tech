@@ -11,5 +11,6 @@ export const nodeTypes: NodeTypes = {
   [StepType.END]: InitialNodes.EndNode,
   [StepType.DECISION_TABLE]: RectangleNode,
   [StepType.CHAMPION_CHALLENGER]: ListNode,
-  [StepType.CALCULATION]: RectangleNode
+  [StepType.CALCULATION]: RectangleNode,
+  [StepType.SUBFLOW]: RectangleNode
 };
