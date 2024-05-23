@@ -3,6 +3,7 @@ import { Edge, Node, Viewport } from '@reactflow/core';
 import { IEntity } from './entity';
 import {
   DATA_TYPE,
+  INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
   UserDefinedVariable,
   VARIABLE_SOURCE_TYPE
 } from './dataDictionary';
@@ -47,7 +48,7 @@ export type DecisionTableData = {
 
 export type ExpressionVariableSources = {
   name: string;
-  sourceType: VARIABLE_SOURCE_TYPE;
+  sourceType: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
 }[];
 
 export type Expression = {
