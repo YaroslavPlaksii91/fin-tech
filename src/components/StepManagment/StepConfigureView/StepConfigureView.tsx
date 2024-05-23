@@ -37,24 +37,25 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
       {step?.type === StepType.CHAMPION_CHALLENGER && (
         <ChampionChallenger
           flow={flow}
+          step={step}
           rfInstance={rfInstance}
           resetActiveStepId={resetActiveStepId}
-          step={step}
         />
       )}
       {step?.type === StepType.DECISION_TABLE && (
         <DecisionTableStep
+          flow={flow}
           step={step}
-          resetActiveStepId={resetActiveStepId}
           rfInstance={rfInstance}
+          resetActiveStepId={resetActiveStepId}
         />
       )}
       {step?.type === StepType.CALCULATION && (
         <Calculation
           flow={flow}
+          step={step}
           rfInstance={rfInstance}
           resetActiveStepId={resetActiveStepId}
-          step={step}
         />
       )}
     </StyledContainer>

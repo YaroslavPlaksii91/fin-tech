@@ -9,3 +9,8 @@ export const StyledLayoutContainer = styled(Box)(() => ({
   height: `calc(100vh - ${HEADER_HEIGHT}px)`,
   overflow: 'auto'
 }));
+
+export const StyledStepWrapper = styled(Box)(() => ({
+  padding: '16px 24px',
+  flexGrow: 1
+}));

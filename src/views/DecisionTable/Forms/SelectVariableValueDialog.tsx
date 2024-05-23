@@ -3,7 +3,7 @@ import { Button, Stack, InputAdornment, MenuItem } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { OPERATORS, CATEGORIES } from '../constants';
+import { OPERATORS, CATEGORIES, CATEGORIES_TYPE } from '../constants';
 import { SelectedCellInRowData, FormFieldsProps } from '../types';
 import { getOperatorOptions } from '../utils';
 
@@ -20,7 +20,7 @@ type SelectVariableValueDialogProps = {
   modalOpen: boolean;
   handleClose: () => void;
   selectedRowCell: SelectedCellInRowData;
-  category: CATEGORIES;
+  category: CATEGORIES_TYPE;
   handleSubmitSelectedRowCellData: (
     data: SelectedCellInRowData & FormFieldsProps
   ) => void;

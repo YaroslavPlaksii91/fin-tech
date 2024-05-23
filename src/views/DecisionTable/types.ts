@@ -1,10 +1,6 @@
-import { CATEGORIES, CATEGORIES_WITHOUT_ELSE_ACTIONS } from './constants';
+import { CATEGORIES_TYPE } from './constants';
 
-import {
-  DataDictionaryVariable,
-  UserDefinedVariable,
-  DATA_TYPE
-} from '@domain/dataDictionary';
+import { DATA_TYPE } from '@domain/dataDictionary';
 
 export type CaseEntry = {
   name: string;
@@ -13,9 +9,21 @@ export type CaseEntry = {
   destinationType?: string;
 };
 
+export interface CaseEntryUpdate extends CaseEntry {
+  category?: CATEGORIES_TYPE;
+}
+
 export type CaseEntriesDate = {
   conditions: CaseEntry[];
   actions: CaseEntry[];
+  edgeId: null;
+};
+
+export type CaseEntriesDataUpdate = {
+  conditions: CaseEntryUpdate[];
+  actions: CaseEntryUpdate[];
+  defaultActions: CaseEntryUpdate[];
+  edgeId?: string | null;
 };
 
 export type VariableRowData = {
@@ -23,6 +31,7 @@ export type VariableRowData = {
     name: string;
     operator: string;
     expression: string;
+    edgeId?: string | null;
   };
 };
 
@@ -38,61 +47,18 @@ export type VariableColumnData = {
   allowedValues?: string | string[];
 };
 
+export type VariableColumnDataUpdate = {
+  category: CATEGORIES_TYPE;
+  name: string;
+  dataType: DATA_TYPE | string;
+  allowedValues?: string | string[];
+  index: number;
+};
+
 export type FormFieldsProps = {
   variableName: string;
   operator: string;
   value?: string;
   lowerBound?: number | null;
   upperBound?: number | null;
-};
-
-export type TableSkeletonProps = {
-  columns: VariableColumnData[];
-  rows: VariableRowData[];
-  variablesOptions: (DataDictionaryVariable | UserDefinedVariable)[];
-  columnClickedIndex?: number;
-  category: CATEGORIES;
-  handleDeleteRow?: (index: number) => void;
-  handleChangeColumnClickedIndex?: (newColumnIndex: number) => void;
-  handleInsertingColumn?: ({
-    columnClickedIndex,
-    category
-  }: {
-    columnClickedIndex: number;
-    category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
-  }) => void;
-  handleDeleteCategoryColumn?: ({
-    columnIndex,
-    category
-  }: {
-    columnIndex: number;
-    category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
-  }) => void;
-  handleChangeColumnVariable?: ({
-    columnIndex,
-    newVariable,
-    category
-  }: {
-    columnIndex: number;
-    newVariable: Pick<DataDictionaryVariable, 'name'>;
-    category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
-  }) => void;
-  handleSubmitVariableValue: ({
-    formFieldData,
-    category
-  }: {
-    formFieldData: SelectedCellInRowData & FormFieldsProps;
-    category: CATEGORIES;
-  }) => void;
-  handleSubmitVariableValueForEnum: ({
-    rowIndex,
-    variableName,
-    newEnumValue,
-    category
-  }: {
-    rowIndex: number;
-    variableName: string;
-    newEnumValue: string;
-    category: CATEGORIES;
-  }) => void;
 };

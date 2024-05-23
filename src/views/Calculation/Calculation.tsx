@@ -28,10 +28,10 @@ import { RULES_LIMIT, SNACK_TYPE } from '@constants/common';
 import Dialog from '@components/shared/Modals/Dialog';
 import { ExpressionForm } from '@components/ExpressionForm/ExpressionForm.tsx';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
-import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
-import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { InputText } from '@components/shared/Forms/InputText';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar.tsx';
+import { StyledStepWrapper } from '@components/Layouts/styled';
+import StepNoteSection from '@views/DecisionTable/StepNoteSection/StepNoteSection';
 
 interface CalculationProps {
   step: FlowNode;
@@ -67,9 +67,7 @@ const Calculation: React.FC<CalculationProps> = ({
     control
   });
 
-  const handleOpenNoteModal = () => {
-    setOpenNoteModal(true);
-  };
+  const handleOpenNoteModal = () => setOpenNoteModal(true);
 
   const handleSubmitNote = (note: string) => {
     setValue('note', note);
@@ -127,10 +125,10 @@ const Calculation: React.FC<CalculationProps> = ({
   };
 
   return (
-    <Stack sx={{ minHeight: '100%' }} direction="column" spacing={0}>
+    <>
       {!openExpEditorView && (
         <>
-          <Box sx={{ flexGrow: 1 }}>
+          <StyledStepWrapper>
             <form onSubmit={handleSubmit(onSubmit)}>
               <StepDetailsHeader
                 flow={flow}
@@ -139,7 +137,7 @@ const Calculation: React.FC<CalculationProps> = ({
                 disabled={isSubmitting}
                 isActionContainerVisible={false}
               />
-              <Stack pl={3} pr={3}>
+              <Stack>
                 <Box mb={1}>
                   <Card variant="outlined">
                     <CardContent
@@ -241,24 +239,25 @@ const Calculation: React.FC<CalculationProps> = ({
                 >
                   Add New Expression
                 </Button>
-                <Box mt={2}>
-                  <Card variant="outlined">
-                    <CardContent>
-                      <NoteSection handleOpenNoteModal={handleOpenNoteModal}>
-                        <InputText
-                          fullWidth
-                          name="note"
-                          control={control}
-                          label="Note"
-                          disabled
-                          placeholder="Enter note here"
-                        />
-                      </NoteSection>
-                    </CardContent>
-                  </Card>
-                </Box>
               </Stack>
             </form>
+            <StepNoteSection
+              modalOpen={openNoteModal}
+              handleCloseModal={handleCloseNoteModal}
+              handleOpenModal={handleOpenNoteModal}
+              noteValue={getValues('note') ?? ''}
+              handleSubmitNote={handleSubmitNote}
+              renderInput={() => (
+                <InputText
+                  fullWidth
+                  name="note"
+                  control={control}
+                  label="Note"
+                  disabled
+                  placeholder="Enter note here"
+                />
+              )}
+            />
             <Dialog
               title="Cancel Changes"
               open={openDiscardModal}
@@ -273,13 +272,7 @@ const Calculation: React.FC<CalculationProps> = ({
                 changes?
               </Typography>
             </Dialog>
-            <NoteForm
-              modalOpen={openNoteModal}
-              handleClose={handleCloseNoteModal}
-              handleSubmitNote={handleSubmitNote}
-              note={getValues('note') ?? ''}
-            />
-          </Box>
+          </StyledStepWrapper>
           <StepDetailsControlBar
             disabled={isSubmitting}
             onDiscard={() => setOpenDiscardModal(true)}
@@ -291,32 +284,21 @@ const Calculation: React.FC<CalculationProps> = ({
         </>
       )}
       {openExpEditorView && (
-        <Box
-          sx={{
-            minHeight: '100%',
-            flexGrow: 1,
-            display: 'flex',
-            flexDirection: 'column'
-          }}
-        >
-          <ExpressionForm
-            renderTitle={() => (
-              <StepDetailsHeader
-                flow={flow}
-                title={
-                  (initialValue?.id ? 'Change' : 'Add New') + ' Expression'
-                }
-                disabled
-                isActionContainerVisible={false}
-              />
-            )}
-            initialValues={initialValue}
-            handleAddNewBusinessRule={handleAddNewBussinesRule}
-            onCancelClick={() => setOpenExpEditorView(false)}
-          />
-        </Box>
+        <ExpressionForm
+          renderTitle={() => (
+            <StepDetailsHeader
+              flow={flow}
+              title={(initialValue?.id ? 'Change' : 'Add New') + ' Expression'}
+              disabled
+              isActionContainerVisible={false}
+            />
+          )}
+          initialValues={initialValue}
+          handleAddNewBusinessRule={handleAddNewBussinesRule}
+          onCancelClick={() => setOpenExpEditorView(false)}
+        />
       )}
-    </Stack>
+    </>
   );
 };
 

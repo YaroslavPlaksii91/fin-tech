@@ -1,3 +1,5 @@
+import { lightGreen, lightBlue } from '@mui/material/colors';
+
 import {
   EQUAL_OPERATOR,
   BETWEEN_OPERATOR,
@@ -7,9 +9,11 @@ import {
   IN_OPERATOR,
   NOT_EQUAL_OPERATOR,
   LESS_OPERATOR,
-  GREATER_OPERATOR
+  GREATER_OPERATOR,
+  CATEGORIES,
+  CATEGORIES_TYPE
 } from './constants';
-import { CaseEntriesDate, CaseEntry } from './types';
+import { CaseEntry } from './types';
 
 import {
   DATA_TYPE_WITHOUT_ENUM,
@@ -49,46 +53,39 @@ export const getOperatorOptions = (dataType: DATA_TYPE_WITHOUT_ENUM) => {
   return operators;
 };
 
-export const getSerializedCaseEntries = (caseEntries: CaseEntriesDate[]) =>
-  caseEntries.map((row) => {
-    const serializedActions = [...row.actions];
-
-    return {
-      ...row,
-      actions: serializedActions.map((column) => ({
-        ...column,
-        // set variable destinationType
-        destinationType: 'TemporaryVariable'
-      }))
-    };
-  });
-
-export const getSerializedDefaultActions = (defaultActions: CaseEntry[]) =>
-  defaultActions.map((element) => ({
-    ...element,
-    // set variable destinationType
-    destinationType: 'TemporaryVariable'
+export const setVariableSources = (
+  caseEntries: CaseEntry[],
+  variablesSourceTypes: Record<string, VARIABLE_SOURCE_TYPE>
+) =>
+  caseEntries.map(({ name }) => ({
+    name,
+    sourceType: variablesSourceTypes[name]
   }));
 
-export const setVariableSources = ({
-  caseEntry,
-  variablesSourceTypes
-}: {
-  caseEntry: CaseEntriesDate;
-  variablesSourceTypes: Record<string, VARIABLE_SOURCE_TYPE>;
-}) => {
-  let variableSources: { name: string; sourceType: VARIABLE_SOURCE_TYPE }[] =
-    [];
+export const getHeaderCellBgColor = (category: CATEGORIES_TYPE | null) => {
+  switch (category) {
+    case CATEGORIES.Actions:
+      return lightGreen[50];
+    case CATEGORIES.Conditions:
+      return lightBlue[50];
+    default:
+      return lightGreen[50];
+  }
+};
 
-  Object.keys(caseEntry).forEach((obj) => {
-    caseEntry[obj as keyof CaseEntriesDate].map(
-      (el) =>
-        el.name.length &&
-        (variableSources = [
-          ...variableSources,
-          { name: el.name, sourceType: variablesSourceTypes[el.name] }
-        ])
-    );
-  });
-  return variableSources;
+export const getFormatedOptions = (
+  enumTypeSelectOptions: string | string[]
+) => {
+  // in case API returns array in string "[ContactTime.Morning,ContactTime.Afternoon]"
+  if (typeof enumTypeSelectOptions === 'string') {
+    return enumTypeSelectOptions
+      .replace(/\[|\]/g, '')
+      .split(',')
+      .map((value) => ({ value, label: value }));
+  }
+
+  return enumTypeSelectOptions.map((value) => ({
+    value,
+    label: value
+  }));
 };

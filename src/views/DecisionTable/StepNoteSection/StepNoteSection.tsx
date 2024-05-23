@@ -1,45 +1,41 @@
-import { useState } from 'react';
-import { Stack, TextField } from '@mui/material';
+import { ReactElement } from 'react';
+import { Card, CardContent, Stack } from '@mui/material';
 
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
 
-const StepNoteSection = ({
-  noteValue,
-  setNoteValue
-}: {
+interface StepNoteSectionProps {
+  modalOpen: boolean;
+  handleCloseModal: () => void;
+  handleOpenModal: () => void;
   noteValue: string;
-  setNoteValue: (data: string) => void;
-}) => {
-  const [openNoteModal, setOpenNoteModal] = useState(false);
+  handleSubmitNote: (data: string) => void;
+  renderInput: () => ReactElement;
+}
 
-  return (
-    <>
-      <Stack sx={{ margin: '16px' }}>
-        <NoteSection handleOpenNoteModal={() => setOpenNoteModal(true)}>
-          <TextField
-            fullWidth
-            placeholder="Enter note here"
-            disabled
-            size="small"
-            value={noteValue}
-          />
+const StepNoteSection = ({
+  modalOpen,
+  handleCloseModal,
+  handleOpenModal,
+  noteValue,
+  handleSubmitNote,
+  renderInput
+}: StepNoteSectionProps) => (
+  <Card variant="outlined" sx={{ mt: 2 }}>
+    <CardContent>
+      <Stack>
+        <NoteSection handleOpenNoteModal={handleOpenModal}>
+          {renderInput()}
         </NoteSection>
       </Stack>
-
-      {openNoteModal && (
-        <NoteForm
-          modalOpen={!!openNoteModal}
-          handleClose={() => setOpenNoteModal(false)}
-          handleSubmitNote={(data) => {
-            setNoteValue(data);
-            setOpenNoteModal(false);
-          }}
-          note={noteValue ?? ''}
-        />
-      )}
-    </>
-  );
-};
+      <NoteForm
+        modalOpen={modalOpen}
+        handleClose={handleCloseModal}
+        handleSubmitNote={handleSubmitNote}
+        note={noteValue}
+      />
+    </CardContent>
+  </Card>
+);
 
 export default StepNoteSection;

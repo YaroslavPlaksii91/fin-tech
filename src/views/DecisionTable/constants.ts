@@ -58,6 +58,8 @@ export enum CATEGORIES {
   DefaultActions = 'defaultActions'
 }
 
+export type CATEGORIES_TYPE = `${CATEGORIES}`;
+
 export type CATEGORIES_WITHOUT_ELSE_ACTIONS = Exclude<
   CATEGORIES,
   CATEGORIES.DefaultActions

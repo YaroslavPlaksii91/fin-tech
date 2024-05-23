@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
-  Box,
   Button,
   Stack,
   Table,
@@ -37,8 +36,6 @@ import {
   StyledTableContainer,
   StyledTableRow
 } from '@components/shared/Table/styled';
-import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
-import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { RULES_LIMIT, SNACK_TYPE } from '@constants/common';
 import {
   SnackbarErrorMessage,
@@ -48,6 +45,8 @@ import Dialog from '@components/shared/Modals/Dialog';
 import { flowService } from '@services/flow-service';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
 import { theme } from '@theme';
+import { StyledStepWrapper } from '@components/Layouts/styled';
+import StepNoteSection from '@views/DecisionTable/StepNoteSection/StepNoteSection';
 
 const DEFAULT_PERCENTAGE_SPLIT = 10;
 
@@ -101,9 +100,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     control
   });
 
-  const handleOpenNoteModal = () => {
-    setOpenNoteModal(true);
-  };
+  const handleOpenNoteModal = () => setOpenNoteModal(true);
 
   const handleSubmitNote = (note: string) => {
     setValue('note', note);
@@ -147,13 +144,16 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       if (node.id === step.id) {
         // This updates data inside the node. Since React Flow uses Zustand under the hood, it is necessary to recreate the data.
         const splits = node.data.splits ?? [];
+
         splits.length = 0;
+
         splits.push(
           ...splitEdges.map((splitEdge, index) => ({
             edgeId: splitEdge.id,
             percentage: data.splits[index].percentage
           }))
         );
+
         node.data = {
           ...node.data,
           note: data.note,
@@ -223,15 +223,16 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   }, [step.data]);
 
   return (
-    <Stack sx={{ minHeight: '100%' }} direction="column" spacing={0}>
-      <Box sx={{ flexGrow: 1 }}>
+    <>
+      <StyledStepWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <StepDetailsHeader
             title={step.data.name}
             details="A Champion Challenger is a step that allows you to split traffic into several groups and run experiment."
             isActionContainerVisible={false}
+            flow={flow}
           />
-          <Stack pl={3} pr={3}>
+          <Stack>
             <StyledPaper>
               <StyledTableContainer>
                 <Table stickyHeader aria-label="sticky table">
@@ -305,7 +306,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
             </StyledPaper>
             <ErrorMessage errors={errors} name="splits" />
             <Button
-              sx={{ width: '135px' }}
+              sx={{ width: 'fit-content' }}
               disabled={fields.length === RULES_LIMIT}
               variant="outlined"
               size="small"
@@ -316,25 +317,26 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
             >
               Add new split
             </Button>
-            <NoteSection handleOpenNoteModal={handleOpenNoteModal}>
-              <InputText
-                fullWidth
-                name="note"
-                control={control}
-                label="Note"
-                disabled
-                placeholder="Enter note here"
-              />
-            </NoteSection>
           </Stack>
         </form>
-        <NoteForm
+        <StepNoteSection
           modalOpen={openNoteModal}
-          handleClose={handleCloseNoteModal}
+          handleCloseModal={handleCloseNoteModal}
+          handleOpenModal={handleOpenNoteModal}
+          noteValue={getValues('note') ?? ''}
           handleSubmitNote={handleSubmitNote}
-          note={getValues('note') ?? ''}
+          renderInput={() => (
+            <InputText
+              fullWidth
+              name="note"
+              control={control}
+              label="Note"
+              disabled
+              placeholder="Enter note here"
+            />
+          )}
         />
-      </Box>
+      </StyledStepWrapper>
       <StepDetailsControlBar
         disabled={!isEmpty(errors) || isSubmitting}
         onDiscard={() => setOpenDiscardModal(true)}
@@ -355,7 +357,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
           cannot be canceled. Are you sure you want to cancel the changes?
         </Typography>
       </Dialog>
-    </Stack>
+    </>
   );
 };
 

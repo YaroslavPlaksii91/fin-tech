@@ -1,22 +1,23 @@
 import { Handle, NodeProps, Position, useUpdateNodeInternals } from 'reactflow';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import CustomHandler from '../CustomHandler/CustomHandler';
+import { StepListData } from '../types';
+import { getListNodesData } from '../utils/nodesUtils';
 
 import styles from './style.module.scss';
 
 import ArrowLeftAndRightSquareIcon from '@icons/arrowLeftAndRightSquare.svg';
-import { NodeData, ChampionChallengerData } from '@domain/flow';
 import { NO_TAG_LABEL } from '@constants/common';
 
-const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
-  data
-}) => {
+const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
   const updateNodeInternals = useUpdateNodeInternals();
 
   useEffect(() => {
     updateNodeInternals(data.stepId);
   });
+
+  const dataToShow = useMemo(() => getListNodesData(data), [data]);
 
   return (
     <div id={data.stepId} className={styles['node-list-container']}>
@@ -29,12 +30,12 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
         </div>
       </div>
       <ul className={styles['node-list-container__list']}>
-        {data?.splits?.map((el, idx) => (
+        {dataToShow.map((el, idx) => (
           <div
             className={styles['node-list-container__row']}
-            key={`${el.edgeId}+${idx}`}
+            key={`${el.id}+${idx}`}
           >
-            <li>{el.percentage}%</li>
+            <li>{el.value}</li>
             <CustomHandler
               type="source"
               position={Position.Right}
@@ -44,9 +45,9 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
           </div>
         ))}
       </ul>
-      {data.splits?.length === 0 && (
+      {dataToShow.length === 0 ? (
         <Handle type="source" position={Position.Right} />
-      )}
+      ) : null}
     </div>
   );
 };

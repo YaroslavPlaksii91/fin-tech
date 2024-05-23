@@ -19,12 +19,11 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 
 import { palette } from '@theme';
-import { DataDictionaryVariables } from '@contexts/DataDictionaryContext.tsx';
 import { highlightText } from '@utils/text.ts';
 import LoadingButton from '@components/shared/LoadingButton.tsx';
 import {
-  DataDictionaryVariable,
-  UserDefinedVariable
+  DataDictionaryVariableRecord,
+  Variable
 } from '@domain/dataDictionary.ts';
 
 const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
@@ -36,9 +35,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
 }) => {
   const [query, setQuery] = React.useState<string>('');
   const [selectedDict, setSelectedDict] = React.useState<null | string>(null);
-  const [selectedVar, setSelectedVar] = React.useState<
-    null | DataDictionaryVariable | UserDefinedVariable
-  >(null);
+  const [selectedVar, setSelectedVar] = React.useState<null | Variable>(null);
 
   useEffect(() => {
     setSelectedVar(null);
@@ -52,21 +49,24 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
     }
   }, [isOpen]);
 
-  const filteredData: Record<string, DataDictionaryVariable[]> = useMemo(
+  const filteredData = useMemo(
     () =>
       data
-        ? Object.keys(data).reduce((acc, curr) => {
-            const filteredVariables = data[curr].filter((i) =>
-              i.name.toLowerCase().includes(query.toLowerCase())
-            );
-            if (filteredVariables.length > 0) {
-              return {
-                ...acc,
-                [curr]: filteredVariables
-              };
-            }
-            return acc;
-          }, {})
+        ? Object.keys(data).reduce<DataDictionaryVariableRecord>(
+            (acc, curr) => {
+              const filteredVariables = data[curr].filter((i) =>
+                i.name.toLowerCase().includes(query.toLowerCase())
+              );
+              if (filteredVariables.length > 0) {
+                return {
+                  ...acc,
+                  [curr]: filteredVariables
+                };
+              }
+              return acc;
+            },
+            {}
+          )
         : {},
     [data, query]
   );
@@ -218,7 +218,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
           variant="text"
           color="primary"
           onClick={() => {
-            onConfirm(selectedVar as DataDictionaryVariable);
+            onConfirm(selectedVar!);
             onClose();
           }}
         >
@@ -236,8 +236,8 @@ interface DataDictionaryDialogProps {
   title?: string;
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (variable: DataDictionaryVariable | UserDefinedVariable) => void;
-  data: DataDictionaryVariables;
+  onConfirm: (variable: Variable) => void;
+  data?: DataDictionaryVariableRecord;
 }
 
 export default DataDictionaryDialog;

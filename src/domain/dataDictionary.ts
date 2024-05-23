@@ -94,11 +94,7 @@ export type Variable =
   | DataDictionaryIntegrationVariable;
 
 export interface DataDictionaryVariableRecord {
-  [key: string]: (
-    | DataDictionaryVariable
-    | UserDefinedVariable
-    | DataDictionaryIntegrationVariable
-  )[];
+  [key: string]: Variable[];
 }
 
 export type ExpressionValidateParams = { name: string; dataType: DATA_TYPE }[];
