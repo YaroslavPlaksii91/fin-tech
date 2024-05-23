@@ -170,7 +170,6 @@ const Sidebar = () => {
         width: sidebarWidth,
         transition: !isResizing ? 'width 0.2s ease-in-out' : ''
       }}
-      onMouseDown={(e) => e.preventDefault()}
     >
       {expanded && <Resizer onMouseDown={startResizing} />}
       <SidebarToggle
