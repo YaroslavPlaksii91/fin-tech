@@ -1,19 +1,13 @@
 import { map } from 'lodash';
 
-import {
-  UserDefinedVariable,
-  VariableUsageParams
-} from '@domain/dataDictionary';
+import { Variable, VariableUsageParams } from '@domain/dataDictionary';
 import { dataDictionaryService } from '@services/data-dictionary';
 import { FlowNode } from '@domain/flow';
 import Logger from '@utils/logger';
 
 export const getUserDefinedUsage = async (
   flowId: string,
-  variables: Pick<
-    UserDefinedVariable,
-    'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-  >[]
+  variables: Variable[]
 ) => {
   try {
     const responseData =
@@ -34,10 +28,7 @@ export const getUserDefinedUsageNodes = ({
   flowNodes
 }: {
   userDefinedUsage: VariableUsageParams;
-  variable: Pick<
-    UserDefinedVariable,
-    'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
-  >;
+  variable: Variable;
   flowNodes: FlowNode[];
 }) => {
   const usageNodes: FlowNode[] = [];

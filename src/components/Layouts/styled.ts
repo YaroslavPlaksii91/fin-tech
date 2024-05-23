@@ -6,5 +6,6 @@ import { HEADER_HEIGHT } from '@constants/themeConstants';
 export const StyledLayoutContainer = styled(Box)(() => ({
   position: 'relative',
   display: 'flex',
-  height: `calc(100vh - ${HEADER_HEIGHT}px)`
+  height: `calc(100vh - ${HEADER_HEIGHT}px)`,
+  overflow: 'auto'
 }));

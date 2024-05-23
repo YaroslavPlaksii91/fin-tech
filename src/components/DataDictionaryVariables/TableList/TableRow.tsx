@@ -11,8 +11,7 @@ import {
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
-
-import { TableEl } from './TableList';
+import { TableHeader } from '../DataDictionaryVariables';
 
 import CalculatorIcon from '@icons/calculator.svg';
 import BlocksIcon from '@icons/blocks.svg';
@@ -22,6 +21,7 @@ import {
   StyledTableCell,
   StyledTableRow
 } from '@components/shared/Table/styled';
+import { Variable } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { dataDictionaryService } from '@services/data-dictionary';
 import Logger from '@utils/logger';
@@ -30,17 +30,19 @@ import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { theme } from '@theme';
 
 type TableRowProps = {
-  row: TableEl;
+  headers: TableHeader[];
+  row: Variable;
   index: number;
   tabName: VARIABLES_TABS;
   flowId: string;
   flowNodes: FlowNode[];
   userDefinedUsageNodes: FlowNode[] | undefined;
-  onDelete: (row: TableEl, variableUsageNodes: FlowNode[]) => void;
-  onEdit: (row: TableEl, variableUsageNodes: FlowNode[]) => void;
+  onDelete: (row: Variable, variableUsageNodes: FlowNode[]) => void;
+  onEdit: (row: Variable, variableUsageNodes: FlowNode[]) => void;
 };
 
 export const TableRow = ({
+  headers,
   row,
   index,
   tabName,
@@ -105,10 +107,9 @@ export const TableRow = ({
             {isExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </StyledTableCell>
-        <StyledTableCell>{row.name}</StyledTableCell>
-        <StyledTableCell>{row.dataType}</StyledTableCell>
-        <StyledTableCell>{row.defaultValue}</StyledTableCell>
-        <StyledTableCell>{row.description}</StyledTableCell>
+        {headers.map(({ key }) => (
+          <StyledTableCell key={key}>{row[key]}</StyledTableCell>
+        ))}
         {tabName === VARIABLES_TABS.userDefined && (
           <StyledTableCell>
             <Stack spacing={1} direction="row">
@@ -139,7 +140,8 @@ export const TableRow = ({
       <StyledTableRow parity={rowParity}>
         <StyledTableCell
           style={{ paddingBottom: 0, paddingTop: 0 }}
-          colSpan={6}
+          // TODO: if don`t have collapsing then should be controlled
+          colSpan={headers.length + 1}
           sx={{ ...(!isExpanded && { border: 'unset' }) }}
         >
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>
