@@ -38,7 +38,6 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
       flexDirection="row"
       justifyContent="space-between"
       alignItems="flex-start"
-      sx={{ padding: '0 24px 16px' }}
     >
       <Stack spacing={1} mb={2}>
         <Typography variant="h4">{title}</Typography>

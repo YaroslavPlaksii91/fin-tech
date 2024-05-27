@@ -8,6 +8,7 @@ import {
   StepType
 } from '@components/FlowManagment/FlowChart/types';
 import Calculation from '@views/Calculation/Calculation';
+import { StepContainer } from '@views/styled';
 
 interface StepConfigureViewProps {
   flow: IFlow;
@@ -28,7 +29,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
   const step = cloneDeep(currentNode);
 
   return (
-    <>
+    <StepContainer>
       {step?.type === StepType.CHAMPION_CHALLENGER && (
         <ChampionChallenger
           flow={flow}
@@ -56,7 +57,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
           resetActiveStepId={resetActiveStepId}
         />
       )}
-    </>
+    </StepContainer>
   );
 };
 
