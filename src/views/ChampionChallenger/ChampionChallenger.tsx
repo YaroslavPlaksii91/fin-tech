@@ -45,8 +45,8 @@ import Dialog from '@components/shared/Modals/Dialog';
 import { flowService } from '@services/flow-service';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
 import { theme } from '@theme';
-import { StyledStepWrapper } from '@components/Layouts/styled';
 import StepNoteSection from '@views/DecisionTable/StepNoteSection/StepNoteSection';
+import { StepContentWrapper } from '@views/styled';
 
 const DEFAULT_PERCENTAGE_SPLIT = 10;
 
@@ -227,7 +227,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
 
   return (
     <>
-      <StyledStepWrapper>
+      <StepContentWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <StepDetailsHeader
             flow={mainFlow ?? flow}
@@ -340,7 +340,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
             />
           )}
         />
-      </StyledStepWrapper>
+      </StepContentWrapper>
       <StepDetailsControlBar
         disabled={!isEmpty(errors) || isSubmitting}
         onDiscard={() => setOpenDiscardModal(true)}

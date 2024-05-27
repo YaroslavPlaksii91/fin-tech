@@ -30,8 +30,8 @@ import { ExpressionForm } from '@components/ExpressionForm/ExpressionForm.tsx';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import { InputText } from '@components/shared/Forms/InputText';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar.tsx';
-import { StyledStepWrapper } from '@components/Layouts/styled';
 import StepNoteSection from '@views/DecisionTable/StepNoteSection/StepNoteSection';
+import { StepContentWrapper } from '@views/styled';
 
 interface CalculationProps {
   flow: IFlow;
@@ -130,7 +130,7 @@ const Calculation: React.FC<CalculationProps> = ({
     <>
       {!openExpEditorView && (
         <>
-          <StyledStepWrapper>
+          <StepContentWrapper>
             <form onSubmit={handleSubmit(onSubmit)}>
               <StepDetailsHeader
                 flow={mainFlow ?? flow}
@@ -275,7 +275,7 @@ const Calculation: React.FC<CalculationProps> = ({
                 changes?
               </Typography>
             </Dialog>
-          </StyledStepWrapper>
+          </StepContentWrapper>
           <StepDetailsControlBar
             disabled={isSubmitting}
             onDiscard={() => setOpenDiscardModal(true)}

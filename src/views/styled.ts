@@ -14,3 +14,8 @@ export const StepContainer = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   background: theme.palette.background.default
 }));
+
+export const StepContentWrapper = styled(Box)(() => ({
+  padding: '16px 24px',
+  flexGrow: 1
+}));

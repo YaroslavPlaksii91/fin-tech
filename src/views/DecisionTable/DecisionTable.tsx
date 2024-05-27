@@ -52,10 +52,10 @@ import {
   SnackbarErrorMessage,
   SnackbarMessage
 } from '@components/shared/Snackbar/SnackbarMessage';
-import { StyledStepWrapper } from '@components/Layouts/styled';
 import Dialog from '@components/shared/Modals/Dialog';
 import { SNACK_TYPE } from '@constants/common';
 import { DataDictionaryVariable } from '@domain/dataDictionary';
+import { StepContentWrapper } from '@views/styled';
 
 type DecisionTableStepProps = {
   flow: IFlow;
@@ -405,7 +405,7 @@ const DecisionTableStep = ({
 
   return (
     <>
-      <StyledStepWrapper>
+      <StepContentWrapper>
         <StepDetailsHeader
           flow={mainFlow ?? flow}
           step={step}
@@ -460,7 +460,7 @@ const DecisionTableStep = ({
             />
           )}
         />
-      </StyledStepWrapper>
+      </StepContentWrapper>
       <StepDetailsControlBar
         onDiscard={() => setOpenDiscardModal(true)}
         onApplyChangesClick={onApplyChangesClick}
