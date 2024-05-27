@@ -1,11 +1,8 @@
-import { useEffect, useState } from 'react';
 import { cloneDeep } from 'lodash';
-
-import { StyledContainer } from './styled';
 
 import ChampionChallenger from '@views/ChampionChallenger/ChampionChallenger';
 import DecisionTableStep from '@views/DecisionTable/DecisionTable';
-import { FlowNode, IFlow } from '@domain/flow';
+import { IFlow } from '@domain/flow';
 import {
   CustomReactFlowInstance,
   StepType
@@ -14,6 +11,7 @@ import Calculation from '@views/Calculation/Calculation';
 
 interface StepConfigureViewProps {
   flow: IFlow;
+  mainFlow?: IFlow;
   rfInstance: CustomReactFlowInstance;
   activeStepId: string;
   resetActiveStepId: () => void;
@@ -23,21 +21,19 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
   activeStepId,
   resetActiveStepId,
   flow,
+  mainFlow,
   rfInstance
 }) => {
-  const [step, setStep] = useState<FlowNode>();
-
-  useEffect(() => {
-    const currentNode = rfInstance.getNode(activeStepId);
-    setStep(cloneDeep(currentNode));
-  }, [activeStepId]);
+  const currentNode = rfInstance.getNode(activeStepId);
+  const step = cloneDeep(currentNode);
 
   return (
-    <StyledContainer>
+    <>
       {step?.type === StepType.CHAMPION_CHALLENGER && (
         <ChampionChallenger
           flow={flow}
           step={step}
+          mainFlow={mainFlow}
           rfInstance={rfInstance}
           resetActiveStepId={resetActiveStepId}
         />
@@ -45,6 +41,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
       {step?.type === StepType.DECISION_TABLE && (
         <DecisionTableStep
           flow={flow}
+          mainFlow={mainFlow}
           step={step}
           rfInstance={rfInstance}
           resetActiveStepId={resetActiveStepId}
@@ -54,11 +51,12 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
         <Calculation
           flow={flow}
           step={step}
+          mainFlow={mainFlow}
           rfInstance={rfInstance}
           resetActiveStepId={resetActiveStepId}
         />
       )}
-    </StyledContainer>
+    </>
   );
 };
 

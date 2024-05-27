@@ -14,7 +14,6 @@ import {
   FunctionalStepType,
   StepType
 } from '@components/FlowManagment/FlowChart/types';
-import { useStep } from '@contexts/StepContext';
 import { FlowNode } from '@domain/flow';
 import { addNode } from '@store/flow/flow';
 
@@ -34,23 +33,21 @@ interface AddStepProps {
   setSelectedStep: (value: FunctionalStepType | null) => void;
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
-  onAddNodeBetweenEdges?: (
+  edgeId: string;
+  onAddNodeBetweenEdges: (
     type: FunctionalStepType,
     name: string,
     edgeId: string
-  ) => FlowNode;
-  edgeId?: string;
-  reopenSelectStepModal?: () => void;
+  ) => { newNode: FlowNode; flowId: string };
 }
 
 export const AddStep: React.FC<AddStepProps> = ({
-  edgeId,
   stepType,
   setSelectedStep,
   modalOpen,
   setModalOpen,
-  reopenSelectStepModal,
-  onAddNodeBetweenEdges
+  onAddNodeBetweenEdges,
+  edgeId
 }) => {
   const {
     handleSubmit,
@@ -60,19 +57,14 @@ export const AddStep: React.FC<AddStepProps> = ({
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema)
   });
-  const { setActiveStepId } = useStep();
   const dispatch = useDispatch();
 
   const onSubmit: SubmitHandler<FormData> = ({ name }) => {
-    let createdStep;
-    if (edgeId) {
-      createdStep = onAddNodeBetweenEdges?.(stepType, name, edgeId);
-    }
-    if (createdStep) {
-      setActiveStepId(createdStep.id);
+    const { newNode, flowId } = onAddNodeBetweenEdges(stepType, name, edgeId);
 
+    if (newNode && flowId) {
       // For update list of steps in the sidebar
-      dispatch(addNode(cloneDeep(createdStep)));
+      dispatch(addNode({ node: cloneDeep(newNode), flowId: flowId }));
     }
     handleCloseModal();
   };
@@ -84,7 +76,6 @@ export const AddStep: React.FC<AddStepProps> = ({
 
   const handleCancel = () => {
     handleCloseModal();
-    reopenSelectStepModal?.();
   };
 
   useEffect(() => {

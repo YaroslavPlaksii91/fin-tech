@@ -46,7 +46,7 @@ import { getConnectableNodes } from '@views/ChampionChallenger/utils';
 import { flowService } from '@services/flow-service';
 import { theme } from '@theme';
 import PlusSquareIcon from '@icons/plusSquare.svg';
-import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
+import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
 import {
   SnackbarErrorMessage,
@@ -58,8 +58,9 @@ import { SNACK_TYPE } from '@constants/common';
 import { DataDictionaryVariable } from '@domain/dataDictionary';
 
 type DecisionTableStepProps = {
-  step: FlowNode;
   flow: IFlow;
+  mainFlow?: IFlow;
+  step: FlowNode;
   resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
 };
@@ -67,6 +68,7 @@ type DecisionTableStepProps = {
 const DecisionTableStep = ({
   step,
   flow,
+  mainFlow,
   resetActiveStepId,
   rfInstance: {
     getNodes,
@@ -405,10 +407,11 @@ const DecisionTableStep = ({
     <>
       <StyledStepWrapper>
         <StepDetailsHeader
-          title={step.data.name}
+          flow={mainFlow ?? flow}
+          step={step}
+          title={`Edit Step: ${step.data.name}`}
           details={STEP_DETAILS}
           isActionContainerVisible={false}
-          flow={flow}
         />
         <Paper>
           <TableContainer sx={{ bgcolor: theme.palette.background.default }}>

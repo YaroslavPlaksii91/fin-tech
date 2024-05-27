@@ -14,14 +14,14 @@ import isEmpty from 'lodash/isEmpty';
 import { enqueueSnackbar } from 'notistack';
 import { cloneDeep } from 'lodash';
 
-import { getConnectableNodes } from './utils';
+import { formatFlowDataForValidation, getConnectableNodes } from './utils';
 import validationSchema from './validationSchema';
 import { FieldValues, columns } from './types';
 
 import TrashIcon from '@icons/trash.svg';
 import AddIcon from '@icons/plusSquare.svg';
 import { FlowNode, IFlow } from '@domain/flow';
-import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader';
+import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
 import NumberRangeInput from '@components/shared/NumberRangeInput/NumberRangeInput';
 import SearchableSelect from '@components/shared/SearchableSelect/SearchableSelect';
 import {
@@ -55,12 +55,14 @@ interface ChampionChallengerProps {
   resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
   flow: IFlow;
+  mainFlow?: IFlow;
 }
 
 const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   step,
   resetActiveStepId,
   flow,
+  mainFlow,
   rfInstance: {
     getEdge,
     getNodes,
@@ -162,13 +164,14 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       }
       return node;
     });
-
     try {
-      await flowService.validateFlow({
-        ...flow,
-        nodes: updatedNodes,
-        edges: newEdges
-      });
+      const data = formatFlowDataForValidation(
+        mainFlow,
+        flow,
+        updatedNodes,
+        newEdges
+      );
+      await flowService.validateFlow(data);
       setNodes(updatedNodes);
       setEdges(newEdges);
       enqueueSnackbar(
@@ -227,10 +230,11 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       <StyledStepWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <StepDetailsHeader
-            title={step.data.name}
+            flow={mainFlow ?? flow}
+            step={step}
+            title={`Edit Step: ${step.data.name}`}
             details="A Champion Challenger is a step that allows you to split traffic into several groups and run experiment."
             isActionContainerVisible={false}
-            flow={flow}
           />
           <Stack>
             <StyledPaper>
@@ -306,7 +310,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
             </StyledPaper>
             <ErrorMessage errors={errors} name="splits" />
             <Button
-              sx={{ width: 'fit-content' }}
+              sx={{ width: '135px' }}
               disabled={fields.length === RULES_LIMIT}
               variant="outlined"
               size="small"

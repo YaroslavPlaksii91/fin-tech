@@ -6,21 +6,21 @@ import Navigation from '../Navigation/Navigation';
 import { LayoutContainer, MainContainer } from './MainLayout';
 
 import Sidebar from '@components/Sidebar/Sidebar';
-import { StepProvider } from '@contexts/StepContext';
+import { ActiveStepProvider } from '@contexts/StepContext';
 
 export default function Layout() {
   return (
     <>
       <Navigation />
       <ReactFlowProvider>
-        <StepProvider>
+        <ActiveStepProvider>
           <LayoutContainer>
             <Sidebar />
             <MainContainer>
               <Outlet />
             </MainContainer>
           </LayoutContainer>
-        </StepProvider>
+        </ActiveStepProvider>
       </ReactFlowProvider>
     </>
   );

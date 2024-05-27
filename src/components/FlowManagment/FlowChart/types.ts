@@ -4,14 +4,15 @@ import {
   ChampionChallengerData,
   DecisionTableData,
   FlowNode,
-  NodeData
+  NodeData,
+  IFlow
 } from '@domain/flow';
 
 export enum StepType {
   DECISION_TABLE = 'DecisionTable',
   CALCULATION = 'Calculation',
   CHAMPION_CHALLENGER = 'ChampionChallenger',
-  SUBFLOW = 'subflow',
+  SUBFLOW = 'Subflow',
   START = 'Start',
   END = 'End'
 }
@@ -27,7 +28,11 @@ export const ADD_BUTTON_ON_EDGE = 'add-button-on-edge';
 export const DEFAULT_EDGE_TYPE = 'smoothstep';
 
 export type EdgeData = {
-  onAdd?: (type: StepType, name: string, id: string) => FlowNode;
+  onAdd: (
+    type: StepType,
+    name: string,
+    id: string
+  ) => { newNode: FlowNode; flowId: string };
   animated?: boolean;
 };
 
@@ -38,3 +43,16 @@ export type CustomReactFlowInstance = ReactFlowInstance & {
 export type StepListData = NodeData &
   ChampionChallengerData &
   DecisionTableData;
+export interface StepConfigureViewProps {
+  flow: IFlow;
+  mainFlow?: IFlow;
+  rfInstance: CustomReactFlowInstance;
+}
+
+export interface ControlPanelEditProps {
+  flow: IFlow;
+  mainFlow?: IFlow;
+  isDirty: boolean;
+  setCopyFlow: (flow: IFlow) => void;
+  rfInstance: CustomReactFlowInstance;
+}

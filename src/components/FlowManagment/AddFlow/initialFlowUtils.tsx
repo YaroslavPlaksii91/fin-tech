@@ -5,11 +5,17 @@ import { DEFAULT_EDGE_TYPE, StepType } from '../FlowChart/types';
 import { FlowNode } from '@domain/flow';
 import { DRAWER_WIDTH, HEADER_HEIGHT } from '@constants/themeConstants';
 
-const startNodeId = uuidv4();
-const endNodeId = uuidv4();
+export const createInitialFlow = () => {
+  const startNodeId = uuidv4();
+  const endNodeId = uuidv4();
+  const newEdgeId = uuidv4();
 
-export const createStartNodeData = () => {
-  const newNode: FlowNode = {
+  const x = (window.innerWidth - DRAWER_WIDTH * 3) / 2;
+  const y = (window.innerHeight - HEADER_HEIGHT) / 2;
+
+  const viewport = { x, y, zoom: 1 };
+
+  const startNode: FlowNode = {
     id: startNodeId,
     type: StepType.START,
     data: {
@@ -24,11 +30,8 @@ export const createStartNodeData = () => {
     deletable: false,
     draggable: true
   };
-  return newNode;
-};
 
-export const createEndNodeData = () => {
-  const newNode: FlowNode = {
+  const endNode: FlowNode = {
     id: endNodeId,
     type: StepType.END,
     data: {
@@ -43,24 +46,17 @@ export const createEndNodeData = () => {
     deletable: false,
     draggable: true
   };
-  return newNode;
-};
 
-export const createEdgeData = () => {
-  const newEdgeId = uuidv4();
-  const newEdge = {
+  const edge = {
     id: newEdgeId,
     source: startNodeId,
     target: endNodeId,
     type: DEFAULT_EDGE_TYPE
   };
 
-  return newEdge;
-};
-
-export const getViewPort = () => {
-  const x = (window.innerWidth - DRAWER_WIDTH * 3) / 2;
-  const y = (window.innerHeight - HEADER_HEIGHT) / 2;
-
-  return { x, y, zoom: 1 };
+  return {
+    nodes: [startNode, endNode],
+    edges: [edge],
+    viewport
+  };
 };

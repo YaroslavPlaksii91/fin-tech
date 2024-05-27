@@ -1,10 +1,6 @@
 import { AxiosError } from 'axios';
 
-import {
-  DataDictionaryVariable,
-  ExpressionValidateParams,
-  UserDefinedVariable
-} from '@domain/dataDictionary';
+import { ExpressionValidateParams, Variable } from '@domain/dataDictionary';
 import { ExpressionVariableSources } from '@domain/flow';
 
 interface MappingResult {
@@ -12,9 +8,7 @@ interface MappingResult {
   variableSources: ExpressionVariableSources;
 }
 
-export const mapVariablesToParamsAndSources = (
-  variables: (DataDictionaryVariable | UserDefinedVariable)[]
-) =>
+export const mapVariablesToParamsAndSources = (variables: Variable[]) =>
   variables.reduce<MappingResult>(
     (acc, variable) => {
       acc.params.push({

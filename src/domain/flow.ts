@@ -55,7 +55,7 @@ export type DecisionTableData = {
 
 export type ExpressionVariableSources = {
   name: string;
-  sourceType: VARIABLE_SOURCE_TYPE;
+  sourceType: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
 }[];
 
 export type Expression = {
@@ -70,9 +70,21 @@ export type CalculationData = {
   expressions?: Expression[];
 };
 
+export type SubFlowData = {
+  nodes: FlowNode[];
+  edges: Edge[];
+  viewport: Viewport;
+};
+
 export type FlowNode = Node<
-  NodeData & ChampionChallengerData & CalculationData & DecisionTableData
+  NodeData &
+    ChampionChallengerData &
+    CalculationData &
+    DecisionTableData &
+    Optional<SubFlowData, 'nodes' | 'edges' | 'viewport'>
 >;
+
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
 export interface IFlow {
   id: string;
