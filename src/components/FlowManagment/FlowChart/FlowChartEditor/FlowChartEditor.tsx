@@ -72,6 +72,7 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { activeStepId, setActiveStepId, resetActiveStepId } = useStep();
+  // console.log(nodes[4]?.data, 'On Chart', flow.nodes[4]?.data);
 
   const dispatch = useAppDispatch();
 
@@ -186,7 +187,6 @@ const FlowChartEditorLayout: React.FC<FlowChartViewProps> = ({
           updatedNode?.type === StepType.CHAMPION_CHALLENGER &&
           connection.sourceHandle !== null
         ) {
-          connection.sourceHandle;
           const updatedNodes = getUpdatedChampionChallengerNodes({
             nodes,
             updatedNode,

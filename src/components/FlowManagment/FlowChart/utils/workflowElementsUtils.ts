@@ -105,6 +105,7 @@ export const updateEdges = ({
   onAddNodeBetweenEdges
 }: updateEdgesParams) => {
   const targetEdgeIndex = edges.findIndex((ed) => ed.id === updatableEdgeId);
+
   const targetEdge = edges[targetEdgeIndex];
   const { target: targetNodeId } = targetEdge;
 
@@ -166,7 +167,8 @@ export const getUpdatedChampionChallengerNodes = ({
   const updatedSplits =
     updatedNode.data.splits?.map((split, index) => {
       if (index === +sourceHandle) return { ...split, edgeId: newEdgeId };
-      return split;
+
+      return { ...split };
     }) ?? [];
 
   const updatedNodes = nodes.map((node) => {
@@ -187,7 +189,7 @@ export const getUpdatedDecisionTableNodes = ({
     updatedNode.data.caseEntries?.map((entry, index) => {
       if (index === +sourceHandle) return { ...entry, edgeId: newEdgeId };
 
-      return entry;
+      return { ...entry };
     }) ?? [];
 
   const isDefaultEdgeId = updatedCaseEntries.length === +sourceHandle;

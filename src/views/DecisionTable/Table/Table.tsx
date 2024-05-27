@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import {
   Button,
   Table,
   TableBody,
   TableHead,
   Typography,
-  TableCell
+  TableCell,
+  Box
 } from '@mui/material';
-// import { last } from 'lodash';
 import { lightBlue, lightGreen } from '@mui/material/colors';
 
 import { CATEGORIES, BOOLEAN_OPTIONS, CATEGORIES_TYPE } from '../constants';
@@ -39,64 +39,44 @@ import {
 } from '@domain/dataDictionary';
 
 interface TableSkeletonProps {
-  steps: {
-    rowIndex: number;
-    edgeId: string | null;
-  }[];
+  steps: (string | null)[];
+  defaultStep: string | null;
   columns: VariableColumnDataUpdate[];
   rows: VariableRowData[];
   variables: Record<string, Variable[]>;
   searchableSelectOptions?: { value: string; label: string }[];
-  selectedCategory: CATEGORIES_TYPE | null;
   selectedColumn: VariableColumnDataUpdate | null;
-  handleSelectColumn: (column: VariableColumnDataUpdate) => void;
+  handleSelectionColumn: (column: VariableColumnDataUpdate) => void;
   handleDeleteRow: (index: number) => void;
-  handleInsertingColumn: () => void;
+  handleInsertColumn: () => void;
   handleDeleteCategoryColumn: () => void;
-  handleChangeStep: ({
-    rowIndex,
-    edgeId
-  }: {
-    rowIndex: number;
-    edgeId: string;
-  }) => void;
+  handleChangeStep: (rowIndex: number, edgeId: string) => void;
   handleChangeColumnVariable: (
     newVariable: Pick<DataDictionaryVariable, 'name'>
   ) => void;
-  handleSubmitVariableValue: ({
-    formFieldData
-  }: {
-    formFieldData: SelectedCellInRowData & FormFieldsProps;
-  }) => void;
-  handleSubmitVariableValueForEnum: ({
-    rowIndex,
-    variableName,
-    newEnumValue
-  }: {
-    rowIndex: number;
-    variableName: string;
-    newEnumValue: string;
-  }) => void;
+  handleSubmitVariableValue: (
+    data: SelectedCellInRowData & FormFieldsProps
+  ) => void;
 }
 
 const TableSkeleton = ({
   steps,
+  defaultStep,
   columns,
   rows,
   variables,
   searchableSelectOptions,
-  selectedCategory,
   selectedColumn,
-  handleSelectColumn,
+  handleSelectionColumn,
   handleDeleteRow,
-  handleInsertingColumn,
+  handleInsertColumn,
   handleDeleteCategoryColumn,
   handleChangeColumnVariable,
   handleChangeStep,
-  handleSubmitVariableValue,
-  handleSubmitVariableValueForEnum
+  handleSubmitVariableValue
 }: TableSkeletonProps) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [anchorVariableMenu, setAnchorVariableMenu] =
+    useState<HTMLElement | null>(null);
   const [isDialogOpen, setIsDiaglogOpen] = useState(false);
   const [selectedRowCell, setSelectedRowCell] =
     useState<SelectedCellInRowData | null>(null);
@@ -104,14 +84,14 @@ const TableSkeleton = ({
   const handleClickOnMenu =
     (column: VariableColumnDataUpdate) =>
     (event: React.MouseEvent<HTMLElement>) => {
-      handleSelectColumn(column);
-      setAnchorEl(event.currentTarget);
+      handleSelectionColumn(column);
+      setAnchorVariableMenu(event.currentTarget);
     };
 
   const getColSpanLength = (category: CATEGORIES_TYPE) =>
     columns.filter((column) => column.category === category).length;
 
-  const handleCloseMenu = () => setAnchorEl(null);
+  const handleCloseMenu = () => setAnchorVariableMenu(null);
   const handleCloseDialog = () => setIsDiaglogOpen(false);
 
   const handleAddVariable = () => {
@@ -120,7 +100,7 @@ const TableSkeleton = ({
   };
 
   const handleAddNewColumn = () => {
-    handleInsertingColumn();
+    handleInsertColumn();
     handleCloseMenu();
   };
 
@@ -132,9 +112,7 @@ const TableSkeleton = ({
   const handleSubmitSelectedRowCellData = (
     data: SelectedCellInRowData & FormFieldsProps
   ) => {
-    handleSubmitVariableValue({
-      formFieldData: data
-    });
+    handleSubmitVariableValue(data);
     setSelectedRowCell(null);
   };
 
@@ -173,39 +151,50 @@ const TableSkeleton = ({
             </TableCell>
           </StyledTableRow>
           <StyledTableRow>
-            {columns.map((column, columnIndex) => (
-              <TableCell
-                width={340}
-                key={columnIndex}
-                sx={{
-                  padding: 0,
-                  bgcolor: getHeaderCellBgColor(column.category)
-                }}
-              >
-                <VariableInput
-                  readOnly
+            {columns.map((column, columnIndex) => {
+              const isLastConditionColumn =
+                columns.filter(
+                  ({ category }) => category === CATEGORIES.Conditions
+                ).length === 1 && column.category === CATEGORIES.Conditions;
+
+              const isCurrentMenuOpen =
+                Boolean(anchorVariableMenu) &&
+                column.index === selectedColumn?.index &&
+                column.category === selectedColumn?.category;
+
+              return (
+                <TableCell
+                  width={340}
+                  key={columnIndex}
                   sx={{
-                    width: 300,
-                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                    padding: 0,
+                    bgcolor: getHeaderCellBgColor(column.category)
                   }}
-                  size="small"
-                  open={
-                    Boolean(anchorEl) && columnIndex === selectedColumn?.index
-                  }
-                  value={column.name}
-                  anchorEl={anchorEl}
-                  handleAddVariable={handleAddVariable}
-                  handleAddNewColumn={handleAddNewColumn}
-                  handleDeleteColumn={handleDeleteColumn}
-                  handleClickOnMenu={handleClickOnMenu(column)}
-                  handleCloseMenu={handleCloseMenu}
-                  isAddVariableDisabled={column.name === 'Step'}
-                  isDeleteDisabled={
-                    column.name === 'Step' || columns.length <= 1
-                  }
-                />
-              </TableCell>
-            ))}
+                >
+                  <VariableInput
+                    readOnly
+                    sx={{
+                      width: 300,
+                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                    }}
+                    size="small"
+                    open={isCurrentMenuOpen}
+                    variableActionTitle={`Add ${selectedColumn?.category === CATEGORIES.Conditions ? 'Input' : 'Output'} Variable`}
+                    value={column.name}
+                    anchorEl={anchorVariableMenu}
+                    handleAddVariable={handleAddVariable}
+                    handleAddNewColumn={handleAddNewColumn}
+                    handleDeleteColumn={handleDeleteColumn}
+                    handleClickOnMenu={handleClickOnMenu(column)}
+                    handleCloseMenu={handleCloseMenu}
+                    isAddVariableDisabled={column.name === 'Step'}
+                    isDeleteDisabled={
+                      isLastConditionColumn || column.name === 'Step'
+                    }
+                  />
+                </TableCell>
+              );
+            })}
             <TableCell sx={{ bgcolor: lightGreen[50] }} />
           </StyledTableRow>
         </TableHead>
@@ -215,51 +204,65 @@ const TableSkeleton = ({
               key={rowIndex}
               parity={(rowIndex + 1) % 2 === 0 ? 'even' : 'odd'}
             >
-              {columns.map(({ dataType, name, allowedValues }, columnIndex) => {
+              {columns.map((column, columnIndex) => {
+                const { dataType, name, allowedValues, category } = column;
+
                 if (name === 'Step') {
-                  const value = steps.find(
-                    (step) => step.rowIndex === rowIndex
-                  )?.edgeId; // here bug because the default edge has 0 index
+                  const value =
+                    rowIndex >= steps.length
+                      ? defaultStep
+                      : steps.find((_, stepIndex) => stepIndex === rowIndex);
 
                   return (
-                    <StyledTableCell key={columnIndex}>
-                      <SelectComponent
-                        fullWidth
-                        value={value || ''}
-                        options={searchableSelectOptions || []}
-                        handleChange={(edgeId) =>
-                          handleChangeStep({
-                            rowIndex:
-                              selectedCategory === CATEGORIES.DefaultActions
-                                ? steps.length - 1
-                                : rowIndex,
-                            edgeId
-                          })
-                        }
-                      />
-                    </StyledTableCell>
+                    <Fragment key={columnIndex}>
+                      <StyledTableCell>
+                        <SelectComponent
+                          fullWidth
+                          value={value || ''}
+                          options={searchableSelectOptions || []}
+                          handleChange={(edgeId) =>
+                            handleChangeStep(rowIndex, edgeId)
+                          }
+                        />
+                      </StyledTableCell>
+                      <StyledTableCell sx={{ padding: 0 }}>
+                        {rows.length !== rowIndex + 1 ? (
+                          <Button
+                            sx={{ color: theme.palette.error.main }}
+                            onClick={() => handleDeleteRow(rowIndex)}
+                          >
+                            <TrashIcon />
+                          </Button>
+                        ) : null}
+                      </StyledTableCell>
+                    </Fragment>
                   );
                 }
 
-                const hasValue = row[name]?.expression || row[name]?.operator;
+                if (!row[name])
+                  return (
+                    <StyledTableCell key={columnIndex}>
+                      {columnIndex === 0 ? 'Else' : ''}
+                    </StyledTableCell>
+                  );
+
+                const hasValue = row[name].expression || row[name].operator;
+
+                const isBooleanDataType =
+                  dataType === (DATA_TYPE_WITHOUT_ENUM.Boolean as string);
 
                 const isDataTypeWithoutEnum =
                   Object.values<string>(DATA_TYPE_WITHOUT_ENUM).includes(
                     dataType
-                  ) &&
-                  (dataType as DATA_TYPE_WITHOUT_ENUM) !==
-                    DATA_TYPE_WITHOUT_ENUM.Boolean;
+                  ) && !isBooleanDataType;
 
                 const isDataTypeWithEnum =
                   Object.values<string>(DATA_TYPE_WITH_ENUM_PREFIX).includes(
                     dataType
-                  ) ||
-                  (dataType as DATA_TYPE_WITHOUT_ENUM) ===
-                    DATA_TYPE_WITHOUT_ENUM.Boolean;
+                  ) || isBooleanDataType;
 
                 const enumTypeSelectOptions =
-                  (dataType as DATA_TYPE_WITHOUT_ENUM) !==
-                    DATA_TYPE_WITHOUT_ENUM.Boolean && allowedValues
+                  !isBooleanDataType && allowedValues
                     ? allowedValues
                     : BOOLEAN_OPTIONS;
 
@@ -270,6 +273,7 @@ const TableSkeleton = ({
                         onClick={() =>
                           setSelectedRowCell({
                             rowIndex,
+                            category,
                             variableName: name,
                             dataType
                           })
@@ -290,11 +294,13 @@ const TableSkeleton = ({
                         fullWidth
                         value={row[name].expression ?? ''}
                         options={getFormatedOptions(enumTypeSelectOptions)}
-                        handleChange={(seletedValue) =>
-                          handleSubmitVariableValueForEnum({
+                        handleChange={(value) =>
+                          handleSubmitSelectedRowCellData({
+                            value,
+                            category,
                             rowIndex,
-                            variableName: name,
-                            newEnumValue: seletedValue
+                            dataType,
+                            variableName: name
                           })
                         }
                       />
@@ -302,31 +308,33 @@ const TableSkeleton = ({
                   </StyledTableCell>
                 );
               })}
-              <StyledTableCell sx={{ padding: 0 }}>
-                <Button
-                  sx={{ color: theme.palette.error.main }}
-                  onClick={() => handleDeleteRow(rowIndex)}
-                  disabled={rows.length === 1}
-                >
-                  <TrashIcon />
-                </Button>
-              </StyledTableCell>
             </StyledTableRow>
           ))}
+          {!rows.length ? (
+            <StyledTableRow sx={{ bgcolor: theme.palette.common.white }}>
+              <TableCell sx={{ borderBottom: 0 }} colSpan={columns.length + 1}>
+                <Box py={2}>
+                  <Typography variant="body2" textAlign="center">
+                    No Expressions Yet.
+                  </Typography>
+                </Box>
+              </TableCell>
+            </StyledTableRow>
+          ) : null}
         </TableBody>
       </Table>
-      {selectedRowCell && selectedColumn && (
+      {selectedRowCell && (
         <SelectVariableValueDialog
           modalOpen={!!selectedRowCell}
           handleClose={() => setSelectedRowCell(null)}
           selectedRowCell={selectedRowCell}
-          category={selectedColumn.category} // Need to check from wich source get category
+          category={selectedRowCell.category}
           handleSubmitSelectedRowCellData={handleSubmitSelectedRowCellData}
         />
       )}
       <DataDictionaryDialog
         data={variables}
-        title={`Add ${selectedColumn?.category === CATEGORIES.Actions ? 'Input' : 'Output'} Variable`}
+        title="Add Variable"
         isOpen={isDialogOpen}
         onClose={handleCloseDialog}
         onConfirm={handleChangeColumnVariable}

@@ -7,20 +7,34 @@ import {
   Typography
 } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
-import { flatMap, keyBy, mapValues, filter, cloneDeep, last } from 'lodash';
+import { keyBy, cloneDeep } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-import { CATEGORIES, CATEGORIES_TYPE } from './constants';
+import {
+  CATEGORIES,
+  CATEGORIES_TYPE,
+  CATEGORIES_WITHOUT_ELSE_ACTIONS,
+  INITIAL_CASE_ENTRIES,
+  INITIAL_ENTRY,
+  OPERATORS,
+  STEP_DETAILS
+} from './constants';
 import {
   VariableColumnDataUpdate,
   SelectedCellInRowData,
   FormFieldsProps,
   CaseEntriesDataUpdate,
-  CaseEntryUpdate
+  CaseEntryUpdate,
+  CaseEntry
 } from './types';
-import TableSkeleton from './TableSkeleton/TableSkeleton';
+import {
+  filterVariablesByUsageMode,
+  getColumns,
+  setVariableSources,
+  updateCaseEntry
+} from './utils';
+import TableSkeleton from './Table/Table';
 import StepNoteSection from './StepNoteSection/StepNoteSection';
-import { setVariableSources } from './utils';
 
 import {
   ADD_BUTTON_ON_EDGE,
@@ -41,12 +55,7 @@ import {
 import { StyledStepWrapper } from '@components/Layouts/styled';
 import Dialog from '@components/shared/Modals/Dialog';
 import { SNACK_TYPE } from '@constants/common';
-import {
-  DataDictionaryVariable,
-  DATA_TYPE_WITH_ENUM_PREFIX,
-  VARIABLE_USAGE_MODE,
-  VARIABLE_SOURCE_TYPE
-} from '@domain/dataDictionary';
+import { DataDictionaryVariable } from '@domain/dataDictionary';
 
 type DecisionTableStepProps = {
   step: FlowNode;
@@ -55,44 +64,31 @@ type DecisionTableStepProps = {
   rfInstance: CustomReactFlowInstance;
 };
 
-const INITIAL_ENTRY = {
-  name: '',
-  operator: '',
-  expression: ''
-};
-
-const INITAL_CASE_ENTRIES: CaseEntriesDataUpdate = {
-  conditions: [],
-  actions: [],
-  defaultActions: []
-};
-
 const DecisionTableStep = ({
   step,
   flow,
   resetActiveStepId,
-  rfInstance: { getNodes, getEdges, setNodes, setEdges, onAddNodeBetweenEdges }
+  rfInstance: {
+    getNodes,
+    getEdge,
+    getEdges,
+    setNodes,
+    setEdges,
+    onAddNodeBetweenEdges
+  }
 }: DecisionTableStepProps) => {
   const [noteValue, setNoteValue] = useState('');
   const [selectedColumn, setSelectedColumn] =
     useState<VariableColumnDataUpdate | null>(null);
-  const [selectedCategory, setSelectedCategory] =
-    useState<CATEGORIES_TYPE | null>(null);
   const [openNoteModal, setOpenNoteModal] = useState(false);
   const [openDiscardModal, setOpenDiscardModal] = useState(false);
+  const [caseEntries, setCaseEntries] =
+    useState<CaseEntriesDataUpdate[]>(INITIAL_CASE_ENTRIES);
 
-  const [caseEntries, setCaseEntries] = useState<CaseEntriesDataUpdate[]>([
-    INITAL_CASE_ENTRIES
-  ]);
+  const [defaultEdgeId, setDefaultEdgeId] = useState<string | null>(null);
+  const [defaultActions, setDefaultActions] = useState<CaseEntry[]>([]);
 
-  const [defaultActions, setDefaultActions] = useState([INITIAL_ENTRY]);
-
-  const [steps, setSteps] = useState<
-    {
-      rowIndex: number;
-      edgeId: string | null;
-    }[]
-  >([]);
+  const [steps, setSteps] = useState<(string | null)[]>([]);
 
   const dataDictionary = useContext(DataDictionaryContext);
 
@@ -101,25 +97,10 @@ const DecisionTableStep = ({
   const edges = getEdges();
 
   // temporary combine variables for autocomplete
-  const combinedVariables = flatMap(variables);
-
-  const filteredVariables = useMemo(() => {
-    let usageMode: VARIABLE_USAGE_MODE;
-
-    switch (selectedColumn?.category) {
-      case CATEGORIES.Conditions:
-        usageMode = VARIABLE_USAGE_MODE.WriteOnly;
-        break;
-      case CATEGORIES.DefaultActions:
-      case CATEGORIES.Actions:
-        usageMode = VARIABLE_USAGE_MODE.ReadOnly;
-        break;
-    }
-
-    return mapValues(variables, (arr) =>
-      filter(arr, (item) => item.usageMode !== usageMode)
-    );
-  }, [selectedColumn?.category, variables]);
+  const filteredVariables = filterVariablesByUsageMode(
+    variables,
+    selectedColumn?.category
+  );
 
   const searchableSelectOptions = useMemo(
     () =>
@@ -127,75 +108,39 @@ const DecisionTableStep = ({
         value: node.id,
         label: node.data.name
       })),
-    [edges, nodes, step.id]
+    [nodes.length, step.id]
   );
 
-  const variablesDataTypes = useMemo<Record<string, string>>(
-    () =>
-      combinedVariables.reduce(
-        (acc, current) => ({
-          ...acc,
-          [current.name]: current.dataType
-        }),
-        {}
-      ),
-    [combinedVariables]
+  const conditionsColumns = getColumns(
+    caseEntries[0],
+    variables,
+    CATEGORIES.Conditions
   );
 
-  const variablesSourceTypes = useMemo<Record<string, VARIABLE_SOURCE_TYPE>>(
-    () =>
-      combinedVariables.reduce(
-        (acc, current) => ({
-          ...acc,
-          [current.name]: current.sourceType
-        }),
-        {}
-      ),
-    [combinedVariables]
+  const actionsColumns = getColumns(
+    caseEntries[0],
+    variables,
+    CATEGORIES.Actions
   );
-
-  const getColumns = (category: CATEGORIES_TYPE) =>
-    caseEntries[0][category].map((el) => {
-      const isDataTypeWithEnum = Object.values<string>(
-        DATA_TYPE_WITH_ENUM_PREFIX
-      ).includes(variablesDataTypes[el.name]);
-
-      return {
-        ...el,
-        category,
-        name: el.name,
-        dataType: variablesDataTypes[el.name],
-        // if variable enum type we have additional prop with allowedValues
-        allowedValues: isDataTypeWithEnum
-          ? combinedVariables.find((variable) => variable.name === el.name)
-              ?.allowedValues
-          : undefined
-      };
-    });
 
   const stepColumn = {
     name: 'Step',
     dataType: '',
-    category: 'step' as CATEGORIES,
-    index: 0
+    category: CATEGORIES.Actions as CATEGORIES_WITHOUT_ELSE_ACTIONS,
+    index: actionsColumns.length
   };
 
-  const columns = [
-    ...getColumns(CATEGORIES.Conditions),
-    ...getColumns(CATEGORIES.Actions)
-  ];
-
-  const columnsToShow = [...columns, stepColumn].map((column, index) => ({
-    ...column,
-    index
-  }));
+  const columns = [...conditionsColumns, ...actionsColumns];
+  const columnsToShow = [...columns, stepColumn];
 
   const rows = caseEntries.map((row) => ({
     ...keyBy(row.conditions, 'name'),
     ...keyBy(row.actions, 'name')
   }));
 
-  // const defaultActionsRows = [keyBy(defaultActions, 'name')];
+  const rowsToShow = rows.length
+    ? [...rows, ...[keyBy(defaultActions, 'name')]]
+    : [];
 
   const handleOpenNoteModal = () => setOpenNoteModal(true);
   const handleCloseNoteModal = () => setOpenNoteModal(false);
@@ -203,8 +148,6 @@ const DecisionTableStep = ({
   const handleSubmitNote = (note: string) => {
     setNoteValue(note);
     setOpenNoteModal(false);
-
-    setSelectedCategory(null);
   };
 
   const handleDiscardChanges = () => resetActiveStepId();
@@ -224,14 +167,13 @@ const DecisionTableStep = ({
     setCaseEntries((prev) => [
       ...prev,
       {
-        defaultActions: [],
         conditions: addNewLayerColumns(columns, 'conditions'),
         actions: addNewLayerColumns(columns, 'actions'),
         edgeId: null
       }
     ]);
 
-    // setSteps((prev) => [...prev, { rowIndex: prev.length, edgeId: null }]);
+    setSteps((prev) => [...prev, null]);
   };
 
   const handleDeleteLayer = (index: number) => {
@@ -239,217 +181,116 @@ const DecisionTableStep = ({
     newCaseEntries.splice(index, 1);
 
     setCaseEntries(newCaseEntries);
-    // setSteps((prev) => prev.filter((step) => step.rowIndex !== index));
+
+    if (steps.length <= 1) setDefaultEdgeId(null);
+
+    setSteps((prev) => prev.filter((_, stepIndex) => stepIndex !== index));
   };
 
-  const handleInsertingColumn = () => {
+  const handleInsertColumn = () => {
     if (!selectedColumn) return;
 
-    // if (selectedCategory === CATEGORIES.Actions) {
-    //   const newDefaultActionsEntries = [...defaultActions];
-    //   newDefaultActionsEntries.splice(
-    //     selectedColumn!.index + 1,
-    //     0,
-    //     INITIAL_ENTRY
-    //   );
-    //   setDefaultActions(newDefaultActionsEntries);
-    // }
+    const updatedCaseEntries = updateCaseEntry({
+      caseEntries,
+      selectedColumn,
+      start: selectedColumn.index + 1,
+      deleteCount: 0,
+      insertEntry: INITIAL_ENTRY
+    });
 
-    setCaseEntries((prev) =>
-      prev.map((row) => {
-        const newColumns = [...row[selectedColumn.category]];
-
-        newColumns.splice(selectedColumn.index + 1, 0, INITIAL_ENTRY);
-
-        return {
-          ...row,
-          [selectedColumn.category]: newColumns
-        };
-      })
-    );
+    setCaseEntries(updatedCaseEntries);
   };
 
   const handleDeleteCategoryColumn = () => {
-    if (!selectedCategory) return;
+    if (!selectedColumn) return;
 
-    // if (selectedCategory === CATEGORIES.Actions) {
-    //   const newDefaultActionsEntries = [...defaultActions];
+    const updatedCaseEntries = updateCaseEntry({
+      caseEntries,
+      selectedColumn,
+      start: selectedColumn.index,
+      deleteCount: 1
+    });
 
-    //   newDefaultActionsEntries.splice(selectedColumn!.index, 1);
-    //   setDefaultActions(newDefaultActionsEntries);
-    // }
-
-    setCaseEntries((prev) =>
-      prev.map((row) => {
-        const newColumns = [...row[selectedCategory]];
-        newColumns.splice(selectedColumn!.index, 1);
-
-        return {
-          ...row,
-          [selectedCategory]: newColumns
-        };
-      })
-    );
+    setCaseEntries(updatedCaseEntries);
   };
 
   const handleChangeColumnVariable = (
     newVariable: Pick<DataDictionaryVariable, 'name'>
   ) => {
-    if (!selectedCategory) return;
-    if (selectedCategory === CATEGORIES.Actions) {
-      const newDefaultActionsEntries = [...defaultActions];
-      newDefaultActionsEntries.splice(selectedColumn!.index, 1, {
+    if (!selectedColumn) return;
+
+    const updatedCaseEntries = updateCaseEntry({
+      caseEntries,
+      selectedColumn,
+      start: selectedColumn.index,
+      deleteCount: 1,
+      insertEntry: {
         ...INITIAL_ENTRY,
         name: newVariable.name
-      });
+      }
+    });
 
-      setDefaultActions(newDefaultActionsEntries);
-    }
-
-    setCaseEntries((prev) =>
-      prev.map((row) => {
-        const newColumns = [...row[selectedCategory]];
-        newColumns.splice(selectedColumn!.index, 1, {
-          ...INITIAL_ENTRY,
-          name: newVariable.name
-        });
-
-        return {
-          ...row,
-          [selectedCategory]: newColumns
-        };
-      })
-    );
+    setCaseEntries(updatedCaseEntries);
   };
 
-  const handleSubmitVariableValue = ({
-    formFieldData
-  }: {
-    formFieldData: SelectedCellInRowData & FormFieldsProps;
-  }) => {
-    if (!selectedCategory) return;
-
-    const { rowIndex, variableName, operator } = formFieldData;
-
-    if (selectedCategory === CATEGORIES.DefaultActions) {
-      setDefaultActions((prev) =>
-        prev.map((column) =>
-          column.name !== variableName
-            ? column
-            : {
-                ...column,
-                operator,
-                expression: formFieldData.value ?? ''
-              }
-        )
-      );
-      return;
-    }
+  const handleSubmitVariableValue = (
+    data: SelectedCellInRowData & FormFieldsProps
+  ) => {
+    const expression =
+      data.operator === OPERATORS.Between
+        ? `${data.upperBound} ${data.lowerBound}`
+        : data.value;
 
     setCaseEntries((prev) =>
       prev.map((row, index) => {
-        if (index === rowIndex) {
+        if (index === data.rowIndex)
           return {
             ...row,
-            [selectedCategory]: row[selectedCategory].map((column) =>
-              column.name !== variableName
+            [data.category]: row[data.category].map((column) =>
+              column.name !== data.variableName
                 ? column
                 : {
                     ...column,
-                    operator,
-                    expression: formFieldData.value
+                    expression,
+                    operator: data.operator
                   }
             )
           };
-        }
-        return row;
-      })
-    );
-  };
-
-  const handleSubmitVariableValueForEnum = ({
-    rowIndex,
-    variableName,
-    newEnumValue
-  }: {
-    rowIndex: number;
-    variableName: string;
-    newEnumValue: string;
-  }) => {
-    if (!selectedCategory) return;
-
-    if (selectedCategory === CATEGORIES.DefaultActions) {
-      setDefaultActions((prev) =>
-        prev.map((column) =>
-          column.name !== variableName
-            ? column
-            : {
-                ...column,
-                operator: '=',
-                expression: newEnumValue
-              }
-        )
-      );
-      return;
-    }
-
-    setCaseEntries((prev) =>
-      prev.map((row, index) => {
-        if (index === rowIndex) {
-          return {
-            ...row,
-            [selectedCategory]: row[selectedCategory].map((column) =>
-              column.name !== variableName
-                ? column
-                : {
-                    ...column,
-                    operator: '=',
-                    expression: newEnumValue
-                  }
-            )
-          };
-        }
 
         return row;
       })
     );
   };
 
-  const handleChangeStep = ({
-    rowIndex,
-    edgeId
-  }: {
-    rowIndex: number;
-    edgeId: string;
-  }) => {
+  const handleChangeStep = (rowIndex: number, edgeId: string) => {
+    if (rowIndex >= steps.length) {
+      setDefaultEdgeId(edgeId);
+      return;
+    }
+
     setSteps((prev) =>
-      prev.map((step, index) =>
-        index === rowIndex ? { ...step, edgeId } : step
-      )
+      prev.map((step, index) => (rowIndex === index ? edgeId : step))
     );
   };
 
   const onApplyChangesClick = async () => {
     const existingEdges = [
-      step.data.defaultEdgeId,
-      ...(step.data?.caseEntries?.map((entry) => entry.edgeId) || [])
+      ...(step.data.caseEntries?.map((entry) => entry.edgeId) || []),
+      step.data.defaultEdgeId
     ];
 
-    const targetNodesIds = steps
-      .map((step) => step.edgeId)
-      .filter((edgeId) => edgeId) as string[];
+    const targetNodesIds = [...steps, defaultEdgeId].filter(
+      (edgeId) => edgeId
+    ) as string[];
 
-    const splitEdges = targetNodesIds.map((targetNodeId, index) => {
-      const newEdgeId = uuidv4();
-      return {
-        id: newEdgeId,
-        sourceHandle: index.toString(),
-        source: step.id,
-        target: targetNodeId,
-        type: ADD_BUTTON_ON_EDGE,
-        data: { onAdd: onAddNodeBetweenEdges }
-      };
-    });
+    const splitEdges = targetNodesIds.map((targetNodeId, index) => ({
+      id: uuidv4(),
+      sourceHandle: index.toString(),
+      source: step.id,
+      target: targetNodeId,
+      type: ADD_BUTTON_ON_EDGE,
+      data: { onAdd: onAddNodeBetweenEdges }
+    }));
 
     const storedNodes = cloneDeep(nodes);
     const storedEdges = cloneDeep(edges);
@@ -460,29 +301,36 @@ const DecisionTableStep = ({
       .concat(splitEdges);
 
     const updatedNodes = nodes.map((node: FlowNode) => {
-      if (node.id === step.id) {
-        // This updates data inside the node. Since React Flow uses Zustand under the hood, it is necessary to recreate the data.
-        node.data = {
-          ...node.data,
-          defaultEdgeId: last(steps)?.edgeId || null,
-          note: noteValue,
-          caseEntries: caseEntries.map((row) => ({
-            ...row,
-            actions: row.actions.map((column) => ({
-              ...column,
+      if (node.id === step.id)
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            defaultEdgeId: (steps.length && splitEdges.pop()?.id) || null,
+            note: noteValue,
+            caseEntries: caseEntries.map((row, caseEntryIndex) => ({
+              ...row,
+              edgeId:
+                splitEdges.find((_, index) => index === caseEntryIndex)?.id ||
+                row.edgeId,
+              actions: row.actions.map((column) => ({
+                ...column,
+                destinationType: 'TemporaryVariable'
+              }))
+            })),
+            defaultActions: defaultActions.map((element) => ({
+              ...element,
               destinationType: 'TemporaryVariable'
-            }))
-          })),
-          defaultActions: defaultActions.map((element) => ({
-            ...element,
-            destinationType: 'TemporaryVariable'
-          })),
-          variableSources: setVariableSources(
-            [...caseEntries[0].actions, ...caseEntries[0].conditions],
-            variablesSourceTypes
-          )
+            })),
+            variableSources: setVariableSources(
+              [
+                ...(caseEntries[0]?.actions || []),
+                ...(caseEntries[0]?.conditions || [])
+              ],
+              variables
+            )
+          }
         };
-      }
 
       return node;
     });
@@ -517,34 +365,36 @@ const DecisionTableStep = ({
 
     if (!data.caseEntries) return;
 
+    const savedDefaultEdgeId =
+      getEdge(data.defaultEdgeId || '')?.target || null;
+
+    const savedSteps = data.caseEntries.map((entry) => {
+      const connectedEdges = getEdge(entry.edgeId || '');
+
+      return connectedEdges?.target || null;
+    });
+
     // if some defaultActions were saved already into the flow
-    const savedDefaultActions = data.defaultActions?.map((column) => ({
-      ...column,
-      operator: column.expression ? '=' : ''
-    }));
+    const savedDefaultActions =
+      data.defaultActions?.map((column) => ({
+        ...column,
+        operator: column.expression ? '=' : ''
+      })) || [];
 
     // if some CaseEntries were saved already into the flow
     const savedCaseEntries = data.caseEntries.map((row) => ({
       ...row,
-      defaultActions: [],
-      conditions: row.conditions.length ? row.conditions : [INITIAL_ENTRY],
       actions: row.actions.map((column) => ({
         ...column,
         operator: column.expression ? '=' : ''
       }))
     }));
 
+    setSteps(savedSteps);
     setCaseEntries(savedCaseEntries);
-    setDefaultActions(savedDefaultActions || []);
+    setDefaultActions(savedDefaultActions);
+    setDefaultEdgeId(savedDefaultEdgeId);
     setNoteValue(data.note ?? '');
-
-    setSteps([
-      ...data.caseEntries.map((row, i) => ({
-        rowIndex: i,
-        edgeId: row.edgeId || null
-      })),
-      { rowIndex: data.caseEntries.length, edgeId: data.defaultEdgeId || null }
-    ]);
   }, [step.data]);
 
   useEffect(() => setInitialData(), [setInitialData]);
@@ -556,32 +406,27 @@ const DecisionTableStep = ({
       <StyledStepWrapper>
         <StepDetailsHeader
           title={step.data.name}
-          details="A decision table is a step that allows to set expressions for
-        columns and rows. The system will go through the table and analyze the
-        values."
+          details={STEP_DETAILS}
           isActionContainerVisible={false}
           flow={flow}
         />
         <Paper>
           <TableContainer sx={{ bgcolor: theme.palette.background.default }}>
             <TableSkeleton
+              defaultStep={defaultEdgeId}
               steps={steps}
               columns={columnsToShow}
-              rows={rows}
+              rows={rowsToShow}
               variables={filteredVariables}
-              selectedCategory={selectedCategory}
               searchableSelectOptions={searchableSelectOptions}
               selectedColumn={selectedColumn}
               handleChangeStep={handleChangeStep}
-              handleSelectColumn={setSelectedColumn}
+              handleSelectionColumn={setSelectedColumn}
               handleDeleteRow={handleDeleteLayer}
-              handleInsertingColumn={handleInsertingColumn}
+              handleInsertColumn={handleInsertColumn}
               handleDeleteCategoryColumn={handleDeleteCategoryColumn}
               handleChangeColumnVariable={handleChangeColumnVariable}
               handleSubmitVariableValue={handleSubmitVariableValue}
-              handleSubmitVariableValueForEnum={
-                handleSubmitVariableValueForEnum
-              }
             />
           </TableContainer>
         </Paper>
@@ -590,6 +435,7 @@ const DecisionTableStep = ({
           variant="outlined"
           onClick={handleAddNewLayer}
           startIcon={<PlusSquareIcon />}
+          disabled={rowsToShow.length >= searchableSelectOptions.length}
         >
           Add new business layer
         </Button>

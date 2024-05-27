@@ -7,6 +7,7 @@ import { HexagonOutlinedIcon } from '@components/shared/Icons';
 type VariableInputProps = {
   open: boolean;
   anchorEl: HTMLElement | null;
+  variableActionTitle: string;
   handleSelectColumn?: () => void;
   handleAddVariable: () => void;
   handleAddNewColumn?: () => void;
@@ -22,6 +23,7 @@ type VariableInputProps = {
 const VariableInput = ({
   open,
   anchorEl,
+  variableActionTitle,
   handleAddVariable,
   handleAddNewColumn,
   handleDeleteColumn,
@@ -61,7 +63,7 @@ const VariableInput = ({
             <ListItemIcon>
               <HexagonOutlinedIcon size="16px" />
             </ListItemIcon>
-            Add Input Variable
+            {variableActionTitle}
           </MenuItem>
           <MenuItem key="add-column-action" onClick={handleAddNewColumn}>
             <ListItemIcon>

@@ -1,4 +1,4 @@
-import { CATEGORIES_TYPE } from './constants';
+import { CATEGORIES_TYPE, CATEGORIES_WITHOUT_ELSE_ACTIONS } from './constants';
 
 import { DATA_TYPE } from '@domain/dataDictionary';
 
@@ -22,7 +22,6 @@ export type CaseEntriesDate = {
 export type CaseEntriesDataUpdate = {
   conditions: CaseEntryUpdate[];
   actions: CaseEntryUpdate[];
-  defaultActions: CaseEntryUpdate[];
   edgeId?: string | null;
 };
 
@@ -39,6 +38,7 @@ export type SelectedCellInRowData = {
   rowIndex: number;
   variableName: string;
   dataType: string;
+  category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
 };
 
 export type VariableColumnData = {
@@ -48,7 +48,7 @@ export type VariableColumnData = {
 };
 
 export type VariableColumnDataUpdate = {
-  category: CATEGORIES_TYPE;
+  category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   name: string;
   dataType: DATA_TYPE | string;
   allowedValues?: string | string[];
@@ -57,7 +57,7 @@ export type VariableColumnDataUpdate = {
 
 export type FormFieldsProps = {
   variableName: string;
-  operator: string;
+  operator?: string;
   value?: string;
   lowerBound?: number | null;
   upperBound?: number | null;

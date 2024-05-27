@@ -57,26 +57,14 @@ const SelectVariableValueDialog = ({
   const watchOperator = watch('operator');
 
   useEffect(() => {
-    if (category !== CATEGORIES.Conditions) {
-      setValue('operator', '=');
-    }
+    if (category !== CATEGORIES.Conditions) setValue('operator', '=');
   }, []);
 
   const onSubmit = (data: FormFieldsProps) => {
-    if (watchOperator !== OPERATORS.Between) {
-      const { operator, value } = data;
-
-      handleSubmitSelectedRowCellData({ ...selectedRowCell, operator, value });
-    } else {
-      const { operator, lowerBound, upperBound } = data;
-
-      handleSubmitSelectedRowCellData({
-        ...selectedRowCell,
-        operator,
-        lowerBound,
-        upperBound
-      });
-    }
+    handleSubmitSelectedRowCellData({
+      ...selectedRowCell,
+      ...data
+    });
   };
 
   return (
@@ -148,13 +136,13 @@ const SelectVariableValueDialog = ({
                 fullWidth
                 name="lowerBound"
                 control={control}
-                placeholder="Enter lower bound"
+                placeholder="Lowest Value*"
               />
               <InputText
                 fullWidth
                 name="upperBound"
                 control={control}
-                placeholder="Enter upper bound"
+                placeholder="Highest Value*"
               />
             </>
           ) : (
@@ -162,7 +150,7 @@ const SelectVariableValueDialog = ({
               fullWidth
               name="value"
               control={control}
-              placeholder="Enter value"
+              placeholder="Value*"
               InputProps={{ disabled: watchOperator === OPERATORS.Any }}
             />
           )}
