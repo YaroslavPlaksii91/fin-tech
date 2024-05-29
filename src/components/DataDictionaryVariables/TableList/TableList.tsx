@@ -54,7 +54,7 @@ const TableList = ({
     Variable & { index: number; variableIsUsed: boolean }
   >();
 
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -130,8 +130,8 @@ const TableList = ({
   const handlePageByInput = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const newPage = Number(event.target.value);
-    if (newPage <= totalPages) setPage(newPage);
+    const newPage = Number(event.target.value) - 1;
+    if (newPage >= 0 && newPage < totalPages) setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (
