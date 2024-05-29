@@ -79,6 +79,7 @@ export const INITIAL_ENTRY = {
 export const INITIAL_CASE_ENTRIES = [
   {
     conditions: [],
-    actions: []
+    actions: [],
+    edgeId: null
   }
 ];

@@ -21,8 +21,8 @@ const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
 
   return (
     <div id={data.stepId} className={styles['node-list-container']}>
+      <Handle style={{ top: '25px' }} type="target" position={Position.Left} />
       <div className={styles['node-list-container__header']}>
-        <Handle type="target" position={Position.Top} />
         <ArrowLeftAndRightSquareIcon />
         <div className={styles['node-list-container__header__text']}>
           <p className={styles['node-tag']}>{data?.tag || NO_TAG_LABEL}</p>

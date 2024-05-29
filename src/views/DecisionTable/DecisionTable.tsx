@@ -14,7 +14,6 @@ import {
   CATEGORIES,
   CATEGORIES_TYPE,
   CATEGORIES_WITHOUT_ELSE_ACTIONS,
-  INITIAL_CASE_ENTRIES,
   INITIAL_ENTRY,
   OPERATORS,
   STEP_DETAILS
@@ -42,7 +41,10 @@ import {
 } from '@components/FlowManagment/FlowChart/types';
 import { FlowNode, IFlow } from '@domain/flow';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
-import { getConnectableNodes } from '@views/ChampionChallenger/utils';
+import {
+  formatFlowDataForValidation,
+  getConnectableNodes
+} from '@views/ChampionChallenger/utils';
 import { flowService } from '@services/flow-service';
 import { theme } from '@theme';
 import PlusSquareIcon from '@icons/plusSquare.svg';
@@ -84,13 +86,12 @@ const DecisionTableStep = ({
     useState<VariableColumnDataUpdate | null>(null);
   const [openNoteModal, setOpenNoteModal] = useState(false);
   const [openDiscardModal, setOpenDiscardModal] = useState(false);
-  const [caseEntries, setCaseEntries] =
-    useState<CaseEntriesDataUpdate[]>(INITIAL_CASE_ENTRIES);
+  const [caseEntries, setCaseEntries] = useState<CaseEntriesDataUpdate[]>([]);
 
-  const [defaultEdgeId, setDefaultEdgeId] = useState<string | null>(null);
   const [defaultActions, setDefaultActions] = useState<CaseEntry[]>([]);
 
-  const [steps, setSteps] = useState<(string | null)[]>([]);
+  const [stepIds, setStepIds] = useState<(string | null)[]>([]);
+  const [defaultStepId, setDefaultStepId] = useState<string | null>(null);
 
   const dataDictionary = useContext(DataDictionaryContext);
 
@@ -175,7 +176,7 @@ const DecisionTableStep = ({
       }
     ]);
 
-    setSteps((prev) => [...prev, null]);
+    setStepIds((prev) => [...prev, null]);
   };
 
   const handleDeleteLayer = (index: number) => {
@@ -184,17 +185,17 @@ const DecisionTableStep = ({
 
     setCaseEntries(newCaseEntries);
 
-    if (steps.length <= 1) setDefaultEdgeId(null);
+    if (stepIds.length <= 1) setDefaultStepId(null);
 
-    setSteps((prev) => prev.filter((_, stepIndex) => stepIndex !== index));
+    setStepIds((prev) => prev.filter((_, stepIndex) => stepIndex !== index));
   };
 
   const handleInsertColumn = () => {
-    if (!selectedColumn) return;
+    if (!selectedColumn?.category) return;
 
     const updatedCaseEntries = updateCaseEntry({
       caseEntries,
-      selectedColumn,
+      category: selectedColumn.category,
       start: selectedColumn.index + 1,
       deleteCount: 0,
       insertEntry: INITIAL_ENTRY
@@ -204,11 +205,11 @@ const DecisionTableStep = ({
   };
 
   const handleDeleteCategoryColumn = () => {
-    if (!selectedColumn) return;
+    if (!selectedColumn?.category) return;
 
     const updatedCaseEntries = updateCaseEntry({
       caseEntries,
-      selectedColumn,
+      category: selectedColumn.category,
       start: selectedColumn.index,
       deleteCount: 1
     });
@@ -219,11 +220,11 @@ const DecisionTableStep = ({
   const handleChangeColumnVariable = (
     newVariable: Pick<DataDictionaryVariable, 'name'>
   ) => {
-    if (!selectedColumn) return;
+    if (!selectedColumn?.category) return;
 
     const updatedCaseEntries = updateCaseEntry({
       caseEntries,
-      selectedColumn,
+      category: selectedColumn.category,
       start: selectedColumn.index,
       deleteCount: 1,
       insertEntry: {
@@ -264,25 +265,25 @@ const DecisionTableStep = ({
     );
   };
 
-  const handleChangeStep = (rowIndex: number, edgeId: string) => {
-    if (rowIndex >= steps.length) {
-      setDefaultEdgeId(edgeId);
+  const handleChangeStep = (rowIndex: number, stepId: string) => {
+    if (rowIndex >= stepIds.length) {
+      setDefaultStepId(stepId);
       return;
     }
 
-    setSteps((prev) =>
-      prev.map((step, index) => (rowIndex === index ? edgeId : step))
+    setStepIds((prev) =>
+      prev.map((oldStepId, index) => (rowIndex === index ? stepId : oldStepId))
     );
   };
 
   const onApplyChangesClick = async () => {
     const existingEdges = [
-      ...(step.data.caseEntries?.map((entry) => entry.edgeId) || []),
+      ...(step.data.caseEntries || []).map((entry) => entry.edgeId),
       step.data.defaultEdgeId
     ];
 
-    const targetNodesIds = [...steps, defaultEdgeId].filter(
-      (edgeId) => edgeId
+    const targetNodesIds = [...stepIds, defaultStepId].filter(
+      (stepId) => stepId
     ) as string[];
 
     const splitEdges = targetNodesIds.map((targetNodeId, index) => ({
@@ -303,46 +304,54 @@ const DecisionTableStep = ({
       .concat(splitEdges);
 
     const updatedNodes = nodes.map((node: FlowNode) => {
-      if (node.id === step.id)
+      if (node.id === step.id) {
+        const updatedCaseEntries = caseEntries.map((row, caseEntryIndex) => ({
+          ...row,
+          edgeId: splitEdges[caseEntryIndex]?.id || null,
+          actions: row.actions.map((column) => ({
+            ...column,
+            destinationType: 'TemporaryVariable'
+          }))
+        }));
+
+        const updatedDefaultActions = defaultActions.map((element) => ({
+          ...element,
+          destinationType: 'TemporaryVariable'
+        }));
+
+        const updatedVariableSources = setVariableSources(
+          [
+            ...(caseEntries[0]?.actions || []),
+            ...(caseEntries[0]?.conditions || [])
+          ],
+          variables
+        );
+
         return {
           ...node,
           data: {
             ...node.data,
-            defaultEdgeId: (steps.length && splitEdges.pop()?.id) || null,
+            defaultEdgeId: (defaultStepId && splitEdges.pop()?.id) || null,
             note: noteValue,
-            caseEntries: caseEntries.map((row, caseEntryIndex) => ({
-              ...row,
-              edgeId:
-                splitEdges.find((_, index) => index === caseEntryIndex)?.id ||
-                row.edgeId,
-              actions: row.actions.map((column) => ({
-                ...column,
-                destinationType: 'TemporaryVariable'
-              }))
-            })),
-            defaultActions: defaultActions.map((element) => ({
-              ...element,
-              destinationType: 'TemporaryVariable'
-            })),
-            variableSources: setVariableSources(
-              [
-                ...(caseEntries[0]?.actions || []),
-                ...(caseEntries[0]?.conditions || [])
-              ],
-              variables
-            )
+            caseEntries: updatedCaseEntries,
+            defaultActions: updatedDefaultActions,
+            variableSources: updatedVariableSources
           }
         };
+      }
 
       return node;
     });
 
     try {
-      await flowService.validateFlow({
-        ...flow,
-        nodes: updatedNodes,
-        edges: newEdges
-      });
+      const data = formatFlowDataForValidation(
+        mainFlow,
+        flow,
+        updatedNodes,
+        newEdges
+      );
+      await flowService.validateFlow(data);
+
       setNodes(updatedNodes);
       setEdges(newEdges);
       enqueueSnackbar(
@@ -367,13 +376,13 @@ const DecisionTableStep = ({
 
     if (!data.caseEntries) return;
 
-    const savedDefaultEdgeId =
+    const savedDefaultStepId =
       getEdge(data.defaultEdgeId || '')?.target || null;
 
-    const savedSteps = data.caseEntries.map((entry) => {
-      const connectedEdges = getEdge(entry.edgeId || '');
+    const savedStepIds = data.caseEntries.map((entry) => {
+      const connectedEdge = getEdge(entry.edgeId || '');
 
-      return connectedEdges?.target || null;
+      return connectedEdge?.target || null;
     });
 
     // if some defaultActions were saved already into the flow
@@ -392,10 +401,10 @@ const DecisionTableStep = ({
       }))
     }));
 
-    setSteps(savedSteps);
+    setStepIds(savedStepIds);
     setCaseEntries(savedCaseEntries);
     setDefaultActions(savedDefaultActions);
-    setDefaultEdgeId(savedDefaultEdgeId);
+    setDefaultStepId(savedDefaultStepId);
     setNoteValue(data.note ?? '');
   }, [step.data]);
 
@@ -416,8 +425,8 @@ const DecisionTableStep = ({
         <Paper>
           <TableContainer sx={{ bgcolor: theme.palette.background.default }}>
             <TableSkeleton
-              defaultStep={defaultEdgeId}
-              steps={steps}
+              defaultStepId={defaultStepId}
+              stepIds={stepIds}
               columns={columnsToShow}
               rows={rowsToShow}
               variables={filteredVariables}

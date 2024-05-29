@@ -8,6 +8,7 @@ const getListNodesData = (data: StepListData) => {
         value: `${split.percentage}%`
       }));
     case StepType.DECISION_TABLE:
+      if (!data.caseEntries?.length) return [];
       return [
         ...(data.caseEntries || []).map((entry) => entry.edgeId),
         data.defaultEdgeId

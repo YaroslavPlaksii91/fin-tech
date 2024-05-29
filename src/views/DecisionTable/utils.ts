@@ -17,11 +17,7 @@ import {
   INITIAL_ENTRY,
   INITIAL_CASE_ENTRIES
 } from './constants';
-import {
-  CaseEntriesDataUpdate,
-  CaseEntry,
-  VariableColumnDataUpdate
-} from './types';
+import { CaseEntriesDataUpdate, CaseEntry } from './types';
 
 import {
   DATA_TYPE,
@@ -133,35 +129,35 @@ export const setVariableSources = (
 
 export const updateCaseEntry = ({
   caseEntries,
-  selectedColumn,
+  category,
   start,
   deleteCount = 0,
   insertEntry
 }: {
   caseEntries: CaseEntriesDataUpdate[];
-  selectedColumn: VariableColumnDataUpdate;
+  category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   start: number;
   deleteCount: number;
   insertEntry?: CaseEntry;
 }) =>
   (caseEntries.length ? caseEntries : INITIAL_CASE_ENTRIES).map((row) => {
-    if (!row[selectedColumn.category].length)
+    if (!row[category].length)
       return {
         ...row,
-        [selectedColumn.category]:
-          selectedColumn.name === 'Step'
+        [category]:
+          category === CATEGORIES.Actions
             ? [INITIAL_ENTRY]
-            : [INITIAL_ENTRY, INITIAL_ENTRY] // Need to add two entries if it is first action after creating the table
+            : [INITIAL_ENTRY, INITIAL_ENTRY] // Need to add two entries if it is first action after creating the table cause caseEntries is []
       };
 
-    const newColumns = [...row[selectedColumn.category]];
+    const newColumns = [...row[category]];
 
     if (insertEntry) newColumns.splice(start, deleteCount, insertEntry);
     else newColumns.splice(start, deleteCount);
 
     return {
       ...row,
-      [selectedColumn.category]: newColumns
+      [category]: newColumns
     };
   });
 

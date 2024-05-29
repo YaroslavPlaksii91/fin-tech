@@ -1,12 +1,12 @@
 import { Fragment, useState } from 'react';
 import {
   Button,
-  Table,
   TableBody,
   TableHead,
   Typography,
   TableCell,
-  Box
+  Box,
+  Table as MuiTable
 } from '@mui/material';
 import { lightBlue, lightGreen } from '@mui/material/colors';
 
@@ -38,9 +38,9 @@ import {
   Variable
 } from '@domain/dataDictionary';
 
-interface TableSkeletonProps {
-  steps: (string | null)[];
-  defaultStep: string | null;
+interface Table {
+  stepIds: (string | null)[];
+  defaultStepId: string | null;
   columns: VariableColumnDataUpdate[];
   rows: VariableRowData[];
   variables: Record<string, Variable[]>;
@@ -50,7 +50,7 @@ interface TableSkeletonProps {
   handleDeleteRow: (index: number) => void;
   handleInsertColumn: () => void;
   handleDeleteCategoryColumn: () => void;
-  handleChangeStep: (rowIndex: number, edgeId: string) => void;
+  handleChangeStep: (rowIndex: number, stepId: string) => void;
   handleChangeColumnVariable: (
     newVariable: Pick<DataDictionaryVariable, 'name'>
   ) => void;
@@ -59,9 +59,9 @@ interface TableSkeletonProps {
   ) => void;
 }
 
-const TableSkeleton = ({
-  steps,
-  defaultStep,
+const Table = ({
+  stepIds,
+  defaultStepId,
   columns,
   rows,
   variables,
@@ -74,7 +74,7 @@ const TableSkeleton = ({
   handleChangeColumnVariable,
   handleChangeStep,
   handleSubmitVariableValue
-}: TableSkeletonProps) => {
+}: Table) => {
   const [anchorVariableMenu, setAnchorVariableMenu] =
     useState<HTMLElement | null>(null);
   const [isDialogOpen, setIsDiaglogOpen] = useState(false);
@@ -118,7 +118,7 @@ const TableSkeleton = ({
 
   return (
     <>
-      <Table>
+      <MuiTable>
         <TableHead>
           <StyledTableRow>
             <TableCell
@@ -209,9 +209,9 @@ const TableSkeleton = ({
 
                 if (name === 'Step') {
                   const value =
-                    rowIndex >= steps.length
-                      ? defaultStep
-                      : steps.find((_, stepIndex) => stepIndex === rowIndex);
+                    rowIndex >= stepIds.length
+                      ? defaultStepId
+                      : stepIds.find((_, stepIndex) => stepIndex === rowIndex);
 
                   return (
                     <Fragment key={columnIndex}>
@@ -220,8 +220,8 @@ const TableSkeleton = ({
                           fullWidth
                           value={value || ''}
                           options={searchableSelectOptions || []}
-                          handleChange={(edgeId) =>
-                            handleChangeStep(rowIndex, edgeId)
+                          handleChange={(stepId) =>
+                            handleChangeStep(rowIndex, stepId)
                           }
                         />
                       </StyledTableCell>
@@ -322,7 +322,7 @@ const TableSkeleton = ({
             </StyledTableRow>
           ) : null}
         </TableBody>
-      </Table>
+      </MuiTable>
       {selectedRowCell && (
         <SelectVariableValueDialog
           modalOpen={!!selectedRowCell}
@@ -343,4 +343,4 @@ const TableSkeleton = ({
   );
 };
 
-export default TableSkeleton;
+export default Table;

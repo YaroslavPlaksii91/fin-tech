@@ -50,7 +50,7 @@ export const createNewNode = (
     case StepType.DECISION_TABLE:
       newNode.data = {
         ...newNode.data,
-        caseEntries: [{ conditions: [], actions: [] }],
+        caseEntries: [],
         defaultActions: [],
         variableSources: [],
         defaultEdgeId: null
