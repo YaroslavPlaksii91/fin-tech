@@ -1,27 +1,54 @@
-import { cloneDeep } from 'lodash';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 import FlowChartReadOnlyView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyView';
-import { IFlow } from '@domain/flow';
 import { selectFlow } from '@store/flow/selectors';
-import { useAppSelector } from '@store/hooks';
-import { checkIsProductionFlow } from '@utils/helpers';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { PRODUCTION_FLOW_ID } from '@constants/common';
+import { useLoading } from '@contexts/LoadingContext';
+import { getProductionFlow, getFlow } from '@store/flow/asyncThunk';
+import { setInitialFlow } from '@store/flow/flow';
+import { useActiveStep } from '@contexts/StepContext';
+import Logger from '@utils/logger';
 
 export default function FlowsNew() {
+  const { id } = useParams();
   const { flow } = useAppSelector(selectFlow);
-  const [copyFlow, setCopyFlow] = useState<IFlow>();
-  const isProductionFlow = checkIsProductionFlow();
+  const dispatch = useAppDispatch();
+  const { resetActive } = useActiveStep();
+  const { startLoading, stopLoading } = useLoading();
+
+  const isProductionFlow = id === PRODUCTION_FLOW_ID;
 
   useEffect(() => {
-    const flowDeepCopy = cloneDeep(flow);
-    setCopyFlow(flowDeepCopy);
-  }, [flow.id]);
+    const fetchFlow = async (flowId: string) => {
+      try {
+        startLoading();
+        if (id === PRODUCTION_FLOW_ID) {
+          await dispatch(getProductionFlow());
+        } else {
+          await dispatch(getFlow(flowId));
+        }
+      } catch (error) {
+        Logger.error('Error fetching initial data:', error);
+      } finally {
+        stopLoading();
+      }
+    };
+
+    resetActive();
+    if (id) {
+      void fetchFlow(id);
+    } else {
+      dispatch(setInitialFlow());
+    }
+  }, []);
 
   return (
-    copyFlow && (
+    flow && (
       <FlowChartReadOnlyView
-        showControlPanel={!!copyFlow.id}
-        flow={copyFlow}
+        showControlPanel={!!flow.id}
+        flow={flow}
         isProductionFlow={isProductionFlow}
       />
     )

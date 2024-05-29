@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useContext } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { indexOf, map } from 'lodash';
 import {
   TableHead,
@@ -20,7 +20,6 @@ import { TableHeader } from '../DataDictionaryVariables';
 
 import { TableRow } from './TableRow';
 
-import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import {
   StyledTableCell,
   StyledTableRow,
@@ -33,6 +32,8 @@ import {
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { theme } from '@theme';
+import { useAppSelector } from '@store/hooks';
+import { selectFlow } from '@store/flow/selectors';
 
 interface TableListProps {
   flowNodes: FlowNode[];
@@ -53,12 +54,14 @@ const TableList = ({
     Variable & { index: number; variableIsUsed: boolean }
   >();
 
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const value = useContext(DataDictionaryPageContext);
+  const {
+    flow: { temporaryVariables, permanentVariables }
+  } = useAppSelector(selectFlow);
 
   const totalPages = Math.ceil(tableData.length / rowsPerPage);
 
@@ -89,11 +92,11 @@ const TableList = ({
 
     switch (row.sourceType) {
       case VARIABLE_SOURCE_TYPE.PermanentVariable: {
-        variables = value?.permanentVariables;
+        variables = permanentVariables;
         break;
       }
       case VARIABLE_SOURCE_TYPE.TemporaryVariable: {
-        variables = value?.temporaryVariables;
+        variables = temporaryVariables;
         break;
       }
     }
@@ -225,7 +228,7 @@ const TableList = ({
           <TextField
             sx={{ borderRadius: '8px', maxWidth: '64px', mr: 1 }}
             size="small"
-            value={page}
+            value={page + 1}
             onChange={handlePageByInput}
           />
           <Typography variant="body1" color={theme.palette.text.secondary}>

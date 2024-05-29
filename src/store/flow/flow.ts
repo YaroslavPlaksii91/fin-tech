@@ -76,7 +76,10 @@ export const flowSlicer = createSlice({
       (state, action: PayloadAction<Omit<FlowData, 'id'>>) => {
         state.flow.data = action.payload;
       }
-    )
+    ),
+    updateFlow: create.reducer((state, action: PayloadAction<IFlow>) => {
+      state.flow = action.payload;
+    })
   }),
   extraReducers(builder) {
     builder.addCase(getFlow.fulfilled, (state, action) => {
@@ -93,5 +96,10 @@ export const flowSlicer = createSlice({
 
 export default flowSlicer.reducer;
 
-export const { setInitialFlow, addNode, deleteNodes, updateFlowData } =
-  flowSlicer.actions;
+export const {
+  setInitialFlow,
+  addNode,
+  deleteNodes,
+  updateFlowData,
+  updateFlow
+} = flowSlicer.actions;
