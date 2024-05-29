@@ -120,4 +120,4 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
   );
 };
 
-export default RecursiveStepListItem;
+export default React.memo(RecursiveStepListItem);
