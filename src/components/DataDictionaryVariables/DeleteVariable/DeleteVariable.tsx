@@ -1,13 +1,14 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { Typography } from '@mui/material';
+import { useDispatch } from 'react-redux/es/hooks/useDispatch';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import Logger from '@utils/logger';
 import { JSONPatchOperation } from '@domain/entity';
 import { flowService } from '@services/flow-service';
-import { DataDictionaryPageContext } from '@pages/DataDictionary';
 import { modifyFirstLetter } from '@utils/text';
 import { Variable } from '@domain/dataDictionary';
+import { updateFlow } from '@store/flow/flow';
 
 interface DeleteVariableProps {
   flowId: string;
@@ -23,7 +24,7 @@ export const DeleteVariable = ({
   onClose
 }: DeleteVariableProps) => {
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
-  const value = useContext(DataDictionaryPageContext);
+  const dispatch = useDispatch();
 
   const handleDeleteVariable = async () => {
     try {
@@ -37,7 +38,7 @@ export const DeleteVariable = ({
       setConfirmLoading(true);
       const newFlowData = await flowService.updateFlow(flowId, operations);
 
-      newFlowData && value?.setFlow(newFlowData);
+      newFlowData && dispatch(updateFlow(newFlowData));
       onClose();
     } catch (error) {
       Logger.error(error);
