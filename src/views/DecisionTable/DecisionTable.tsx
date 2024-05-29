@@ -22,8 +22,8 @@ import {
   VariableColumnDataUpdate,
   SelectedCellInRowData,
   FormFieldsProps,
-  CaseEntriesDataUpdate,
-  CaseEntryUpdate,
+  CaseEntriesDate,
+  CaseEntryColumn,
   CaseEntry
 } from './types';
 import {
@@ -86,7 +86,7 @@ const DecisionTableStep = ({
     useState<VariableColumnDataUpdate | null>(null);
   const [openNoteModal, setOpenNoteModal] = useState(false);
   const [openDiscardModal, setOpenDiscardModal] = useState(false);
-  const [caseEntries, setCaseEntries] = useState<CaseEntriesDataUpdate[]>([]);
+  const [caseEntries, setCaseEntries] = useState<CaseEntriesDate[]>([]);
 
   const [defaultActions, setDefaultActions] = useState<CaseEntry[]>([]);
 
@@ -157,7 +157,7 @@ const DecisionTableStep = ({
 
   const handleAddNewLayer = () => {
     const addNewLayerColumns = (
-      existedColumns: CaseEntryUpdate[],
+      existedColumns: CaseEntryColumn[],
       category: CATEGORIES_TYPE
     ) =>
       existedColumns

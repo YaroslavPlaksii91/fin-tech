@@ -17,7 +17,7 @@ import {
   INITIAL_ENTRY,
   INITIAL_CASE_ENTRIES
 } from './constants';
-import { CaseEntriesDataUpdate, CaseEntry } from './types';
+import { CaseEntriesDate, CaseEntry } from './types';
 
 import {
   DATA_TYPE,
@@ -63,7 +63,7 @@ export const getOperatorOptions = (dataType: DATA_TYPE_WITHOUT_ENUM) => {
 };
 
 export const getColumns = (
-  caseEntry: CaseEntriesDataUpdate,
+  caseEntry: CaseEntriesDate,
   variables: Record<string, Variable[]>,
   category: CATEGORIES_WITHOUT_ELSE_ACTIONS
 ) => {
@@ -134,7 +134,7 @@ export const updateCaseEntry = ({
   deleteCount = 0,
   insertEntry
 }: {
-  caseEntries: CaseEntriesDataUpdate[];
+  caseEntries: CaseEntriesDate[];
   category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   start: number;
   deleteCount: number;

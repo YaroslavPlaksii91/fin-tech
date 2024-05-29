@@ -7,9 +7,10 @@ export type CaseEntry = {
   operator: string;
   expression: string;
   destinationType?: string;
+  category?: CATEGORIES_TYPE;
 };
 
-export interface CaseEntryUpdate extends CaseEntry {
+export interface CaseEntryColumn extends CaseEntry {
   category?: CATEGORIES_TYPE;
 }
 
@@ -17,12 +18,6 @@ export type CaseEntriesDate = {
   conditions: CaseEntry[];
   actions: CaseEntry[];
   edgeId: null;
-};
-
-export type CaseEntriesDataUpdate = {
-  conditions: CaseEntryUpdate[];
-  actions: CaseEntryUpdate[];
-  edgeId?: string | null;
 };
 
 export type VariableRowData = {
