@@ -54,7 +54,7 @@ const TableList = ({
     Variable & { index: number; variableIsUsed: boolean }
   >();
 
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -228,7 +228,7 @@ const TableList = ({
           <TextField
             sx={{ borderRadius: '8px', maxWidth: '64px', mr: 1 }}
             size="small"
-            value={page}
+            value={page + 1}
             onChange={handlePageByInput}
           />
           <Typography variant="body1" color={theme.palette.text.secondary}>
