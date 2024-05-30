@@ -17,7 +17,7 @@ export interface CaseEntryColumn extends CaseEntry {
 export type CaseEntriesDate = {
   conditions: CaseEntry[];
   actions: CaseEntry[];
-  edgeId: null;
+  edgeId?: string | null;
 };
 
 export type VariableRowData = {

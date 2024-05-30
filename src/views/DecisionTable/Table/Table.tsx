@@ -137,7 +137,7 @@ const Table = ({
             </TableCell>
             <TableCell
               sx={{ padding: 0 }}
-              colSpan={getColSpanLength('actions') + 2}
+              colSpan={getColSpanLength('actions') + 1}
             >
               <Head
                 sx={{
@@ -195,7 +195,7 @@ const Table = ({
                 </TableCell>
               );
             })}
-            <TableCell sx={{ bgcolor: lightGreen[50] }} />
+            <TableCell sx={{ bgcolor: lightGreen[50], width: 0 }} />
           </StyledTableRow>
         </TableHead>
         <TableBody>
@@ -218,6 +218,7 @@ const Table = ({
                       <StyledTableCell>
                         <SelectComponent
                           fullWidth
+                          placeholder="Select next step"
                           value={value || ''}
                           options={searchableSelectOptions || []}
                           handleChange={(stepId) =>
@@ -292,7 +293,8 @@ const Table = ({
                     {isDataTypeWithEnum && (
                       <SelectComponent
                         fullWidth
-                        value={row[name].expression ?? ''}
+                        placeholder="Select Value"
+                        value={row[name].expression || ''}
                         options={getFormatedOptions(enumTypeSelectOptions)}
                         handleChange={(value) =>
                           handleSubmitSelectedRowCellData({

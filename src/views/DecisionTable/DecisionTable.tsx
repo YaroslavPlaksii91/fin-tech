@@ -32,7 +32,7 @@ import {
   setVariableSources,
   updateCaseEntry
 } from './utils';
-import TableSkeleton from './Table/Table';
+import Table from './Table/Table';
 import StepNoteSection from './StepNoteSection/StepNoteSection';
 
 import {
@@ -282,9 +282,7 @@ const DecisionTableStep = ({
       step.data.defaultEdgeId
     ];
 
-    const targetNodesIds = [...stepIds, defaultStepId].filter(
-      (stepId) => stepId
-    ) as string[];
+    const targetNodesIds = [...stepIds, defaultStepId];
 
     const splitEdges = targetNodesIds.map((targetNodeId, index) => ({
       id: uuidv4(),
@@ -295,13 +293,17 @@ const DecisionTableStep = ({
       data: { onAdd: onAddNodeBetweenEdges }
     }));
 
+    const filteredSplitEdges = splitEdges.filter(
+      (splitEdge) => splitEdge.target
+    );
+
     const storedNodes = cloneDeep(nodes);
     const storedEdges = cloneDeep(edges);
 
     const newEdges = edges
       .filter((edg) => !existingEdges.includes(edg.id))
       .filter((edg) => !targetNodesIds.includes(edg.target))
-      .concat(splitEdges);
+      .concat(filteredSplitEdges);
 
     const updatedNodes = nodes.map((node: FlowNode) => {
       if (node.id === step.id) {
@@ -406,9 +408,9 @@ const DecisionTableStep = ({
     setDefaultActions(savedDefaultActions);
     setDefaultStepId(savedDefaultStepId);
     setNoteValue(data.note ?? '');
-  }, [step.data]);
+  }, [step]);
 
-  useEffect(() => setInitialData(), [setInitialData]);
+  useEffect(() => setInitialData(), [step.data]);
 
   if (!variables) return null;
 
@@ -424,7 +426,7 @@ const DecisionTableStep = ({
         />
         <Paper>
           <TableContainer sx={{ bgcolor: theme.palette.background.default }}>
-            <TableSkeleton
+            <Table
               defaultStepId={defaultStepId}
               stepIds={stepIds}
               columns={columnsToShow}

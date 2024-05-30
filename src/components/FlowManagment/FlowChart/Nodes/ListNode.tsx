@@ -1,5 +1,11 @@
-import { Handle, NodeProps, Position, useUpdateNodeInternals } from 'reactflow';
-import { useEffect, useMemo } from 'react';
+import {
+  Handle,
+  NodeProps,
+  Position,
+  useReactFlow,
+  useUpdateNodeInternals
+} from 'reactflow';
+import { useEffect } from 'react';
 
 import CustomHandler from '../CustomHandler/CustomHandler';
 import { StepListData } from '../types';
@@ -11,13 +17,14 @@ import ArrowLeftAndRightSquareIcon from '@icons/arrowLeftAndRightSquare.svg';
 import { NO_TAG_LABEL } from '@constants/common';
 
 const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
+  const rfInstance = useReactFlow();
   const updateNodeInternals = useUpdateNodeInternals();
+
+  const dataToShow = getListNodesData(data, rfInstance);
 
   useEffect(() => {
     updateNodeInternals(data.stepId);
   });
-
-  const dataToShow = useMemo(() => getListNodesData(data), [data]);
 
   return (
     <div id={data.stepId} className={styles['node-list-container']}>
@@ -32,9 +39,12 @@ const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
       <ul className={styles['node-list-container__list']}>
         {dataToShow.map((el, idx) => (
           <div
-            className={styles['node-list-container__row']}
+            className={`${styles['node-list-container__row']} ${styles['tooltip']}`}
             key={`${el.id}+${idx}`}
           >
+            {el.tooltipText ? (
+              <div className={styles['tooltip__content']}>{el.tooltipText}</div>
+            ) : null}
             <li>{el.value}</li>
             <CustomHandler
               type="source"

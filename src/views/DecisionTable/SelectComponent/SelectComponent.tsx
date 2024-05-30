@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 
 interface SelectComponentProps {
+  placeholder: string;
   value: string;
   options: { label: string; value: string }[];
   isMultiSelect?: boolean;
@@ -15,6 +16,7 @@ interface SelectComponentProps {
 }
 
 const SelectComponent = ({
+  placeholder,
   value,
   options,
   isMultiSelect = false,
@@ -34,10 +36,11 @@ const SelectComponent = ({
             typography: 'body2'
           }}
         >
-          Select next step
+          {placeholder}
         </InputLabel>
       ) : null}
       <Select
+        fullWidth={fullWidth}
         sx={{
           '& .MuiSelect-select': {
             padding: 0
