@@ -1,58 +1,48 @@
-import { useState, useEffect, createContext } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography, Breadcrumbs, Stack, Link } from '@mui/material';
 
 import { theme } from '@theme';
 import { LayoutContainer } from '@components/Layouts/MainLayout';
 import DataDictionaryVariables from '@components/DataDictionaryVariables/DataDictionaryVariables.tsx';
-import { IFlow } from '@domain/flow';
-import { UserDefinedVariable } from '@domain/dataDictionary';
-import { flowService } from '@services/flow-service';
 import { useLoading } from '@contexts/LoadingContext';
 import routes from '@constants/routes';
 import Logger from '@utils/logger';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
-
-type Variable = Pick<
-  UserDefinedVariable,
-  'name' | 'dataType' | 'defaultValue' | 'description'
->[];
-
-export type DataDictionaryPageContextType = {
-  temporaryVariables: Variable;
-  permanentVariables: Variable;
-  setFlow: (flow: IFlow) => void;
-};
-
-export const DataDictionaryPageContext = createContext<
-  DataDictionaryPageContextType | undefined
->(undefined);
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { getFlow, getProductionFlow } from '@store/flow/asyncThunk';
+import { setInitialFlow } from '@store/flow/flow';
+import { selectFlow } from '@store/flow/selectors';
 
 export default function DataDictionary() {
   const { id } = useParams();
-  const [flow, setFlow] = useState<IFlow | null>(null);
+  const { flow } = useAppSelector(selectFlow);
   const { startLoading, stopLoading } = useLoading();
 
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
-    const fetchInitialData = async (flowId: string) => {
+    const fetchFlow = async (flowId: string) => {
       try {
         startLoading();
-        let flow;
-        if (flowId === PRODUCTION_FLOW_ID) {
-          flow = await flowService.getProductionFlowDetails();
+        if (id === PRODUCTION_FLOW_ID) {
+          await dispatch(getProductionFlow());
         } else {
-          flow = await flowService.getFlow(flowId);
+          await dispatch(getFlow(flowId));
         }
-        setFlow(flow);
       } catch (error) {
-        Logger.error('Error fetching flow data:', error);
+        Logger.error('Error fetching initial data:', error);
       } finally {
         stopLoading();
       }
     };
 
-    id && void fetchInitialData(id);
-  }, [id]);
+    if (id) {
+      void fetchFlow(id);
+    } else {
+      dispatch(setInitialFlow());
+    }
+  }, []);
 
   const breadcrumbs = [
     <Link
@@ -75,12 +65,6 @@ export default function DataDictionary() {
 
   if (!flow) return null;
 
-  const contextValue = {
-    temporaryVariables: flow.temporaryVariables,
-    permanentVariables: flow.permanentVariables,
-    setFlow
-  };
-
   return (
     <LayoutContainer>
       <Stack
@@ -94,9 +78,7 @@ export default function DataDictionary() {
             {breadcrumbs}
           </Breadcrumbs>
         </Stack>
-        <DataDictionaryPageContext.Provider value={contextValue}>
-          <DataDictionaryVariables flow={flow} />
-        </DataDictionaryPageContext.Provider>
+        <DataDictionaryVariables flow={flow} />
       </Stack>
     </LayoutContainer>
   );

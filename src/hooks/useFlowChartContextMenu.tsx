@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useReactFlow } from 'reactflow';
 
 import { FlowNode } from '@domain/flow.ts';
+import { StepType } from '@components/FlowManagment/FlowChart/types';
 
 function useFlowChartContextMenu() {
   const { getNode } = useReactFlow();
@@ -22,6 +23,9 @@ function useFlowChartContextMenu() {
       const nodeId = targetElement.dataset.id;
 
       if (nodeId) {
+        const node = getNode(nodeId);
+        if (node?.type === StepType.START || node?.type === StepType.END)
+          return;
         setNodeElement(targetElement);
         setFlowNode(getNode(nodeId) as FlowNode);
       }
