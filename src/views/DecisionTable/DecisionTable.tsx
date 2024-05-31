@@ -308,16 +308,16 @@ const DecisionTableStep = ({
     const updatedNodes = nodes.map((node: FlowNode) => {
       if (node.id === step.id) {
         const updatedCaseEntries = caseEntries.map((row, caseEntryIndex) => ({
-          ...row,
           edgeId: splitEdges[caseEntryIndex]?.id || null,
-          actions: row.actions.map((column) => ({
-            ...column,
+          conditions: row.conditions.map((condition) => ({ ...condition })),
+          actions: row.actions.map((action) => ({
+            ...action,
             destinationType: 'TemporaryVariable'
           }))
         }));
 
-        const updatedDefaultActions = defaultActions.map((element) => ({
-          ...element,
+        const updatedDefaultActions = defaultActions.map((defaultAction) => ({
+          ...defaultAction,
           destinationType: 'TemporaryVariable'
         }));
 
@@ -329,16 +329,15 @@ const DecisionTableStep = ({
           variables
         );
 
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            defaultEdgeId: (defaultStepId && splitEdges.pop()?.id) || null,
-            note: noteValue,
-            caseEntries: updatedCaseEntries,
-            defaultActions: updatedDefaultActions,
-            variableSources: updatedVariableSources
-          }
+        node.data = {
+          ...node.data,
+          defaultEdgeId: defaultStepId
+            ? splitEdges[splitEdges.length - 1].id
+            : null,
+          note: noteValue,
+          caseEntries: updatedCaseEntries,
+          defaultActions: updatedDefaultActions,
+          variableSources: updatedVariableSources
         };
       }
 
