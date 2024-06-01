@@ -285,7 +285,7 @@ const DecisionTableStep = ({
       id: uuidv4(),
       sourceHandle: index.toString(),
       source: step.id,
-      target: targetNodeId,
+      target: targetNodeId as string,
       type: ADD_BUTTON_ON_EDGE,
       data: { onAdd: onAddNodeBetweenEdges }
     }));
