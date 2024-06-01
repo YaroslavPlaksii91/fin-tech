@@ -277,11 +277,8 @@ const DecisionTableStep = ({
   };
 
   const onApplyChangesClick = async () => {
-    const existingEdges = [
-      ...(step.data.caseEntries || []).map((entry) => entry.edgeId),
-      step.data.defaultEdgeId
-    ];
-
+    const storedNodes = cloneDeep(nodes);
+    const storedEdges = cloneDeep(edges);
     const targetNodesIds = [...stepIds, defaultStepId];
 
     const splitEdges = targetNodesIds.map((targetNodeId, index) => ({
@@ -297,24 +294,29 @@ const DecisionTableStep = ({
       (splitEdge) => splitEdge.target
     );
 
-    const storedNodes = cloneDeep(nodes);
-    const storedEdges = cloneDeep(edges);
-
     const newEdges = edges
-      .filter((edg) => !existingEdges.includes(edg.id))
-      .filter((edg) => !targetNodesIds.includes(edg.target))
+      .filter((edg) => edg.source !== step.id)
       .concat(filteredSplitEdges);
 
     const updatedNodes = nodes.map((node: FlowNode) => {
       if (node.id === step.id) {
-        const updatedCaseEntries = caseEntries.map((row, caseEntryIndex) => ({
-          edgeId: splitEdges[caseEntryIndex]?.id || null,
-          conditions: row.conditions.map((condition) => ({ ...condition })),
-          actions: row.actions.map((action) => ({
-            ...action,
-            destinationType: 'TemporaryVariable'
+        // This updates data inside the node. Since React Flow uses Zustand under the hood, it is necessary to recreate the data
+        const updatedCaseEntries = node.data.caseEntries ?? [];
+
+        updatedCaseEntries.length = 0;
+        updatedCaseEntries.push(
+          ...caseEntries.map((row, caseEntryIndex) => ({
+            edgeId: splitEdges[caseEntryIndex]?.id || null,
+            conditions: row.conditions.map((condition) => ({ ...condition })),
+            actions: row.actions.map((action) => ({
+              ...action,
+              destinationType: 'TemporaryVariable'
+            }))
           }))
-        }));
+        );
+        node.data.defaultEdgeId = defaultStepId
+          ? splitEdges[splitEdges.length - 1].id
+          : null;
 
         const updatedDefaultActions = defaultActions.map((defaultAction) => ({
           ...defaultAction,
@@ -331,11 +333,7 @@ const DecisionTableStep = ({
 
         node.data = {
           ...node.data,
-          defaultEdgeId: defaultStepId
-            ? splitEdges[splitEdges.length - 1].id
-            : null,
           note: noteValue,
-          caseEntries: updatedCaseEntries,
           defaultActions: updatedDefaultActions,
           variableSources: updatedVariableSources
         };
