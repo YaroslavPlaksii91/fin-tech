@@ -1,18 +1,26 @@
-import { Handle, NodeProps, Position, useUpdateNodeInternals } from 'reactflow';
+import {
+  Handle,
+  NodeProps,
+  Position,
+  useReactFlow,
+  useUpdateNodeInternals
+} from 'reactflow';
 import { useEffect } from 'react';
 
 import CustomHandler from '../CustomHandler/CustomHandler';
+import { StepListData } from '../types';
+import { getListNodesData } from '../utils/nodesUtils';
 
 import styles from './style.module.scss';
 
 import ArrowLeftAndRightSquareIcon from '@icons/arrowLeftAndRightSquare.svg';
-import { NodeData, ChampionChallengerData } from '@domain/flow';
 import { NO_TAG_LABEL } from '@constants/common';
 
-const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
-  data
-}) => {
+const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
+  const rfInstance = useReactFlow();
   const updateNodeInternals = useUpdateNodeInternals();
+
+  const dataToShow = getListNodesData(data, rfInstance);
 
   useEffect(() => {
     updateNodeInternals(data.stepId);
@@ -20,8 +28,8 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
 
   return (
     <div id={data.stepId} className={styles['node-list-container']}>
+      <Handle style={{ top: '25px' }} type="target" position={Position.Left} />
       <div className={styles['node-list-container__header']}>
-        <Handle type="target" position={Position.Left} />
         <ArrowLeftAndRightSquareIcon />
         <div className={styles['node-list-container__header__text']}>
           <p className={styles['node-tag']}>{data?.tag || NO_TAG_LABEL}</p>
@@ -29,12 +37,15 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
         </div>
       </div>
       <ul className={styles['node-list-container__list']}>
-        {data?.splits?.map((el, idx) => (
+        {dataToShow.map((el, idx) => (
           <div
-            className={styles['node-list-container__row']}
-            key={`${el.edgeId}+${idx}`}
+            className={`${styles['node-list-container__row']} ${styles['tooltip']}`}
+            key={`${el.id}+${idx}`}
           >
-            <li>{el.percentage}%</li>
+            {el.tooltipText ? (
+              <div className={styles['tooltip__content']}>{el.tooltipText}</div>
+            ) : null}
+            <li>{el.value}</li>
             <CustomHandler
               type="source"
               position={Position.Right}
@@ -44,9 +55,9 @@ const ListNode: React.FC<NodeProps<NodeData & ChampionChallengerData>> = ({
           </div>
         ))}
       </ul>
-      {data.splits?.length === 0 && (
+      {dataToShow.length === 0 ? (
         <Handle type="source" position={Position.Right} />
-      )}
+      ) : null}
     </div>
   );
 };

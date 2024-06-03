@@ -7,11 +7,8 @@ interface NoteSectionProps {
   handleOpenNoteModal: () => void;
 }
 
-const NoteSection: React.FC<NoteSectionProps> = ({
-  handleOpenNoteModal,
-  children
-}) => (
-  <Stack width="558px">
+const NoteSection = ({ handleOpenNoteModal, children }: NoteSectionProps) => (
+  <Stack sx={{ width: '50%', minWidth: '100px' }}>
     <Typography variant="h6" pb={1}>
       Note for this step
     </Typography>

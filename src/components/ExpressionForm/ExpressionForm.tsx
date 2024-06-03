@@ -51,6 +51,7 @@ import { dataDictionaryService } from '@services/data-dictionary';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext.tsx';
 import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog.tsx';
 import { DATA_DICTIONARY_GROUP } from '@constants/common.ts';
+import { StepContentWrapper } from '@views/styled';
 
 const operatorsList = [
   ...Object.values(groupBy(operatorsConfig, 'category')),
@@ -112,6 +113,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
       const regex = new RegExp(`\\b${items.name}\\b`);
       return regex.test(data.expressionString);
     });
+
     const { params, variableSources } =
       mapVariablesToParamsAndSources(usageVariables);
     try {
@@ -203,130 +205,128 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   );
 
   return (
-    <Box sx={{ minHeight: '100%', display: 'flex', flexGrow: 1 }}>
-      <form
-        style={{ minHeight: '100%', display: 'flex' }}
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <Stack flexDirection="column">
-          <Stack flexGrow={1}>
-            {renderTitle && renderTitle()}
-            <Box flexGrow={1} pl={3} pr={3}>
-              <Card variant="outlined" sx={{ overflow: 'unset' }}>
-                <CardHeader title="Expression Builder" />
-                <CardContent sx={{ paddingTop: 0 }}>
-                  <Box mb={1}>
-                    <Controller
-                      control={control}
-                      name="variable"
-                      render={({ field: { value }, fieldState: { error } }) => (
-                        <FormControl fullWidth variant="standard">
-                          <OutlinedInput
-                            size="small"
-                            error={!!error}
-                            placeholder="Variable*"
-                            value={value?.name}
-                            readOnly
-                            endAdornment={
-                              <InputAdornment position="end">
-                                <Button
-                                  size="small"
-                                  variant="text"
-                                  onClick={() => {
-                                    setDataDictMode(DataDictMode.Variable);
-                                  }}
-                                >
-                                  {value?.name ? 'Change' : 'Add'} Output
-                                  Variable
-                                </Button>
-                              </InputAdornment>
-                            }
-                          />
-                          {error?.message && (
-                            <FormHelperText error>
-                              {error.message}
-                            </FormHelperText>
-                          )}
-                        </FormControl>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      style={{
+        flexGrow: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between'
+      }}
+    >
+      <StepContentWrapper>
+        {renderTitle && renderTitle()}
+        <Box>
+          <Card variant="outlined" sx={{ overflow: 'unset' }}>
+            <CardHeader title="Expression Builder" />
+            <CardContent sx={{ paddingTop: 0 }}>
+              <Box mb={1}>
+                <Controller
+                  control={control}
+                  name="variable"
+                  render={({ field: { value }, fieldState: { error } }) => (
+                    <FormControl fullWidth variant="standard">
+                      <OutlinedInput
+                        size="small"
+                        error={!!error}
+                        placeholder="Variable*"
+                        value={value?.name}
+                        readOnly
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <Button
+                              size="small"
+                              variant="text"
+                              onClick={() => {
+                                setDataDictMode(DataDictMode.Variable);
+                              }}
+                            >
+                              {value?.name ? 'Change' : 'Add'} Output Variable
+                            </Button>
+                          </InputAdornment>
+                        }
+                      />
+                      {error?.message && (
+                        <FormHelperText error>{error.message}</FormHelperText>
                       )}
+                    </FormControl>
+                  )}
+                />
+              </Box>
+              <Controller
+                control={control}
+                name="expressionString"
+                render={({ field: { onChange, value }, fieldState }) => (
+                  <FormControl fullWidth variant="standard">
+                    <ExpressionEditor
+                      value={value}
+                      placeholder="Expression*"
+                      onChange={onChange}
+                      name="expressionString"
+                      ref={expressionEditorRef}
+                      error={fieldState?.error?.message}
+                      onAddVariableClick={() => {
+                        setDataDictMode(DataDictMode.Expression);
+                      }}
                     />
-                  </Box>
-                  <Controller
-                    control={control}
-                    name="expressionString"
-                    render={({ field: { onChange, value }, fieldState }) => (
-                      <FormControl fullWidth variant="standard">
-                        <ExpressionEditor
-                          value={value}
-                          placeholder="Expression*"
-                          onChange={onChange}
-                          name="expressionString"
-                          ref={expressionEditorRef}
-                          error={fieldState?.error?.message}
-                          onAddVariableClick={() => {
-                            setDataDictMode(DataDictMode.Expression);
-                          }}
-                        />
-                      </FormControl>
-                    )}
-                  />
-                  <ExpressionOperatorsList
-                    list={operatorsList}
-                    onItemClick={onExpressionOperatorsListClick}
-                  />
-                </CardContent>
-              </Card>
-            </Box>
+                  </FormControl>
+                )}
+              />
+              <ExpressionOperatorsList
+                list={operatorsList}
+                onItemClick={onExpressionOperatorsListClick}
+              />
+            </CardContent>
+          </Card>
+        </Box>
+      </StepContentWrapper>
+      <DataDictionaryDialog
+        data={
+          dataDictMode === DataDictMode.Variable
+            ? variableFieldDataDict
+            : dataDictionary?.variables
+        }
+        title={
+          dataDictMode === DataDictMode.Variable
+            ? 'Add Output Variable'
+            : 'Add Input Variable'
+        }
+        isOpen={Boolean(dataDictMode)}
+        onClose={() => setDataDictMode(null)}
+        onConfirm={(variable) => {
+          if (dataDictMode === DataDictMode.Variable) {
+            setValue('variable', variable);
+          }
+          if (dataDictMode === DataDictMode.Expression) {
+            onVariableListClick(variable);
+          }
+        }}
+      />
+      <Paper elevation={1} sx={{ marginTop: '10px' }}>
+        <Divider />
+        <Box px={3} py={2}>
+          <Stack
+            flexDirection="row"
+            justifyContent="end"
+            alignItems="flex-start"
+            gap={1}
+          >
+            <LoadingButton
+              loading={isSubmitting}
+              disabled={isSubmitting}
+              variant="contained"
+              color="primary"
+              type="submit"
+            >
+              Save Expression
+            </LoadingButton>
+            <Button variant="outlined" onClick={onCancelClick}>
+              Cancel
+            </Button>
           </Stack>
-          <DataDictionaryDialog
-            data={
-              dataDictMode === DataDictMode.Variable
-                ? variableFieldDataDict
-                : dataDictionary?.variables
-            }
-            title={
-              dataDictMode === DataDictMode.Variable
-                ? 'Add Output Variable'
-                : 'Add Input Variable'
-            }
-            isOpen={Boolean(dataDictMode)}
-            onClose={() => setDataDictMode(null)}
-            onConfirm={(variable) => {
-              if (dataDictMode === DataDictMode.Variable) {
-                setValue('variable', variable);
-              }
-              if (dataDictMode === DataDictMode.Expression) {
-                onVariableListClick(variable);
-              }
-            }}
-          />
-          <Paper elevation={1}>
-            <Divider />
-            <Box px={3} py={2}>
-              <Stack
-                flexDirection="row"
-                justifyContent="end"
-                alignItems="flex-start"
-                gap={1}
-              >
-                <LoadingButton
-                  loading={isSubmitting}
-                  disabled={isSubmitting}
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                >
-                  Save Expression
-                </LoadingButton>
-                <Button variant="outlined" onClick={onCancelClick}>
-                  Cancel
-                </Button>
-              </Stack>
-            </Box>
-            <Divider />
-          </Paper>
-        </Stack>
-      </form>
-    </Box>
+        </Box>
+        <Divider />
+      </Paper>
+    </form>
   );
 };

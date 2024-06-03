@@ -41,6 +41,6 @@ export const StyledTableContainer = styled(TableContainer)(() => ({
 export const StyledPaper = styled(Paper)(() => ({
   width: '100%',
   overflow: 'hidden',
-  marginBottom: '16px',
+  marginBottom: '8px',
   border: `1px solid ${theme.palette.divider}`
 }));

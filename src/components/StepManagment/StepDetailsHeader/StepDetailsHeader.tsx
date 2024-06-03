@@ -31,19 +31,16 @@ const StepDetailsHeader: React.FC<StepDetailsHeaderProps> = ({
   onApplyChangesClick
 }) => (
   <>
-    <Stack spacing={2} sx={{ padding: '16px 24px 8px' }}>
+    <Stack spacing={2}>
       <StepBreadcrumbs flow={flow} stepId={step.id} title={title} />
     </Stack>
     <Stack
       flexDirection="row"
       justifyContent="space-between"
       alignItems="flex-start"
-      sx={{ padding: '0 24px 16px' }}
     >
-      <Stack>
-        <Typography variant="h4" mb={1}>
-          {title}
-        </Typography>
+      <Stack spacing={1} mb={2}>
+        <Typography variant="h4">{title}</Typography>
         {details && (
           <Typography color="gray" variant="body1">
             {details}

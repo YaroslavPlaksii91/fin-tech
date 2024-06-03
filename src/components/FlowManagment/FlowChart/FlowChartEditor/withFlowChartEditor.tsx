@@ -36,6 +36,7 @@ import {
   createNewNode,
   elementsOverlap,
   getUpdatedChampionChallengerNodes,
+  getUpdatedDecisionTableNodes,
   updateEdges
 } from '../utils/workflowElementsUtils';
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
@@ -165,13 +166,27 @@ const withFlowChartEditor =
     const onConnect: OnConnect = useCallback(
       (connection) => {
         const newEdgeId = uuidv4();
-        if (connection.source === connection.target) {
-          return;
-        }
+        if (connection.source === connection.target) return;
 
-        // Update edgeId of splits Champion Challenger data
         if (rfInstance && connection.source) {
           const updatedNode = rfInstance.getNode(connection.source) as FlowNode;
+
+          // Update edgeId of entries Desion Table data
+          if (
+            updatedNode?.type === StepType.DECISION_TABLE &&
+            connection.sourceHandle !== null
+          ) {
+            const updatedNodes = getUpdatedDecisionTableNodes({
+              nodes,
+              updatedNode,
+              newEdgeId,
+              sourceHandle: connection.sourceHandle
+            });
+
+            setNodes(updatedNodes);
+          }
+
+          // Update edgeId of splits Champion Challenger data
           if (
             updatedNode?.type === StepType.CHAMPION_CHALLENGER &&
             connection.sourceHandle !== null
@@ -206,6 +221,19 @@ const withFlowChartEditor =
       (updatedNode: FlowNode, edgeId: string) => {
         const newEdgeId = uuidv4();
         let sourceHandle: string | null = null;
+
+        // Update edgeId of entries Desion Table data
+        if (updatedNode.type === StepType.DECISION_TABLE && rfInstance) {
+          sourceHandle = DEFAULT_SOURCE_HANDLE;
+          const updatedNodes = getUpdatedDecisionTableNodes({
+            nodes,
+            updatedNode,
+            newEdgeId: edgeId,
+            sourceHandle
+          });
+          setNodes(updatedNodes);
+        }
+
         // Update edgeId of splits Champion Challenger data
         if (updatedNode.type === StepType.CHAMPION_CHALLENGER && rfInstance) {
           sourceHandle = DEFAULT_SOURCE_HANDLE;
@@ -278,10 +306,26 @@ const withFlowChartEditor =
         const updatedNode: FlowNode | undefined = rfInstance?.getNode(
           deletedEdge.source
         );
+
+        // Update edgeId of entries Desion Table data
+        if (
+          updatedNode?.type === StepType.DECISION_TABLE &&
+          rfInstance &&
+          deletedEdge.sourceHandle
+        ) {
+          const updatedNodes = getUpdatedDecisionTableNodes({
+            nodes,
+            updatedNode,
+            newEdgeId: null,
+            sourceHandle: deletedEdge.sourceHandle
+          });
+
+          setNodes(updatedNodes);
+        }
+
         // Update edgeId of splits Champion Challenger data
         if (
-          updatedNode &&
-          updatedNode.type === StepType.CHAMPION_CHALLENGER &&
+          updatedNode?.type === StepType.CHAMPION_CHALLENGER &&
           rfInstance &&
           deletedEdge.sourceHandle
         ) {

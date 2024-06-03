@@ -37,13 +37,20 @@ export type ChampionChallengerData = {
   splits?: { edgeId: string | null; percentage: number }[];
 };
 
+export type CaseEntriesData = {
+  conditions: CaseEntry[];
+  actions: CaseEntry[];
+  edgeId?: string | null;
+};
+
 export type DecisionTableData = {
-  caseEntries?: {
-    conditions: CaseEntry[];
-    actions: CaseEntry[];
-  }[];
+  caseEntries?: CaseEntriesData[];
   defaultActions?: CaseEntry[];
-  variableSources?: { name: string; sourceType: VARIABLE_SOURCE_TYPE }[];
+  variableSources?: {
+    name: string;
+    sourceType: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
+  }[];
+  defaultEdgeId?: string | null;
 };
 
 export type ExpressionVariableSources = {

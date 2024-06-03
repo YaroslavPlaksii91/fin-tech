@@ -1,71 +1,62 @@
 import {
   FormControl,
+  InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent
 } from '@mui/material';
 
-import { CATEGORIES, CATEGORIES_WITHOUT_ELSE_ACTIONS } from '../constants';
-
-type SelectComponentProps = {
-  rowIndex: number;
-  category: CATEGORIES;
-  variableName: string;
+interface SelectComponentProps {
+  placeholder: string;
   value: string;
-  options: string[] | string;
+  options: { label: string; value: string }[];
   isMultiSelect?: boolean;
   fullWidth: boolean;
-  handleSubmitVariableValueForEnum: ({
-    rowIndex,
-    variableName,
-    newEnumValue,
-    category
-  }: {
-    rowIndex: number;
-    variableName: string;
-    newEnumValue: string;
-    category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
-  }) => void;
-};
+  handleChange: (selectedValue: string) => void;
+}
 
 const SelectComponent = ({
-  rowIndex,
-  category,
-  variableName,
+  placeholder,
   value,
   options,
   isMultiSelect = false,
   fullWidth = false,
-  handleSubmitVariableValueForEnum
+  handleChange
 }: SelectComponentProps) => {
   const handleOnSelectChange = (event: SelectChangeEvent<string>) => {
-    handleSubmitVariableValueForEnum({
-      rowIndex,
-      variableName,
-      newEnumValue: event.target.value,
-      category: category as CATEGORIES_WITHOUT_ELSE_ACTIONS
-    });
+    handleChange(event.target.value);
   };
 
-  const getFormatedOptions = () => {
-    // in case API returns array in string "[ContactTime.Morning,ContactTime.Afternoon]"
-    if (typeof options === 'string') {
-      return options.replace(/\[|\]/g, '').split(',');
-    }
-
-    return options;
-  };
   return (
-    <FormControl fullWidth={fullWidth} size="small">
+    <FormControl fullWidth={fullWidth}>
+      {!value ? (
+        <InputLabel
+          sx={{
+            transform: 'none',
+            typography: 'body2'
+          }}
+        >
+          {placeholder}
+        </InputLabel>
+      ) : null}
       <Select
+        fullWidth={fullWidth}
+        sx={{
+          '& .MuiSelect-select': {
+            padding: 0
+          },
+          '& .MuiOutlinedInput-notchedOutline': {
+            border: 'none'
+          }
+        }}
+        size="small"
         value={value}
         onChange={handleOnSelectChange}
         multiple={isMultiSelect}
-        sx={{ minWidth: 200 }}
       >
-        {getFormatedOptions().map((option: string) => (
-          <MenuItem value={option} key={option}>
-            {option}
+        {options.map((option) => (
+          <MenuItem value={option.value} key={option.value}>
+            {option.label}
           </MenuItem>
         ))}
       </Select>

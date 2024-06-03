@@ -7,6 +7,13 @@ import { ADD_BUTTON_ON_EDGE, StepType } from '../types';
 import { FlowNode } from '@domain/flow';
 import { createInitialFlow } from '@components/FlowManagment/AddFlow/initialFlowUtils';
 
+interface GetUpdatedNodes {
+  nodes: FlowNode[];
+  updatedNode: FlowNode;
+  newEdgeId: string | null;
+  sourceHandle: string;
+}
+
 const defaultPosition = { x: 0, y: 0 };
 
 export const createNewNode = (
@@ -43,9 +50,10 @@ export const createNewNode = (
     case StepType.DECISION_TABLE:
       newNode.data = {
         ...newNode.data,
-        caseEntries: [{ conditions: [], actions: [] }],
+        caseEntries: [],
         defaultActions: [],
-        variableSources: []
+        variableSources: [],
+        defaultEdgeId: null
       };
       break;
     case StepType.CALCULATION:
@@ -103,6 +111,7 @@ export const updateEdges = ({
   onAddNodeBetweenEdges
 }: updateEdgesParams) => {
   const targetEdgeIndex = edges.findIndex((ed) => ed.id === updatableEdgeId);
+
   const targetEdge = edges[targetEdgeIndex];
   const { target: targetNodeId } = targetEdge;
 
@@ -160,24 +169,43 @@ export const getUpdatedChampionChallengerNodes = ({
   updatedNode,
   newEdgeId,
   sourceHandle
-}: {
-  nodes: FlowNode[];
-  updatedNode: FlowNode;
-  newEdgeId: string | null;
-  sourceHandle: string;
-}) => {
+}: GetUpdatedNodes) => {
   const updatedSplits =
     updatedNode.data.splits?.map((split, index) => {
-      if (index === +sourceHandle) {
-        return { ...split, edgeId: newEdgeId };
-      }
-      return split;
+      if (index === +sourceHandle) return { ...split, edgeId: newEdgeId };
+
+      return { ...split };
     }) ?? [];
 
-  const updatedNodes = nodes.map((node: FlowNode) => {
-    if (node.id === updatedNode?.id) {
-      node.data.splits = [...updatedSplits];
-    }
+  const updatedNodes = nodes.map((node) => {
+    if (node.id === updatedNode?.id) node.data.splits = [...updatedSplits];
+    return node;
+  });
+
+  return updatedNodes;
+};
+
+export const getUpdatedDecisionTableNodes = ({
+  nodes,
+  updatedNode,
+  newEdgeId,
+  sourceHandle
+}: GetUpdatedNodes) => {
+  const updatedCaseEntries =
+    updatedNode.data.caseEntries?.map((entry, index) => {
+      if (index === +sourceHandle) return { ...entry, edgeId: newEdgeId };
+
+      return { ...entry };
+    }) ?? [];
+
+  const isDefaultEdgeId = updatedCaseEntries.length === +sourceHandle;
+
+  const updatedNodes = nodes.map((node) => {
+    const isNodeToUpdate = node.id === updatedNode?.id;
+
+    if (isNodeToUpdate) node.data.caseEntries = [...updatedCaseEntries];
+    if (isNodeToUpdate && isDefaultEdgeId) node.data.defaultEdgeId = newEdgeId;
+
     return node;
   });
 

@@ -1,13 +1,8 @@
 import { createContext } from 'react';
 
-import {
-  DataDictionaryVariable,
-  UserDefinedVariable
-} from '@domain/dataDictionary';
+import { Variable } from '@domain/dataDictionary';
 
-export type DataDictionaryVariables =
-  | Record<string, DataDictionaryVariable[] | UserDefinedVariable[]>
-  | undefined;
+export type DataDictionaryVariables = Record<string, Variable[]> | undefined;
 
 export type DataDictionaryContextType = {
   variables: DataDictionaryVariables;

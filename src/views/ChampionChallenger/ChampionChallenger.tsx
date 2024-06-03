@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
-  Box,
   Button,
   Stack,
   Table,
@@ -37,8 +36,6 @@ import {
   StyledTableContainer,
   StyledTableRow
 } from '@components/shared/Table/styled';
-import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
-import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { RULES_LIMIT, SNACK_TYPE } from '@constants/common';
 import {
   SnackbarErrorMessage,
@@ -48,7 +45,8 @@ import Dialog from '@components/shared/Modals/Dialog';
 import { flowService } from '@services/flow-service';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
 import { theme } from '@theme';
-import { StepContainer } from '@views/styled';
+import StepNoteSection from '@views/DecisionTable/StepNoteSection/StepNoteSection';
+import { StepContentWrapper } from '@views/styled';
 
 const DEFAULT_PERCENTAGE_SPLIT = 10;
 
@@ -104,9 +102,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     control
   });
 
-  const handleOpenNoteModal = () => {
-    setOpenNoteModal(true);
-  };
+  const handleOpenNoteModal = () => setOpenNoteModal(true);
 
   const handleSubmitNote = (note: string) => {
     setValue('note', note);
@@ -150,13 +146,16 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       if (node.id === step.id) {
         // This updates data inside the node. Since React Flow uses Zustand under the hood, it is necessary to recreate the data.
         const splits = node.data.splits ?? [];
+
         splits.length = 0;
+
         splits.push(
           ...splitEdges.map((splitEdge, index) => ({
             edgeId: splitEdge.id,
             percentage: data.splits[index].percentage
           }))
         );
+
         node.data = {
           ...node.data,
           note: data.note,
@@ -227,145 +226,142 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   }, [step.data]);
 
   return (
-    <StepContainer>
-      <Stack sx={{ minHeight: '100%' }} direction="column" spacing={0}>
-        <Box sx={{ flexGrow: 1 }}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <StepDetailsHeader
-              flow={mainFlow ?? flow}
-              step={step}
-              title={`Edit Step: ${step.data.name}`}
-              details="A Champion Challenger is a step that allows you to split traffic into several groups and run experiment."
-              isActionContainerVisible={false}
-            />
-            <Stack pl={3} pr={3}>
-              <StyledPaper>
-                <StyledTableContainer>
-                  <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                      <StyledTableRow>
-                        {columns.map((column) => (
-                          <StyledTableCell
-                            key={column.id}
-                            align={column.align}
-                            style={{ width: column.width }}
-                          >
-                            {column.label}
-                          </StyledTableCell>
-                        ))}
-                      </StyledTableRow>
-                    </TableHead>
-                    <TableBody>
-                      {fields.map((field, index) => (
-                        <StyledTableRow
-                          key={field.id}
-                          parity={(index + 1) % 2 === 0 ? 'even' : 'odd'}
-                        >
-                          <StyledTableCell sx={{ p: '0 12px' }}>
-                            <NumberRangeInput
-                              control={control}
-                              name={`splits.${index}.percentage`}
-                              onChangeCb={() => clearErrors()}
-                            />
-                          </StyledTableCell>
-                          <StyledTableCell sx={{ p: 0 }}>
-                            <SearchableSelect
-                              index={index}
-                              control={control}
-                              onChangeCb={() => clearErrors()}
-                              name={`splits.${index}.value`}
-                              options={options}
-                              selectedOptions={selectedOptions}
-                              setSelectedOptions={setSelectedOptions}
-                            />
-                          </StyledTableCell>
-                          <StyledTableCell sx={{ p: 0 }} width={40}>
-                            <Button
-                              fullWidth
-                              sx={{ p: '10px' }}
-                              onClick={() => {
-                                clearErrors();
-                                const removedOption = fields[index].value;
-                                setSelectedOptions(
-                                  selectedOptions.filter(
-                                    (option) => option !== removedOption
-                                  )
-                                );
-                                remove(index);
-                              }}
-                            >
-                              <TrashIcon color={theme.palette.error.main} />
-                            </Button>
-                          </StyledTableCell>
-                        </StyledTableRow>
-                      ))}
-                      {!fields.length ? (
-                        <StyledTableRow parity="odd">
-                          <StyledTableCell colSpan={3} align="center">
-                            <Typography variant="body2">
-                              No Split Yet.
-                            </Typography>
-                          </StyledTableCell>
-                        </StyledTableRow>
-                      ) : null}
-                    </TableBody>
-                  </Table>
-                </StyledTableContainer>
-              </StyledPaper>
-              <ErrorMessage errors={errors} name="splits" />
-              <Button
-                sx={{ width: '135px' }}
-                disabled={fields.length === RULES_LIMIT}
-                variant="outlined"
-                size="small"
-                onClick={() => {
-                  append({ percentage: DEFAULT_PERCENTAGE_SPLIT, value: '' });
-                }}
-                startIcon={<AddIcon />}
-              >
-                Add new split
-              </Button>
-              <NoteSection handleOpenNoteModal={handleOpenNoteModal}>
-                <InputText
-                  fullWidth
-                  name="note"
-                  control={control}
-                  label="Note"
-                  disabled
-                  placeholder="Enter note here"
-                />
-              </NoteSection>
-            </Stack>
-          </form>
-          <NoteForm
-            modalOpen={openNoteModal}
-            handleClose={handleCloseNoteModal}
-            handleSubmitNote={handleSubmitNote}
-            note={getValues('note') ?? ''}
+    <>
+      <StepContentWrapper>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <StepDetailsHeader
+            flow={mainFlow ?? flow}
+            step={step}
+            title={`Edit Step: ${step.data.name}`}
+            details="A Champion Challenger is a step that allows you to split traffic into several groups and run experiment."
+            isActionContainerVisible={false}
           />
-        </Box>
-        <StepDetailsControlBar
-          disabled={!isEmpty(errors) || isSubmitting}
-          onDiscard={() => setOpenDiscardModal(true)}
-          isSubmitting={isSubmitting}
-          onApplyChangesClick={() => {
-            void handleSubmit(onSubmit)();
-          }}
+          <Stack>
+            <StyledPaper>
+              <StyledTableContainer>
+                <Table stickyHeader aria-label="sticky table">
+                  <TableHead>
+                    <StyledTableRow>
+                      {columns.map((column) => (
+                        <StyledTableCell
+                          key={column.id}
+                          align={column.align}
+                          style={{ width: column.width }}
+                        >
+                          {column.label}
+                        </StyledTableCell>
+                      ))}
+                    </StyledTableRow>
+                  </TableHead>
+                  <TableBody>
+                    {fields.map((field, index) => (
+                      <StyledTableRow
+                        key={field.id}
+                        parity={(index + 1) % 2 === 0 ? 'even' : 'odd'}
+                      >
+                        <StyledTableCell sx={{ p: '0 12px' }}>
+                          <NumberRangeInput
+                            control={control}
+                            name={`splits.${index}.percentage`}
+                            onChangeCb={() => clearErrors()}
+                          />
+                        </StyledTableCell>
+                        <StyledTableCell sx={{ p: 0 }}>
+                          <SearchableSelect
+                            index={index}
+                            control={control}
+                            onChangeCb={() => clearErrors()}
+                            name={`splits.${index}.value`}
+                            options={options}
+                            selectedOptions={selectedOptions}
+                            setSelectedOptions={setSelectedOptions}
+                          />
+                        </StyledTableCell>
+                        <StyledTableCell sx={{ p: 0 }} width={40}>
+                          <Button
+                            fullWidth
+                            sx={{ p: '10px' }}
+                            onClick={() => {
+                              clearErrors();
+                              const removedOption = fields[index].value;
+                              setSelectedOptions(
+                                selectedOptions.filter(
+                                  (option) => option !== removedOption
+                                )
+                              );
+                              remove(index);
+                            }}
+                          >
+                            <TrashIcon color={theme.palette.error.main} />
+                          </Button>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ))}
+                    {!fields.length ? (
+                      <StyledTableRow parity="odd">
+                        <StyledTableCell colSpan={3} align="center">
+                          <Typography variant="body2">No Split Yet.</Typography>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ) : null}
+                  </TableBody>
+                </Table>
+              </StyledTableContainer>
+            </StyledPaper>
+            <ErrorMessage errors={errors} name="splits" />
+            <Button
+              sx={{ width: '135px' }}
+              disabled={fields.length === RULES_LIMIT}
+              variant="outlined"
+              size="small"
+              onClick={() => {
+                append({ percentage: DEFAULT_PERCENTAGE_SPLIT, value: '' });
+              }}
+              startIcon={<AddIcon />}
+            >
+              Add new split
+            </Button>
+          </Stack>
+        </form>
+        <StepNoteSection
+          modalOpen={openNoteModal}
+          handleCloseModal={handleCloseNoteModal}
+          handleOpenModal={handleOpenNoteModal}
+          noteValue={getValues('note') ?? ''}
+          handleSubmitNote={handleSubmitNote}
+          renderInput={() => (
+            <InputText
+              fullWidth
+              name="note"
+              control={control}
+              label="Note"
+              disabled
+              placeholder="Enter note here"
+            />
+          )}
         />
-        <Dialog
-          title="Discard changes"
-          open={openDiscardModal}
-          onConfirm={handleDiscardChanges}
-          onClose={() => setOpenDiscardModal(false)}
-          confirmText="Discard changes"
-        >
-          <Typography sx={{ maxWidth: '416px' }} variant="body2">
-            Discarding changes will delete all edits in this step, this action
-            cannot be canceled. Are you sure you want to cancel the changes?
-          </Typography>
-        </Dialog>
-      </Stack>
-    </StepContainer>
+      </StepContentWrapper>
+      <StepDetailsControlBar
+        disabled={!isEmpty(errors) || isSubmitting}
+        onDiscard={() => setOpenDiscardModal(true)}
+        isSubmitting={isSubmitting}
+        onApplyChangesClick={() => {
+          void handleSubmit(onSubmit)();
+        }}
+      />
+      <Dialog
+        title="Discard changes"
+        open={openDiscardModal}
+        onConfirm={handleDiscardChanges}
+        onClose={() => setOpenDiscardModal(false)}
+        confirmText="Discard changes"
+      >
+        <Typography sx={{ maxWidth: '416px' }} variant="body2">
+          Discarding changes will delete all edits in this step, this action
+          cannot be canceled. Are you sure you want to cancel the changes?
+        </Typography>
+      </Dialog>
+    </>
   );
 };
 
