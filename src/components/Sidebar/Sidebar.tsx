@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Accordion,
   Box,
@@ -44,6 +44,9 @@ import { AddFlow } from '@components/FlowManagment/AddFlow/AddFlowForm';
 import StepList from '@components/StepManagment/StepList/StepList';
 import { useActiveStep } from '@contexts/StepContext';
 import { theme } from '@theme';
+import { permissionsMap } from '@constants/permissions';
+import { checkPermission } from '@utils/helpers';
+import { selectUserInfo } from '@store/auth/auth';
 
 const animationStyles = (expanded: boolean) => ({
   maxWidth: expanded ? '100%' : 0,
@@ -55,16 +58,25 @@ const animationStyles = (expanded: boolean) => ({
 const DEFAULT_SIDEBAR_WIDTH = 256;
 const MIN_SIDEBAR_WIDTH = 70;
 
+export interface MenuItem {
+  icon: React.ReactElement;
+  text: string;
+  to: string;
+  permission: string;
+}
+
 const pages = [
   {
     icon: <TimePastIcon color={theme.palette.primary.dark} />,
     text: 'Changes History',
-    to: routes.underwriting.changeHistory
+    to: routes.underwriting.changeHistory,
+    permission: permissionsMap.canViewChangeHistory
   },
   {
     icon: <DocumentPaperIcon color={theme.palette.primary.dark} />,
     text: 'Reports',
-    to: routes.underwriting.leadRequest
+    to: routes.underwriting.leadRequest,
+    permission: permissionsMap.canViewLeadRequestReport
   }
 ];
 
@@ -82,6 +94,7 @@ const Sidebar = () => {
   const [expanded, setExpanded] = useState(true);
   const [expandedFlow, setExpandedFlow] = useState<string | false>(false);
   const [expandedFlowList, setExpandedFlowList] = useState<boolean>(true);
+  const user = useAppSelector(selectUserInfo);
 
   const handleChangeFlow =
     (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -279,17 +292,24 @@ const Sidebar = () => {
             </ListItemIcon>
           </ListItemButton>
         )}
-        {pages.map((item, index) => (
-          <ListItemButton
-            key={index}
-            component={NavLink}
-            to={item.to}
-            sx={{ height: '32px', marginBottom: '8px' }}
-          >
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.text} sx={animationStyles(expanded)} />
-          </ListItemButton>
-        ))}
+        {pages.map((item, index) => {
+          if (checkPermission(user?.policies, item)) {
+            return (
+              <ListItemButton
+                key={index}
+                component={NavLink}
+                to={item.to}
+                sx={{ height: '32px', marginBottom: '8px' }}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText
+                  primary={item.text}
+                  sx={animationStyles(expanded)}
+                />
+              </ListItemButton>
+            );
+          }
+        })}
       </List>
     </StyledPaper>
   );
