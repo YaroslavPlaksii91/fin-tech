@@ -17,6 +17,9 @@ import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { saveFlow } from '@store/flow/asyncThunk';
 import { pushProductionFlow } from '@store/flowList/asyncThunk';
 import { selectFlowData } from '@store/flow/selectors';
+import { selectUserInfo } from '@store/auth/auth';
+import { permissionsMap } from '@constants/permissions';
+import { hasPermission } from '@utils/helpers';
 
 const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
   rfInstance,
@@ -27,6 +30,7 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const flowData = useAppSelector(selectFlowData);
+  const user = useAppSelector(selectUserInfo);
 
   const onSave = useCallback(async () => {
     if (rfInstance && flow) {
@@ -108,14 +112,19 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
         >
           Save changes
         </Button>
-        <Button
-          size="small"
-          variant="contained"
-          disabled={isDirty}
-          onClick={onPushFlow}
-        >
-          Push changes
-        </Button>
+        {hasPermission(
+          user?.policies,
+          permissionsMap.canPushFlowToProduction
+        ) && (
+          <Button
+            size="small"
+            variant="contained"
+            disabled={isDirty}
+            onClick={onPushFlow}
+          >
+            Push changes
+          </Button>
+        )}
       </Stack>
     </StyledPanel>
   );
