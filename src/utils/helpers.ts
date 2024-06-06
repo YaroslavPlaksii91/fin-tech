@@ -77,21 +77,29 @@ const checkIsProductionFlow = () => {
   return id === PRODUCTION_FLOW_ID;
 };
 
-const checkPermission = (
+type PermissionCheckTarget = MenuItem | string;
+
+const hasPermission = (
   permissions: string[] | undefined,
-  menuItem: MenuItem
-) => {
-  if (!menuItem) {
+  target: PermissionCheckTarget
+): boolean | undefined => {
+  if (typeof target === 'string') {
+    return permissions ? permissions.includes(target) : true;
+  }
+
+  if (!target) {
     return true;
   }
-  if (!Array.isArray(menuItem.permission)) {
-    return permissions?.includes(menuItem.permission);
+
+  if (!Array.isArray(target.permission)) {
+    return permissions ? permissions.includes(target.permission) : true;
   }
+  // update code if MenuItem will have two or more permissions
 };
 
 export {
   parseErrorMessages,
   parseValidationError,
   checkIsProductionFlow,
-  checkPermission
+  hasPermission
 };

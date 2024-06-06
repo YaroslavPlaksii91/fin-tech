@@ -45,7 +45,7 @@ import StepList from '@components/StepManagment/StepList/StepList';
 import { useActiveStep } from '@contexts/StepContext';
 import { theme } from '@theme';
 import { permissionsMap } from '@constants/permissions';
-import { checkPermission } from '@utils/helpers';
+import { hasPermission } from '@utils/helpers';
 import { selectUserInfo } from '@store/auth/auth';
 
 const animationStyles = (expanded: boolean) => ({
@@ -293,7 +293,7 @@ const Sidebar = () => {
           </ListItemButton>
         )}
         {pages.map((item, index) =>
-          checkPermission(user?.policies, item) ? (
+          hasPermission(user?.policies, item) ? (
             <ListItemButton
               key={index}
               component={NavLink}
