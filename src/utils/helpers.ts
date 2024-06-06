@@ -85,15 +85,16 @@ const hasPermission = (
 ): boolean | undefined => {
   if (typeof target === 'string') {
     return permissions ? permissions.includes(target) : true;
-  } else {
-    if (!target) {
-      return true;
-    }
-    if (!Array.isArray(target.permission)) {
-      return permissions ? permissions.includes(target.permission) : true;
-    }
-    // update code if MenuItem will have two or more permissions
   }
+
+  if (!target) {
+    return true;
+  }
+
+  if (!Array.isArray(target.permission)) {
+    return permissions ? permissions.includes(target.permission) : true;
+  }
+  // update code if MenuItem will have two or more permissions
 };
 
 export {
