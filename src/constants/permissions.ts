@@ -5,7 +5,6 @@ export const permissionsMap = {
   canCreateFlow: 'CanCreateFlow',
   canViewChangeHistory: 'CanViewChangeHistory',
   canViewReportingWithMonetaryValues: 'CanViewReportingWithMonetaryValues',
-  test: 'Test',
   canPushFlowToProduction: 'CanPushFlowToProduction',
   canViewWaterfallReport: 'CanViewWaterfallReport',
   canUpdateFlow: 'CanUpdateFlow',

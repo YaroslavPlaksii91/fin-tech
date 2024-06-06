@@ -292,24 +292,22 @@ const Sidebar = () => {
             </ListItemIcon>
           </ListItemButton>
         )}
-        {pages.map((item, index) => {
-          if (checkPermission(user?.policies, item)) {
-            return (
-              <ListItemButton
-                key={index}
-                component={NavLink}
-                to={item.to}
-                sx={{ height: '32px', marginBottom: '8px' }}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText
-                  primary={item.text}
-                  sx={animationStyles(expanded)}
-                />
-              </ListItemButton>
-            );
-          }
-        })}
+        {pages.map((item, index) =>
+          checkPermission(user?.policies, item) ? (
+            <ListItemButton
+              key={index}
+              component={NavLink}
+              to={item.to}
+              sx={{ height: '32px', marginBottom: '8px' }}
+            >
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText
+                primary={item.text}
+                sx={animationStyles(expanded)}
+              />
+            </ListItemButton>
+          ) : null
+        )}
       </List>
     </StyledPaper>
   );
