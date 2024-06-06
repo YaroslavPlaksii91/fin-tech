@@ -7,6 +7,7 @@ import {
   NOT_FOUND,
   PRODUCTION_FLOW_ID
 } from '@constants/common';
+import { MenuItem } from '@components/Sidebar/Sidebar';
 
 type Errors = {
   [key: string]: string[];
@@ -76,4 +77,21 @@ const checkIsProductionFlow = () => {
   return id === PRODUCTION_FLOW_ID;
 };
 
-export { parseErrorMessages, parseValidationError, checkIsProductionFlow };
+const checkPermission = (
+  permissions: string[] | undefined,
+  menuItem: MenuItem
+) => {
+  if (!menuItem) {
+    return true;
+  }
+  if (!Array.isArray(menuItem.permission)) {
+    return permissions?.includes(menuItem.permission);
+  }
+};
+
+export {
+  parseErrorMessages,
+  parseValidationError,
+  checkIsProductionFlow,
+  checkPermission
+};
