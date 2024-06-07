@@ -53,9 +53,8 @@ const SubFlow: React.FC<SubFlowProps> = ({
     return undefined;
   }, [activeStepId]);
 
-  const updateNodesInMainFlow = (newNode: FlowNode, subFlow: IFlow) => {
-    const updatedNodes = addNodeInSubFlow(nodes, subFlow, newNode);
-    setNodes(updatedNodes);
+  const updateNodesInMainFlow = (subFlow: IFlow, newNode: FlowNode) => {
+    setNodes((nodes) => addNodeInSubFlow(nodes, subFlow, newNode));
   };
 
   return (
