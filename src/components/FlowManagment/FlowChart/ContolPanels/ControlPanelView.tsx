@@ -8,11 +8,14 @@ import routes from '@constants/routes';
 import { checkIsProductionFlow } from '@utils/helpers';
 import { useAppSelector } from '@store/hooks';
 import { selectFlowData } from '@store/flow/selectors';
+import { permissionsMap } from '@constants/permissions';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
 
 const ControlPanelView = () => {
   const { id } = useParams();
   const isProductionFlow = checkIsProductionFlow();
   const flowData = useAppSelector(selectFlowData);
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   return (
     <StyledPanel position="top-right">
@@ -22,7 +25,7 @@ const ControlPanelView = () => {
         </Typography>
         <Typography variant="h4">{flowData.name}</Typography>
       </Box>
-      {!isProductionFlow && (
+      {!isProductionFlow && hasUserPermission && (
         <Button
           sx={{ marginLeft: 'auto' }}
           variant="contained"

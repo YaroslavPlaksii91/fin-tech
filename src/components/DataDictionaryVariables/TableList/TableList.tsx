@@ -34,6 +34,8 @@ import { FlowNode } from '@domain/flow';
 import { theme } from '@theme';
 import { useAppSelector } from '@store/hooks';
 import { selectFlow } from '@store/flow/selectors';
+import { permissionsMap } from '@constants/permissions';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
 
 interface TableListProps {
   flowNodes: FlowNode[];
@@ -58,6 +60,7 @@ const TableList = ({
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const {
     flow: { temporaryVariables, permanentVariables }
@@ -160,17 +163,19 @@ const TableList = ({
             ))}
             {tabName === VARIABLES_TABS.userDefined && (
               <StyledTableCell align="right">
-                <IconButton
-                  onClick={() => {
-                    setSelectedVariable(undefined);
-                    setIsVariableModalOpen(true);
-                  }}
-                  edge="end"
-                  aria-label="add"
-                  sx={{ p: 0, mr: 0 }}
-                >
-                  <AddBoxOutlined fontSize="small" />
-                </IconButton>
+                {hasUserPermission && (
+                  <IconButton
+                    onClick={() => {
+                      setSelectedVariable(undefined);
+                      setIsVariableModalOpen(true);
+                    }}
+                    edge="end"
+                    aria-label="add"
+                    sx={{ p: 0, mr: 0 }}
+                  >
+                    <AddBoxOutlined fontSize="small" />
+                  </IconButton>
+                )}
               </StyledTableCell>
             )}
           </StyledTableRow>

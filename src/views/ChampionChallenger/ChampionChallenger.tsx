@@ -47,6 +47,8 @@ import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlB
 import { theme } from '@theme';
 import StepNoteSection from '@views/DecisionTable/StepNoteSection/StepNoteSection';
 import { StepContentWrapper } from '@views/styled';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
+import { permissionsMap } from '@constants/permissions';
 
 const DEFAULT_PERCENTAGE_SPLIT = 10;
 
@@ -79,6 +81,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
 
   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const nodes: FlowNode[] = getNodes();
   const edges = getEdges();
@@ -278,22 +281,24 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                           />
                         </StyledTableCell>
                         <StyledTableCell sx={{ p: 0 }} width={40}>
-                          <Button
-                            fullWidth
-                            sx={{ p: '10px' }}
-                            onClick={() => {
-                              clearErrors();
-                              const removedOption = fields[index].value;
-                              setSelectedOptions(
-                                selectedOptions.filter(
-                                  (option) => option !== removedOption
-                                )
-                              );
-                              remove(index);
-                            }}
-                          >
-                            <TrashIcon color={theme.palette.error.main} />
-                          </Button>
+                          {hasUserPermission && (
+                            <Button
+                              fullWidth
+                              sx={{ p: '10px' }}
+                              onClick={() => {
+                                clearErrors();
+                                const removedOption = fields[index].value;
+                                setSelectedOptions(
+                                  selectedOptions.filter(
+                                    (option) => option !== removedOption
+                                  )
+                                );
+                                remove(index);
+                              }}
+                            >
+                              <TrashIcon color={theme.palette.error.main} />
+                            </Button>
+                          )}
                         </StyledTableCell>
                       </StyledTableRow>
                     ))}
@@ -309,18 +314,20 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
               </StyledTableContainer>
             </StyledPaper>
             <ErrorMessage errors={errors} name="splits" />
-            <Button
-              sx={{ width: '135px' }}
-              disabled={fields.length === RULES_LIMIT}
-              variant="outlined"
-              size="small"
-              onClick={() => {
-                append({ percentage: DEFAULT_PERCENTAGE_SPLIT, value: '' });
-              }}
-              startIcon={<AddIcon />}
-            >
-              Add new split
-            </Button>
+            {hasUserPermission && (
+              <Button
+                sx={{ width: '135px' }}
+                disabled={fields.length === RULES_LIMIT}
+                variant="outlined"
+                size="small"
+                onClick={() => {
+                  append({ percentage: DEFAULT_PERCENTAGE_SPLIT, value: '' });
+                }}
+                startIcon={<AddIcon />}
+              >
+                Add new split
+              </Button>
+            )}
           </Stack>
         </form>
         <StepNoteSection
@@ -348,6 +355,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         onApplyChangesClick={() => {
           void handleSubmit(onSubmit)();
         }}
+        isShow={hasUserPermission}
       />
       <Dialog
         title="Discard changes"
