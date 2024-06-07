@@ -42,8 +42,11 @@ export const ActiveStepProvider: React.FC<ActiveStepProviderProps> = ({
 
   useEffect(() => {
     const state = (location.state || {}) as LocationState;
-    if (state.subFlowId && state.stepId) {
-      setActiveStep({ subFlowId: state.subFlowId, stepId: state.stepId });
+    if (state.stepId) {
+      setActiveStep({
+        subFlowId: state.subFlowId ?? null,
+        stepId: state.stepId
+      });
     }
   }, [location]);
 
