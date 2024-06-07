@@ -21,3 +21,23 @@ export enum COLUMN_IDS {
   cachedConnector = 'processingMetadata/cachedConnector',
   details = 'details'
 }
+
+export type RowData = Record<
+  Exclude<COLUMN_IDS, COLUMN_IDS.details>,
+  string | number
+>;
+
+export type FetchList = {
+  page: number;
+  sort: string;
+  startDate?: string;
+  endDate?: string;
+};
+
+export type OdataQueries = {
+  top: number;
+  skip: number;
+  orderBy: string;
+  count: boolean;
+  filter?: Record<string, object>;
+};

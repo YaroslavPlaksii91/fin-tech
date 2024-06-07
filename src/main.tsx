@@ -4,6 +4,8 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { ThemeProvider } from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers-pro/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
 import { SnackbarProvider } from 'notistack';
 import { Provider } from 'react-redux';
 
@@ -32,7 +34,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             error: StyledSnackbar
           }}
         >
-          <App />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <App />
+          </LocalizationProvider>
         </SnackbarProvider>
       </LoadingProvider>
     </ThemeProvider>

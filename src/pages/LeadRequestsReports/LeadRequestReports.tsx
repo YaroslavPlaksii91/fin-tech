@@ -1,77 +1,88 @@
 import { useEffect, useState } from 'react';
-import {
-  DataGridPremium,
-  GridColDef,
-  GridSortModel
-} from '@mui/x-data-grid-premium';
+import { Dayjs } from 'dayjs';
+import { DataGridPremium, GridSortModel } from '@mui/x-data-grid-premium';
+import { DateRange } from '@mui/x-date-pickers-pro';
+import { Stack, Typography } from '@mui/material';
 import buildQuery from 'odata-query';
-import { Container, Stack, Typography } from '@mui/material';
-import React from 'react';
 
-import { COLUMN_IDS } from './types';
+import { FetchList, OdataQueries, RowData } from './types';
 import { getFormattedRows } from './utils';
+import {
+  DEFAULT_SORT,
+  PAGE_SIZE,
+  SHORTCUTS_DATE_ITEMS,
+  TODAY,
+  dataGridColumns
+} from './constants';
 
 import { reportingService } from '@services/lead-requests-reports';
 import Logger from '@utils/logger';
-import { RemoveRedEyeOutlinedIcon } from '@components/shared/Icons';
 import DataGridPagination from '@components/shared/DataGridPagination';
-
-const PAGE_SIZE = 25;
-const DEFAULT_SORT = 'id asc';
-
-const dataGridColumns: GridColDef[] = [
-  { field: COLUMN_IDS.requestId, headerName: 'Request ID' },
-  { field: COLUMN_IDS.loanId, headerName: 'Loan ID' },
-  { field: COLUMN_IDS.leadProvider, headerName: 'Lead Provider' },
-  { field: COLUMN_IDS.leadCampaign, headerName: 'Lead Campaign' },
-  { field: COLUMN_IDS.customerId, headerName: 'Customer ID' },
-  { field: COLUMN_IDS.leadPrice, headerName: 'Lead Price' },
-  { field: COLUMN_IDS.affiliate, headerName: 'Affiliate' },
-  { field: COLUMN_IDS.requestDate, headerName: 'Request date' },
-  { field: COLUMN_IDS.requestedAmount, headerName: 'Request amount' },
-  { field: COLUMN_IDS.stackName, headerName: 'Stack Name' },
-  { field: COLUMN_IDS.promoCode, headerName: 'Promo Code' },
-  { field: COLUMN_IDS.store, headerName: 'Store' },
-  { field: COLUMN_IDS.ssn, headerName: 'SSN' },
-  { field: COLUMN_IDS.email, headerName: 'Email' },
-  { field: COLUMN_IDS.decision, headerName: 'Decision' },
-  { field: COLUMN_IDS.denialReason, headerName: 'Denial Reason' },
-  { field: COLUMN_IDS.state, headerName: 'State' },
-  { field: COLUMN_IDS.apiVersion, headerName: 'API Version' },
-  { field: COLUMN_IDS.totalTime, headerName: 'Total Time(sec)' },
-  { field: COLUMN_IDS.cachedConnector, headerName: 'Cached Connector' },
-  {
-    field: COLUMN_IDS.details,
-    headerName: '',
-    width: 45,
-    renderCell: () => <RemoveRedEyeOutlinedIcon />
-  }
-];
-
-type RowData = Record<Exclude<COLUMN_IDS, COLUMN_IDS.details>, string | number>;
+import { StepContainer as Container } from '@views/styled';
+import { combineDateAndTime } from '@utils/date';
+import DateFilters from '@components/Report/DateFilters';
 
 export default function LeadRequestsReportsPage() {
   const [rows, setRows] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [sort, setSort] = useState(DEFAULT_SORT);
+  const [time, setTime] = useState<DateRange<Dayjs>>([null, null]);
 
-  const [paginationModel, setPaginationModel] = React.useState({
+  const [date, setDate] = useState<DateRange<Dayjs>>([
+    TODAY.startOf('week'),
+    TODAY.endOf('week')
+  ]);
+
+  const [paginationModel, setPaginationModel] = useState({
     pageSize: PAGE_SIZE,
     page: 0
   });
 
-  const fetchList = async (page: number, sort: string) => {
+  const handleDateReset = () => {
+    setDate([null, null]);
+    setTime([null, null]);
+  };
+
+  const handleSortModelChange = (model: GridSortModel) => {
+    const sortParams = `${model[0].field} ${model[0].sort}`;
+    setSort(sortParams);
+  };
+
+  const fetchList = async ({ page, sort, startDate, endDate }: FetchList) => {
+    setLoading(true);
+
+    const queries: OdataQueries = {
+      top: PAGE_SIZE,
+      skip: PAGE_SIZE * page,
+      orderBy: sort,
+      count: true
+    };
+
+    if (startDate && endDate) {
+      queries.filter = {
+        processingMetadata: {
+          processingDateTimeUtc: {
+            ge: startDate,
+            le: endDate
+          }
+        }
+      };
+    }
+
+    const params = buildQuery(queries);
+
+    // Need to remove single quotes from params
+    const correctedParams = params.replace(
+      /'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z)'/g,
+      '$1'
+    );
+
     try {
-      setLoading(true);
-      const params = buildQuery({
-        top: PAGE_SIZE,
-        skip: PAGE_SIZE * page,
-        orderBy: sort,
-        count: true
-      });
-      const data = await reportingService.getLeadRequestsReports(params);
+      const data =
+        await reportingService.getLeadRequestsReports(correctedParams);
       const rows = getFormattedRows(data.value);
+
       setRows(rows);
       setTotalCount(data['@odata.count']);
     } catch (e) {
@@ -81,25 +92,51 @@ export default function LeadRequestsReportsPage() {
     }
   };
 
-  useEffect(() => {
-    void fetchList(paginationModel.page, sort);
-  }, [paginationModel.page, sort]);
+  const fetch = () => {
+    const params: FetchList = { page: paginationModel.page, sort };
 
-  const handleSortModelChange = (model: GridSortModel) => {
-    const sortParams = `${model[0].field} ${model[0].sort}`;
-    setSort(sortParams);
+    const startDate = combineDateAndTime(date[0], time[0]);
+    const endDate = combineDateAndTime(date[1], time[1]);
+
+    if (startDate && endDate) {
+      params.startDate = startDate.toISOString();
+      params.endDate = endDate.toISOString();
+    }
+
+    void fetchList(params);
   };
 
+  useEffect(() => fetch(), [paginationModel.page, sort]);
+
   return (
-    // TODO: fix width value
-    <Container
-      maxWidth="xl"
-      sx={{ overflow: 'auto', height: '100%', width: 'calc(100vw - 300px)' }}
-    >
+    <Container>
       <Stack sx={{ padding: '16px 32px' }}>
-        <Typography pb={3} variant="h4">
-          Lead requests
-        </Typography>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          overflow="auto"
+          spacing={2}
+          py={2}
+        >
+          <Typography variant="h4">Lead requests</Typography>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            spacing={1}
+          >
+            <DateFilters
+              date={date}
+              time={time}
+              shortcutsDateItems={SHORTCUTS_DATE_ITEMS}
+              onDateChange={setDate}
+              onTimeChange={setTime}
+              onClear={handleDateReset}
+              onApply={fetch}
+            />
+          </Stack>
+        </Stack>
         <DataGridPremium
           rows={rows}
           columns={dataGridColumns}
@@ -111,9 +148,7 @@ export default function LeadRequestsReportsPage() {
           onSortModelChange={handleSortModelChange}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
-          slots={{
-            footer: DataGridPagination
-          }}
+          slots={{ footer: DataGridPagination }}
         />
       </Stack>
     </Container>
