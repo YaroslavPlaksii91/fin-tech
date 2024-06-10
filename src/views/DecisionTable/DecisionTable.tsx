@@ -198,8 +198,17 @@ const DecisionTableStep = ({
       category: selectedColumn.category,
       start: selectedColumn.index + 1,
       deleteCount: 0,
-      insertEntry: INITIAL_ENTRY
+      insertEntry: INITIAL_ENTRY,
+      initialEntries:
+        selectedColumn.category === CATEGORIES.Actions
+          ? [INITIAL_ENTRY]
+          : [INITIAL_ENTRY, INITIAL_ENTRY]
     });
+
+    if (!caseEntries.length) {
+      setStepIds([null]);
+      setDefaultStepId(null);
+    }
 
     setCaseEntries(updatedCaseEntries);
   };
@@ -222,16 +231,24 @@ const DecisionTableStep = ({
   ) => {
     if (!selectedColumn?.category) return;
 
+    const insertEntry = {
+      ...INITIAL_ENTRY,
+      name: newVariable.name
+    };
+
     const updatedCaseEntries = updateCaseEntry({
       caseEntries,
       category: selectedColumn.category,
       start: selectedColumn.index,
       deleteCount: 1,
-      insertEntry: {
-        ...INITIAL_ENTRY,
-        name: newVariable.name
-      }
+      insertEntry,
+      initialEntries: [insertEntry]
     });
+
+    if (!caseEntries.length) {
+      setStepIds([null]);
+      setDefaultStepId(null);
+    }
 
     setCaseEntries(updatedCaseEntries);
   };
@@ -241,7 +258,7 @@ const DecisionTableStep = ({
   ) => {
     const expression =
       data.operator === OPERATORS.Between
-        ? `${data.upperBound} ${data.lowerBound}`
+        ? `${data.lowerBound} ${data.upperBound}`
         : data.value;
 
     setCaseEntries((prev) =>

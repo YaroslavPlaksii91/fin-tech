@@ -172,9 +172,10 @@ const Table = ({
                   }}
                 >
                   <VariableInput
+                    fullWidth
                     readOnly
                     sx={{
-                      width: 300,
+                      minWidth: '300px',
                       '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
                     }}
                     size="small"
@@ -243,7 +244,9 @@ const Table = ({
                 if (!row[name])
                   return (
                     <StyledTableCell key={columnIndex}>
-                      {columnIndex === 0 ? 'Else' : ''}
+                      {columnIndex === 0 && rows.length - 1 === rowIndex
+                        ? 'Else'
+                        : ''}
                     </StyledTableCell>
                   );
 
