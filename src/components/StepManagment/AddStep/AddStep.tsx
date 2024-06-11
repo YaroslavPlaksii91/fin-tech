@@ -37,8 +37,7 @@ interface AddStepProps {
   onAddNodeBetweenEdges: (
     type: FunctionalStepType,
     name: string,
-    edgeId: string,
-    flowId: string
+    edgeId: string
   ) => { newNode: FlowNode; flowId: string };
 }
 
@@ -61,12 +60,7 @@ export const AddStep: React.FC<AddStepProps> = ({
   const dispatch = useDispatch();
 
   const onSubmit: SubmitHandler<FormData> = ({ name }) => {
-    const { newNode, flowId } = onAddNodeBetweenEdges(
-      stepType,
-      name,
-      edgeId,
-      flowId
-    );
+    const { newNode, flowId } = onAddNodeBetweenEdges(stepType, name, edgeId);
 
     if (newNode && flowId) {
       // For update list of steps in the sidebar

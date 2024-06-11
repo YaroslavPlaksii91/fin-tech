@@ -19,7 +19,7 @@ import 'reactflow/dist/style.css';
 
 import { nodeTypes } from '../Nodes';
 import { edgeTypes } from '../Edges';
-// import NodePositioning from '../Nodes/NodePositioning';
+import NodePositioning from '../Nodes/NodePositioning';
 import '../overview.css';
 import {
   ADD_BUTTON_ON_EDGE,
@@ -231,7 +231,7 @@ const withFlowChartEditor =
 
     const onConnectNode = useCallback(
       (updatedNode: FlowNode, edgeId: string) => {
-        // const newEdgeId = uuidv4();
+        const newEdgeId = uuidv4();
         let sourceHandle: string | null = null;
 
         // Update edgeId of entries Desion Table data
@@ -258,25 +258,23 @@ const withFlowChartEditor =
           setNodes(updatedNodes);
         }
 
-        // setEdges((edges) => {
-        //   // console.log('EDGES IN ON onConnectNode', edges);
-        //   // console.log('EDGES IN ON updatableEdgeId', edgeId);
-        //   // return updateEdges({
-        //   //   sourceHandle,
-        //   //   edges,
-        //   //   updatableEdgeId: edgeId,
-        //   //   newNodeId: updatedNode.id,
-        //   //   newEdgeId,
-        //   //   onAddNodeBetweenEdges
-        //   // });
-        // });
+        setEdges((edges) =>
+          updateEdges({
+            sourceHandle,
+            edges,
+            updatableEdgeId: edgeId,
+            newNodeId: updatedNode.id,
+            newEdgeId,
+            onAddNodeBetweenEdges
+          })
+        );
       },
       [setNodes, setEdges, rfInstance, nodes]
     );
 
     const onNodeDragStop = useCallback(
       (_event: React.MouseEvent, node: Node) => {
-        if (edges.length === 0) return;
+        // if (edges.length === 0) return;
 
         const nodeIsInitial = checkIfNodeIsInitial(node);
         if (nodeIsInitial) return;
@@ -289,12 +287,12 @@ const withFlowChartEditor =
 
         // console.log('edges on drag stop', edges);
         const sourceNode = document.getElementById(node.id);
+
         const edgesAddButtons = document.querySelectorAll(
-          `[data-edge-type=${ADD_BUTTON_ON_EDGE}]`
+          `[data-flow-id='${flow.id}'] [data-edge-type='${ADD_BUTTON_ON_EDGE}`
         );
 
         if (sourceNode) {
-          // console.log('query selector data', Array.from(edgesAddButtons));
           const overlapedEdge = Array.from(edgesAddButtons).find((edge) =>
             elementsOverlap(sourceNode, edge)
           );
@@ -303,7 +301,7 @@ const withFlowChartEditor =
           }
         }
       },
-      [edges]
+      [edges, flow.id]
     );
 
     const onNodeDragStart = useCallback(
@@ -365,25 +363,25 @@ const withFlowChartEditor =
     }, []);
 
     useEffect(() => {
-      if (startDrag) {
-        setEdges((eds: Edge<EdgeData>[]) =>
-          eds.map((edge) => ({
-            ...edge,
-            data: { ...edge.data, animated: startDrag }
-          }))
-        );
-      }
+      setEdges((eds: Edge<EdgeData>[]) =>
+        eds.map((edge) => ({
+          ...edge,
+          data: { ...edge.data, animated: startDrag }
+        }))
+      );
     }, [startDrag]);
 
     return (
       <>
-        {/* <NodePositioning
+        <NodePositioning
           edges={edges}
           nodes={nodes}
           setEdges={setEdges}
           setNodes={setNodes}
-        /> */}
+        />
         <ReactFlow
+          id={flow.id}
+          data-flow-id={flow.id}
           nodes={nodes}
           edges={edges}
           autoPanOnNodeDrag

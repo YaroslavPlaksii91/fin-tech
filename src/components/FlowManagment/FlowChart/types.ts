@@ -31,19 +31,14 @@ export type EdgeData = {
   onAdd: (
     type: StepType,
     name: string,
-    id: string,
-    flowId: string
+    id: string
   ) => { newNode: FlowNode; flowId: string };
+  flowId: string;
   animated?: boolean;
 };
 
 export type CustomReactFlowInstance = ReactFlowInstance & {
-  onAddNodeBetweenEdges: (
-    type: StepType,
-    name: string,
-    edgeId: string,
-    flowId: string
-  ) => void;
+  onAddNodeBetweenEdges: (type: StepType, name: string, edgeId: string) => void;
 };
 
 export type StepListData = NodeData &
