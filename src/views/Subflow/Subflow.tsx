@@ -2,7 +2,8 @@ import { ReactFlowProvider } from 'reactflow';
 import { useMemo } from 'react';
 import { cloneDeep } from 'lodash';
 
-import { addNodeInSubFlow, findSubFlow, updateNodesInSubFlow } from './utils';
+import { findSubFlow, updateNodesInSubFlow } from './utils';
+// import { addNodeInSubFlow, findSubFlow, updateNodesInSubFlow } from './utils';
 
 import { FlowNode, IFlow } from '@domain/flow';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
@@ -25,6 +26,7 @@ const SubFlow: React.FC<SubFlowProps> = ({
   const nodes: FlowNode[] = getNodes();
 
   const saveSubflow = (subFlow: IFlow) => {
+    // console.log('UPDATE SUBFLOW NODES IN MAIN FLOW', subFlow.nodes);
     const updatedNodes = updateNodesInSubFlow(nodes, subFlow);
     setNodes(updatedNodes);
     resetActiveStepId();
@@ -53,8 +55,9 @@ const SubFlow: React.FC<SubFlowProps> = ({
     return undefined;
   }, [activeStepId]);
 
-  const updateNodesInMainFlow = (subFlow: IFlow, newNode: FlowNode) => {
-    setNodes((nodes) => addNodeInSubFlow(nodes, subFlow, newNode));
+  const updateNodesInMainFlow = (subFlow: IFlow) => {
+    // console.log('UPDATE SUBFLOW NODES IN MAIN FLOW');
+    setNodes((nodes) => updateNodesInSubFlow(nodes, subFlow));
   };
 
   return (

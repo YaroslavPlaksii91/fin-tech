@@ -15,11 +15,11 @@ import ReactFlow, {
 } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 import 'reactflow/dist/style.css';
-import debounce from 'lodash/debounce';
+// import debounce from 'lodash/debounce';
 
 import { nodeTypes } from '../Nodes';
 import { edgeTypes } from '../Edges';
-import NodePositioning from '../Nodes/NodePositioning';
+// import NodePositioning from '../Nodes/NodePositioning';
 import '../overview.css';
 import {
   ADD_BUTTON_ON_EDGE,
@@ -30,7 +30,7 @@ import {
   StepType
 } from '../types';
 import {
-  checkIfFlowIsEdit,
+  // checkIfFlowIsEdit,
   checkIfNodeHasConnection,
   checkIfNodeIsInitial,
   createNewNode,
@@ -42,7 +42,7 @@ import {
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
 import { DEFAULT_SOURCE_HANDLE } from '../constants';
 
-import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
+// import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
 import { FlowNode, IFlow } from '@domain/flow';
 import { useActiveStep } from '@contexts/StepContext';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
@@ -54,7 +54,7 @@ type FlowChartEditorProps = {
   flow: IFlow;
   mainFlow?: IFlow;
   setCopyFlow: (flow: IFlow) => void;
-  updateNodesInMainFlow?: (subFlow: IFlow, newNode: FlowNode) => void;
+  updateNodesInMainFlow?: (subFlow: IFlow) => void;
 };
 
 const withFlowChartEditor =
@@ -65,7 +65,7 @@ const withFlowChartEditor =
   // eslint-disable-next-line react/display-name
   (props: FlowChartEditorProps) => {
     const { flow, mainFlow, setCopyFlow, updateNodesInMainFlow } = props;
-    const [isDirty, setIsDirty] = useState<boolean>(false);
+    // const [isDirty, setIsDirty] = useState<boolean>(false);
     const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
     const [startDrag, setStartDrag] = useState<boolean>(false);
     const { flowNode, nodeElement, onPaneClick, onNodeContextMenu } =
@@ -80,19 +80,18 @@ const withFlowChartEditor =
 
     const { activeStep, setActiveStep } = useActiveStep();
 
-    // const [updateSubFlowNode, setUpdateSubflowNode] = useState(false);
+    const [updateSubFlowNode, setUpdateSubflowNode] = useState(false);
 
-    // useEffect(() => {
-    //   if (mainFlow && updateSubFlowNode && rfInstance) {
-    //     // console.log('rfInstanse', rfInstance?.getEdges());
-    //     // updateNodesInMainFlow?.({
-    //     //   ...flow,
-    //     //   nodes: rfInstance.getNodes(),
-    //     //   edges: rfInstance.getEdges()
-    //     // });
-    //     // setUpdateSubflowNode(false);
-    //   }
-    // }, [updateSubFlowNode]);
+    useEffect(() => {
+      if (mainFlow && updateSubFlowNode && rfInstance) {
+        updateNodesInMainFlow?.({
+          ...flow,
+          nodes: rfInstance.getNodes(),
+          edges: rfInstance.getEdges()
+        });
+        setUpdateSubflowNode(false);
+      }
+    }, [updateSubFlowNode]);
 
     const onAddNodeBetweenEdges = useCallback(
       (type: StepType, name: string, edgeId: string) => {
@@ -111,8 +110,8 @@ const withFlowChartEditor =
           })
         );
 
-        // setUpdateSubflowNode(true);
-        updateNodesInMainFlow?.(flow, newNode);
+        setUpdateSubflowNode(true);
+        // updateNodesInMainFlow?.(flow, newNode);
 
         return { newNode, flowId: flow.id };
       },
@@ -140,41 +139,41 @@ const withFlowChartEditor =
       setViewport(flow.viewport);
     }, [flow.viewport, setViewport]);
 
-    const checkIsDirty = ({
-      initialNodes,
-      initialEdges,
-      nodes,
-      edges
-    }: {
-      initialNodes: Node[];
-      initialEdges: Edge[];
-      nodes: Node[];
-      edges: Edge[];
-    }) => {
-      const isFlowEdit = checkIfFlowIsEdit({
-        initialNodes,
-        initialEdges,
-        nodes,
-        edges
-      });
+    // const checkIsDirty = ({
+    //   initialNodes,
+    //   initialEdges,
+    //   nodes,
+    //   edges
+    // }: {
+    //   initialNodes: Node[];
+    //   initialEdges: Edge[];
+    //   nodes: Node[];
+    //   edges: Edge[];
+    // }) => {
+    //   const isFlowEdit = checkIfFlowIsEdit({
+    //     initialNodes,
+    //     initialEdges,
+    //     nodes,
+    //     edges
+    //   });
 
-      if (isFlowEdit) {
-        setIsDirty(true);
-      } else {
-        setIsDirty(false);
-      }
-    };
+    //   if (isFlowEdit) {
+    //     setIsDirty(true);
+    //   } else {
+    //     setIsDirty(false);
+    //   }
+    // };
 
-    const debounceCheckIsDirty = useCallback(debounce(checkIsDirty, 300), []);
+    // const debounceCheckIsDirty = useCallback(debounce(checkIsDirty, 300), []);
 
-    useEffect(() => {
-      debounceCheckIsDirty({
-        initialNodes: initialElements.nodes,
-        initialEdges: initialElements.edges,
-        nodes,
-        edges
-      });
-    }, [initialElements, nodes, edges]);
+    // useEffect(() => {
+    //   debounceCheckIsDirty({
+    //     initialNodes: initialElements.nodes,
+    //     initialEdges: initialElements.edges,
+    //     nodes,
+    //     edges
+    //   });
+    // }, [initialElements, nodes, edges]);
 
     const onConnect: OnConnect = useCallback(
       (connection) => {
@@ -232,7 +231,7 @@ const withFlowChartEditor =
 
     const onConnectNode = useCallback(
       (updatedNode: FlowNode, edgeId: string) => {
-        const newEdgeId = uuidv4();
+        // const newEdgeId = uuidv4();
         let sourceHandle: string | null = null;
 
         // Update edgeId of entries Desion Table data
@@ -258,22 +257,27 @@ const withFlowChartEditor =
           });
           setNodes(updatedNodes);
         }
-        setEdges((edges) =>
-          updateEdges({
-            sourceHandle,
-            edges,
-            updatableEdgeId: edgeId,
-            newNodeId: updatedNode.id,
-            newEdgeId,
-            onAddNodeBetweenEdges
-          })
-        );
+
+        // setEdges((edges) => {
+        //   // console.log('EDGES IN ON onConnectNode', edges);
+        //   // console.log('EDGES IN ON updatableEdgeId', edgeId);
+        //   // return updateEdges({
+        //   //   sourceHandle,
+        //   //   edges,
+        //   //   updatableEdgeId: edgeId,
+        //   //   newNodeId: updatedNode.id,
+        //   //   newEdgeId,
+        //   //   onAddNodeBetweenEdges
+        //   // });
+        // });
       },
       [setNodes, setEdges, rfInstance, nodes]
     );
 
     const onNodeDragStop = useCallback(
       (_event: React.MouseEvent, node: Node) => {
+        if (edges.length === 0) return;
+
         const nodeIsInitial = checkIfNodeIsInitial(node);
         if (nodeIsInitial) return;
 
@@ -283,12 +287,14 @@ const withFlowChartEditor =
 
         setStartDrag(false);
 
+        // console.log('edges on drag stop', edges);
         const sourceNode = document.getElementById(node.id);
         const edgesAddButtons = document.querySelectorAll(
           `[data-edge-type=${ADD_BUTTON_ON_EDGE}]`
         );
 
         if (sourceNode) {
+          // console.log('query selector data', Array.from(edgesAddButtons));
           const overlapedEdge = Array.from(edgesAddButtons).find((edge) =>
             elementsOverlap(sourceNode, edge)
           );
@@ -359,22 +365,24 @@ const withFlowChartEditor =
     }, []);
 
     useEffect(() => {
-      setEdges((eds: Edge<EdgeData>[]) =>
-        eds.map((edge) => ({
-          ...edge,
-          data: { ...edge.data, animated: startDrag }
-        }))
-      );
+      if (startDrag) {
+        setEdges((eds: Edge<EdgeData>[]) =>
+          eds.map((edge) => ({
+            ...edge,
+            data: { ...edge.data, animated: startDrag }
+          }))
+        );
+      }
     }, [startDrag]);
 
     return (
       <>
-        <NodePositioning
+        {/* <NodePositioning
           edges={edges}
           nodes={nodes}
           setEdges={setEdges}
           setNodes={setNodes}
-        />
+        /> */}
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -406,7 +414,7 @@ const withFlowChartEditor =
               mainFlow={mainFlow}
               flow={flow}
               setCopyFlow={setCopyFlow}
-              isDirty={isDirty}
+              isDirty={false}
               rfInstance={rfInstance}
             />
           )}
@@ -429,7 +437,7 @@ const withFlowChartEditor =
           isEditMode
           setActiveStep={setActiveStep}
         />
-        <LeavePageConfirmationDialog isDirty={isDirty} />
+        {/* <LeavePageConfirmationDialog isDirty={isDirty} /> */}
       </>
     );
   };

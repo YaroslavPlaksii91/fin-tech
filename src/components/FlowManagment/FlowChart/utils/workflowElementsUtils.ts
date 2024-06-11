@@ -33,7 +33,9 @@ export const createNewNode = (
     },
     position: defaultPosition,
     deletable: true,
-    draggable: true
+    draggable: true,
+    width: 40,
+    height: 40
   };
 
   switch (type) {
@@ -98,7 +100,8 @@ type updateEdgesParams = {
   onAddNodeBetweenEdges: (
     type: StepType,
     name: string,
-    edgeId: string
+    edgeId: string,
+    flowId: string
   ) => { newNode: FlowNode; flowId: string };
 };
 

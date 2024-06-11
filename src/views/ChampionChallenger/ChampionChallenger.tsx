@@ -175,6 +175,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         newEdges
       );
       await flowService.validateFlow(data);
+      // console.log('UPDATED NODES', updatedNodes);
       setNodes(updatedNodes);
       setEdges(newEdges);
       enqueueSnackbar(
