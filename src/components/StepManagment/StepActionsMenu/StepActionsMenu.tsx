@@ -55,7 +55,10 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const options = isEditMode
-    ? getEditModeOptions({ canUserViewFlow, canUserUpdateFlow })
+    ? getEditModeOptions({
+        canUserViewFlow,
+        canUserUpdateFlow
+      })
     : getOptions({ canUserViewFlow, canUserUpdateFlow });
 
   useEffect(() => {

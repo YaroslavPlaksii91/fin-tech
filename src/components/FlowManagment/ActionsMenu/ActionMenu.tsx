@@ -34,12 +34,19 @@ const ActionsMenu: React.FC<{
   const navigate = useNavigate();
   const canUserViewFlow = useHasUserPermission(permissionsMap.canViewFlow);
   const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const canUserDeleteFlow = useHasUserPermission(permissionsMap.canDeleteFlow);
+  const canUserCreateFlow = useHasUserPermission(permissionsMap.canCreateFlow);
 
   const options = useMemo(
     () =>
       isProductionFlow
         ? getOptionsProductionFlow({ canUserViewFlow })
-        : getOptionsDraftFlow({ canUserViewFlow, canUserUpdateFlow }),
+        : getOptionsDraftFlow({
+            canUserViewFlow,
+            canUserUpdateFlow,
+            canUserDeleteFlow,
+            canUserCreateFlow
+          }),
     [isProductionFlow, canUserViewFlow, canUserUpdateFlow]
   );
 
