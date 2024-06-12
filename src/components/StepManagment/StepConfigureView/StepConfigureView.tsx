@@ -1,4 +1,5 @@
-import { cloneDeep } from 'lodash';
+import { useMemo } from 'react';
+// import { cloneDeep } from 'lodash';
 
 import ChampionChallenger from '@views/ChampionChallenger/ChampionChallenger';
 import DecisionTableStep from '@views/DecisionTable/DecisionTable';
@@ -25,8 +26,10 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
   mainFlow,
   rfInstance
 }) => {
-  const currentNode = rfInstance.getNode(activeStepId);
-  const step = cloneDeep(currentNode);
+  const step = useMemo(() => {
+    const currentNode = rfInstance.getNode(activeStepId);
+    return currentNode;
+  }, [activeStepId, rfInstance]);
 
   return (
     <StepContainer>

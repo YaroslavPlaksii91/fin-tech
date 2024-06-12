@@ -2,8 +2,8 @@ import {
   Handle,
   NodeProps,
   Position,
-  useReactFlow,
-  useUpdateNodeInternals
+  useReactFlow
+  // useUpdateNodeInternals
 } from 'reactflow';
 import { useEffect } from 'react';
 
@@ -18,12 +18,12 @@ import { NO_TAG_LABEL } from '@constants/common';
 
 const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
   const rfInstance = useReactFlow();
-  const updateNodeInternals = useUpdateNodeInternals();
+  // const updateNodeInternals = useUpdateNodeInternals();
 
   const dataToShow = getListNodesData(data, rfInstance);
 
   useEffect(() => {
-    updateNodeInternals(data.stepId);
+    // updateNodeInternals(data.stepId);
   });
 
   return (

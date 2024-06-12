@@ -54,7 +54,12 @@ type FlowChartEditorProps = {
   flow: IFlow;
   mainFlow?: IFlow;
   setCopyFlow: (flow: IFlow) => void;
-  updateNodesInMainFlow?: (subFlow: IFlow) => void;
+  // updateNodesInMainFlow?: (subFlow: IFlow) => void;
+  updateNodesInMainFlow?: (
+    subflowId: string,
+    newNode: FlowNode,
+    edges: Edge[]
+  ) => void;
 };
 
 const withFlowChartEditor =
@@ -80,18 +85,14 @@ const withFlowChartEditor =
 
     const { activeStep, setActiveStep } = useActiveStep();
 
-    const [updateSubFlowNode, setUpdateSubflowNode] = useState(false);
+    const [newNode, setNewNode] = useState<FlowNode | null>(null);
 
     useEffect(() => {
-      if (mainFlow && updateSubFlowNode && rfInstance) {
-        updateNodesInMainFlow?.({
-          ...flow,
-          nodes: rfInstance.getNodes(),
-          edges: rfInstance.getEdges()
-        });
-        setUpdateSubflowNode(false);
+      if (mainFlow && newNode && rfInstance) {
+        updateNodesInMainFlow?.(flow.id, newNode, edges);
+        setNewNode(null);
       }
-    }, [updateSubFlowNode]);
+    }, [newNode]);
 
     const onAddNodeBetweenEdges = useCallback(
       (type: StepType, name: string, edgeId: string) => {
@@ -110,9 +111,7 @@ const withFlowChartEditor =
           })
         );
 
-        setUpdateSubflowNode(true);
-        // updateNodesInMainFlow?.(flow, newNode);
-
+        setNewNode(newNode);
         return { newNode, flowId: flow.id };
       },
       [setNodes, setEdges, flow.id]

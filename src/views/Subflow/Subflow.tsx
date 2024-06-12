@@ -1,9 +1,9 @@
-import { ReactFlowProvider } from 'reactflow';
+import { Edge, ReactFlowProvider } from 'reactflow';
 import { useMemo } from 'react';
 import { cloneDeep } from 'lodash';
 
-import { findSubFlow, updateNodesInSubFlow } from './utils';
-// import { addNodeInSubFlow, findSubFlow, updateNodesInSubFlow } from './utils';
+// import { findSubFlow, updateNodesInSubFlow } from './utils';
+import { addNodeInSubFlow, findSubFlow, updateNodesInSubFlow } from './utils';
 
 import { FlowNode, IFlow } from '@domain/flow';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
@@ -23,17 +23,16 @@ const SubFlow: React.FC<SubFlowProps> = ({
   activeStepId,
   resetActiveStepId
 }) => {
-  const nodes: FlowNode[] = getNodes();
+  const mainFlowNodes: FlowNode[] = getNodes();
 
   const saveSubflow = (subFlow: IFlow) => {
-    // console.log('UPDATE SUBFLOW NODES IN MAIN FLOW', subFlow.nodes);
-    const updatedNodes = updateNodesInSubFlow(nodes, subFlow);
+    const updatedNodes = updateNodesInSubFlow(mainFlowNodes, subFlow);
     setNodes(updatedNodes);
     resetActiveStepId();
   };
 
   const subFlow = useMemo(() => {
-    const subFlowNode = cloneDeep(findSubFlow(activeStepId, nodes));
+    const subFlowNode = cloneDeep(findSubFlow(activeStepId, mainFlowNodes));
     if (subFlowNode) {
       return {
         id: subFlowNode.id,
@@ -55,9 +54,13 @@ const SubFlow: React.FC<SubFlowProps> = ({
     return undefined;
   }, [activeStepId]);
 
-  const updateNodesInMainFlow = (subFlow: IFlow) => {
+  const updateNodesInMainFlow = (
+    subFlowId: string,
+    newNode: FlowNode,
+    edges: Edge[]
+  ) => {
     // console.log('UPDATE SUBFLOW NODES IN MAIN FLOW');
-    setNodes((nodes) => updateNodesInSubFlow(nodes, subFlow));
+    setNodes((nodes) => addNodeInSubFlow(nodes, subFlowId, newNode, edges));
   };
 
   return (

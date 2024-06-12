@@ -1,3 +1,5 @@
+import { Edge } from 'reactflow';
+
 import { FlowNode, IFlow } from '@domain/flow';
 
 export const findSubFlow = (
@@ -37,14 +39,19 @@ export const updateNodesInSubFlow = (
 
 export const addNodeInSubFlow = (
   nodes: FlowNode[],
-  subFlow: IFlow,
-  newNode: FlowNode
+  subFlowId: string,
+  newNode: FlowNode,
+  edges: Edge[]
 ): FlowNode[] =>
   nodes.map((node: FlowNode) => {
-    if (node.id === subFlow.id) {
-      node.data.nodes = [...(node?.data?.nodes ?? []), newNode];
+    if (node.id === subFlowId) {
+      node.data = {
+        ...node.data,
+        nodes: [...(node?.data?.nodes ?? []), newNode],
+        edges: [...edges]
+      };
     } else if (node.data?.nodes) {
-      node.data.nodes = addNodeInSubFlow(node.data.nodes, subFlow, newNode);
+      addNodeInSubFlow(node.data.nodes, subFlowId, newNode, edges);
     }
     return node;
   });
