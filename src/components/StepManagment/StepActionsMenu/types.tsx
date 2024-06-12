@@ -4,6 +4,7 @@ import FileEditIcon from '@icons/fileEdit.svg';
 import DuplicateSquareIcon from '@icons/duplicateSquare.svg';
 import FileIcon from '@icons/file.svg';
 import TrashIcon from '@icons/trash.svg';
+import { OptionsFlowParams } from '@components/FlowManagment/ActionsMenu/options';
 
 export enum ActionTypes {
   STEP_TEXT_VIEW = 'StepTextView',
@@ -43,12 +44,21 @@ export const deleteStepOption = {
   textColor: theme.palette.error.main
 };
 
-export const options = [viewStepOption, editStepOption];
+export const getOptions = ({
+  canUserViewFlow,
+  canUserUpdateFlow
+}: OptionsFlowParams) => [
+  { ...viewStepOption, hide: !canUserViewFlow },
+  { ...editStepOption, hide: !canUserUpdateFlow }
+];
 
-export const editModeOptions = [
-  viewStepOption,
-  editStepOption,
-  renameStepOption,
+export const getEditModeOptions = ({
+  canUserViewFlow,
+  canUserUpdateFlow
+}: OptionsFlowParams) => [
+  { ...viewStepOption, hide: !canUserViewFlow },
+  { ...editStepOption, hide: !canUserUpdateFlow },
+  { ...renameStepOption, hide: !canUserUpdateFlow },
   duplicateStepOption,
-  deleteStepOption
+  { ...deleteStepOption, hide: !canUserUpdateFlow }
 ];

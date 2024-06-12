@@ -49,3 +49,7 @@ export const GRANT_TYPES = {
   PASSWORD: 'password',
   CLIENT_CREDENTIALS: 'client_credentials'
 };
+
+export const tooltipText = {
+  cantUpdateFlow: "You don't have permission to update flow"
+};
