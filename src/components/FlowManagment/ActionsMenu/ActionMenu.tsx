@@ -47,7 +47,13 @@ const ActionsMenu: React.FC<{
             canUserDeleteFlow,
             canUserCreateFlow
           }),
-    [isProductionFlow, canUserViewFlow, canUserUpdateFlow]
+    [
+      isProductionFlow,
+      canUserViewFlow,
+      canUserUpdateFlow,
+      canUserDeleteFlow,
+      canUserCreateFlow
+    ]
   );
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
