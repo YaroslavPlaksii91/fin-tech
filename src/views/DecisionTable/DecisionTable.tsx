@@ -435,11 +435,9 @@ const DecisionTableStep = ({
     <>
       <StepContentWrapper>
         <StepDetailsHeader
-          flow={mainFlow ?? flow}
           step={step}
           title={`Edit Step: ${step.data.name}`}
           details={STEP_DETAILS}
-          isActionContainerVisible={false}
         />
         <Paper>
           <TableContainer sx={{ bgcolor: theme.palette.background.default }}>

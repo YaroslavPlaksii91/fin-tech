@@ -260,11 +260,9 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       <StepContentWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <StepDetailsHeader
-            flow={mainFlow ?? flow}
             step={step}
             title={`Edit Step: ${step.data.name}`}
             details="A Champion Challenger is a step that allows you to split traffic into several groups and run experiment."
-            isActionContainerVisible={false}
           />
           <Stack>
             <StyledPaper>
