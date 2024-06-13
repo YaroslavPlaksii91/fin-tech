@@ -2,20 +2,20 @@ import { Breadcrumbs } from '@mui/material';
 
 import createBreadcrumbs from './utils';
 
-import { IFlow } from '@domain/flow.ts';
 import { useActiveStep } from '@contexts/StepContext.tsx';
+import { useAppSelector } from '@store/hooks';
+import { selectFlow } from '@store/flow/selectors';
 
 interface StepDetailsHeaderProps {
-  flow: IFlow;
   stepId: string;
   title: string;
 }
 
 const StepBreadcrumbs: React.FC<StepDetailsHeaderProps> = ({
-  flow,
   stepId,
   title
 }) => {
+  const { flow } = useAppSelector(selectFlow);
   const { setActiveStep } = useActiveStep();
 
   const breadcrumbs = createBreadcrumbs({

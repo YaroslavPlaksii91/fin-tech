@@ -15,6 +15,7 @@ interface GetUpdatedNodes {
 }
 
 const defaultPosition = { x: 0, y: 0 };
+const defaultNodeSize = { width: 100, height: 100 };
 
 export const createNewNode = (
   type: StepType,
@@ -33,7 +34,8 @@ export const createNewNode = (
     },
     position: defaultPosition,
     deletable: true,
-    draggable: true
+    draggable: true,
+    ...defaultNodeSize
   };
 
   switch (type) {
