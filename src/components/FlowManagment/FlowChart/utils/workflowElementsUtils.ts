@@ -100,8 +100,7 @@ type updateEdgesParams = {
   onAddNodeBetweenEdges: (
     type: StepType,
     name: string,
-    edgeId: string,
-    flowId: string
+    edgeId: string
   ) => { newNode: FlowNode; flowId: string };
 };
 

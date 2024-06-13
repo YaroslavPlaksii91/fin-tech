@@ -33,7 +33,6 @@ export type EdgeData = {
     name: string,
     id: string
   ) => { newNode: FlowNode; flowId: string };
-  flowId: string;
   animated?: boolean;
 };
 

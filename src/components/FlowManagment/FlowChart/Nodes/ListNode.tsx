@@ -1,11 +1,4 @@
-import {
-  Handle,
-  NodeProps,
-  Position,
-  useReactFlow
-  // useUpdateNodeInternals
-} from 'reactflow';
-import { useEffect } from 'react';
+import { Handle, NodeProps, Position, useReactFlow } from 'reactflow';
 
 import CustomHandler from '../CustomHandler/CustomHandler';
 import { StepListData } from '../types';
@@ -18,13 +11,8 @@ import { NO_TAG_LABEL } from '@constants/common';
 
 const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
   const rfInstance = useReactFlow();
-  // const updateNodeInternals = useUpdateNodeInternals();
 
   const dataToShow = getListNodesData(data, rfInstance);
-
-  useEffect(() => {
-    // updateNodeInternals(data.stepId);
-  });
 
   return (
     <div id={data.stepId} className={styles['node-list-container']}>

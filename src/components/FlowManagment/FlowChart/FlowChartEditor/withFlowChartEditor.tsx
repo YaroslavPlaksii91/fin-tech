@@ -407,7 +407,7 @@ const withFlowChartEditor =
               mainFlow={mainFlow}
               flow={flow}
               setCopyFlow={setCopyFlow}
-              isDirty={false}
+              isDirty={isDirty}
               rfInstance={rfInstance}
             />
           )}

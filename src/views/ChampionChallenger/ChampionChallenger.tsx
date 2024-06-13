@@ -149,20 +149,9 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       edgeId: splitEdge.id,
       percentage: data.splits[index].percentage
     }));
+
     const updatedNodes = nodes.map((node: FlowNode) => {
       if (node.id === step.id) {
-        // This updates data inside the node. Since React Flow uses Zustand under the hood, it is necessary to recreate the data.
-        // const splits = node.data.splits ?? [];
-
-        // splits.length = 0;
-
-        // splits.push(
-        //   ...splitEdges.map((splitEdge, index) => ({
-        //     edgeId: splitEdge.id,
-        //     percentage: data.splits[index].percentage
-        //   }))
-        // );
-
         node.data = {
           ...node.data,
           note: data.note,
@@ -171,29 +160,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       }
       return node;
     });
-    // console.log('nodes', nodes);
-    // const updatedNodes = nodes.map((node: FlowNode) => {
-    //   if (node.id === step.id) {
-    //     // This updates data inside the node. Since React Flow uses Zustand under the hood, it is necessary to recreate the data.
-    //     const splits = node.data.splits ?? [];
 
-    //     splits.length = 0;
-
-    //     splits.push(
-    //       ...splitEdges.map((splitEdge, index) => ({
-    //         edgeId: splitEdge.id,
-    //         percentage: data.splits[index].percentage
-    //       }))
-    //     );
-
-    //     node.data = {
-    //       ...node.data,
-    //       note: data.note,
-    //       splits: [...splits]
-    //     };
-    //   }
-    //   return node;
-    // });
     try {
       const data = formatFlowDataForValidation(
         mainFlow,

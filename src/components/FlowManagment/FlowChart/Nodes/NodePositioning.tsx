@@ -17,9 +17,6 @@ const NodePositioning: React.FC<NodePositioningProps> = ({
   nodes,
   edges
 }) => {
-  // const getNodeInternals = (state: ReactFlowState) => state.nodeInternals;
-  // const nodeInternals = useStore(getNodeInternals);
-  // const flattenedNodes = Array.from(nodeInternals.values());
   const lastElement = nodes.length - 1;
 
   useEffect(() => {
