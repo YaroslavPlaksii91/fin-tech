@@ -7,39 +7,43 @@ const StepDetailsControlBar: React.FC<StepDetailsControlBarProps> = ({
   disabled,
   onDiscard,
   isSubmitting,
-  onApplyChangesClick
-}) => (
-  <Paper elevation={1}>
-    <Divider />
-    <Box px={3} py={2}>
-      <Stack
-        flexDirection="row"
-        justifyContent="end"
-        alignItems="flex-start"
-        gap={1}
-      >
-        <LoadingButton
-          disabled={disabled}
-          loading={Boolean(isSubmitting)}
-          type="submit"
-          variant="contained"
-          onClick={() => onApplyChangesClick()}
+  onApplyChangesClick,
+  isShow = true
+}) =>
+  isShow && (
+    <Paper elevation={1}>
+      <Divider />
+      <Box px={3} py={2}>
+        <Stack
+          flexDirection="row"
+          justifyContent="end"
+          alignItems="flex-start"
+          gap={1}
         >
-          Save step
-        </LoadingButton>
-        <Button variant="outlined" onClick={onDiscard}>
-          Cancel
-        </Button>
-      </Stack>
-    </Box>
-  </Paper>
-);
+          <LoadingButton
+            disabled={disabled}
+            loading={Boolean(isSubmitting)}
+            type="submit"
+            variant="contained"
+            onClick={() => onApplyChangesClick()}
+          >
+            Save step
+          </LoadingButton>
+
+          <Button variant="outlined" onClick={onDiscard}>
+            Cancel
+          </Button>
+        </Stack>
+      </Box>
+    </Paper>
+  );
 
 interface StepDetailsControlBarProps {
   disabled?: boolean;
   isSubmitting?: boolean;
   onDiscard?: () => void;
   onApplyChangesClick: () => void;
+  isShow?: boolean;
 }
 
 export default StepDetailsControlBar;

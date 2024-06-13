@@ -58,6 +58,8 @@ import Dialog from '@components/shared/Modals/Dialog';
 import { SNACK_TYPE } from '@constants/common';
 import { DataDictionaryVariable } from '@domain/dataDictionary';
 import { StepContentWrapper } from '@views/styled';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
+import { permissionsMap } from '@constants/permissions';
 
 type DecisionTableStepProps = {
   flow: IFlow;
@@ -94,6 +96,7 @@ const DecisionTableStep = ({
   const [defaultStepId, setDefaultStepId] = useState<string | null>(null);
 
   const dataDictionary = useContext(DataDictionaryContext);
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const variables = dataDictionary?.variables || {};
   const nodes: FlowNode[] = getNodes();
@@ -458,6 +461,7 @@ const DecisionTableStep = ({
             />
           </TableContainer>
         </Paper>
+
         <Button
           sx={{ width: 'fit-content', mt: 1 }}
           variant="outlined"
@@ -467,6 +471,7 @@ const DecisionTableStep = ({
         >
           Add new business layer
         </Button>
+
         <StepNoteSection
           modalOpen={openNoteModal}
           handleCloseModal={handleCloseNoteModal}
@@ -489,6 +494,7 @@ const DecisionTableStep = ({
       <StepDetailsControlBar
         onDiscard={() => setOpenDiscardModal(true)}
         onApplyChangesClick={onApplyChangesClick}
+        isShow={hasUserPermission}
       />
       <Dialog
         title="Discard changes"

@@ -25,6 +25,8 @@ import { FlowNode } from '@domain/flow';
 import { useAppSelector } from '@store/hooks';
 import { selectFlow } from '@store/flow/selectors';
 import TablePagination from '@components/shared/TablePagination';
+import { permissionsMap } from '@constants/permissions';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import useTablePagination from '@hooks/useTablePagination';
 
 interface TableListProps {
@@ -48,6 +50,7 @@ const TableList = ({
 
   const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const [userDefinedUsage, setUserDefinedUsage] =
     useState<VariableUsageParams>();
@@ -136,17 +139,19 @@ const TableList = ({
             ))}
             {tabName === VARIABLES_TABS.userDefined && (
               <StyledTableCell align="right">
-                <IconButton
-                  onClick={() => {
-                    setSelectedVariable(undefined);
-                    setIsVariableModalOpen(true);
-                  }}
-                  edge="end"
-                  aria-label="add"
-                  sx={{ p: 0, mr: 0 }}
-                >
-                  <AddBoxOutlined fontSize="small" />
-                </IconButton>
+                {hasUserPermission && (
+                  <IconButton
+                    onClick={() => {
+                      setSelectedVariable(undefined);
+                      setIsVariableModalOpen(true);
+                    }}
+                    edge="end"
+                    aria-label="add"
+                    sx={{ p: 0, mr: 0 }}
+                  >
+                    <AddBoxOutlined fontSize="small" />
+                  </IconButton>
+                )}
               </StyledTableCell>
             )}
           </StyledTableRow>

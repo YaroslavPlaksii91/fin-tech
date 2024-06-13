@@ -28,6 +28,8 @@ import Logger from '@utils/logger';
 import routes from '@constants/routes';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { theme } from '@theme';
+import { permissionsMap } from '@constants/permissions';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
 
 type TableRowProps = {
   headers: TableHeader[];
@@ -54,7 +56,7 @@ export const TableRow = ({
 }: TableRowProps) => {
   const [isExpanded, setisExpanded] = useState(false);
   const [variableUsageNodes, setVariableUsageNodes] = useState<FlowNode[]>([]);
-
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
   const navigate = useNavigate();
 
   const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
@@ -112,28 +114,30 @@ export const TableRow = ({
         ))}
         {tabName === VARIABLES_TABS.userDefined && (
           <StyledTableCell>
-            <Stack spacing={1} direction="row">
-              <Button
-                sx={{
-                  minWidth: 'auto',
-                  width: 'auto',
-                  p: 0
-                }}
-                onClick={() => onEdit(row, variableUsageNodes)}
-              >
-                <EditIcon color={theme.palette.action.active} />
-              </Button>
-              <Button
-                sx={{
-                  minWidth: 'auto',
-                  width: 'auto',
-                  p: 0
-                }}
-                onClick={() => onDelete(row, variableUsageNodes)}
-              >
-                <TrashIcon color={theme.palette.error.main} />
-              </Button>
-            </Stack>
+            {hasUserPermission && (
+              <Stack spacing={1} direction="row">
+                <Button
+                  sx={{
+                    minWidth: 'auto',
+                    width: 'auto',
+                    p: 0
+                  }}
+                  onClick={() => onEdit(row, variableUsageNodes)}
+                >
+                  <EditIcon color={theme.palette.action.active} />
+                </Button>
+                <Button
+                  sx={{
+                    minWidth: 'auto',
+                    width: 'auto',
+                    p: 0
+                  }}
+                  onClick={() => onDelete(row, variableUsageNodes)}
+                >
+                  <TrashIcon color={theme.palette.error.main} />
+                </Button>
+              </Stack>
+            )}
           </StyledTableCell>
         )}
       </StyledTableRow>
@@ -153,7 +157,7 @@ export const TableRow = ({
                   key={flowNode.id}
                   aria-label="breadcrumb"
                   onClick={() =>
-                    navigate(routes.underwriting.flow.edit(flowId), {
+                    navigate(routes.underwriting.flow.view(flowId), {
                       state: { activeStepId: flowNode.id }
                     })
                   }
