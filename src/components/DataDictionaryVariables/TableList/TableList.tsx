@@ -1,15 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { indexOf, map } from 'lodash';
-import {
-  TableHead,
-  TableBody,
-  IconButton,
-  TablePagination,
-  TextField,
-  Table,
-  Box,
-  Typography
-} from '@mui/material';
+import { TableHead, TableBody, IconButton, Table } from '@mui/material';
 import { AddBoxOutlined } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
@@ -31,9 +22,10 @@ import {
   VARIABLE_SOURCE_TYPE
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
-import { theme } from '@theme';
 import { useAppSelector } from '@store/hooks';
 import { selectFlow } from '@store/flow/selectors';
+import TablePagination from '@components/shared/TablePagination';
+import useTablePagination from '@hooks/useTablePagination';
 
 interface TableListProps {
   flowNodes: FlowNode[];
@@ -54,19 +46,24 @@ const TableList = ({
     Variable & { index: number; variableIsUsed: boolean }
   >();
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const [userDefinedUsage, setUserDefinedUsage] =
+    useState<VariableUsageParams>();
 
   const {
     flow: { temporaryVariables, permanentVariables }
   } = useAppSelector(selectFlow);
 
-  const totalPages = Math.ceil(tableData.length / rowsPerPage);
-
-  const [userDefinedUsage, setUserDefinedUsage] =
-    useState<VariableUsageParams>();
+  const {
+    rowsPerPage,
+    page,
+    totalPages,
+    handlePageChange,
+    handlePageByInputChange,
+    handleRowsPerPageChange
+  } = useTablePagination({ totalCount: tableData.length });
 
   const visibleRows = useMemo(
     () => tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
@@ -118,27 +115,6 @@ const TableList = ({
   const handleDeleteClick = (row: Variable, variableUsageNodes: FlowNode[]) => {
     handleVariable(row, variableUsageNodes);
     setIsDeleteModalOpen(true);
-  };
-
-  const handlePageBySelect = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
-    event && setPage(newPage);
-  };
-
-  const handlePageByInput = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const newPage = Number(event.target.value) - 1;
-    if (newPage >= 0 && newPage < totalPages) setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   useEffect(() => {
@@ -206,35 +182,15 @@ const TableList = ({
         </TableBody>
       </Table>
       {tableData.length > 10 && (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            p: '8px 16px'
-          }}
-        >
-          <TablePagination
-            sx={{ flex: 1 }}
-            showFirstButton
-            showLastButton
-            component="div"
-            count={tableData.length}
-            page={page}
-            onPageChange={handlePageBySelect}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-          <TextField
-            sx={{ borderRadius: '8px', maxWidth: '64px', mr: 1 }}
-            size="small"
-            value={page + 1}
-            onChange={handlePageByInput}
-          />
-          <Typography variant="body1" color={theme.palette.text.secondary}>
-            of {totalPages} pages
-          </Typography>
-        </Box>
+        <TablePagination
+          count={tableData.length}
+          totalPages={totalPages}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handlePageChange}
+          onRowsPerPageChange={handleRowsPerPageChange}
+          onPageByInputChange={handlePageByInputChange}
+        />
       )}
       {isVariableModalOpen && (
         <VariableForm
