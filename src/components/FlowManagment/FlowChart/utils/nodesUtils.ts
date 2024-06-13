@@ -3,6 +3,31 @@ import { ReactFlowInstance } from 'reactflow';
 import { StepType, StepListData } from '../types';
 
 import { FlowNode } from '@domain/flow';
+import { OPERATORS } from '@views/DecisionTable/constants';
+import { CaseEntry } from '@views/DecisionTable/types';
+
+const getTooltipText = (caseEntry: CaseEntry[]) =>
+  caseEntry.reduce((acc, { name, operator, expression }, index) => {
+    const textPieces = [];
+    const hasDividingWord = index !== caseEntry.length - 1;
+    const hasWordsToCompare = name && expression;
+    const isAnyOperator = operator === OPERATORS.Any;
+    const anyOperatorText = isAnyOperator && name ? operator : '';
+    const defaultOperatorText =
+      !isAnyOperator && hasWordsToCompare ? operator || '=' : '';
+
+    textPieces.push(
+      acc,
+      name || '',
+      anyOperatorText || defaultOperatorText,
+      expression || ''
+    );
+
+    if (hasDividingWord && name) textPieces.push('and');
+    if (!hasDividingWord) textPieces.push('then Go to step');
+
+    return textPieces.join(' ');
+  }, '');
 
 const getListNodesData = (
   data: StepListData,
@@ -26,17 +51,12 @@ const getListNodesData = (
       const caseEntriesData = data.caseEntries.map((entry, i) => {
         const stepId = rfInstance.getEdge(entry.edgeId || '')?.target;
         const node = rfInstance.getNode(stepId || '') as FlowNode;
-
-        const prepairedTooltipText = entry.conditions.reduce(
-          (acc, action) =>
-            `${acc} ${action.name} ${action.operator} ${action.expression} and`,
-          'If'
-        );
+        const prepairedTooltipText = getTooltipText(entry.conditions);
 
         return {
           id: entry.edgeId,
           value: `Rule #${i + 1}`,
-          tooltipText: `${prepairedTooltipText} then Go to step ${node?.data?.name || ''}`
+          tooltipText: `${prepairedTooltipText} ${node?.data?.name || ''}`
         };
       });
 
