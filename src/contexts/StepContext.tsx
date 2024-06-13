@@ -42,12 +42,10 @@ export const ActiveStepProvider: React.FC<ActiveStepProviderProps> = ({
 
   useEffect(() => {
     const state = (location.state || {}) as LocationState;
-    if (state.stepId) {
-      setActiveStep({
-        subFlowId: state.subFlowId ?? null,
-        stepId: state.stepId
-      });
-    }
+    setActiveStep({
+      subFlowId: state.subFlowId ?? null,
+      stepId: state.stepId ?? null
+    });
   }, [location]);
 
   const resetActive = useCallback(

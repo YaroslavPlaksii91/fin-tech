@@ -15,7 +15,7 @@ import ReactFlow, {
 } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 import 'reactflow/dist/style.css';
-// import debounce from 'lodash/debounce';
+import debounce from 'lodash/debounce';
 
 import { nodeTypes } from '../Nodes';
 import { edgeTypes } from '../Edges';
@@ -30,7 +30,7 @@ import {
   StepType
 } from '../types';
 import {
-  // checkIfFlowIsEdit,
+  checkIfFlowIsEdit,
   checkIfNodeHasConnection,
   checkIfNodeIsInitial,
   createNewNode,
@@ -42,7 +42,7 @@ import {
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
 import { DEFAULT_SOURCE_HANDLE } from '../constants';
 
-// import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
+import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
 import { FlowNode, IFlow } from '@domain/flow';
 import { useActiveStep } from '@contexts/StepContext';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
@@ -54,7 +54,6 @@ type FlowChartEditorProps = {
   flow: IFlow;
   mainFlow?: IFlow;
   setCopyFlow: (flow: IFlow) => void;
-  // updateNodesInMainFlow?: (subFlow: IFlow) => void;
   updateNodesInMainFlow?: (
     subflowId: string,
     newNode: FlowNode,
@@ -70,7 +69,7 @@ const withFlowChartEditor =
   // eslint-disable-next-line react/display-name
   (props: FlowChartEditorProps) => {
     const { flow, mainFlow, setCopyFlow, updateNodesInMainFlow } = props;
-    // const [isDirty, setIsDirty] = useState<boolean>(false);
+    const [isDirty, setIsDirty] = useState<boolean>(false);
     const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
     const [startDrag, setStartDrag] = useState<boolean>(false);
     const { flowNode, nodeElement, onPaneClick, onNodeContextMenu } =
@@ -138,41 +137,41 @@ const withFlowChartEditor =
       setViewport(flow.viewport);
     }, [flow.viewport, setViewport]);
 
-    // const checkIsDirty = ({
-    //   initialNodes,
-    //   initialEdges,
-    //   nodes,
-    //   edges
-    // }: {
-    //   initialNodes: Node[];
-    //   initialEdges: Edge[];
-    //   nodes: Node[];
-    //   edges: Edge[];
-    // }) => {
-    //   const isFlowEdit = checkIfFlowIsEdit({
-    //     initialNodes,
-    //     initialEdges,
-    //     nodes,
-    //     edges
-    //   });
+    const checkIsDirty = ({
+      initialNodes,
+      initialEdges,
+      nodes,
+      edges
+    }: {
+      initialNodes: Node[];
+      initialEdges: Edge[];
+      nodes: Node[];
+      edges: Edge[];
+    }) => {
+      const isFlowEdit = checkIfFlowIsEdit({
+        initialNodes,
+        initialEdges,
+        nodes,
+        edges
+      });
 
-    //   if (isFlowEdit) {
-    //     setIsDirty(true);
-    //   } else {
-    //     setIsDirty(false);
-    //   }
-    // };
+      if (isFlowEdit) {
+        setIsDirty(true);
+      } else {
+        setIsDirty(false);
+      }
+    };
 
-    // const debounceCheckIsDirty = useCallback(debounce(checkIsDirty, 300), []);
+    const debounceCheckIsDirty = useCallback(debounce(checkIsDirty, 300), []);
 
-    // useEffect(() => {
-    //   debounceCheckIsDirty({
-    //     initialNodes: initialElements.nodes,
-    //     initialEdges: initialElements.edges,
-    //     nodes,
-    //     edges
-    //   });
-    // }, [initialElements, nodes, edges]);
+    useEffect(() => {
+      debounceCheckIsDirty({
+        initialNodes: initialElements.nodes,
+        initialEdges: initialElements.edges,
+        nodes,
+        edges
+      });
+    }, [initialElements, nodes, edges]);
 
     const onConnect: OnConnect = useCallback(
       (connection) => {
@@ -273,8 +272,6 @@ const withFlowChartEditor =
 
     const onNodeDragStop = useCallback(
       (_event: React.MouseEvent, node: Node) => {
-        // if (edges.length === 0) return;
-
         const nodeIsInitial = checkIfNodeIsInitial(node);
         if (nodeIsInitial) return;
 
@@ -284,7 +281,6 @@ const withFlowChartEditor =
 
         setStartDrag(false);
 
-        // console.log('edges on drag stop', edges);
         const sourceNode = document.getElementById(node.id);
 
         const edgesAddButtons = document.querySelectorAll(
@@ -425,7 +421,7 @@ const withFlowChartEditor =
           />
         )}
         <StepActionsMenu
-          subFlowId={null}
+          subFlowId={mainFlow ? flow.id : null}
           activeStep={activeStep}
           anchorElement={nodeElement}
           flowNode={flowNode}
@@ -434,7 +430,7 @@ const withFlowChartEditor =
           isEditMode
           setActiveStep={setActiveStep}
         />
-        {/* <LeavePageConfirmationDialog isDirty={isDirty} /> */}
+        <LeavePageConfirmationDialog isDirty={isDirty} />
       </>
     );
   };
