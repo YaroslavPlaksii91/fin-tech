@@ -30,6 +30,7 @@ import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { theme } from '@theme';
 import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
+import { checkIsProductionFlow } from '@utils/helpers';
 
 type TableRowProps = {
   headers: TableHeader[];
@@ -58,16 +59,19 @@ export const TableRow = ({
   const [variableUsageNodes, setVariableUsageNodes] = useState<FlowNode[]>([]);
   const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
   const navigate = useNavigate();
+  const isProductionFlow = checkIsProductionFlow();
 
   const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
 
   const getVariableUsage = async (variableName: string) => {
     const resultData: FlowNode[] = [];
+
     try {
-      const responseData = await dataDictionaryService.getVariableUsage(
-        flowId,
-        variableName
-      );
+      const getVariable = isProductionFlow
+        ? () => dataDictionaryService.getProductionVariableUsage(variableName)
+        : () => dataDictionaryService.getVariableUsage(flowId, variableName);
+
+      const responseData = await getVariable();
 
       if (responseData && responseData?.length) {
         responseData.forEach((variable) => {
@@ -102,7 +106,7 @@ export const TableRow = ({
             onClick={() => {
               setisExpanded(!isExpanded);
               !isExpanded &&
-                tabName != VARIABLES_TABS.userDefined &&
+                tabName !== VARIABLES_TABS.userDefined &&
                 void getVariableUsage(row.name);
             }}
           >

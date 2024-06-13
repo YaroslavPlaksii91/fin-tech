@@ -1,5 +1,3 @@
-import { map } from 'lodash';
-
 import { Variable, VariableUsageParams } from '@domain/dataDictionary';
 import { dataDictionaryService } from '@services/data-dictionary';
 import { FlowNode } from '@domain/flow';
@@ -7,13 +5,26 @@ import Logger from '@utils/logger';
 
 export const getUserDefinedUsage = async (
   flowId: string,
-  variables: Variable[]
+  variables: string[]
 ) => {
   try {
     const responseData =
       await dataDictionaryService.getUserDefinedVariableUsage(
         flowId,
-        map(variables, 'name')
+        variables
+      );
+
+    return responseData;
+  } catch (error) {
+    Logger.error('Error fetching variable usage in the flow:', error);
+  }
+};
+
+export const getProductionUserDefinedUsage = async (variables: string[]) => {
+  try {
+    const responseData =
+      await dataDictionaryService.getProductionUserDefinedVariableUsage(
+        variables
       );
 
     return responseData;
