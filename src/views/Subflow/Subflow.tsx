@@ -1,5 +1,5 @@
 import { Edge, ReactFlowProvider } from 'reactflow';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { cloneDeep } from 'lodash';
 
 // import { findSubFlow, updateNodesInSubFlow } from './utils';
@@ -54,14 +54,16 @@ const SubFlow: React.FC<SubFlowProps> = ({
     return undefined;
   }, [activeStepId]);
 
-  const updateNodesInMainFlow = (
-    subFlowId: string,
-    newNode: FlowNode,
-    edges: Edge[]
-  ) => {
-    // console.log('UPDATE SUBFLOW NODES IN MAIN FLOW');
-    setNodes((nodes) => addNodeInSubFlow(nodes, subFlowId, newNode, edges));
-  };
+  const updateNodesInMainFlow = useCallback(
+    (subFlowId: string, newNode: FlowNode, edges: Edge[]) => {
+      // console.log('UPDATE SUBFLOW NODES IN MAIN FLOW');
+      setNodes((nodes) => {
+        const updatedNodes = addNodeInSubFlow(nodes, subFlowId, newNode, edges);
+        return updatedNodes;
+      });
+    },
+    [mainFlowNodes]
+  );
 
   return (
     // As subFlow is sub instance main flow, it needs own flow provider

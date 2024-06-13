@@ -34,8 +34,8 @@ export const createNewNode = (
     position: defaultPosition,
     deletable: true,
     draggable: true,
-    width: 40,
-    height: 40
+    width: 0,
+    height: 0
   };
 
   switch (type) {

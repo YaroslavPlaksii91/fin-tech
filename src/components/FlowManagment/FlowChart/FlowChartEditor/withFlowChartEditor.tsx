@@ -88,7 +88,7 @@ const withFlowChartEditor =
     const [newNode, setNewNode] = useState<FlowNode | null>(null);
 
     useEffect(() => {
-      if (mainFlow && newNode && rfInstance) {
+      if (mainFlow && newNode) {
         updateNodesInMainFlow?.(flow.id, newNode, edges);
         setNewNode(null);
       }
