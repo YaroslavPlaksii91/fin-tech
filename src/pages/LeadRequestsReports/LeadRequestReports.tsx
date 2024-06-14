@@ -110,7 +110,7 @@ export default function LeadRequestsReportsPage() {
     void fetchList(params);
   };
 
-  useEffect(() => fetch(), [page, sort]);
+  useEffect(() => fetch(), [page, rowsPerPage, sort]);
 
   return (
     <Stack sx={{ padding: '16px 32px' }}>
@@ -156,7 +156,6 @@ export default function LeadRequestsReportsPage() {
           columnHeaderHeight={32}
           rowHeight={28}
           rows={rows}
-          rowCount={rowsPerPage}
           columns={dataGridColumns}
           loading={loading}
           sortingMode="server"
