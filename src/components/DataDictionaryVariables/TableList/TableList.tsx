@@ -4,7 +4,11 @@ import { TableHead, TableBody, IconButton, Table } from '@mui/material';
 import { AddBoxOutlined } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
-import { getUserDefinedUsage, getUserDefinedUsageNodes } from '../utils';
+import {
+  getProductionUserDefinedUsage,
+  getUserDefinedUsage,
+  getUserDefinedUsageNodes
+} from '../utils';
 import { VariableForm } from '../VariableForm/VariableForm';
 import { DeleteVariable } from '../DeleteVariable/DeleteVariable';
 import { TableHeader } from '../DataDictionaryVariables';
@@ -28,6 +32,7 @@ import TablePagination from '@components/shared/TablePagination';
 import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import useTablePagination from '@hooks/useTablePagination';
+import { checkIsProductionFlow } from '@utils/helpers';
 
 interface TableListProps {
   flowNodes: FlowNode[];
@@ -51,6 +56,7 @@ const TableList = ({
   const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const isProductionFlow = checkIsProductionFlow();
 
   const [userDefinedUsage, setUserDefinedUsage] =
     useState<VariableUsageParams>();
@@ -121,12 +127,18 @@ const TableList = ({
   };
 
   useEffect(() => {
-    if (tabName === VARIABLES_TABS.userDefined) {
-      void getUserDefinedUsage(flowId, tableData).then((data) =>
-        setUserDefinedUsage(data as VariableUsageParams)
-      );
-    }
-  }, []);
+    if (tabName !== VARIABLES_TABS.userDefined) return;
+
+    const variables = map(tableData, 'name');
+
+    isProductionFlow
+      ? void getProductionUserDefinedUsage(variables).then((data) =>
+          setUserDefinedUsage(data)
+        )
+      : void getUserDefinedUsage(flowId, variables).then((data) =>
+          setUserDefinedUsage(data)
+        );
+  }, [tabName]);
 
   return (
     <StyledPaper>
