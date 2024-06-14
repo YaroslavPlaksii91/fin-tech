@@ -8,8 +8,8 @@ import Menu from '@components/shared/Menu/Menu';
 import Logger from '@utils/logger';
 import {
   ActionTypes,
-  editModeOptions,
-  options as defaultOptions
+  getEditModeOptions,
+  getOptions
 } from '@components/StepManagment/StepActionsMenu/types';
 import { FlowNode } from '@domain/flow.ts';
 import routes from '@constants/routes.ts';
@@ -18,6 +18,8 @@ import { asyncConfirmDialog } from '@components/shared/Confirmation/AsyncConfirm
 import { useAppDispatch } from '@store/hooks';
 import { deleteNodes } from '@store/flow/flow';
 import { ActiveStep } from '@contexts/StepContext';
+import { permissionsMap } from '@constants/permissions';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
 
 interface StepActionsMenuOnNode {
   isOpen?: boolean;
@@ -49,8 +51,12 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
 
   const menuRef: MutableRefObject<HTMLButtonElement | null> = useRef(null);
   const [open, setIsOpen] = useState(isOpen);
+  const canUserViewFlow = useHasUserPermission(permissionsMap.canViewFlow);
+  const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
 
-  const options = isEditMode ? editModeOptions : defaultOptions;
+  const options = isEditMode
+    ? getEditModeOptions({ canUserViewFlow, canUserUpdateFlow })
+    : getOptions({ canUserViewFlow, canUserUpdateFlow });
 
   useEffect(() => {
     setIsOpen(isOpen);

@@ -44,12 +44,24 @@ const deleteOption = {
   textColor: theme.palette.error.main
 };
 
-export const optionsProductionFlow = [viewDataDictionaryOption];
+export interface OptionsFlowParams {
+  canUserViewFlow?: boolean;
+  canUserUpdateFlow?: boolean;
+}
 
-export const optionsDraftFlow = [
-  viewDataDictionaryOption,
+export const getOptionsProductionFlow = ({
+  canUserViewFlow
+}: OptionsFlowParams) => [
+  { ...viewDataDictionaryOption, hide: !canUserViewFlow }
+];
+
+export const getOptionsDraftFlow = ({
+  canUserViewFlow,
+  canUserUpdateFlow
+}: OptionsFlowParams) => [
+  { ...viewDataDictionaryOption, hide: !canUserViewFlow },
   duplicateOption,
-  editOption,
-  renameOption,
-  deleteOption
+  { ...editOption, hide: !canUserUpdateFlow },
+  { ...renameOption, hide: !canUserUpdateFlow },
+  { ...deleteOption, hide: !canUserUpdateFlow }
 ];

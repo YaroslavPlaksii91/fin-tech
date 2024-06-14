@@ -32,6 +32,8 @@ import { InputText } from '@components/shared/Forms/InputText';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar.tsx';
 import StepNoteSection from '@views/DecisionTable/StepNoteSection/StepNoteSection';
 import { StepContentWrapper } from '@views/styled';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
+import { permissionsMap } from '@constants/permissions';
 
 interface CalculationProps {
   flow: IFlow;
@@ -55,6 +57,8 @@ const Calculation: React.FC<CalculationProps> = ({
   const [initialValue, setInitialValue] = useState<
     Expression & { id: string }
   >();
+
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const {
     handleSubmit,
@@ -187,26 +191,28 @@ const Calculation: React.FC<CalculationProps> = ({
                                 }}
                                 width={40}
                               >
-                                <Stack direction="row">
-                                  <IconButton
-                                    onClick={() => {
-                                      setInitialValue({
-                                        ...expression,
-                                        id: expression.id
-                                      });
-                                      setOpenExpEditorView(true);
-                                    }}
-                                  >
-                                    <EditIcon />
-                                  </IconButton>
-                                  <IconButton
-                                    onClick={() => {
-                                      remove(index);
-                                    }}
-                                  >
-                                    <TrashIcon />
-                                  </IconButton>
-                                </Stack>
+                                {hasUserPermission && (
+                                  <Stack direction="row">
+                                    <IconButton
+                                      onClick={() => {
+                                        setInitialValue({
+                                          ...expression,
+                                          id: expression.id
+                                        });
+                                        setOpenExpEditorView(true);
+                                      }}
+                                    >
+                                      <EditIcon />
+                                    </IconButton>
+                                    <IconButton
+                                      onClick={() => {
+                                        remove(index);
+                                      }}
+                                    >
+                                      <TrashIcon />
+                                    </IconButton>
+                                  </Stack>
+                                )}
                               </TableCell>
                             </TableRow>
                           ))}
@@ -229,19 +235,21 @@ const Calculation: React.FC<CalculationProps> = ({
                     </CardContent>
                   </Card>
                 </Box>
-                <Button
-                  disabled={fields.length === RULES_LIMIT}
-                  variant="outlined"
-                  size="small"
-                  sx={{ maxWidth: 180 }}
-                  onClick={() => {
-                    setInitialValue(undefined);
-                    setOpenExpEditorView(true);
-                  }}
-                  startIcon={<PlusSquareIcon />}
-                >
-                  Add New Expression
-                </Button>
+                {hasUserPermission && (
+                  <Button
+                    disabled={fields.length === RULES_LIMIT}
+                    variant="outlined"
+                    size="small"
+                    sx={{ maxWidth: 180 }}
+                    onClick={() => {
+                      setInitialValue(undefined);
+                      setOpenExpEditorView(true);
+                    }}
+                    startIcon={<PlusSquareIcon />}
+                  >
+                    Add New Expression
+                  </Button>
+                )}
               </Stack>
             </form>
             <StepNoteSection
@@ -283,6 +291,7 @@ const Calculation: React.FC<CalculationProps> = ({
             onApplyChangesClick={() => {
               void handleSubmit(onSubmit)();
             }}
+            isShow={hasUserPermission}
           />
         </>
       )}

@@ -58,6 +58,8 @@ import Dialog from '@components/shared/Modals/Dialog';
 import { SNACK_TYPE } from '@constants/common';
 import { DataDictionaryVariable } from '@domain/dataDictionary';
 import { StepContentWrapper } from '@views/styled';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
+import { permissionsMap } from '@constants/permissions';
 
 type DecisionTableStepProps = {
   flow: IFlow;
@@ -94,6 +96,7 @@ const DecisionTableStep = ({
   const [defaultStepId, setDefaultStepId] = useState<string | null>(null);
 
   const dataDictionary = useContext(DataDictionaryContext);
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const variables = dataDictionary?.variables || {};
   const nodes: FlowNode[] = getNodes();
@@ -198,8 +201,17 @@ const DecisionTableStep = ({
       category: selectedColumn.category,
       start: selectedColumn.index + 1,
       deleteCount: 0,
-      insertEntry: INITIAL_ENTRY
+      insertEntry: INITIAL_ENTRY,
+      initialEntries:
+        selectedColumn.category === CATEGORIES.Actions
+          ? [INITIAL_ENTRY]
+          : [INITIAL_ENTRY, INITIAL_ENTRY]
     });
+
+    if (!caseEntries.length) {
+      setStepIds([null]);
+      setDefaultStepId(null);
+    }
 
     setCaseEntries(updatedCaseEntries);
   };
@@ -222,16 +234,24 @@ const DecisionTableStep = ({
   ) => {
     if (!selectedColumn?.category) return;
 
+    const insertEntry = {
+      ...INITIAL_ENTRY,
+      name: newVariable.name
+    };
+
     const updatedCaseEntries = updateCaseEntry({
       caseEntries,
       category: selectedColumn.category,
       start: selectedColumn.index,
       deleteCount: 1,
-      insertEntry: {
-        ...INITIAL_ENTRY,
-        name: newVariable.name
-      }
+      insertEntry,
+      initialEntries: [insertEntry]
     });
+
+    if (!caseEntries.length) {
+      setStepIds([null]);
+      setDefaultStepId(null);
+    }
 
     setCaseEntries(updatedCaseEntries);
   };
@@ -241,7 +261,7 @@ const DecisionTableStep = ({
   ) => {
     const expression =
       data.operator === OPERATORS.Between
-        ? `${data.upperBound} ${data.lowerBound}`
+        ? `${data.lowerBound} ${data.upperBound}`
         : data.value;
 
     setCaseEntries((prev) =>
@@ -441,6 +461,7 @@ const DecisionTableStep = ({
             />
           </TableContainer>
         </Paper>
+
         <Button
           sx={{ width: 'fit-content', mt: 1 }}
           variant="outlined"
@@ -450,6 +471,7 @@ const DecisionTableStep = ({
         >
           Add new business layer
         </Button>
+
         <StepNoteSection
           modalOpen={openNoteModal}
           handleCloseModal={handleCloseNoteModal}
@@ -472,6 +494,7 @@ const DecisionTableStep = ({
       <StepDetailsControlBar
         onDiscard={() => setOpenDiscardModal(true)}
         onApplyChangesClick={onApplyChangesClick}
+        isShow={hasUserPermission}
       />
       <Dialog
         title="Discard changes"

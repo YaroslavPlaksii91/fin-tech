@@ -1,43 +1,47 @@
 import { useEffect, useState } from 'react';
 import { Dayjs } from 'dayjs';
-import { DataGridPremium, GridSortModel } from '@mui/x-data-grid-premium';
+import { GridSortModel } from '@mui/x-data-grid-premium';
 import { DateRange } from '@mui/x-date-pickers-pro';
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, Paper } from '@mui/material';
 import buildQuery from 'odata-query';
 
-import { FetchList, OdataQueries, RowData } from './types';
+import { COLUMN_IDS, FetchList, OdataQueries, RowData } from './types';
 import { getFormattedRows } from './utils';
 import {
   DEFAULT_SORT,
-  PAGE_SIZE,
   SHORTCUTS_DATE_ITEMS,
   TODAY,
   dataGridColumns
 } from './constants';
 
 import { reportingService } from '@services/lead-requests-reports';
-import Logger from '@utils/logger';
-import DataGridPagination from '@components/shared/DataGridPagination';
-import { StepContainer as Container } from '@views/styled';
 import { combineDateAndTime } from '@utils/date';
 import DateFilters from '@components/Report/DateFilters';
+import TablePagination from '@components/shared/TablePagination';
+import { theme } from '@theme';
+import { StyledDataGridPremium } from '@components/shared/Table/styled';
+import useTablePagination from '@hooks/useTablePagination';
+import Logger from '@utils/logger';
 
 export default function LeadRequestsReportsPage() {
   const [rows, setRows] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
   const [sort, setSort] = useState(DEFAULT_SORT);
+  const [totalCount, setTotalCount] = useState(0);
   const [time, setTime] = useState<DateRange<Dayjs>>([null, null]);
-
   const [date, setDate] = useState<DateRange<Dayjs>>([
     TODAY.startOf('week'),
     TODAY.endOf('week')
   ]);
 
-  const [paginationModel, setPaginationModel] = useState({
-    pageSize: PAGE_SIZE,
-    page: 0
-  });
+  const {
+    rowsPerPage,
+    page,
+    totalPages,
+    handlePageChange,
+    handlePageByInputChange,
+    handleRowsPerPageChange
+  } = useTablePagination({ totalCount });
 
   const handleDateReset = () => {
     setDate([null, null]);
@@ -53,8 +57,8 @@ export default function LeadRequestsReportsPage() {
     setLoading(true);
 
     const queries: OdataQueries = {
-      top: PAGE_SIZE,
-      skip: PAGE_SIZE * page,
+      top: rowsPerPage,
+      skip: rowsPerPage * page,
       orderBy: sort,
       count: true
     };
@@ -93,7 +97,7 @@ export default function LeadRequestsReportsPage() {
   };
 
   const fetch = () => {
-    const params: FetchList = { page: paginationModel.page, sort };
+    const params: FetchList = { page, sort };
 
     const startDate = combineDateAndTime(date[0], time[0]);
     const endDate = combineDateAndTime(date[1], time[1]);
@@ -106,51 +110,77 @@ export default function LeadRequestsReportsPage() {
     void fetchList(params);
   };
 
-  useEffect(() => fetch(), [paginationModel.page, sort]);
+  useEffect(() => fetch(), [page, sort]);
 
   return (
-    <Container>
-      <Stack sx={{ padding: '16px 32px' }}>
+    <Stack sx={{ padding: '16px 32px' }}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        overflow="auto"
+        spacing={2}
+        py={2}
+      >
+        <Typography variant="h4">Lead requests</Typography>
         <Stack
           direction="row"
           justifyContent="space-between"
           alignItems="center"
-          overflow="auto"
-          spacing={2}
-          py={2}
+          spacing={1}
         >
-          <Typography variant="h4">Lead requests</Typography>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            spacing={1}
-          >
-            <DateFilters
-              date={date}
-              time={time}
-              shortcutsDateItems={SHORTCUTS_DATE_ITEMS}
-              onDateChange={setDate}
-              onTimeChange={setTime}
-              onClear={handleDateReset}
-              onApply={fetch}
-            />
-          </Stack>
+          <DateFilters
+            date={date}
+            time={time}
+            shortcutsDateItems={SHORTCUTS_DATE_ITEMS}
+            onDateChange={setDate}
+            onTimeChange={setTime}
+            onClear={handleDateReset}
+            onApply={fetch}
+          />
         </Stack>
-        <DataGridPremium
+      </Stack>
+      <Paper
+        sx={{
+          border: `1px solid ${theme.palette.divider}`,
+          borderRadius: '16px',
+          overflow: 'hidden',
+          minWidth: '680px'
+        }}
+      >
+        <StyledDataGridPremium
+          autoHeight
+          disableColumnReorder
+          disableColumnMenu
+          isRowSelectable={() => false}
+          columnHeaderHeight={32}
+          rowHeight={28}
           rows={rows}
+          rowCount={rowsPerPage}
           columns={dataGridColumns}
           loading={loading}
-          rowCount={totalCount}
-          disableColumnMenu={true}
-          paginationMode="server"
           sortingMode="server"
+          paginationMode="client"
+          pinnedColumns={{ right: [COLUMN_IDS.details] }}
           onSortModelChange={handleSortModelChange}
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          slots={{ footer: DataGridPagination }}
+          getRowClassName={(params) =>
+            params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
+          }
+          slots={{
+            footer: () => (
+              <TablePagination
+                count={totalCount}
+                totalPages={totalPages}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+                onPageByInputChange={handlePageByInputChange}
+              />
+            )
+          }}
         />
-      </Stack>
-    </Container>
+      </Paper>
+    </Stack>
   );
 }

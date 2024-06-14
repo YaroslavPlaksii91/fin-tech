@@ -132,22 +132,21 @@ export const updateCaseEntry = ({
   category,
   start,
   deleteCount = 0,
-  insertEntry
+  insertEntry,
+  initialEntries = [] // We need to provide initial entries for rows in case when we don`t have any already created Entries
 }: {
   caseEntries: CaseEntriesDate[];
   category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   start: number;
   deleteCount: number;
   insertEntry?: CaseEntry;
+  initialEntries?: CaseEntry[];
 }) =>
   (caseEntries.length ? caseEntries : INITIAL_CASE_ENTRIES).map((row) => {
     if (!row[category].length)
       return {
         ...row,
-        [category]:
-          category === CATEGORIES.Actions
-            ? [INITIAL_ENTRY]
-            : [INITIAL_ENTRY, INITIAL_ENTRY] // Need to add two entries if it is first action after creating the table cause caseEntries is []
+        [category]: initialEntries
       };
 
     const newColumns = [...row[category]];

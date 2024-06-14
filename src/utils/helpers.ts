@@ -7,6 +7,7 @@ import {
   NOT_FOUND,
   PRODUCTION_FLOW_ID
 } from '@constants/common';
+import { MenuItem } from '@components/Sidebar/Sidebar';
 
 type Errors = {
   [key: string]: string[];
@@ -76,4 +77,27 @@ const checkIsProductionFlow = () => {
   return id === PRODUCTION_FLOW_ID;
 };
 
-export { parseErrorMessages, parseValidationError, checkIsProductionFlow };
+type PermissionCheckTarget = MenuItem | string;
+
+const hasPermission = (
+  permissions: string[] | undefined,
+  target: PermissionCheckTarget
+): boolean | undefined => {
+  if (typeof target === 'string') {
+    return permissions ? permissions.includes(target) : true;
+  }
+
+  if (!target) return true;
+
+  if (!Array.isArray(target.permission)) {
+    return permissions ? permissions.includes(target.permission) : true;
+  }
+  // update code if MenuItem will have two or more permissions
+};
+
+export {
+  parseErrorMessages,
+  parseValidationError,
+  checkIsProductionFlow,
+  hasPermission
+};

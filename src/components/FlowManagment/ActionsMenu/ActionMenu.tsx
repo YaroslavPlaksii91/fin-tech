@@ -9,8 +9,8 @@ import { DuplicateFlow } from '../DuplicateFlow/DuplicateFlow';
 import Details from './Details';
 import {
   ActionTypes,
-  optionsDraftFlow,
-  optionsProductionFlow
+  getOptionsDraftFlow,
+  getOptionsProductionFlow
 } from './options';
 
 import Menu from '@components/shared/Menu/Menu';
@@ -20,6 +20,8 @@ import routes from '@constants/routes';
 import MoreHorizontalIcon from '@icons/moreHorizontal.svg';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
 import { theme } from '@theme';
+import { permissionsMap } from '@constants/permissions';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
 
 const ActionsMenu: React.FC<{
   flow: IFlowListItem;
@@ -30,10 +32,15 @@ const ActionsMenu: React.FC<{
   const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
   const [modalDuplicateOpen, setModalDuplicateOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+  const canUserViewFlow = useHasUserPermission(permissionsMap.canViewFlow);
+  const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const options = useMemo(
-    () => (isProductionFlow ? optionsProductionFlow : optionsDraftFlow),
-    [isProductionFlow]
+    () =>
+      isProductionFlow
+        ? getOptionsProductionFlow({ canUserViewFlow })
+        : getOptionsDraftFlow({ canUserViewFlow, canUserUpdateFlow }),
+    [isProductionFlow, canUserViewFlow, canUserUpdateFlow]
   );
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {

@@ -1,13 +1,17 @@
 import { GridColDef } from '@mui/x-data-grid-premium';
 import dayjs, { Dayjs } from 'dayjs';
 import { DateRange, PickersShortcutsItem } from '@mui/x-date-pickers-pro';
+import { Button, Typography } from '@mui/material';
 
 import { COLUMN_IDS } from './types';
 
-import { RemoveRedEyeOutlinedIcon } from '@components/shared/Icons';
+import { theme } from '@theme';
 
-export const PAGE_SIZE = 25;
 export const DEFAULT_SORT = 'id asc';
+export const TODAY = dayjs();
+export const YESTRDAY = TODAY.subtract(1);
+export const PREV_WEEK = TODAY.subtract(7, 'day');
+export const PREV_MONTH = TODAY.subtract(1, 'month');
 
 export const dataGridColumns: GridColDef[] = [
   { field: COLUMN_IDS.requestId, headerName: 'Request ID' },
@@ -24,7 +28,28 @@ export const dataGridColumns: GridColDef[] = [
   { field: COLUMN_IDS.store, headerName: 'Store' },
   { field: COLUMN_IDS.ssn, headerName: 'SSN' },
   { field: COLUMN_IDS.email, headerName: 'Email' },
-  { field: COLUMN_IDS.decision, headerName: 'Decision' },
+  {
+    field: COLUMN_IDS.decision,
+    headerName: 'Decision',
+    renderCell: (row) => {
+      switch (row.value) {
+        case 'Approved':
+          return (
+            <Typography color={theme.palette.success.main} variant="body2">
+              {row.value}
+            </Typography>
+          );
+        case 'Denied':
+          return (
+            <Typography color={theme.palette.error.main} variant="body2">
+              {row.value}
+            </Typography>
+          );
+        default:
+          return '-';
+      }
+    }
+  },
   { field: COLUMN_IDS.denialReason, headerName: 'Denial Reason' },
   { field: COLUMN_IDS.state, headerName: 'State' },
   { field: COLUMN_IDS.apiVersion, headerName: 'API Version' },
@@ -33,15 +58,16 @@ export const dataGridColumns: GridColDef[] = [
   {
     field: COLUMN_IDS.details,
     headerName: '',
-    width: 45,
-    renderCell: () => <RemoveRedEyeOutlinedIcon />
+    pinnable: true,
+    sortable: false,
+    resizable: false,
+    renderCell: () => (
+      <Button size="small" variant="text">
+        Details
+      </Button>
+    )
   }
 ];
-
-export const TODAY = dayjs();
-export const YESTRDAY = TODAY.subtract(1);
-export const PREV_WEEK = TODAY.subtract(7, 'day');
-export const PREV_MONTH = TODAY.subtract(1, 'month');
 
 export const SHORTCUTS_DATE_ITEMS: PickersShortcutsItem<DateRange<Dayjs>>[] = [
   {
