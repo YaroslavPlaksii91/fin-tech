@@ -73,7 +73,11 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   const handleSelectedActions = async (action: ActionTypes) => {
     switch (action) {
       case ActionTypes.STEP_TEXT_VIEW:
-        Logger.info('Step text view');
+        navigate(routes.underwriting.flow.view(id as string), {
+          state: { subFlowId, stepId: flowNode?.id }
+        });
+        flowNode && setActiveStep?.({ subFlowId, stepId: flowNode.id });
+
         break;
       case ActionTypes.EDIT_STEP:
         if (isEditMode) {

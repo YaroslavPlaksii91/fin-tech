@@ -96,7 +96,7 @@ const DecisionTableStep = ({
   const [defaultStepId, setDefaultStepId] = useState<string | null>(null);
 
   const dataDictionary = useContext(DataDictionaryContext);
-  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const hasUserPermission = useHasUserPermission(permissionsMap.test);
 
   const variables = dataDictionary?.variables || {};
   const nodes: FlowNode[] = getNodes();
@@ -437,7 +437,7 @@ const DecisionTableStep = ({
         <StepDetailsHeader
           flow={mainFlow ?? flow}
           step={step}
-          title={`Edit Step: ${step.data.name}`}
+          title={`${hasUserPermission ? 'Edit' : 'View'} Step: ${step.data.name}`}
           details={STEP_DETAILS}
           isActionContainerVisible={false}
         />
@@ -458,38 +458,43 @@ const DecisionTableStep = ({
               handleDeleteCategoryColumn={handleDeleteCategoryColumn}
               handleChangeColumnVariable={handleChangeColumnVariable}
               handleSubmitVariableValue={handleSubmitVariableValue}
+              hasUserPermission={hasUserPermission}
             />
           </TableContainer>
         </Paper>
 
-        <Button
-          sx={{ width: 'fit-content', mt: 1 }}
-          variant="outlined"
-          onClick={handleAddNewLayer}
-          startIcon={<PlusSquareIcon />}
-          disabled={rowsToShow.length >= searchableSelectOptions.length}
-        >
-          Add new business layer
-        </Button>
+        {hasUserPermission && (
+          <Button
+            sx={{ width: 'fit-content', mt: 1 }}
+            variant="outlined"
+            onClick={handleAddNewLayer}
+            startIcon={<PlusSquareIcon />}
+            disabled={rowsToShow.length >= searchableSelectOptions.length}
+          >
+            Add new business layer
+          </Button>
+        )}
 
-        <StepNoteSection
-          modalOpen={openNoteModal}
-          handleCloseModal={handleCloseNoteModal}
-          handleOpenModal={handleOpenNoteModal}
-          noteValue={noteValue}
-          handleSubmitNote={handleSubmitNote}
-          renderInput={() => (
-            <TextField
-              fullWidth
-              name="note"
-              value={noteValue}
-              label="Note"
-              size="small"
-              disabled
-              placeholder="Enter note here"
-            />
-          )}
-        />
+        {hasUserPermission && (
+          <StepNoteSection
+            modalOpen={openNoteModal}
+            handleCloseModal={handleCloseNoteModal}
+            handleOpenModal={handleOpenNoteModal}
+            noteValue={noteValue}
+            handleSubmitNote={handleSubmitNote}
+            renderInput={() => (
+              <TextField
+                fullWidth
+                name="note"
+                value={noteValue}
+                label="Note"
+                size="small"
+                disabled
+                placeholder="Enter note here"
+              />
+            )}
+          />
+        )}
       </StepContentWrapper>
       <StepDetailsControlBar
         onDiscard={() => setOpenDiscardModal(true)}

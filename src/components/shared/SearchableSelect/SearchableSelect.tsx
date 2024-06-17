@@ -35,6 +35,7 @@ interface SelectProps<
   setSelectedOptions: React.Dispatch<React.SetStateAction<string[]>>;
   options: { value: string; label: string }[];
   onChangeCb?: () => void;
+  disabled?: boolean;
 }
 
 const SearchableSelect = <
@@ -47,7 +48,8 @@ const SearchableSelect = <
   name,
   selectedOptions,
   setSelectedOptions,
-  onChangeCb
+  onChangeCb,
+  disabled
 }: SelectProps<TFieldValues, TName>) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchText, setSearchText] = useState('');
@@ -102,6 +104,7 @@ const SearchableSelect = <
             renderValue={() =>
               options.find((option) => option.value === value)?.label
             }
+            disabled={disabled}
           >
             <ListSubheader>
               <TextField

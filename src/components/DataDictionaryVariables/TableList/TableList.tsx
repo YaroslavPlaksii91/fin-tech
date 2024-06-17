@@ -60,7 +60,7 @@ const TableList = ({
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const {
     flow: { temporaryVariables, permanentVariables }
@@ -163,7 +163,7 @@ const TableList = ({
             ))}
             {tabName === VARIABLES_TABS.userDefined && (
               <StyledTableCell align="right">
-                {hasUserPermission && (
+                {canUserUpdateFlow && (
                   <IconButton
                     onClick={() => {
                       setSelectedVariable(undefined);

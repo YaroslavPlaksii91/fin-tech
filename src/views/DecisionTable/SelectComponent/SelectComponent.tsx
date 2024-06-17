@@ -13,6 +13,7 @@ interface SelectComponentProps {
   isMultiSelect?: boolean;
   fullWidth: boolean;
   handleChange: (selectedValue: string) => void;
+  disabled?: boolean;
 }
 
 const SelectComponent = ({
@@ -21,7 +22,8 @@ const SelectComponent = ({
   options,
   isMultiSelect = false,
   fullWidth = false,
-  handleChange
+  handleChange,
+  disabled
 }: SelectComponentProps) => {
   const handleOnSelectChange = (event: SelectChangeEvent<string>) => {
     handleChange(event.target.value);
@@ -53,6 +55,7 @@ const SelectComponent = ({
         value={value}
         onChange={handleOnSelectChange}
         multiple={isMultiSelect}
+        disabled={disabled}
       >
         {options.map((option) => (
           <MenuItem value={option.value} key={option.value}>

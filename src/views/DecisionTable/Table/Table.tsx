@@ -57,6 +57,7 @@ interface Table {
   handleSubmitVariableValue: (
     data: SelectedCellInRowData & FormFieldsProps
   ) => void;
+  hasUserPermission?: boolean;
 }
 
 const Table = ({
@@ -73,7 +74,8 @@ const Table = ({
   handleDeleteCategoryColumn,
   handleChangeColumnVariable,
   handleChangeStep,
-  handleSubmitVariableValue
+  handleSubmitVariableValue,
+  hasUserPermission
 }: Table) => {
   const [anchorVariableMenu, setAnchorVariableMenu] =
     useState<HTMLElement | null>(null);
@@ -192,6 +194,7 @@ const Table = ({
                     isDeleteDisabled={
                       isLastConditionColumn || column.name === 'Step'
                     }
+                    showActionButton={hasUserPermission}
                   />
                 </TableCell>
               );
@@ -225,18 +228,21 @@ const Table = ({
                           handleChange={(stepId) =>
                             handleChangeStep(rowIndex, stepId)
                           }
+                          disabled={!hasUserPermission}
                         />
                       </StyledTableCell>
-                      <StyledTableCell sx={{ padding: 0 }}>
-                        {rows.length !== rowIndex + 1 ? (
-                          <Button
-                            sx={{ color: theme.palette.error.main }}
-                            onClick={() => handleDeleteRow(rowIndex)}
-                          >
-                            <TrashIcon />
-                          </Button>
-                        ) : null}
-                      </StyledTableCell>
+                      {hasUserPermission && (
+                        <StyledTableCell sx={{ padding: 0 }}>
+                          {rows.length !== rowIndex + 1 ? (
+                            <Button
+                              sx={{ color: theme.palette.error.main }}
+                              onClick={() => handleDeleteRow(rowIndex)}
+                            >
+                              <TrashIcon />
+                            </Button>
+                          ) : null}
+                        </StyledTableCell>
+                      )}
                     </Fragment>
                   );
                 }
@@ -274,14 +280,15 @@ const Table = ({
                   <StyledTableCell key={columnIndex}>
                     {isDataTypeWithoutEnum ? (
                       <StyledStack
-                        onClick={() =>
-                          setSelectedRowCell({
-                            rowIndex,
-                            category,
-                            variableName: name,
-                            dataType
-                          })
-                        }
+                        onClick={() => {
+                          hasUserPermission &&
+                            setSelectedRowCell({
+                              rowIndex,
+                              category,
+                              variableName: name,
+                              dataType
+                            });
+                        }}
                         disabled={!dataType.length}
                         sx={{ cursor: 'pointer' }}
                       >
