@@ -1,20 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  IconButton,
-  Stack,
-  Button,
-  Collapse,
-  Typography,
-  Box
-} from '@mui/material';
+// import { useNavigate } from 'react-router-dom';
+import { IconButton, Stack, Button, Collapse, Typography } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { VARIABLES_TABS } from '../constants';
 import { TableHeader } from '../DataDictionaryVariables';
 
-import CalculatorIcon from '@icons/calculator.svg';
-import BlocksIcon from '@icons/blocks.svg';
+import StepBreadcrumbs from './StepBreadcrumbs';
+
 import TrashIcon from '@icons/trash.svg';
 import EditIcon from '@icons/editPencil.svg';
 import {
@@ -25,8 +18,8 @@ import { Variable } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { dataDictionaryService } from '@services/data-dictionary';
 import Logger from '@utils/logger';
-import routes from '@constants/routes';
-import { StepType } from '@components/FlowManagment/FlowChart/types';
+// import routes from '@constants/routes';
+// import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { theme } from '@theme';
 import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
@@ -40,6 +33,7 @@ type TableRowProps = {
   flowId: string;
   flowNodes: FlowNode[];
   userDefinedUsageNodes: FlowNode[] | undefined;
+  userDefinedUsageStepIds: string[] | undefined;
   onDelete: (row: Variable, variableUsageNodes: FlowNode[]) => void;
   onEdit: (row: Variable, variableUsageNodes: FlowNode[]) => void;
 };
@@ -52,19 +46,22 @@ export const TableRow = ({
   flowId,
   flowNodes,
   userDefinedUsageNodes,
+  userDefinedUsageStepIds,
   onDelete,
   onEdit
 }: TableRowProps) => {
   const [isExpanded, setisExpanded] = useState(false);
   const [variableUsageNodes, setVariableUsageNodes] = useState<FlowNode[]>([]);
   const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const isProductionFlow = checkIsProductionFlow();
+  const [stepIds, setStepIds] = useState<string[]>([]);
 
   const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
 
   const getVariableUsage = async (variableName: string) => {
     const resultData: FlowNode[] = [];
+    const stepIds: string[] = [];
 
     try {
       const getVariable = isProductionFlow
@@ -80,6 +77,14 @@ export const TableRow = ({
         });
       }
 
+      if (responseData && responseData?.length) {
+        responseData.forEach((variable) => {
+          const lastStepId = variable.path[variable.path.length - 1];
+          stepIds.push(lastStepId);
+        });
+      }
+
+      setStepIds(stepIds);
       setVariableUsageNodes(resultData);
     } catch (error) {
       Logger.error('Error fetching variable usage in the flow:', error);
@@ -90,7 +95,10 @@ export const TableRow = ({
     if (userDefinedUsageNodes?.length) {
       setVariableUsageNodes(userDefinedUsageNodes);
     }
-  }, [userDefinedUsageNodes]);
+    if (userDefinedUsageStepIds?.length) {
+      setStepIds(userDefinedUsageStepIds);
+    }
+  }, [userDefinedUsageNodes, userDefinedUsageStepIds]);
 
   return (
     <>
@@ -155,7 +163,7 @@ export const TableRow = ({
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>
             <Stack margin={1} spacing={1}>
               <Typography variant="body1">This variable is used in:</Typography>
-              {variableUsageNodes.map((flowNode) => (
+              {/* {variableUsageNodes.map((flowNode) => (
                 <Stack
                   sx={{ cursor: 'pointer' }}
                   key={flowNode.id}
@@ -183,6 +191,14 @@ export const TableRow = ({
                     </Box>
                   </Stack>
                 </Stack>
+              ))} */}
+              {stepIds.map((id, idx) => (
+                <StepBreadcrumbs
+                  key={idx}
+                  flowId={flowId}
+                  stepId={id}
+                  flowNodes={flowNodes}
+                />
               ))}
             </Stack>
           </Collapse>

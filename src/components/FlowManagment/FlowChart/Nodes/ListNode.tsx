@@ -6,8 +6,7 @@ import { getListNodesData } from '../utils/nodesUtils';
 
 import styles from './style.module.scss';
 
-import ArrowLeftAndRightSquareIcon from '@icons/arrowLeftAndRightSquare.svg';
-import { NO_TAG_LABEL } from '@constants/common';
+import { NO_TAG_LABEL, STEP_ICONS } from '@constants/common';
 
 const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
   const rfInstance = useReactFlow();
@@ -18,7 +17,7 @@ const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
     <div id={data.stepId} className={styles['node-list-container']}>
       <Handle style={{ top: '25px' }} type="target" position={Position.Left} />
       <div className={styles['node-list-container__header']}>
-        <ArrowLeftAndRightSquareIcon />
+        {STEP_ICONS[data.stepType]}
         <div className={styles['node-list-container__header__text']}>
           <p className={styles['node-tag']}>{data?.tag || NO_TAG_LABEL}</p>
           <p className={styles['node-label']}>{data.name}</p>

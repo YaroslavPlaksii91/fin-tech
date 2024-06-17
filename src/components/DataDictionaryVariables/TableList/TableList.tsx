@@ -7,7 +7,8 @@ import { VARIABLES_TABS } from '../constants';
 import {
   getProductionUserDefinedUsage,
   getUserDefinedUsage,
-  getUserDefinedUsageNodes
+  getUserDefinedUsageNodes,
+  getUserDefinedUsageStepIds
 } from '../utils';
 import { VariableForm } from '../VariableForm/VariableForm';
 import { DeleteVariable } from '../DeleteVariable/DeleteVariable';
@@ -186,6 +187,10 @@ const TableList = ({
                   variable,
                   flowNodes
                 })
+              }
+              userDefinedUsageStepIds={
+                userDefinedUsage &&
+                getUserDefinedUsageStepIds({ userDefinedUsage, variable })
               }
               onEdit={handleEditClick}
               onDelete={handleDeleteClick}

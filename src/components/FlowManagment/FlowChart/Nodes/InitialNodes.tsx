@@ -1,9 +1,10 @@
 import { Handle, Position } from 'reactflow';
 
+import { StepType } from '../types';
+
 import styles from './style.module.scss';
 
-import FlagTriangleIcon from '@icons/flagTriangle.svg';
-import { theme } from '@theme';
+import { STEP_ICONS } from '@constants/common';
 
 export function StartNode() {
   return (
@@ -11,7 +12,7 @@ export function StartNode() {
       <Handle type="source" position={Position.Right} />
       <div className={styles['node-container']}>
         <p className={styles['node-label']}>
-          <FlagTriangleIcon color={theme.palette.primary.main} />
+          {STEP_ICONS[StepType.START]}
           Starting point
         </p>
       </div>
@@ -25,7 +26,7 @@ export function EndNode() {
       <Handle type="target" position={Position.Left} />
       <div className={styles['node-container']}>
         <p className={styles['node-label']}>
-          <FlagTriangleIcon color={theme.palette.error.main} />
+          {STEP_ICONS[StepType.END]}
           Ending point
         </p>
       </div>

@@ -52,3 +52,21 @@ export const getUserDefinedUsageNodes = ({
     });
   return usageNodes;
 };
+
+export const getUserDefinedUsageStepIds = ({
+  userDefinedUsage,
+  variable
+}: {
+  userDefinedUsage: VariableUsageParams;
+  variable: Variable;
+}) => {
+  const stepIds: string[] = [];
+
+  userDefinedUsage
+    .filter((el) => el.name === variable.name)
+    .forEach((variable) => {
+      const lastStepId = variable.path[variable.path.length - 1];
+      stepIds.push(lastStepId);
+    });
+  return stepIds;
+};
