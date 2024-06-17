@@ -96,7 +96,7 @@ const DecisionTableStep = ({
   const [defaultStepId, setDefaultStepId] = useState<string | null>(null);
 
   const dataDictionary = useContext(DataDictionaryContext);
-  const hasUserPermission = useHasUserPermission(permissionsMap.test);
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const variables = dataDictionary?.variables || {};
   const nodes: FlowNode[] = getNodes();

@@ -58,7 +58,7 @@ const Calculation: React.FC<CalculationProps> = ({
     Expression & { id: string }
   >();
 
-  const hasUserPermission = useHasUserPermission(permissionsMap.test);
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const {
     handleSubmit,
