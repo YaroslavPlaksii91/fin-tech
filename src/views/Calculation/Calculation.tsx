@@ -134,7 +134,7 @@ const Calculation: React.FC<CalculationProps> = ({
             <form onSubmit={handleSubmit(onSubmit)}>
               <StepDetailsHeader
                 step={step}
-                title={`Edit Step: ${step.data.name}`}
+                title={`${hasUserPermission ? 'Edit' : 'View'} Step: ${step.data.name}`}
                 details="Calculation is a step that allows the User to set a value for the parameter."
               />
               <Stack>
@@ -245,23 +245,25 @@ const Calculation: React.FC<CalculationProps> = ({
                 )}
               </Stack>
             </form>
-            <StepNoteSection
-              modalOpen={openNoteModal}
-              handleCloseModal={handleCloseNoteModal}
-              handleOpenModal={handleOpenNoteModal}
-              noteValue={getValues('note') ?? ''}
-              handleSubmitNote={handleSubmitNote}
-              renderInput={() => (
-                <InputText
-                  fullWidth
-                  name="note"
-                  control={control}
-                  label="Note"
-                  disabled
-                  placeholder="Enter note here"
-                />
-              )}
-            />
+            {hasUserPermission && (
+              <StepNoteSection
+                modalOpen={openNoteModal}
+                handleCloseModal={handleCloseNoteModal}
+                handleOpenModal={handleOpenNoteModal}
+                noteValue={getValues('note') ?? ''}
+                handleSubmitNote={handleSubmitNote}
+                renderInput={() => (
+                  <InputText
+                    fullWidth
+                    name="note"
+                    control={control}
+                    label="Note"
+                    disabled
+                    placeholder="Enter note here"
+                  />
+                )}
+              />
+            )}
             <Dialog
               title="Cancel Changes"
               open={openDiscardModal}

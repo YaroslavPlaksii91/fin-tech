@@ -42,6 +42,14 @@ export const router = createBrowserRouter([
         )
       },
       {
+        path: `${routes.underwriting.flow.view(':id')}`,
+        element: (
+          <PrivateRoutes>
+            <FlowEdit />
+          </PrivateRoutes>
+        )
+      },
+      {
         path: `${routes.underwriting.flow.dataDictionary(':id')}`,
         element: (
           <PrivateRoutes>

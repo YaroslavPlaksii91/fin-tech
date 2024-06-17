@@ -56,7 +56,10 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const options = isEditMode
-    ? getEditModeOptions({ canUserViewFlow, canUserUpdateFlow })
+    ? getEditModeOptions({
+        canUserViewFlow,
+        canUserUpdateFlow
+      })
     : getOptions({ canUserViewFlow, canUserUpdateFlow });
 
   useEffect(() => {
@@ -71,7 +74,11 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   const handleSelectedActions = async (action: ActionTypes) => {
     switch (action) {
       case ActionTypes.STEP_TEXT_VIEW:
-        Logger.info('Step text view');
+        navigate(routes.underwriting.flow.view(id as string), {
+          state: { subFlowId, stepId: flowNode?.id }
+        });
+        flowNode && setActiveStep?.({ subFlowId, stepId: flowNode.id });
+
         break;
       case ActionTypes.EDIT_STEP: {
         if (!flowNode) return;

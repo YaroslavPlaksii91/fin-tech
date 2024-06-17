@@ -21,6 +21,8 @@ import { useAppDispatch } from '@store/hooks';
 import { createFlow } from '@store/flowList/asyncThunk';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import { SNACK_TYPE } from '@constants/common';
+import { permissionsMap } from '@constants/permissions';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
 
 interface FormData {
   name: string;
@@ -30,6 +32,7 @@ export const AddFlow: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const canUserCreateFlow = useHasUserPermission(permissionsMap.canCreateFlow);
   const {
     handleSubmit,
     reset,
@@ -72,14 +75,16 @@ export const AddFlow: React.FC = () => {
 
   return (
     <>
-      <Button
-        onClick={handleOpenModal}
-        sx={{ marginLeft: '14px' }}
-        variant="text"
-        startIcon={<AddIcon />}
-      >
-        Create New Flow
-      </Button>
+      {canUserCreateFlow && (
+        <Button
+          onClick={handleOpenModal}
+          sx={{ marginLeft: '14px' }}
+          variant="text"
+          startIcon={<AddIcon />}
+        >
+          Create New Flow
+        </Button>
+      )}
       <Dialog
         title="Create New Flow"
         open={modalOpen}

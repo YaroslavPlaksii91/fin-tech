@@ -24,6 +24,7 @@ interface InputProps<
   rangeMin?: number;
   rangeMax?: number;
   onChangeCb?: (index?: number) => void;
+  disabled?: boolean;
 }
 
 const NumberRangeInput = <
@@ -34,7 +35,8 @@ const NumberRangeInput = <
   name,
   onChangeCb,
   rangeMin = MIN_VALUE,
-  rangeMax = MAX_VALUE
+  rangeMax = MAX_VALUE,
+  disabled
 }: InputProps<TFieldValues, TName>) => (
   <Controller
     control={control}
@@ -65,6 +67,7 @@ const NumberRangeInput = <
           onChange(inputValue);
           onChangeCb?.();
         }}
+        disabled={disabled}
         InputProps={{
           startAdornment: (
             <StyledInputAdornment position="start">

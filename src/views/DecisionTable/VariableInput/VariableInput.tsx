@@ -18,6 +18,7 @@ type VariableInputProps = {
   handleCloseMenu: () => void;
   isAddVariableDisabled: boolean;
   isDeleteDisabled: boolean;
+  showActionButton?: boolean;
 };
 
 const VariableInput = ({
@@ -31,6 +32,7 @@ const VariableInput = ({
   handleCloseMenu,
   isAddVariableDisabled,
   isDeleteDisabled,
+  showActionButton,
   ...rest
 }: VariableInputProps & OutlinedInputProps) => (
   <OutlinedInput
@@ -38,17 +40,19 @@ const VariableInput = ({
     placeholder="Choose the variable"
     endAdornment={
       <>
-        <IconButton
-          aria-label="more"
-          id="long-button"
-          aria-controls={open ? 'long-menu' : undefined}
-          aria-expanded={open ? 'true' : undefined}
-          aria-haspopup="true"
-          size="small"
-          onClick={handleClickOnMenu}
-        >
-          <MoreHorizontalIcon />
-        </IconButton>
+        {showActionButton && (
+          <IconButton
+            aria-label="more"
+            id="long-button"
+            aria-controls={open ? 'long-menu' : undefined}
+            aria-expanded={open ? 'true' : undefined}
+            aria-haspopup="true"
+            size="small"
+            onClick={handleClickOnMenu}
+          >
+            <MoreHorizontalIcon />
+          </IconButton>
+        )}
         <Menu
           id="long-menu"
           anchorEl={anchorEl}

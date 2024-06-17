@@ -228,7 +228,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <StepDetailsHeader
             step={step}
-            title={`Edit Step: ${step.data.name}`}
+            title={`${hasUserPermission ? 'Edit' : 'View'} Step: ${step.data.name}`}
             details="A Champion Challenger is a step that allows you to split traffic into several groups and run experiment."
           />
           <Stack>
@@ -259,6 +259,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                             control={control}
                             name={`splits.${index}.percentage`}
                             onChangeCb={() => clearErrors()}
+                            disabled={!hasUserPermission}
                           />
                         </StyledTableCell>
                         <StyledTableCell sx={{ p: 0 }}>
@@ -270,6 +271,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                             options={options}
                             selectedOptions={selectedOptions}
                             setSelectedOptions={setSelectedOptions}
+                            disabled={!hasUserPermission}
                           />
                         </StyledTableCell>
                         <StyledTableCell sx={{ p: 0 }} width={40}>
@@ -322,23 +324,25 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
             )}
           </Stack>
         </form>
-        <StepNoteSection
-          modalOpen={openNoteModal}
-          handleCloseModal={handleCloseNoteModal}
-          handleOpenModal={handleOpenNoteModal}
-          noteValue={getValues('note') ?? ''}
-          handleSubmitNote={handleSubmitNote}
-          renderInput={() => (
-            <InputText
-              fullWidth
-              name="note"
-              control={control}
-              label="Note"
-              disabled
-              placeholder="Enter note here"
-            />
-          )}
-        />
+        {hasUserPermission && (
+          <StepNoteSection
+            modalOpen={openNoteModal}
+            handleCloseModal={handleCloseNoteModal}
+            handleOpenModal={handleOpenNoteModal}
+            noteValue={getValues('note') ?? ''}
+            handleSubmitNote={handleSubmitNote}
+            renderInput={() => (
+              <InputText
+                fullWidth
+                name="note"
+                control={control}
+                label="Note"
+                disabled
+                placeholder="Enter note here"
+              />
+            )}
+          />
+        )}
       </StepContentWrapper>
       <StepDetailsControlBar
         disabled={!isEmpty(errors) || isSubmitting}
