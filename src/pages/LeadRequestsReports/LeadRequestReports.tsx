@@ -1,22 +1,18 @@
 import { useEffect, useState } from 'react';
-import {
-  DataGridPremium,
-  GridColDef,
-  GridSortModel
-} from '@mui/x-data-grid-premium';
+import { GridColDef, GridSortModel } from '@mui/x-data-grid-premium';
 import buildQuery from 'odata-query';
-import { Container, Stack, Typography } from '@mui/material';
-import React from 'react';
+import { Button, Paper, Stack, Typography } from '@mui/material';
 
 import { COLUMN_IDS } from './types';
 import { getFormattedRows } from './utils';
 
 import { reportingService } from '@services/lead-requests-reports';
 import Logger from '@utils/logger';
-import { RemoveRedEyeOutlinedIcon } from '@components/shared/Icons';
-import DataGridPagination from '@components/shared/DataGridPagination';
+import TablePagination from '@components/shared/TablePagination';
+import { theme } from '@theme';
+import { StyledDataGridPremium } from '@components/shared/Table/styled';
+import useTablePagination from '@hooks/useTablePagination';
 
-const PAGE_SIZE = 25;
 const DEFAULT_SORT = 'id asc';
 
 const dataGridColumns: GridColDef[] = [
@@ -34,7 +30,28 @@ const dataGridColumns: GridColDef[] = [
   { field: COLUMN_IDS.store, headerName: 'Store' },
   { field: COLUMN_IDS.ssn, headerName: 'SSN' },
   { field: COLUMN_IDS.email, headerName: 'Email' },
-  { field: COLUMN_IDS.decision, headerName: 'Decision' },
+  {
+    field: COLUMN_IDS.decision,
+    headerName: 'Decision',
+    renderCell: (row) => {
+      switch (row.value) {
+        case 'Approved':
+          return (
+            <Typography color={theme.palette.success.main} variant="body2">
+              {row.value}
+            </Typography>
+          );
+        case 'Denied':
+          return (
+            <Typography color={theme.palette.error.main} variant="body2">
+              {row.value}
+            </Typography>
+          );
+        default:
+          return '-';
+      }
+    }
+  },
   { field: COLUMN_IDS.denialReason, headerName: 'Denial Reason' },
   { field: COLUMN_IDS.state, headerName: 'State' },
   { field: COLUMN_IDS.apiVersion, headerName: 'API Version' },
@@ -43,8 +60,14 @@ const dataGridColumns: GridColDef[] = [
   {
     field: COLUMN_IDS.details,
     headerName: '',
-    width: 45,
-    renderCell: () => <RemoveRedEyeOutlinedIcon />
+    pinnable: true,
+    sortable: false,
+    resizable: false,
+    renderCell: () => (
+      <Button size="small" variant="text">
+        Details
+      </Button>
+    )
   }
 ];
 
@@ -53,20 +76,24 @@ type RowData = Record<Exclude<COLUMN_IDS, COLUMN_IDS.details>, string | number>;
 export default function LeadRequestsReportsPage() {
   const [rows, setRows] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
   const [sort, setSort] = useState(DEFAULT_SORT);
+  const [totalCount, setTotalCount] = useState(0);
 
-  const [paginationModel, setPaginationModel] = React.useState({
-    pageSize: PAGE_SIZE,
-    page: 0
-  });
+  const {
+    rowsPerPage,
+    page,
+    totalPages,
+    handlePageChange,
+    handlePageByInputChange,
+    handleRowsPerPageChange
+  } = useTablePagination({ totalCount });
 
-  const fetchList = async (page: number, sort: string) => {
+  const fetchList = async () => {
     try {
       setLoading(true);
       const params = buildQuery({
-        top: PAGE_SIZE,
-        skip: PAGE_SIZE * page,
+        top: rowsPerPage,
+        skip: rowsPerPage * page,
         orderBy: sort,
         count: true
       });
@@ -82,8 +109,8 @@ export default function LeadRequestsReportsPage() {
   };
 
   useEffect(() => {
-    void fetchList(paginationModel.page, sort);
-  }, [paginationModel.page, sort]);
+    void fetchList();
+  }, [rowsPerPage, page, sort]);
 
   const handleSortModelChange = (model: GridSortModel) => {
     const sortParams = `${model[0].field} ${model[0].sort}`;
@@ -91,31 +118,51 @@ export default function LeadRequestsReportsPage() {
   };
 
   return (
-    // TODO: fix width value
-    <Container
-      maxWidth="xl"
-      sx={{ overflow: 'auto', height: '100%', width: 'calc(100vw - 300px)' }}
-    >
-      <Stack sx={{ padding: '16px 32px' }}>
-        <Typography pb={3} variant="h4">
-          Lead requests
-        </Typography>
-        <DataGridPremium
+    <Stack sx={{ padding: '16px 32px' }}>
+      <Typography pb={3} variant="h4">
+        Lead requests
+      </Typography>
+      <Paper
+        sx={{
+          border: `1px solid ${theme.palette.divider}`,
+          borderRadius: '16px',
+          overflow: 'hidden',
+          minWidth: '680px'
+        }}
+      >
+        <StyledDataGridPremium
+          autoHeight
+          disableColumnReorder
+          disableColumnMenu
+          isRowSelectable={() => false}
+          columnHeaderHeight={32}
+          rowHeight={28}
           rows={rows}
+          rowCount={rowsPerPage}
           columns={dataGridColumns}
           loading={loading}
-          rowCount={totalCount}
-          disableColumnMenu={true}
-          paginationMode="server"
           sortingMode="server"
+          paginationMode="client"
+          pinnedColumns={{ right: [COLUMN_IDS.details] }}
           onSortModelChange={handleSortModelChange}
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
+          getRowClassName={(params) =>
+            params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
+          }
           slots={{
-            footer: DataGridPagination
+            footer: () => (
+              <TablePagination
+                count={totalCount}
+                totalPages={totalPages}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+                onPageByInputChange={handlePageByInputChange}
+              />
+            )
           }}
         />
-      </Stack>
-    </Container>
+      </Paper>
+    </Stack>
   );
 }

@@ -13,7 +13,7 @@ import Filters from './Filters/Filters';
 import { theme } from '@theme';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { IFlow } from '@domain/flow';
-import { Variable } from '@domain/dataDictionary';
+import { DATA_TYPE_WITHOUT_ENUM, Variable } from '@domain/dataDictionary';
 
 export interface TableHeader {
   key: keyof Variable;
@@ -60,7 +60,12 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       : defaultHeaders;
 
   const filterGroupsToShow = useMemo(
-    () => FILTER_GROUPS.filter(({ applyFor }) => applyFor.includes(tab)),
+    () =>
+      FILTER_GROUPS.map((filter) =>
+        tab === VARIABLES_TABS.userDefined
+          ? { ...filter, fields: Object.values(DATA_TYPE_WITHOUT_ENUM) }
+          : filter
+      ).filter(({ applyFor }) => applyFor.includes(tab)),
     [tab]
   );
 

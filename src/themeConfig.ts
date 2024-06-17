@@ -47,6 +47,7 @@ export const theme = createTheme({
       secondary: 'rgba(0,0,0,0.6)',
       disabled: 'rgba(0,0,0,0.38)'
     },
+    success: { main: '#2E7D32' },
     secondary: { main: '#1B5E20', dark: '#1E4620', light: '#2E7D32' },
     primary: {
       main: '#1B5E20',

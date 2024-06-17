@@ -26,6 +26,7 @@ interface MainContainerProps {
 const MainContainer: React.FC<MainContainerProps> = ({ children }) => (
   <Box
     sx={{
+      overflow: 'auto',
       width: '100%',
       height: '100%',
       position: 'relative'

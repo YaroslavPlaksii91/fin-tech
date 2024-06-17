@@ -87,9 +87,7 @@ const hasPermission = (
     return permissions ? permissions.includes(target) : true;
   }
 
-  if (!target) {
-    return true;
-  }
+  if (!target) return true;
 
   if (!Array.isArray(target.permission)) {
     return permissions ? permissions.includes(target.permission) : true;

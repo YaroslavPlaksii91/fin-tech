@@ -1,3 +1,5 @@
+import { Edge } from 'reactflow';
+
 import { FlowNode, IFlow } from '@domain/flow';
 
 export const findSubFlow = (
@@ -24,25 +26,33 @@ export const updateNodesInSubFlow = (
 ): FlowNode[] =>
   nodes.map((node: FlowNode) => {
     if (node.id === subFlow.id) {
-      node.data.nodes = subFlow.nodes;
-      node.data.edges = subFlow.edges;
-      node.data.viewport = subFlow.viewport;
+      node.data = {
+        ...node.data,
+        nodes: [...subFlow.nodes],
+        edges: [...subFlow.edges],
+        viewport: { ...subFlow.viewport }
+      };
     } else if (node.data?.nodes) {
-      node.data.nodes = updateNodesInSubFlow(node.data.nodes, subFlow);
+      updateNodesInSubFlow(node.data.nodes, subFlow);
     }
-    return node;
+    return { ...node };
   });
 
 export const addNodeInSubFlow = (
   nodes: FlowNode[],
-  subFlow: IFlow,
-  newNode: FlowNode
+  subFlowId: string,
+  newNode: FlowNode,
+  edges: Edge[]
 ): FlowNode[] =>
   nodes.map((node: FlowNode) => {
-    if (node.id === subFlow.id) {
-      node.data.nodes = [...(node?.data?.nodes ?? []), newNode];
+    if (node.id === subFlowId) {
+      node.data = {
+        ...node.data,
+        nodes: [...(node?.data?.nodes ?? []), newNode],
+        edges: [...edges]
+      };
     } else if (node.data?.nodes) {
-      node.data.nodes = addNodeInSubFlow(node.data.nodes, subFlow, newNode);
+      addNodeInSubFlow(node.data.nodes, subFlowId, newNode, edges);
     }
     return node;
   });

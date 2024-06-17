@@ -145,28 +145,22 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       .filter((edg) => !targetNodesIds.includes(edg.target))
       .concat(splitEdges);
 
+    const newSplits = splitEdges.map((splitEdge, index) => ({
+      edgeId: splitEdge.id,
+      percentage: data.splits[index].percentage
+    }));
+
     const updatedNodes = nodes.map((node: FlowNode) => {
       if (node.id === step.id) {
-        // This updates data inside the node. Since React Flow uses Zustand under the hood, it is necessary to recreate the data.
-        const splits = node.data.splits ?? [];
-
-        splits.length = 0;
-
-        splits.push(
-          ...splitEdges.map((splitEdge, index) => ({
-            edgeId: splitEdge.id,
-            percentage: data.splits[index].percentage
-          }))
-        );
-
         node.data = {
           ...node.data,
           note: data.note,
-          splits: [...splits]
+          splits: [...newSplits]
         };
       }
       return node;
     });
+
     try {
       const data = formatFlowDataForValidation(
         mainFlow,
@@ -233,11 +227,9 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       <StepContentWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <StepDetailsHeader
-            flow={mainFlow ?? flow}
             step={step}
             title={`${hasUserPermission ? 'Edit' : 'View'} Step: ${step.data.name}`}
             details="A Champion Challenger is a step that allows you to split traffic into several groups and run experiment."
-            isActionContainerVisible={false}
           />
           <Stack>
             <StyledPaper>
