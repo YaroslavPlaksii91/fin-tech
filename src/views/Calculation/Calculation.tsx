@@ -21,7 +21,7 @@ import { COLUMN_IDS, Expression, FieldValues, columns } from './types';
 import TrashIcon from '@icons/trash.svg';
 import EditIcon from '@icons/editPencil.svg';
 import PlusSquareIcon from '@icons/plusSquare.svg';
-import { FlowNode, IFlow } from '@domain/flow';
+import { FlowNode } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
 import { RULES_LIMIT, SNACK_TYPE } from '@constants/common';
@@ -36,16 +36,12 @@ import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
 
 interface CalculationProps {
-  flow: IFlow;
-  mainFlow?: IFlow;
   step: FlowNode;
   resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
 }
 
 const Calculation: React.FC<CalculationProps> = ({
-  flow,
-  mainFlow,
   step,
   resetActiveStepId,
   rfInstance: { getNodes, setNodes }
@@ -137,12 +133,9 @@ const Calculation: React.FC<CalculationProps> = ({
           <StepContentWrapper>
             <form onSubmit={handleSubmit(onSubmit)}>
               <StepDetailsHeader
-                flow={mainFlow ?? flow}
                 step={step}
-                title={`Edit Step: ${step.data.name}`}
+                title={`${hasUserPermission ? 'Edit' : 'View'} Step: ${step.data.name}`}
                 details="Calculation is a step that allows the User to set a value for the parameter."
-                disabled={isSubmitting}
-                isActionContainerVisible={false}
               />
               <Stack>
                 <Box mb={1}>
@@ -252,23 +245,25 @@ const Calculation: React.FC<CalculationProps> = ({
                 )}
               </Stack>
             </form>
-            <StepNoteSection
-              modalOpen={openNoteModal}
-              handleCloseModal={handleCloseNoteModal}
-              handleOpenModal={handleOpenNoteModal}
-              noteValue={getValues('note') ?? ''}
-              handleSubmitNote={handleSubmitNote}
-              renderInput={() => (
-                <InputText
-                  fullWidth
-                  name="note"
-                  control={control}
-                  label="Note"
-                  disabled
-                  placeholder="Enter note here"
-                />
-              )}
-            />
+            {hasUserPermission && (
+              <StepNoteSection
+                modalOpen={openNoteModal}
+                handleCloseModal={handleCloseNoteModal}
+                handleOpenModal={handleOpenNoteModal}
+                noteValue={getValues('note') ?? ''}
+                handleSubmitNote={handleSubmitNote}
+                renderInput={() => (
+                  <InputText
+                    fullWidth
+                    name="note"
+                    control={control}
+                    label="Note"
+                    disabled
+                    placeholder="Enter note here"
+                  />
+                )}
+              />
+            )}
             <Dialog
               title="Cancel Changes"
               open={openDiscardModal}
@@ -299,11 +294,8 @@ const Calculation: React.FC<CalculationProps> = ({
         <ExpressionForm
           renderTitle={() => (
             <StepDetailsHeader
-              flow={mainFlow ?? flow}
               step={step}
               title={(initialValue?.id ? 'Change' : 'Add New') + ' Expression'}
-              disabled
-              isActionContainerVisible={false}
             />
           )}
           initialValues={initialValue}

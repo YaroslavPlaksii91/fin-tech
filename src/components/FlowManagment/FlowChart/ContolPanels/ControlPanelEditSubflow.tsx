@@ -19,7 +19,6 @@ import StepBreadcrumbs from '@components/StepManagment/StepDetailsHeader/StepBre
 const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
   rfInstance,
   flow,
-  mainFlow,
   setCopyFlow
 }) => {
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
@@ -57,11 +56,7 @@ const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
   return (
     <StyledPanel position="top-right">
       <Box>
-        <StepBreadcrumbs
-          flow={mainFlow ?? flow}
-          stepId={flow.id}
-          title={flow.data.name}
-        />
+        <StepBreadcrumbs stepId={flow.id} title={flow.data.name} />
         <Typography variant="h4">{flow.data.name}</Typography>
       </Box>
       <Stack

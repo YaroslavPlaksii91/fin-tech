@@ -47,6 +47,8 @@ const deleteOption = {
 export interface OptionsFlowParams {
   canUserViewFlow?: boolean;
   canUserUpdateFlow?: boolean;
+  canUserDeleteFlow?: boolean;
+  canUserCreateFlow?: boolean;
 }
 
 export const getOptionsProductionFlow = ({
@@ -57,11 +59,13 @@ export const getOptionsProductionFlow = ({
 
 export const getOptionsDraftFlow = ({
   canUserViewFlow,
-  canUserUpdateFlow
+  canUserUpdateFlow,
+  canUserDeleteFlow,
+  canUserCreateFlow
 }: OptionsFlowParams) => [
   { ...viewDataDictionaryOption, hide: !canUserViewFlow },
-  duplicateOption,
+  { ...duplicateOption, hide: !canUserCreateFlow },
   { ...editOption, hide: !canUserUpdateFlow },
   { ...renameOption, hide: !canUserUpdateFlow },
-  { ...deleteOption, hide: !canUserUpdateFlow }
+  { ...deleteOption, hide: !canUserDeleteFlow }
 ];

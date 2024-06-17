@@ -20,6 +20,7 @@ import { deleteNodes } from '@store/flow/flow';
 import { ActiveStep } from '@contexts/StepContext';
 import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
+import { StepType } from '@components/FlowManagment/FlowChart/types';
 
 interface StepActionsMenuOnNode {
   isOpen?: boolean;
@@ -55,7 +56,10 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const options = isEditMode
-    ? getEditModeOptions({ canUserViewFlow, canUserUpdateFlow })
+    ? getEditModeOptions({
+        canUserViewFlow,
+        canUserUpdateFlow
+      })
     : getOptions({ canUserViewFlow, canUserUpdateFlow });
 
   useEffect(() => {
@@ -70,18 +74,33 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   const handleSelectedActions = async (action: ActionTypes) => {
     switch (action) {
       case ActionTypes.STEP_TEXT_VIEW:
-        Logger.info('Step text view');
+        navigate(routes.underwriting.flow.view(id as string), {
+          state: { subFlowId, stepId: flowNode?.id }
+        });
+        flowNode && setActiveStep?.({ subFlowId, stepId: flowNode.id });
+
         break;
-      case ActionTypes.EDIT_STEP:
+      case ActionTypes.EDIT_STEP: {
+        if (!flowNode) return;
+        let activeSubflowId = subFlowId;
+        let activeStepId: null | string = flowNode.id;
+
+        if (flowNode.type === StepType.SUBFLOW) {
+          activeSubflowId = flowNode.id;
+          activeStepId = null;
+        }
         if (isEditMode) {
-          flowNode && setActiveStep?.({ subFlowId, stepId: flowNode.id });
+          setActiveStep?.({
+            subFlowId: activeSubflowId,
+            stepId: activeStepId
+          });
         } else {
-          flowNode &&
-            navigate(routes.underwriting.flow.edit(id as string), {
-              state: { subFlowId, stepId: flowNode.id }
-            });
+          navigate(routes.underwriting.flow.edit(id as string), {
+            state: { subFlowId: activeSubflowId, stepId: activeStepId }
+          });
         }
         break;
+      }
 
       case ActionTypes.RENAME_STEP:
         Logger.info('Rename step');

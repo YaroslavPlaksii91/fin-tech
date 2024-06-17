@@ -16,9 +16,15 @@ export const validationSchema = yup.object().shape({
       'no-dash',
       'Variable name cannot have dash characters',
       (val: string) => {
-        if (val != undefined) {
-          return /^((?!-).)*$/.test(val);
-        }
+        if (val != undefined) return /^((?!-).)*$/.test(val);
+        return true;
+      }
+    )
+    .test(
+      'no-space',
+      'Variable name cannot contain space characters',
+      (val: string) => {
+        if (val != undefined) return /^[^\s]*$/.test(val);
         return true;
       }
     ),

@@ -37,9 +37,24 @@ class DataDictionaryService {
     return data;
   }
 
+  async getProductionVariableUsage(variableName: string) {
+    const { data } = await api.get<VariableUsageParams>(
+      `/production-flow/variable-usage/${variableName}`
+    );
+    return data;
+  }
+
   async getUserDefinedVariableUsage(flowId: string, variables: string[]) {
     const { data } = await api.post<VariableUsageParams>(
       `/flows/${flowId}/variables-usage`,
+      variables
+    );
+    return data;
+  }
+
+  async getProductionUserDefinedVariableUsage(variables: string[]) {
+    const { data } = await api.post<VariableUsageParams>(
+      `/production-flow/variables-usage`,
       variables
     );
     return data;

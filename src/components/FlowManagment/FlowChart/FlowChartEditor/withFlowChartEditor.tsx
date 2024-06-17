@@ -54,7 +54,11 @@ type FlowChartEditorProps = {
   flow: IFlow;
   mainFlow?: IFlow;
   setCopyFlow: (flow: IFlow) => void;
-  updateNodesInMainFlow?: (newNode: FlowNode, subFlow: IFlow) => void;
+  updateNodesInMainFlow?: (
+    subflowId: string,
+    newNode: FlowNode,
+    edges: Edge[]
+  ) => void;
 };
 
 const withFlowChartEditor =
@@ -80,16 +84,21 @@ const withFlowChartEditor =
 
     const { activeStep, setActiveStep } = useActiveStep();
 
+    const [newNode, setNewNode] = useState<FlowNode | null>(null);
+
+    useEffect(() => {
+      if (mainFlow && newNode) {
+        updateNodesInMainFlow?.(flow.id, newNode, edges);
+        setNewNode(null);
+      }
+    }, [newNode]);
+
     const onAddNodeBetweenEdges = useCallback(
       (type: StepType, name: string, edgeId: string) => {
         const newEdgeId = uuidv4();
         const newNode = createNewNode(type, name, newEdgeId);
 
         setNodes((nodes) => nodes.concat(newNode));
-
-        if (updateNodesInMainFlow) {
-          updateNodesInMainFlow(newNode, flow);
-        }
 
         setEdges((edges) =>
           updateEdges({
@@ -101,6 +110,7 @@ const withFlowChartEditor =
           })
         );
 
+        setNewNode(newNode);
         return { newNode, flowId: flow.id };
       },
       [setNodes, setEdges, flow.id]
@@ -116,7 +126,7 @@ const withFlowChartEditor =
       }));
       const nodes = layoutedNodes;
       return { edges, nodes };
-    }, [flow]);
+    }, [flow.id]);
 
     useEffect(() => {
       setEdges(initialElements.edges);
@@ -245,6 +255,7 @@ const withFlowChartEditor =
           });
           setNodes(updatedNodes);
         }
+
         setEdges((edges) =>
           updateEdges({
             sourceHandle,
@@ -271,8 +282,9 @@ const withFlowChartEditor =
         setStartDrag(false);
 
         const sourceNode = document.getElementById(node.id);
+
         const edgesAddButtons = document.querySelectorAll(
-          `[data-edge-type=${ADD_BUTTON_ON_EDGE}]`
+          `[data-flow-id='${flow.id}'] [data-edge-type='${ADD_BUTTON_ON_EDGE}`
         );
 
         if (sourceNode) {
@@ -284,7 +296,7 @@ const withFlowChartEditor =
           }
         }
       },
-      [edges]
+      [edges, flow.id]
     );
 
     const onNodeDragStart = useCallback(
@@ -358,10 +370,13 @@ const withFlowChartEditor =
       <>
         <NodePositioning
           edges={edges}
+          nodes={nodes}
           setEdges={setEdges}
           setNodes={setNodes}
         />
         <ReactFlow
+          id={flow.id}
+          data-flow-id={flow.id}
           nodes={nodes}
           edges={edges}
           autoPanOnNodeDrag
@@ -406,7 +421,7 @@ const withFlowChartEditor =
           />
         )}
         <StepActionsMenu
-          subFlowId={null}
+          subFlowId={mainFlow ? flow.id : null}
           activeStep={activeStep}
           anchorElement={nodeElement}
           flowNode={flowNode}
