@@ -1,6 +1,5 @@
 import { Variable, VariableUsageParams } from '@domain/dataDictionary';
 import { dataDictionaryService } from '@services/data-dictionary';
-import { FlowNode } from '@domain/flow';
 import Logger from '@utils/logger';
 
 export const getUserDefinedUsage = async (
@@ -33,26 +32,6 @@ export const getProductionUserDefinedUsage = async (variables: string[]) => {
   }
 };
 
-export const getUserDefinedUsageNodes = ({
-  userDefinedUsage,
-  variable,
-  flowNodes
-}: {
-  userDefinedUsage: VariableUsageParams;
-  variable: Variable;
-  flowNodes: FlowNode[];
-}) => {
-  const usageNodes: FlowNode[] = [];
-
-  userDefinedUsage
-    .filter((el) => el.name === variable.name)
-    .forEach((variable) => {
-      const node = flowNodes.find((node) => node.id === variable.path[0]);
-      node && usageNodes.push(node);
-    });
-  return usageNodes;
-};
-
 export const getUserDefinedUsageStepIds = ({
   userDefinedUsage,
   variable
@@ -68,5 +47,6 @@ export const getUserDefinedUsageStepIds = ({
       const lastStepId = variable.path[variable.path.length - 1];
       stepIds.push(lastStepId);
     });
+
   return stepIds;
 };

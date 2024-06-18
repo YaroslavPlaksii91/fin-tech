@@ -5,6 +5,7 @@ import { FlowNode } from '@domain/flow';
 import { theme } from '@theme';
 import routes from '@constants/routes';
 import { STEP_ICONS } from '@constants/common';
+import { buildPath } from '@components/StepManagment/StepDetailsHeader/utils';
 
 interface StepDetailsHeaderProps {
   stepId: string;
@@ -104,24 +105,6 @@ const createBreadcrumbs = ({
   );
 
   return breadcrumbs.filter((i) => i);
-};
-
-const buildPath = (
-  id: string,
-  nodes: FlowNode[],
-  subFlowId?: string
-): FlowNode[] | null => {
-  for (const node of nodes) {
-    if (node.id === id) {
-      return [{ ...node, parentNode: subFlowId }];
-    } else if (node.data.nodes) {
-      const result = buildPath(id, node.data.nodes, node.id);
-      if (result) {
-        return [{ ...node, parentNode: subFlowId }, ...result];
-      }
-    }
-  }
-  return null;
 };
 
 export default StepBreadcrumbs;

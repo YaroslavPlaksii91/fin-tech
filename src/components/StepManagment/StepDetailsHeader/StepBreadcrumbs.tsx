@@ -1,6 +1,6 @@
 import { Breadcrumbs } from '@mui/material';
 
-import createBreadcrumbs from './utils';
+import { createBreadcrumbs } from './utils';
 
 import { useActiveStep } from '@contexts/StepContext.tsx';
 import { useAppSelector } from '@store/hooks';
