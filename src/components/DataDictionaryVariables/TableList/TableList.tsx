@@ -7,7 +7,7 @@ import { VARIABLES_TABS } from '../constants';
 import {
   getProductionUserDefinedUsage,
   getUserDefinedUsage,
-  getUserDefinedUsageNodes
+  getUserDefinedUsageStepIds
 } from '../utils';
 import { VariableForm } from '../VariableForm/VariableForm';
 import { DeleteVariable } from '../DeleteVariable/DeleteVariable';
@@ -93,7 +93,7 @@ const TableList = ({
     setIsDeleteModalOpen(false);
   };
 
-  const handleVariable = (row: Variable, variableUsageNodes: FlowNode[]) => {
+  const handleVariable = (row: Variable, variableUsageStepIds: string[]) => {
     let variables;
 
     switch (row.sourceType) {
@@ -111,18 +111,18 @@ const TableList = ({
 
     setSelectedVariable({
       index: indexOfVariable,
-      variableIsUsed: !!variableUsageNodes.length,
+      variableIsUsed: !!variableUsageStepIds.length,
       ...row
     });
   };
 
-  const handleEditClick = (row: Variable, variableUsageNodes: FlowNode[]) => {
-    handleVariable(row, variableUsageNodes);
+  const handleEditClick = (row: Variable, variableUsageStepIds: string[]) => {
+    handleVariable(row, variableUsageStepIds);
     setIsVariableModalOpen(true);
   };
 
-  const handleDeleteClick = (row: Variable, variableUsageNodes: FlowNode[]) => {
-    handleVariable(row, variableUsageNodes);
+  const handleDeleteClick = (row: Variable, variableUsageStepIds: string[]) => {
+    handleVariable(row, variableUsageStepIds);
     setIsDeleteModalOpen(true);
   };
 
@@ -178,14 +178,9 @@ const TableList = ({
               tabName={tabName}
               flowId={flowId}
               flowNodes={flowNodes}
-              // defined for userDefined variables
-              userDefinedUsageNodes={
+              userDefinedUsageStepIds={
                 userDefinedUsage &&
-                getUserDefinedUsageNodes({
-                  userDefinedUsage,
-                  variable,
-                  flowNodes
-                })
+                getUserDefinedUsageStepIds({ userDefinedUsage, variable })
               }
               onEdit={handleEditClick}
               onDelete={handleDeleteClick}
