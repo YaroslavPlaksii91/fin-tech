@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { IconButton, Stack, Button, Collapse, Typography } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 import { VARIABLES_TABS } from '../constants';
 import { TableHeader } from '../DataDictionaryVariables';
@@ -21,6 +22,7 @@ import { theme } from '@theme';
 import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { checkIsProductionFlow } from '@utils/helpers';
+import routes from '@constants/routes';
 
 type TableRowProps = {
   headers: TableHeader[];
@@ -47,7 +49,7 @@ export const TableRow = ({
 }: TableRowProps) => {
   const [isExpanded, setisExpanded] = useState(false);
   const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const isProductionFlow = checkIsProductionFlow();
   const [stepIds, setStepIds] = useState<string[]>([]);
 
@@ -81,6 +83,27 @@ export const TableRow = ({
       setStepIds(userDefinedUsageStepIds);
     }
   }, [userDefinedUsageStepIds]);
+
+  const handleBreadcrumbOnClick = useCallback(
+    ({
+      subFlowId,
+      stepId
+    }: {
+      subFlowId: string | null;
+      stepId: string | null;
+    }) => {
+      if (hasUserPermission && !isProductionFlow) {
+        navigate(routes.underwriting.flow.edit(flowId), {
+          state: { subFlowId, stepId }
+        });
+      } else {
+        navigate(routes.underwriting.flow.view(flowId), {
+          state: { subFlowId, stepId }
+        });
+      }
+    },
+    [hasUserPermission, isProductionFlow]
+  );
 
   return (
     <>
@@ -148,9 +171,9 @@ export const TableRow = ({
               {stepIds.map((id, idx) => (
                 <StepBreadcrumbs
                   key={idx}
-                  flowId={flowId}
                   stepId={id}
                   flowNodes={flowNodes}
+                  handleClick={handleBreadcrumbOnClick}
                 />
               ))}
             </Stack>

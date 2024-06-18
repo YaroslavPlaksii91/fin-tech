@@ -1,49 +1,21 @@
 import { Box, Breadcrumbs, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 
 import { FlowNode } from '@domain/flow';
 import { theme } from '@theme';
-import routes from '@constants/routes';
 import { STEP_ICONS } from '@constants/common';
 import { buildPath } from '@components/StepManagment/StepDetailsHeader/utils';
 
 interface StepDetailsHeaderProps {
   stepId: string;
-  flowId: string;
   flowNodes: FlowNode[];
-}
-
-const StepBreadcrumbs: React.FC<StepDetailsHeaderProps> = ({
-  stepId,
-  flowNodes,
-  flowId
-}) => {
-  const navigate = useNavigate();
-
-  const handleClick = ({
+  handleClick: ({
     subFlowId,
     stepId
   }: {
     subFlowId: string | null;
     stepId: string | null;
-  }) => {
-    navigate(routes.underwriting.flow.edit(flowId), {
-      state: { subFlowId, stepId }
-    });
-  };
-
-  const breadcrumbs = createBreadcrumbs({
-    id: stepId,
-    flowNodes,
-    handleClick
-  });
-
-  return (
-    <Breadcrumbs separator="/" aria-label="breadcrumb">
-      {breadcrumbs}
-    </Breadcrumbs>
-  );
-};
+  }) => void;
+}
 
 type CreateBreadcrumbsParams = {
   id: string;
@@ -55,6 +27,24 @@ type CreateBreadcrumbsParams = {
     subFlowId: string | null;
     stepId: string | null;
   }) => void;
+};
+
+const StepBreadcrumbs: React.FC<StepDetailsHeaderProps> = ({
+  stepId,
+  flowNodes,
+  handleClick
+}) => {
+  const breadcrumbs = createBreadcrumbs({
+    id: stepId,
+    flowNodes,
+    handleClick
+  });
+
+  return (
+    <Breadcrumbs separator="/" aria-label="breadcrumb">
+      {breadcrumbs}
+    </Breadcrumbs>
+  );
 };
 
 const createBreadcrumbs = ({
