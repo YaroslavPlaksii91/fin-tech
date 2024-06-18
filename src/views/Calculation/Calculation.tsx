@@ -34,6 +34,7 @@ import StepNoteSection from '@views/DecisionTable/StepNoteSection/StepNoteSectio
 import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
+import { useViewMode } from '@hooks/useViewMode';
 
 interface CalculationProps {
   step: FlowNode;
@@ -54,7 +55,9 @@ const Calculation: React.FC<CalculationProps> = ({
     Expression & { id: string }
   >();
 
+  const viewMode = useViewMode();
   const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const isViewMode = viewMode || !hasUserPermission;
 
   const {
     handleSubmit,
@@ -134,7 +137,7 @@ const Calculation: React.FC<CalculationProps> = ({
             <form onSubmit={handleSubmit(onSubmit)}>
               <StepDetailsHeader
                 step={step}
-                title={`${hasUserPermission ? 'Edit' : 'View'} Step: ${step.data.name}`}
+                title={`${isViewMode ? 'View' : 'Edit'} Step: ${step.data.name}`}
                 details="Calculation is a step that allows the User to set a value for the parameter."
               />
               <Stack>
@@ -184,7 +187,7 @@ const Calculation: React.FC<CalculationProps> = ({
                                 }}
                                 width={40}
                               >
-                                {hasUserPermission && (
+                                {isViewMode && (
                                   <Stack direction="row">
                                     <IconButton
                                       onClick={() => {
@@ -228,7 +231,7 @@ const Calculation: React.FC<CalculationProps> = ({
                     </CardContent>
                   </Card>
                 </Box>
-                {hasUserPermission && (
+                {!isViewMode && (
                   <Button
                     disabled={fields.length === RULES_LIMIT}
                     variant="outlined"
@@ -245,7 +248,7 @@ const Calculation: React.FC<CalculationProps> = ({
                 )}
               </Stack>
             </form>
-            {hasUserPermission && (
+            {!isViewMode && (
               <StepNoteSection
                 modalOpen={openNoteModal}
                 handleCloseModal={handleCloseNoteModal}
@@ -286,7 +289,7 @@ const Calculation: React.FC<CalculationProps> = ({
             onApplyChangesClick={() => {
               void handleSubmit(onSubmit)();
             }}
-            isShow={hasUserPermission}
+            isShow={!isViewMode}
           />
         </>
       )}
