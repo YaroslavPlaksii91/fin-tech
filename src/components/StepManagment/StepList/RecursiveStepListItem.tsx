@@ -82,7 +82,9 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
           <ListItemIcon>
             <BezierIcon />
           </ListItemIcon>
-          <Typography variant="body2"> {step.data.name}</Typography>
+          <Typography sx={{ whiteSpace: 'nowrap' }} variant="body2">
+            {step.data.name}
+          </Typography>
         </StyledSubAccordionSummary>
         <ListItemSecondaryAction>
           <StepActionsMenu

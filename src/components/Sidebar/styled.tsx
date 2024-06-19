@@ -83,6 +83,11 @@ export const StyledAccordion = styled(Accordion)(() => ({
   padding: '2px 0',
   '&:before': {
     display: 'none'
+  },
+  '& .MuiListItem-container': {
+    display: 'inline-flex',
+    minWidth: '100%',
+    width: 'auto'
   }
 }));
 
@@ -93,10 +98,10 @@ export const StyledPaper = styled(Paper)(({ theme: { palette } }) => ({
   overflow: 'auto',
   position: 'relative',
   flexGrow: 0,
-  flexShrink: 0,
+  flexShrink: 0
 
-  minWidth: '70px',
-  maxWidth: '30%'
+  // minWidth: '70px',
+  // maxWidth: 'calc(100vw - 70%)'
 }));
 
 export const Resizer = styled('div')(({ theme: { palette } }) => ({
