@@ -34,13 +34,29 @@ const dataGridColumns: GridColDef[] = [
       switch (row.value) {
         case 'Approved':
           return (
-            <Typography color={theme.palette.success.main} variant="body2">
+            <Typography
+              sx={{
+                display: 'inline-flex',
+                height: 'auto',
+                alignItems: 'center'
+              }}
+              color={theme.palette.success.main}
+              variant="body2"
+            >
               {row.value}
             </Typography>
           );
         case 'Denied':
           return (
-            <Typography color={theme.palette.error.main} variant="body2">
+            <Typography
+              sx={{
+                display: 'inline-flex',
+                height: 'auto',
+                alignItems: 'center'
+              }}
+              color={theme.palette.error.main}
+              variant="body2"
+            >
               {row.value}
             </Typography>
           );
