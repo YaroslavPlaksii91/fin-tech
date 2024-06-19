@@ -1,22 +1,20 @@
 import { GridColDef } from '@mui/x-data-grid-premium';
-import dayjs, { Dayjs } from 'dayjs';
-import { DateRange, PickersShortcutsItem } from '@mui/x-date-pickers-pro';
 import { Button, Typography } from '@mui/material';
 
 import { COLUMN_IDS } from './types';
 
 import { theme } from '@theme';
 
-export const DEFAULT_SORT = 'id asc';
-export const TODAY = dayjs();
-export const YESTRDAY = TODAY.subtract(1);
-export const PREV_WEEK = TODAY.subtract(7, 'day');
-export const PREV_MONTH = TODAY.subtract(1, 'month');
-
-export const dataGridColumns: GridColDef[] = [
-  { field: COLUMN_IDS.requestId, headerName: 'Request ID' },
+const dataGridColumns: GridColDef[] = [
+  {
+    field: COLUMN_IDS.requestId,
+    headerName: 'Request ID'
+  },
   { field: COLUMN_IDS.loanId, headerName: 'Loan ID' },
-  { field: COLUMN_IDS.leadProvider, headerName: 'Lead Provider' },
+  {
+    field: COLUMN_IDS.leadProvider,
+    headerName: 'Lead Provider'
+  },
   { field: COLUMN_IDS.leadCampaign, headerName: 'Lead Campaign' },
   { field: COLUMN_IDS.customerId, headerName: 'Customer ID' },
   { field: COLUMN_IDS.leadPrice, headerName: 'Lead Price' },
@@ -24,6 +22,7 @@ export const dataGridColumns: GridColDef[] = [
   { field: COLUMN_IDS.requestDate, headerName: 'Request date' },
   { field: COLUMN_IDS.requestedAmount, headerName: 'Request amount' },
   { field: COLUMN_IDS.stackName, headerName: 'Stack Name' },
+  { field: COLUMN_IDS.loanType, headerName: 'Loan Type' },
   { field: COLUMN_IDS.promoCode, headerName: 'Promo Code' },
   { field: COLUMN_IDS.store, headerName: 'Store' },
   { field: COLUMN_IDS.ssn, headerName: 'SSN' },
@@ -69,29 +68,4 @@ export const dataGridColumns: GridColDef[] = [
   }
 ];
 
-export const SHORTCUTS_DATE_ITEMS: PickersShortcutsItem<DateRange<Dayjs>>[] = [
-  {
-    label: 'Today',
-    getValue: () => [TODAY, TODAY]
-  },
-  {
-    label: 'Yesterday',
-    getValue: () => [YESTRDAY, YESTRDAY]
-  },
-  {
-    label: 'This Week',
-    getValue: () => [TODAY.startOf('week'), TODAY.endOf('week')]
-  },
-  {
-    label: 'Last Week',
-    getValue: () => [PREV_WEEK.startOf('week'), PREV_WEEK.endOf('week')]
-  },
-  {
-    label: 'Current Month',
-    getValue: () => [TODAY.startOf('month'), TODAY.endOf('month')]
-  },
-  {
-    label: 'Last Month',
-    getValue: () => [PREV_MONTH.startOf('month'), PREV_MONTH.endOf('month')]
-  }
-];
+export default dataGridColumns;

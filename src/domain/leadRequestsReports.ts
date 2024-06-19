@@ -18,6 +18,12 @@ type LeadResponse = {
 };
 
 type LeadRequest = {
+  bankRoutingNumber: string;
+  city: string;
+  zipCode: string;
+  payFrequency: string;
+  paymentType: string;
+  isMilitary: boolean;
   requestId: string;
   leadProviderId: string;
   campaignId: string;
@@ -45,4 +51,5 @@ type ProcessingMetadata = {
 
 type CustomFields = {
   promoCode: string;
+  requestType: string;
 };

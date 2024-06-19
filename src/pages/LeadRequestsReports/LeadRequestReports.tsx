@@ -1,38 +1,28 @@
 import { useEffect, useState } from 'react';
-import { Dayjs } from 'dayjs';
 import { GridSortModel } from '@mui/x-data-grid-premium';
-import { DateRange } from '@mui/x-date-pickers-pro';
-import { Stack, Typography, Paper } from '@mui/material';
 import buildQuery from 'odata-query';
+import { Button, Paper, Stack, Typography } from '@mui/material';
+import TuneIcon from '@mui/icons-material/Tune';
 
 import { COLUMN_IDS, FetchList, OdataQueries, RowData } from './types';
 import { getFormattedRows } from './utils';
-import {
-  DEFAULT_SORT,
-  SHORTCUTS_DATE_ITEMS,
-  TODAY,
-  dataGridColumns
-} from './constants';
+import { DEFAULT_SORT } from './constants';
+import dataGridColumns from './columns';
 
 import { reportingService } from '@services/lead-requests-reports';
-import { combineDateAndTime } from '@utils/date';
-import DateFilters from '@components/Report/DateFilters';
 import TablePagination from '@components/shared/TablePagination';
+import Filters from '@components/Filters/Filters';
 import { theme } from '@theme';
 import { StyledDataGridPremium } from '@components/shared/Table/styled';
 import useTablePagination from '@hooks/useTablePagination';
 import Logger from '@utils/logger';
+import useFilters from '@hooks/useFilters';
 
 export default function LeadRequestsReportsPage() {
   const [rows, setRows] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [totalCount, setTotalCount] = useState(0);
-  const [time, setTime] = useState<DateRange<Dayjs>>([null, null]);
-  const [date, setDate] = useState<DateRange<Dayjs>>([
-    TODAY.startOf('week'),
-    TODAY.endOf('week')
-  ]);
 
   const {
     rowsPerPage,
@@ -43,10 +33,14 @@ export default function LeadRequestsReportsPage() {
     handleRowsPerPageChange
   } = useTablePagination({ totalCount });
 
-  const handleDateReset = () => {
-    setDate([null, null]);
-    setTime([null, null]);
-  };
+  const {
+    isFiltersOpen,
+    handleFiltersOpen,
+    handleFiltersClose,
+    handleFiltersReset,
+    handleFiltersApply,
+    dateFilters: { dateFrom, dateTo }
+  } = useFilters();
 
   const handleSortModelChange = (model: GridSortModel) => {
     const sortParams = `${model[0].field} ${model[0].sort}`;
@@ -76,11 +70,10 @@ export default function LeadRequestsReportsPage() {
 
     const params = buildQuery(queries);
 
-    // Need to remove single quotes from params
-    const correctedParams = params.replace(
-      /'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z)'/g,
-      '$1'
-    );
+    const removeSingleQuotes = () =>
+      params.replace(/'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z)'/g, '$1');
+
+    const correctedParams = removeSingleQuotes();
 
     try {
       const data =
@@ -99,18 +92,15 @@ export default function LeadRequestsReportsPage() {
   const fetch = () => {
     const params: FetchList = { page, sort };
 
-    const startDate = combineDateAndTime(date[0], time[0]);
-    const endDate = combineDateAndTime(date[1], time[1]);
-
-    if (startDate && endDate) {
-      params.startDate = startDate.toISOString();
-      params.endDate = endDate.toISOString();
+    if (dateFrom && dateTo) {
+      params.startDate = dateFrom.toISOString();
+      params.endDate = dateTo.toISOString();
     }
 
     void fetchList(params);
   };
 
-  useEffect(() => fetch(), [page, rowsPerPage, sort]);
+  useEffect(() => fetch(), [page, rowsPerPage, sort, dateFrom, dateTo]);
 
   return (
     <Stack sx={{ padding: '16px 32px' }}>
@@ -129,15 +119,16 @@ export default function LeadRequestsReportsPage() {
           alignItems="center"
           spacing={1}
         >
-          <DateFilters
-            date={date}
-            time={time}
-            shortcutsDateItems={SHORTCUTS_DATE_ITEMS}
-            onDateChange={setDate}
-            onTimeChange={setTime}
-            onClear={handleDateReset}
-            onApply={fetch}
-          />
+          <Button
+            size="small"
+            color="inherit"
+            variant="outlined"
+            sx={{ minWidth: '80px', borderRadius: '6px' }}
+            startIcon={<TuneIcon sx={{ transform: 'rotate(180deg)' }} />}
+            onClick={handleFiltersOpen}
+          >
+            Filters
+          </Button>
         </Stack>
       </Stack>
       <Paper
@@ -150,9 +141,7 @@ export default function LeadRequestsReportsPage() {
       >
         <StyledDataGridPremium
           autoHeight
-          disableColumnReorder
           disableColumnMenu
-          isRowSelectable={() => false}
           columnHeaderHeight={32}
           rowHeight={28}
           rows={rows}
@@ -180,6 +169,13 @@ export default function LeadRequestsReportsPage() {
           }}
         />
       </Paper>
+      <Filters
+        isOpen={isFiltersOpen}
+        dateFilters={{ dateFrom, dateTo }}
+        handleReset={handleFiltersReset}
+        handleApply={handleFiltersApply}
+        handleClose={handleFiltersClose}
+      />
     </Stack>
   );
 }
