@@ -1,20 +1,13 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  IconButton,
-  Stack,
-  Button,
-  Collapse,
-  Typography,
-  Box
-} from '@mui/material';
+import { useState, useEffect, useCallback } from 'react';
+import { IconButton, Stack, Button, Collapse, Typography } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 import { VARIABLES_TABS } from '../constants';
 import { TableHeader } from '../DataDictionaryVariables';
 
-import CalculatorIcon from '@icons/calculator.svg';
-import BlocksIcon from '@icons/blocks.svg';
+import StepBreadcrumbs from './StepBreadcrumbs';
+
 import TrashIcon from '@icons/trash.svg';
 import EditIcon from '@icons/editPencil.svg';
 import {
@@ -25,12 +18,11 @@ import { Variable } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { dataDictionaryService } from '@services/data-dictionary';
 import Logger from '@utils/logger';
-import routes from '@constants/routes';
-import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { theme } from '@theme';
 import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { checkIsProductionFlow } from '@utils/helpers';
+import routes from '@constants/routes';
 
 type TableRowProps = {
   headers: TableHeader[];
@@ -39,9 +31,9 @@ type TableRowProps = {
   tabName: VARIABLES_TABS;
   flowId: string;
   flowNodes: FlowNode[];
-  userDefinedUsageNodes: FlowNode[] | undefined;
-  onDelete: (row: Variable, variableUsageNodes: FlowNode[]) => void;
-  onEdit: (row: Variable, variableUsageNodes: FlowNode[]) => void;
+  userDefinedUsageStepIds: string[] | undefined;
+  onDelete: (row: Variable, variableUsageStepIds: string[]) => void;
+  onEdit: (row: Variable, variableUsageStepIds: string[]) => void;
 };
 
 export const TableRow = ({
@@ -51,20 +43,20 @@ export const TableRow = ({
   tabName,
   flowId,
   flowNodes,
-  userDefinedUsageNodes,
+  userDefinedUsageStepIds,
   onDelete,
   onEdit
 }: TableRowProps) => {
   const [isExpanded, setisExpanded] = useState(false);
-  const [variableUsageNodes, setVariableUsageNodes] = useState<FlowNode[]>([]);
   const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
   const navigate = useNavigate();
   const isProductionFlow = checkIsProductionFlow();
+  const [stepIds, setStepIds] = useState<string[]>([]);
 
   const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
 
   const getVariableUsage = async (variableName: string) => {
-    const resultData: FlowNode[] = [];
+    const stepIds: string[] = [];
 
     try {
       const getVariable = isProductionFlow
@@ -75,22 +67,43 @@ export const TableRow = ({
 
       if (responseData && responseData?.length) {
         responseData.forEach((variable) => {
-          const node = flowNodes.find((node) => node.id === variable.path[0]);
-          node && resultData.push(node);
+          const lastStepId = variable.path[variable.path.length - 1];
+          stepIds.push(lastStepId);
         });
       }
 
-      setVariableUsageNodes(resultData);
+      setStepIds(stepIds);
     } catch (error) {
       Logger.error('Error fetching variable usage in the flow:', error);
     }
   };
 
   useEffect(() => {
-    if (userDefinedUsageNodes?.length) {
-      setVariableUsageNodes(userDefinedUsageNodes);
+    if (userDefinedUsageStepIds?.length) {
+      setStepIds(userDefinedUsageStepIds);
     }
-  }, [userDefinedUsageNodes]);
+  }, [userDefinedUsageStepIds]);
+
+  const handleBreadcrumbOnClick = useCallback(
+    ({
+      subFlowId,
+      stepId
+    }: {
+      subFlowId: string | null;
+      stepId: string | null;
+    }) => {
+      if (hasUserPermission && !isProductionFlow) {
+        navigate(routes.underwriting.flow.edit(flowId), {
+          state: { subFlowId, stepId }
+        });
+      } else {
+        navigate(routes.underwriting.flow.view(flowId), {
+          state: { subFlowId, stepId }
+        });
+      }
+    },
+    [hasUserPermission, isProductionFlow]
+  );
 
   return (
     <>
@@ -126,7 +139,7 @@ export const TableRow = ({
                     width: 'auto',
                     p: 0
                   }}
-                  onClick={() => onEdit(row, variableUsageNodes)}
+                  onClick={() => onEdit(row, stepIds)}
                 >
                   <EditIcon color={theme.palette.action.active} />
                 </Button>
@@ -136,7 +149,7 @@ export const TableRow = ({
                     width: 'auto',
                     p: 0
                   }}
-                  onClick={() => onDelete(row, variableUsageNodes)}
+                  onClick={() => onDelete(row, stepIds)}
                 >
                   <TrashIcon color={theme.palette.error.main} />
                 </Button>
@@ -155,34 +168,13 @@ export const TableRow = ({
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>
             <Stack margin={1} spacing={1}>
               <Typography variant="body1">This variable is used in:</Typography>
-              {variableUsageNodes.map((flowNode) => (
-                <Stack
-                  sx={{ cursor: 'pointer' }}
-                  key={flowNode.id}
-                  aria-label="breadcrumb"
-                  onClick={() =>
-                    navigate(routes.underwriting.flow.view(flowId), {
-                      state: { activeStepId: flowNode.id }
-                    })
-                  }
-                >
-                  <Stack>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      {flowNode.type === StepType.CALCULATION ? (
-                        <CalculatorIcon color={theme.palette.primary.main} />
-                      ) : (
-                        <BlocksIcon color={theme.palette.primary.main} />
-                      )}
-                      <Typography
-                        sx={{ textDecoration: 'underline' }}
-                        variant="body1"
-                        color={theme.palette.info.main}
-                      >
-                        {flowNode.data.name}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                </Stack>
+              {stepIds.map((id, idx) => (
+                <StepBreadcrumbs
+                  key={idx}
+                  stepId={id}
+                  flowNodes={flowNodes}
+                  handleClick={handleBreadcrumbOnClick}
+                />
               ))}
             </Stack>
           </Collapse>

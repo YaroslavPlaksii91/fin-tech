@@ -79,18 +79,22 @@ const createBreadcrumbs = ({
   return breadcrumbs.filter((i) => i);
 };
 
-const buildPath = (id: string, nodes: FlowNode[]): FlowNode[] | null => {
+const buildPath = (
+  id: string,
+  nodes: FlowNode[],
+  subFlowId?: string
+): FlowNode[] | null => {
   for (const node of nodes) {
     if (node.id === id) {
-      return [{ ...node }];
+      return [{ ...node, parentNode: subFlowId }];
     } else if (node.data.nodes) {
-      const result = buildPath(id, node.data.nodes);
+      const result = buildPath(id, node.data.nodes, node.id);
       if (result) {
-        return [{ ...node }, ...result];
+        return [{ ...node, parentNode: subFlowId }, ...result];
       }
     }
   }
   return null;
 };
 
-export default createBreadcrumbs;
+export { createBreadcrumbs, buildPath };

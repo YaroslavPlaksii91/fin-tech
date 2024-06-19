@@ -15,7 +15,7 @@ import TripOriginIcon from '@mui/icons-material/TripOrigin';
 
 import { palette } from '@theme';
 import { ChangeHistoryRecord } from '@domain/changeHistory.ts';
-import { FULL_DATE_TIME_FORMAT } from '@constants/common.ts';
+import { FULL_DATE_TIME_FORMAT } from '@constants/common.tsx';
 import { Row } from '@components/ChangeHistory/ChangeHistory.utils.tsx';
 
 const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({ data }) => {

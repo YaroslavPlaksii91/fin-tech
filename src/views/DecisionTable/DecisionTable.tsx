@@ -60,6 +60,7 @@ import { DataDictionaryVariable } from '@domain/dataDictionary';
 import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
+import { useViewMode } from '@hooks/useViewMode';
 
 type DecisionTableStepProps = {
   flow: IFlow;
@@ -96,7 +97,10 @@ const DecisionTableStep = ({
   const [defaultStepId, setDefaultStepId] = useState<string | null>(null);
 
   const dataDictionary = useContext(DataDictionaryContext);
+
+  const viewMode = useViewMode();
   const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const isViewMode = viewMode || !hasUserPermission;
 
   const variables = dataDictionary?.variables || {};
   const nodes: FlowNode[] = getNodes();
@@ -436,7 +440,7 @@ const DecisionTableStep = ({
       <StepContentWrapper>
         <StepDetailsHeader
           step={step}
-          title={`${hasUserPermission ? 'Edit' : 'View'} Step: ${step.data.name}`}
+          title={`${isViewMode ? 'View' : 'Edit'} Step: ${step.data.name}`}
           details={STEP_DETAILS}
         />
         <Paper>
@@ -456,12 +460,12 @@ const DecisionTableStep = ({
               handleDeleteCategoryColumn={handleDeleteCategoryColumn}
               handleChangeColumnVariable={handleChangeColumnVariable}
               handleSubmitVariableValue={handleSubmitVariableValue}
-              hasUserPermission={hasUserPermission}
+              hasUserPermission={!isViewMode}
             />
           </TableContainer>
         </Paper>
 
-        {hasUserPermission && (
+        {!isViewMode && (
           <Button
             sx={{ width: 'fit-content', mt: 1 }}
             variant="outlined"
@@ -473,7 +477,7 @@ const DecisionTableStep = ({
           </Button>
         )}
 
-        {hasUserPermission && (
+        {!isViewMode && (
           <StepNoteSection
             modalOpen={openNoteModal}
             handleCloseModal={handleCloseNoteModal}
@@ -497,7 +501,7 @@ const DecisionTableStep = ({
       <StepDetailsControlBar
         onDiscard={() => setOpenDiscardModal(true)}
         onApplyChangesClick={onApplyChangesClick}
-        isShow={hasUserPermission}
+        isShow={!isViewMode}
       />
       <Dialog
         title="Discard changes"

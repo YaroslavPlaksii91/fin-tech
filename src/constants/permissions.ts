@@ -14,5 +14,6 @@ export const permissionsMap = {
   canViewFlow: 'CanViewFlow',
   canViewReportingWithoutMonetaryValues:
     'CanViewReportingWithoutMonetaryValues',
-  canTriggerExecution: 'CanTriggerExecution'
+  canTriggerExecution: 'CanTriggerExecution',
+  test: 'Test'
 };

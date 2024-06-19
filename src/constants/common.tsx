@@ -1,3 +1,11 @@
+import { StepType } from '@components/FlowManagment/FlowChart/types';
+import { theme } from '@theme';
+import ArrowLeftAndRightSquareIcon from '@icons/arrowLeftAndRightSquare.svg';
+import CalculatorIcon from '@icons/calculator.svg';
+import BlocksIcon from '@icons/blocks.svg';
+import LineChartDotsSquareIcon from '@icons/lineChartDotsSquare.svg';
+import FlagTriangleIcon from '@icons/flagTriangle.svg';
+
 export const MUI_LICENSE_KEY = import.meta.env.VITE_MUI_LICENSE_KEY;
 export const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 export const IAM_SERVICE_URL = import.meta.env.VITE_IAM_SERVICE_URL;
@@ -52,4 +60,17 @@ export const GRANT_TYPES = {
 
 export const tooltipText = {
   cantUpdateFlow: "You don't have permission to update flow"
+};
+
+export const STEP_ICONS = {
+  [StepType.START]: <FlagTriangleIcon color={theme.palette.primary.main} />,
+  [StepType.END]: <FlagTriangleIcon color={theme.palette.error.main} />,
+  [StepType.CHAMPION_CHALLENGER]: (
+    <ArrowLeftAndRightSquareIcon color={theme.palette.primary.main} />
+  ),
+  [StepType.CALCULATION]: <CalculatorIcon color={theme.palette.primary.main} />,
+  [StepType.DECISION_TABLE]: <BlocksIcon color={theme.palette.primary.main} />,
+  [StepType.SUBFLOW]: (
+    <LineChartDotsSquareIcon color={theme.palette.primary.main} />
+  )
 };

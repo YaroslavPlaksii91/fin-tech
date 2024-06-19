@@ -49,6 +49,7 @@ import StepNoteSection from '@views/DecisionTable/StepNoteSection/StepNoteSectio
 import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
+import { useViewMode } from '@hooks/useViewMode';
 
 const DEFAULT_PERCENTAGE_SPLIT = 10;
 
@@ -81,7 +82,10 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
 
   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
+
+  const viewMode = useViewMode();
   const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const isViewMode = viewMode || !hasUserPermission;
 
   const nodes: FlowNode[] = getNodes();
   const edges = getEdges();
@@ -228,7 +232,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <StepDetailsHeader
             step={step}
-            title={`${hasUserPermission ? 'Edit' : 'View'} Step: ${step.data.name}`}
+            title={`${isViewMode ? 'View' : 'Edit'} Step: ${step.data.name}`}
             details="A Champion Challenger is a step that allows you to split traffic into several groups and run experiment."
           />
           <Stack>
@@ -259,7 +263,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                             control={control}
                             name={`splits.${index}.percentage`}
                             onChangeCb={() => clearErrors()}
-                            disabled={!hasUserPermission}
+                            disabled={isViewMode}
                           />
                         </StyledTableCell>
                         <StyledTableCell sx={{ p: 0 }}>
@@ -271,11 +275,11 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                             options={options}
                             selectedOptions={selectedOptions}
                             setSelectedOptions={setSelectedOptions}
-                            disabled={!hasUserPermission}
+                            disabled={isViewMode}
                           />
                         </StyledTableCell>
                         <StyledTableCell sx={{ p: 0 }} width={40}>
-                          {hasUserPermission && (
+                          {!isViewMode && (
                             <Button
                               fullWidth
                               sx={{ p: '10px' }}
@@ -308,7 +312,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
               </StyledTableContainer>
             </StyledPaper>
             <ErrorMessage errors={errors} name="splits" />
-            {hasUserPermission && (
+            {!isViewMode && (
               <Button
                 sx={{ width: '135px' }}
                 disabled={fields.length === RULES_LIMIT}
@@ -324,7 +328,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
             )}
           </Stack>
         </form>
-        {hasUserPermission && (
+        {!isViewMode && (
           <StepNoteSection
             modalOpen={openNoteModal}
             handleCloseModal={handleCloseNoteModal}
@@ -351,7 +355,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         onApplyChangesClick={() => {
           void handleSubmit(onSubmit)();
         }}
-        isShow={hasUserPermission}
+        isShow={!isViewMode}
       />
       <Dialog
         title="Discard changes"

@@ -50,7 +50,7 @@ import {
 import { dataDictionaryService } from '@services/data-dictionary';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext.tsx';
 import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog.tsx';
-import { DATA_DICTIONARY_GROUP } from '@constants/common.ts';
+import { DATA_DICTIONARY_GROUP } from '@constants/common.tsx';
 import { StepContentWrapper } from '@views/styled';
 
 const operatorsList = [
