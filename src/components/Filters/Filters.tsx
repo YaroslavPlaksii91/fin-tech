@@ -46,8 +46,8 @@ const Filters = ({
   });
 
   useEffect(() => {
-    reset({ filters, dateFilters });
-  }, [isOpen, filters]);
+    reset({ filters, dateFilters, search });
+  }, [isOpen, filters, dateFilters, search]);
 
   return (
     <Drawer anchor="right" open={isOpen} onClose={handleClose}>
@@ -84,7 +84,7 @@ const Filters = ({
               </Box>
             </Stack>
             <Stack sx={{ width: '100%' }} direction="column" spacing={1}>
-              {search ? (
+              {typeof search !== 'undefined' ? (
                 <Controller
                   control={control}
                   name="search"
@@ -92,6 +92,7 @@ const Filters = ({
                     <TextField
                       fullWidth
                       placeholder="Search by Keyword"
+                      type="text"
                       size="small"
                       value={value}
                       onChange={onChange}
