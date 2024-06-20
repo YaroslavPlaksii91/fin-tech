@@ -95,13 +95,13 @@ export const StyledPaper = styled(Paper)(({ theme: { palette } }) => ({
   padding: '16px 8px',
   borderRadius: 0,
   borderRight: `1px solid ${palette.divider}`,
-  overflow: 'auto',
+  overflow: 'hidden',
   position: 'relative',
   flexGrow: 0,
-  flexShrink: 0
+  flexShrink: 0,
 
-  // minWidth: '70px',
-  // maxWidth: 'calc(100vw - 70%)'
+  minWidth: '70px',
+  maxWidth: 'calc(100vw - 70%)'
 }));
 
 export const Resizer = styled('div')(({ theme: { palette } }) => ({
@@ -110,6 +110,7 @@ export const Resizer = styled('div')(({ theme: { palette } }) => ({
   bottom: 0,
   right: 0,
   width: '1px',
+  background: 'red',
 
   cursor: 'col-resize',
   resize: 'horizontal',
