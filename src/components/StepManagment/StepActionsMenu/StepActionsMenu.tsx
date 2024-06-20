@@ -4,6 +4,8 @@ import { IconButton } from '@mui/material';
 import { useReactFlow } from 'reactflow';
 import { Node } from '@reactflow/core';
 
+import Details from './Details';
+
 import Menu from '@components/shared/Menu/Menu';
 import Logger from '@utils/logger';
 import {
@@ -166,6 +168,7 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
         anchorEl={open ? menuAnchor : null}
         handleCloseMenu={handleCloseMenu}
         options={options}
+        footer={<Details data={flowNode.data} />}
       />
     </>
   );

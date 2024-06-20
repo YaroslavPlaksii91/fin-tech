@@ -50,6 +50,9 @@ import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
 import { useViewMode } from '@hooks/useViewMode';
+import { useAppSelector } from '@store/hooks';
+import { selectUserInfo } from '@store/auth/auth';
+import { getFullUserName } from '@utils/helpers';
 
 const DEFAULT_PERCENTAGE_SPLIT = 10;
 
@@ -86,6 +89,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   const viewMode = useViewMode();
   const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
   const isViewMode = viewMode || !hasUserPermission;
+  const user = useAppSelector(selectUserInfo);
+  const username = getFullUserName(user);
 
   const nodes: FlowNode[] = getNodes();
   const edges = getEdges();
@@ -158,6 +163,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       if (node.id === step.id) {
         node.data = {
           ...node.data,
+          editedBy: username,
+          editedOn: new Date().toISOString(),
           note: data.note,
           splits: [...newSplits]
         };

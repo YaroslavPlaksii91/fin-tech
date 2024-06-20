@@ -16,7 +16,7 @@ export const createInitialFlowDataHelper = (
   name: string,
   username: string
 ): IFlowDataCreate => {
-  const { nodes, edges, viewport } = createInitialFlow();
+  const { nodes, edges, viewport } = createInitialFlow(username);
 
   return {
     data: {

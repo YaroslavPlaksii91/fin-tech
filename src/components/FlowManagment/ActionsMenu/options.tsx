@@ -40,7 +40,7 @@ const renameOption = {
 const deleteOption = {
   label: 'Delete',
   dataKey: ActionTypes.DELETE_FLOW,
-  icon: <TrashIcon />,
+  icon: <TrashIcon color={theme.palette.error.main} />,
   textColor: theme.palette.error.main
 };
 

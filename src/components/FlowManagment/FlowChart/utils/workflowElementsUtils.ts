@@ -20,6 +20,7 @@ const defaultNodeSize = { width: 100, height: 100 };
 export const createNewNode = (
   type: StepType,
   name: string,
+  username: string,
   edgeId?: string
 ): FlowNode => {
   const newNodeId = uuidv4();
@@ -30,7 +31,9 @@ export const createNewNode = (
       $type: type,
       stepId: newNodeId,
       stepType: type,
-      name
+      name,
+      editedOn: new Date().toISOString(),
+      editedBy: username
     },
     position: defaultPosition,
     deletable: true,
@@ -62,7 +65,7 @@ export const createNewNode = (
       newNode.data = { ...newNode.data, expressions: [] };
       break;
     case StepType.SUBFLOW: {
-      const { nodes, edges, viewport } = createInitialFlow();
+      const { nodes, edges, viewport } = createInitialFlow(username);
       newNode.data = { ...newNode.data, nodes, edges, viewport };
       break;
     }

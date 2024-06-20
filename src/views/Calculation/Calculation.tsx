@@ -35,6 +35,9 @@ import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
 import { useViewMode } from '@hooks/useViewMode';
+import { selectUserInfo } from '@store/auth/auth';
+import { useAppSelector } from '@store/hooks';
+import { getFullUserName } from '@utils/helpers';
 
 interface CalculationProps {
   step: FlowNode;
@@ -58,6 +61,8 @@ const Calculation: React.FC<CalculationProps> = ({
   const viewMode = useViewMode();
   const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
   const isViewMode = viewMode || !hasUserPermission;
+  const user = useAppSelector(selectUserInfo);
+  const username = getFullUserName(user);
 
   const {
     handleSubmit,
@@ -91,6 +96,8 @@ const Calculation: React.FC<CalculationProps> = ({
       if (node.id === step.id) {
         node.data = {
           ...node.data,
+          editedBy: username,
+          editedOn: new Date().toISOString(),
           note: data.note,
           expressions: data.expressions
         };

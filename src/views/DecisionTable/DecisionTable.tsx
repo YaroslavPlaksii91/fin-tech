@@ -61,6 +61,9 @@ import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
 import { useViewMode } from '@hooks/useViewMode';
+import { selectUserInfo } from '@store/auth/auth';
+import { useAppSelector } from '@store/hooks';
+import { getFullUserName } from '@utils/helpers';
 
 type DecisionTableStepProps = {
   flow: IFlow;
@@ -101,6 +104,8 @@ const DecisionTableStep = ({
   const viewMode = useViewMode();
   const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
   const isViewMode = viewMode || !hasUserPermission;
+  const user = useAppSelector(selectUserInfo);
+  const username = getFullUserName(user);
 
   const variables = dataDictionary?.variables || {};
   const nodes: FlowNode[] = getNodes();
@@ -357,6 +362,8 @@ const DecisionTableStep = ({
 
         node.data = {
           ...node.data,
+          editedBy: username,
+          editedOn: new Date().toISOString(),
           note: noteValue,
           defaultActions: updatedDefaultActions,
           variableSources: updatedVariableSources
