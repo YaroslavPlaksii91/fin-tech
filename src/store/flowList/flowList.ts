@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import {
   fetchFlowList,
@@ -30,7 +30,17 @@ const initialState: initialStateInterface = {
 export const flowListSlicer = createSlice({
   name: 'flowList',
   initialState,
-  reducers: {},
+  reducers: {
+    updateFlowListItem(state, action: PayloadAction<IFlowListItem>) {
+      const flowListItem = state.flowList.find(
+        (item) => item.id === action.payload.id
+      );
+      if (flowListItem) {
+        flowListItem.editedBy = action.payload.editedBy;
+        flowListItem.editedOn = action.payload.editedOn;
+      }
+    }
+  },
   extraReducers(builder) {
     builder.addCase(fetchFlowList.fulfilled, (state, action) => {
       state.flowList = action.payload.flowItemsData;
@@ -63,3 +73,5 @@ export const flowListSlicer = createSlice({
 });
 
 export default flowListSlicer.reducer;
+
+export const { updateFlowListItem } = flowListSlicer.actions;

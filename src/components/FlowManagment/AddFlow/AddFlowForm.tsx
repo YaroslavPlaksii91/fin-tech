@@ -17,12 +17,14 @@ import AddIcon from '@icons/plusSquare.svg';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
 import LoadingButton from '@components/shared/LoadingButton';
-import { useAppDispatch } from '@store/hooks';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { createFlow } from '@store/flowList/asyncThunk';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import { SNACK_TYPE } from '@constants/common';
 import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
+import { selectUserInfo } from '@store/auth/auth';
+import { getFullUserName } from '@utils/helpers';
 
 interface FormData {
   name: string;
@@ -32,6 +34,7 @@ export const AddFlow: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const user = useAppSelector(selectUserInfo);
   const canUserCreateFlow = useHasUserPermission(permissionsMap.canCreateFlow);
   const {
     handleSubmit,
@@ -47,7 +50,8 @@ export const AddFlow: React.FC = () => {
 
   const onSubmit: SubmitHandler<FormData> = async ({ name }): Promise<void> => {
     try {
-      const data = createInitialFlowDataHelper(name);
+      const username = getFullUserName(user);
+      const data = createInitialFlowDataHelper(name, username);
       const resultAction = await dispatch(createFlow(data));
 
       handleCloseModal();

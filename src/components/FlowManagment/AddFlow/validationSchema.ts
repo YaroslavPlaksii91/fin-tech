@@ -12,8 +12,10 @@ export const validationSchema = yup.object().shape({
     .max(30, 'Flow name cannot have more than 30 characters')
 });
 
-export const createInitialFlowDataHelper = (name: string): IFlowDataCreate => {
-  const username = 'username';
+export const createInitialFlowDataHelper = (
+  name: string,
+  username: string
+): IFlowDataCreate => {
   const { nodes, edges, viewport } = createInitialFlow();
 
   return {

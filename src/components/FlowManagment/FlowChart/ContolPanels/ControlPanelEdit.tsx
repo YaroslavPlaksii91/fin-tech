@@ -19,7 +19,8 @@ import { pushProductionFlow } from '@store/flowList/asyncThunk';
 import { selectFlowData } from '@store/flow/selectors';
 import { selectUserInfo } from '@store/auth/auth';
 import { permissionsMap } from '@constants/permissions';
-import { hasPermission } from '@utils/helpers';
+import { getFullUserName, hasPermission } from '@utils/helpers';
+import { updateFlowListItem } from '@store/flowList/flowList';
 
 const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
   rfInstance,
@@ -36,13 +37,18 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
     if (rfInstance && flow) {
       try {
         setLoading(true);
+        const username = getFullUserName(user);
         const formattedData = formatFlowOnSave({
-          flow: { ...flow, data: flowData },
+          flow: {
+            ...flow,
+            data: { ...flowData, editedBy: username }
+          },
           rfInstance
         });
         const resultAction = await dispatch(saveFlow(formattedData));
         const savedFlow = unwrapResult(resultAction);
         setCopyFlow(savedFlow);
+        dispatch(updateFlowListItem({ ...savedFlow.data, id: savedFlow.id }));
 
         enqueueSnackbar(
           <SnackbarMessage
