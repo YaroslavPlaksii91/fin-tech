@@ -90,11 +90,32 @@ const Sidebar = () => {
 
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [isResizing, setIsResizing] = useState(false);
-  const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
+
   const [expanded, setExpanded] = useState(true);
   const [expandedFlow, setExpandedFlow] = useState<string | false>(false);
   const [expandedFlowList, setExpandedFlowList] = useState<boolean>(true);
   const user = useAppSelector(selectUserInfo);
+
+  const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
+
+  const handleMouseDown = () => {
+    setIsResizing(true);
+    document.addEventListener('mouseup', handleMouseUp, true);
+    document.addEventListener('mousemove', handleMouseMove, true);
+  };
+
+  const handleMouseUp = () => {
+    setIsResizing(false);
+    document.removeEventListener('mouseup', handleMouseUp, true);
+    document.removeEventListener('mousemove', handleMouseMove, true);
+  };
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    const newWidth = e.clientX - document.body.offsetLeft;
+    if (newWidth > DEFAULT_SIDEBAR_WIDTH) {
+      setSidebarWidth(newWidth);
+    }
+  }, []);
 
   const handleChangeFlow =
     (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -106,35 +127,6 @@ const Sidebar = () => {
     const width = expanded ? MIN_SIDEBAR_WIDTH : DEFAULT_SIDEBAR_WIDTH;
     setSidebarWidth(width);
   }, [expanded]);
-
-  const startResizing = useCallback(() => {
-    setIsResizing(true);
-  }, []);
-
-  const stopResizing = useCallback(() => {
-    setIsResizing(false);
-  }, []);
-
-  const resize = useCallback(
-    (mouseMoveEvent: MouseEvent) => {
-      if (isResizing && sidebarRef.current) {
-        setSidebarWidth(
-          mouseMoveEvent.clientX -
-            sidebarRef.current.getBoundingClientRect()?.left
-        );
-      }
-    },
-    [isResizing]
-  );
-
-  useEffect(() => {
-    window.addEventListener('mousemove', resize);
-    window.addEventListener('mouseup', stopResizing);
-    return () => {
-      window.removeEventListener('mousemove', resize);
-      window.removeEventListener('mouseup', stopResizing);
-    };
-  }, [resize, stopResizing]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -184,7 +176,7 @@ const Sidebar = () => {
         transition: !isResizing ? 'width 0.2s ease-in-out' : ''
       }}
     >
-      {expanded && <Resizer onMouseDown={startResizing} />}
+      {expanded && <Resizer onMouseDown={handleMouseDown} />}
       <SidebarToggle
         fullWidth
         onClick={toggleSidebar}
@@ -201,7 +193,10 @@ const Sidebar = () => {
           Collapse Sidebar
         </Typography>
       </SidebarToggle>
-      <List component="nav">
+      <List
+        style={{ overflow: 'auto', height: 'calc(100% - 68px)' }}
+        component="nav"
+      >
         {expanded ? (
           <Accordion
             expanded={expandedFlowList}

@@ -126,7 +126,7 @@ const withFlowChartEditor =
       }));
       const nodes = layoutedNodes;
       return { edges, nodes };
-    }, [flow]);
+    }, [flow.id]);
 
     useEffect(() => {
       setEdges(initialElements.edges);
