@@ -99,9 +99,7 @@ export const StyledPaper = styled(Paper)(({ theme: { palette } }) => ({
   position: 'relative',
   flexGrow: 0,
   flexShrink: 0,
-
-  minWidth: '70px',
-  maxWidth: 'calc(100vw - 70%)'
+  maxWidth: '30%'
 }));
 
 export const Resizer = styled('div')(({ theme: { palette } }) => ({
@@ -110,8 +108,6 @@ export const Resizer = styled('div')(({ theme: { palette } }) => ({
   bottom: 0,
   right: 0,
   width: '1px',
-  background: 'red',
-
   cursor: 'col-resize',
   resize: 'horizontal',
 

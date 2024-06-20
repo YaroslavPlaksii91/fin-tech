@@ -80,10 +80,6 @@ const pages = [
   }
 ];
 
-export const defaultDrawerWidth = 240;
-const minDrawerWidth = 240;
-const maxDrawerWidth = 1000;
-
 const Sidebar = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
@@ -94,13 +90,13 @@ const Sidebar = () => {
 
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [isResizing, setIsResizing] = useState(false);
-  // const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
+
   const [expanded, setExpanded] = useState(true);
   const [expandedFlow, setExpandedFlow] = useState<string | false>(false);
   const [expandedFlowList, setExpandedFlowList] = useState<boolean>(true);
   const user = useAppSelector(selectUserInfo);
 
-  const [drawerWidth, setDrawerWidth] = useState(defaultDrawerWidth);
+  const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
 
   const handleMouseDown = () => {
     setIsResizing(true);
@@ -116,8 +112,8 @@ const Sidebar = () => {
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     const newWidth = e.clientX - document.body.offsetLeft;
-    if (newWidth > minDrawerWidth && newWidth < maxDrawerWidth) {
-      setDrawerWidth(newWidth);
+    if (newWidth > DEFAULT_SIDEBAR_WIDTH) {
+      setSidebarWidth(newWidth);
     }
   }, []);
 
@@ -129,37 +125,8 @@ const Sidebar = () => {
   const toggleSidebar = useCallback(() => {
     setExpanded(!expanded);
     const width = expanded ? MIN_SIDEBAR_WIDTH : DEFAULT_SIDEBAR_WIDTH;
-    setDrawerWidth(width);
+    setSidebarWidth(width);
   }, [expanded]);
-
-  // const startResizing = useCallback(() => {
-  //   setIsResizing(true);
-  // }, []);
-
-  // const stopResizing = useCallback(() => {
-  //   setIsResizing(false);
-  // }, []);
-
-  // const resize = useCallback(
-  //   (mouseMoveEvent: MouseEvent) => {
-  //     if (isResizing && sidebarRef.current) {
-  //       setSidebarWidth(
-  //         mouseMoveEvent.clientX -
-  //           sidebarRef.current.getBoundingClientRect()?.left
-  //       );
-  //     }
-  //   },
-  //   [isResizing]
-  // );
-
-  // useEffect(() => {
-  //   window.addEventListener('mousemove', resize);
-  //   window.addEventListener('mouseup', stopResizing);
-  //   return () => {
-  //     window.removeEventListener('mousemove', resize);
-  //     window.removeEventListener('mouseup', stopResizing);
-  //   };
-  // }, [resize, stopResizing]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -205,11 +172,11 @@ const Sidebar = () => {
       elevation={0}
       ref={sidebarRef}
       style={{
-        width: drawerWidth,
+        width: sidebarWidth,
         transition: !isResizing ? 'width 0.2s ease-in-out' : ''
       }}
     >
-      {expanded && <Resizer onMouseDown={(e) => handleMouseDown(e)} />}
+      {expanded && <Resizer onMouseDown={handleMouseDown} />}
       <SidebarToggle
         fullWidth
         onClick={toggleSidebar}
