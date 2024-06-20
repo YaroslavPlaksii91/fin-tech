@@ -9,15 +9,37 @@ export enum COLUMN_IDS {
   requestDate = 'processingMetadata/processingDateTimeUtc',
   requestedAmount = 'leadRequest/requestedAmount',
   stackName = 'output/stack',
+  loanType = 'leadRequest/customFields/requestType',
   promoCode = 'leadRequest/customFields/promoCode',
   store = 'output/store',
   ssn = 'leadRequest/ssn',
   email = 'leadRequest/email',
-  state = 'leadRequest/state',
   decision = 'output/decision',
+  // deniedBy ???
   denialReason = 'output/denialReason',
+  state = 'leadRequest/state',
   apiVersion = 'processingMetadata/apiVersion',
   totalTime = 'processingMetadata/processingTime',
   cachedConnector = 'processingMetadata/cachedConnector',
   details = 'details'
 }
+
+export type RowData = Record<
+  Exclude<COLUMN_IDS, COLUMN_IDS.details>,
+  string | number
+>;
+
+export type FetchList = {
+  page: number;
+  sort: string;
+  startDate?: string;
+  endDate?: string;
+};
+
+export type OdataQueries = {
+  top: number;
+  skip: number;
+  orderBy: string;
+  count: boolean;
+  filter?: Record<string, object>;
+};

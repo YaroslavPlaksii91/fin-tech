@@ -91,6 +91,14 @@ export const theme = createTheme({
         }
       }
     },
+
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: '8px'
+        }
+      }
+    },
     MuiButton: {
       styleOverrides: {
         root: {

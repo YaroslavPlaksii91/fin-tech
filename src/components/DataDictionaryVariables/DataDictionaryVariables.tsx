@@ -2,18 +2,23 @@ import { useState, useMemo } from 'react';
 import { Box, Stack, Tabs, Typography, Button } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 
-import { IFilters } from './Filters/types';
-import { FILTER_GROUPS, INITIAL_FILTERS } from './Filters/constants';
-import { StyledTab } from './styled';
-import { VARIABLES_TABS, TABS_LABELS, SOURCES_DESCRIPTIONS } from './constants';
+import {
+  VARIABLES_TABS,
+  TABS_LABELS,
+  SOURCES_DESCRIPTIONS,
+  FILTER_GROUPS,
+  INITIAL_FILTERS
+} from './constants';
 import TableList from './TableList/TableList';
 import TabPanel from './Tabs/TabPanel';
-import Filters from './Filters/Filters';
+import { StyledTab } from './styled';
 
+import Filters from '@components/Filters/Filters';
 import { theme } from '@theme';
-import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { IFlow } from '@domain/flow';
 import { DATA_TYPE_WITHOUT_ENUM, Variable } from '@domain/dataDictionary';
+import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
+import useFilters from '@hooks/useFilters';
 
 export interface TableHeader {
   key: keyof Variable;
@@ -23,9 +28,16 @@ export interface TableHeader {
 
 const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const [tab, setTab] = useState(VARIABLES_TABS.laPMSVariables);
-  const [filters, setFilters] = useState<IFilters>(INITIAL_FILTERS);
-  const [search, setSearch] = useState<string>('');
-  const [isFiltersOpen, setIsFiltersOpen] = useState<boolean>(false);
+
+  const {
+    isFiltersOpen,
+    handleFiltersOpen,
+    handleFiltersClose,
+    handleFiltersReset,
+    handleFiltersApply,
+    filters,
+    search
+  } = useFilters({ initialFilters: INITIAL_FILTERS });
 
   const { variables } = useDataDictionaryVariables(flow);
 
@@ -82,7 +94,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
   const filteredBySelects = useMemo(() => {
     const filtersEntries = Object.entries(filters) as [
-      keyof IFilters,
+      keyof Variable,
       string[]
     ][];
 
@@ -96,7 +108,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
         return;
 
       filteredData = filteredData.filter((el) =>
-        activeFilters.includes(el[field])
+        activeFilters.includes(el[field] as string)
       );
     });
 
@@ -108,26 +120,6 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     newValue: VARIABLES_TABS
   ) => {
     setTab(newValue);
-  };
-
-  const handleFiltersClose = () => setIsFiltersOpen(false);
-  const handleFiltersOpen = () => setIsFiltersOpen(true);
-
-  const handleFiltersReset = () => {
-    setSearch('');
-    setFilters(INITIAL_FILTERS);
-  };
-
-  const handleFiltersApply = ({
-    search,
-    filters
-  }: {
-    search: string;
-    filters: IFilters;
-  }) => {
-    setSearch(search);
-    setFilters(filters);
-    handleFiltersClose();
   };
 
   if (!variables) return null;
@@ -220,7 +212,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
         </TabPanel>
       )}
       <Filters
-        isFiltersOpen={isFiltersOpen}
+        isOpen={isFiltersOpen}
         filters={filters}
         search={search}
         filterGroupsToShow={filterGroupsToShow}

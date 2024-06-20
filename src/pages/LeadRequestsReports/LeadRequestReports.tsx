@@ -1,77 +1,22 @@
 import { useEffect, useState } from 'react';
-import { GridColDef, GridSortModel } from '@mui/x-data-grid-premium';
+import { GridSortModel } from '@mui/x-data-grid-premium';
 import buildQuery from 'odata-query';
 import { Button, Paper, Stack, Typography } from '@mui/material';
+import TuneIcon from '@mui/icons-material/Tune';
 
-import { COLUMN_IDS } from './types';
+import { COLUMN_IDS, FetchList, OdataQueries, RowData } from './types';
 import { getFormattedRows } from './utils';
+import { DEFAULT_SORT } from './constants';
+import dataGridColumns from './columns';
 
 import { reportingService } from '@services/lead-requests-reports';
-import Logger from '@utils/logger';
 import TablePagination from '@components/shared/TablePagination';
+import Filters from '@components/Filters/Filters';
 import { theme } from '@theme';
 import { StyledDataGridPremium } from '@components/shared/Table/styled';
 import useTablePagination from '@hooks/useTablePagination';
-
-const DEFAULT_SORT = 'id asc';
-
-const dataGridColumns: GridColDef[] = [
-  { field: COLUMN_IDS.requestId, headerName: 'Request ID' },
-  { field: COLUMN_IDS.loanId, headerName: 'Loan ID' },
-  { field: COLUMN_IDS.leadProvider, headerName: 'Lead Provider' },
-  { field: COLUMN_IDS.leadCampaign, headerName: 'Lead Campaign' },
-  { field: COLUMN_IDS.customerId, headerName: 'Customer ID' },
-  { field: COLUMN_IDS.leadPrice, headerName: 'Lead Price' },
-  { field: COLUMN_IDS.affiliate, headerName: 'Affiliate' },
-  { field: COLUMN_IDS.requestDate, headerName: 'Request date' },
-  { field: COLUMN_IDS.requestedAmount, headerName: 'Request amount' },
-  { field: COLUMN_IDS.stackName, headerName: 'Stack Name' },
-  { field: COLUMN_IDS.promoCode, headerName: 'Promo Code' },
-  { field: COLUMN_IDS.store, headerName: 'Store' },
-  { field: COLUMN_IDS.ssn, headerName: 'SSN' },
-  { field: COLUMN_IDS.email, headerName: 'Email' },
-  {
-    field: COLUMN_IDS.decision,
-    headerName: 'Decision',
-    renderCell: (row) => {
-      switch (row.value) {
-        case 'Approved':
-          return (
-            <Typography color={theme.palette.success.main} variant="body2">
-              {row.value}
-            </Typography>
-          );
-        case 'Denied':
-          return (
-            <Typography color={theme.palette.error.main} variant="body2">
-              {row.value}
-            </Typography>
-          );
-        default:
-          return '-';
-      }
-    }
-  },
-  { field: COLUMN_IDS.denialReason, headerName: 'Denial Reason' },
-  { field: COLUMN_IDS.state, headerName: 'State' },
-  { field: COLUMN_IDS.apiVersion, headerName: 'API Version' },
-  { field: COLUMN_IDS.totalTime, headerName: 'Total Time(sec)' },
-  { field: COLUMN_IDS.cachedConnector, headerName: 'Cached Connector' },
-  {
-    field: COLUMN_IDS.details,
-    headerName: '',
-    pinnable: true,
-    sortable: false,
-    resizable: false,
-    renderCell: () => (
-      <Button size="small" variant="text">
-        Details
-      </Button>
-    )
-  }
-];
-
-type RowData = Record<Exclude<COLUMN_IDS, COLUMN_IDS.details>, string | number>;
+import Logger from '@utils/logger';
+import useFilters from '@hooks/useFilters';
 
 export default function LeadRequestsReportsPage() {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -88,17 +33,53 @@ export default function LeadRequestsReportsPage() {
     handleRowsPerPageChange
   } = useTablePagination({ totalCount });
 
-  const fetchList = async () => {
+  const {
+    isFiltersOpen,
+    handleFiltersOpen,
+    handleFiltersClose,
+    handleFiltersReset,
+    handleFiltersApply,
+    dateFilters: { dateFrom, dateTo }
+  } = useFilters();
+
+  const handleSortModelChange = (model: GridSortModel) => {
+    const sortParams = `${model[0].field} ${model[0].sort}`;
+    setSort(sortParams);
+  };
+
+  const fetchList = async ({ page, sort, startDate, endDate }: FetchList) => {
+    setLoading(true);
+
+    const queries: OdataQueries = {
+      top: rowsPerPage,
+      skip: rowsPerPage * page,
+      orderBy: sort,
+      count: true
+    };
+
+    if (startDate && endDate) {
+      queries.filter = {
+        processingMetadata: {
+          processingDateTimeUtc: {
+            ge: startDate,
+            le: endDate
+          }
+        }
+      };
+    }
+
+    const params = buildQuery(queries);
+
+    const removeSingleQuotes = () =>
+      params.replace(/'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z)'/g, '$1');
+
+    const correctedParams = removeSingleQuotes();
+
     try {
-      setLoading(true);
-      const params = buildQuery({
-        top: rowsPerPage,
-        skip: rowsPerPage * page,
-        orderBy: sort,
-        count: true
-      });
-      const data = await reportingService.getLeadRequestsReports(params);
+      const data =
+        await reportingService.getLeadRequestsReports(correctedParams);
       const rows = getFormattedRows(data.value);
+
       setRows(rows);
       setTotalCount(data['@odata.count']);
     } catch (e) {
@@ -108,20 +89,48 @@ export default function LeadRequestsReportsPage() {
     }
   };
 
-  useEffect(() => {
-    void fetchList();
-  }, [rowsPerPage, page, sort]);
+  const fetch = () => {
+    const params: FetchList = { page, sort };
 
-  const handleSortModelChange = (model: GridSortModel) => {
-    const sortParams = `${model[0].field} ${model[0].sort}`;
-    setSort(sortParams);
+    if (dateFrom && dateTo) {
+      params.startDate = dateFrom.toISOString();
+      params.endDate = dateTo.toISOString();
+    }
+
+    void fetchList(params);
   };
+
+  useEffect(() => fetch(), [page, rowsPerPage, sort, dateFrom, dateTo]);
 
   return (
     <Stack sx={{ padding: '16px 32px' }}>
-      <Typography pb={3} variant="h4">
-        Lead requests
-      </Typography>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        overflow="auto"
+        spacing={2}
+        py={2}
+      >
+        <Typography variant="h4">Lead requests</Typography>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          spacing={1}
+        >
+          <Button
+            size="small"
+            color="inherit"
+            variant="outlined"
+            sx={{ minWidth: '80px', borderRadius: '6px' }}
+            startIcon={<TuneIcon sx={{ transform: 'rotate(180deg)' }} />}
+            onClick={handleFiltersOpen}
+          >
+            Filters
+          </Button>
+        </Stack>
+      </Stack>
       <Paper
         sx={{
           border: `1px solid ${theme.palette.divider}`,
@@ -132,13 +141,10 @@ export default function LeadRequestsReportsPage() {
       >
         <StyledDataGridPremium
           autoHeight
-          disableColumnReorder
           disableColumnMenu
-          isRowSelectable={() => false}
           columnHeaderHeight={32}
           rowHeight={28}
           rows={rows}
-          rowCount={rowsPerPage}
           columns={dataGridColumns}
           loading={loading}
           sortingMode="server"
@@ -163,6 +169,13 @@ export default function LeadRequestsReportsPage() {
           }}
         />
       </Paper>
+      <Filters
+        isOpen={isFiltersOpen}
+        dateFilters={{ dateFrom, dateTo }}
+        handleReset={handleFiltersReset}
+        handleApply={handleFiltersApply}
+        handleClose={handleFiltersClose}
+      />
     </Stack>
   );
 }

@@ -48,7 +48,6 @@ export const StyledPaper = styled(Paper)(() => ({
 
 export const StyledDataGridPremium = styled(DataGridPremium)(() => ({
   border: 'none',
-
   [`& .${gridClasses.row}`]: {
     borderBottom: `1px solid ${theme.palette.divider}`,
 
@@ -60,7 +59,6 @@ export const StyledDataGridPremium = styled(DataGridPremium)(() => ({
       backgroundColor: `${theme.palette.background.default} !important`
     }
   },
-
   [`& .${gridClasses.columnHeader}`]: {
     backgroundColor: theme.palette.background.default,
 
@@ -69,7 +67,6 @@ export const StyledDataGridPremium = styled(DataGridPremium)(() => ({
       border: 'transparent'
     }
   },
-
   [`& .${gridClasses.cell}`]: {
     outline: 'transparent',
     border: 'transparent',
@@ -78,5 +75,11 @@ export const StyledDataGridPremium = styled(DataGridPremium)(() => ({
       outline: 'transparent',
       border: 'transparent'
     }
+  },
+  [`& .${gridClasses['cell--pinnedRight']}`]: {
+    boxShadow: 'rgba(0, 0, 0, 0.21) -2px 0px 4px -2px'
+  },
+  [`& .${gridClasses['columnHeader--pinnedRight']}`]: {
+    boxShadow: 'rgba(0, 0, 0, 0.21) -2px 0px 4px -2px'
   }
 }));
