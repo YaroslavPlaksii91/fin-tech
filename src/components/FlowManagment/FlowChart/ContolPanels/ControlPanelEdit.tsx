@@ -3,7 +3,10 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { unwrapResult } from '@reduxjs/toolkit';
 
-import { formatFlowOnSave } from '../utils/formatFlowOnSave';
+import {
+  formatFlowOnSave,
+  parseFlowValidationErrors
+} from '../utils/flowUtils';
 import { ControlPanelEditProps } from '../types';
 
 import { StyledPanel } from './styled';
@@ -89,8 +92,16 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
           { variant: SNACK_TYPE.SUCCESS }
         );
       } catch (error) {
+        const errors = parseFlowValidationErrors(
+          error,
+          rfInstance.toObject().nodes
+        );
         enqueueSnackbar(
-          <SnackbarErrorMessage message="Error" error={error} />,
+          <SnackbarErrorMessage
+            message="Error"
+            parsedErrors={errors}
+            error={error}
+          />,
           {
             variant: SNACK_TYPE.ERROR
           }
