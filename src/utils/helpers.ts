@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 import { FieldErrors } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
+import { UserInfoModel } from '@eloanwarehouse/frontend-core';
 
 import {
   GENERAL_SERVER_ERROR,
@@ -95,9 +96,13 @@ const hasPermission = (
   // update code if MenuItem will have two or more permissions
 };
 
+const getFullUserName = (user: UserInfoModel | null) =>
+  user ? user.firstName + user.lastName : '';
+
 export {
   parseErrorMessages,
   parseValidationError,
   checkIsProductionFlow,
-  hasPermission
+  hasPermission,
+  getFullUserName
 };

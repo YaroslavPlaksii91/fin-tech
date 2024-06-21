@@ -5,7 +5,7 @@ import { DEFAULT_EDGE_TYPE, StepType } from '../FlowChart/types';
 import { FlowNode } from '@domain/flow';
 import { DRAWER_WIDTH, HEADER_HEIGHT } from '@constants/themeConstants';
 
-export const createInitialFlow = () => {
+export const createInitialFlow = (username: string) => {
   const startNodeId = uuidv4();
   const endNodeId = uuidv4();
   const newEdgeId = uuidv4();
@@ -22,7 +22,9 @@ export const createInitialFlow = () => {
       $type: StepType.START,
       stepId: startNodeId,
       stepType: StepType.START,
-      name: StepType.START
+      name: StepType.START,
+      editedBy: username,
+      editedOn: new Date().toISOString()
     },
     width: 40,
     height: 40,
@@ -38,7 +40,9 @@ export const createInitialFlow = () => {
       $type: StepType.END,
       stepId: endNodeId,
       stepType: StepType.END,
-      name: StepType.END
+      name: StepType.END,
+      editedBy: username,
+      editedOn: new Date().toISOString()
     },
     width: 40,
     height: 40,
