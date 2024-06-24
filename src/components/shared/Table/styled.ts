@@ -47,7 +47,8 @@ export const StyledPaper = styled(Paper)(() => ({
 }));
 
 export const StyledDataGridPremium = styled(DataGridPremium)(() => ({
-  border: 'none',
+  border: 'transparent',
+
   [`& .${gridClasses.row}`]: {
     borderBottom: `1px solid ${theme.palette.divider}`,
 
@@ -63,8 +64,7 @@ export const StyledDataGridPremium = styled(DataGridPremium)(() => ({
     backgroundColor: theme.palette.background.default,
 
     '&:focus-within': {
-      outline: 'transparent',
-      border: 'transparent'
+      outline: 'transparent'
     }
   },
   [`& .${gridClasses.cell}`]: {

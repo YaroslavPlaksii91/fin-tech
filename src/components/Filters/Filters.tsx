@@ -6,7 +6,8 @@ import {
   Typography,
   Drawer,
   Button,
-  TextField
+  TextField,
+  IconButton
 } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
@@ -55,7 +56,9 @@ const Filters = ({
         <Box sx={{ width: '384px', padding: '8px' }}>
           <Stack spacing={1} alignItems="center" sx={{ padding: '8px 16px' }}>
             <Stack spacing={1} direction="row" alignItems="center" width="100%">
-              <ChevronRightIcon sx={{ fontSize: '32px' }} />
+              <IconButton sx={{ padding: '2px' }} onClick={handleClose}>
+                <ChevronRightIcon sx={{ fontSize: '28px' }} />
+              </IconButton>
               <Typography variant="h6">Filters</Typography>
               <Box
                 sx={{
