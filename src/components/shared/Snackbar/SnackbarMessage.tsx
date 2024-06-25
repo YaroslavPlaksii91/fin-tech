@@ -15,6 +15,7 @@ interface SnackbarMessageProps {
 interface SnackbarErrorMessageProps {
   message: string;
   error: unknown;
+  parsedErrors?: string[];
 }
 
 const SnackbarMessage: React.FC<SnackbarMessageProps> = ({
@@ -34,9 +35,10 @@ const SnackbarMessage: React.FC<SnackbarMessageProps> = ({
 
 const SnackbarErrorMessage: React.FC<SnackbarErrorMessageProps> = ({
   message,
-  error
+  error,
+  parsedErrors = null
 }) => {
-  const errors = parseErrorMessages(error);
+  const errors = parsedErrors || parseErrorMessages(error);
   return (
     <Stack display="flex" flexDirection="row" gap={1.5}>
       <ErrorOutlineOutlinedIcon color="error" />
@@ -51,4 +53,5 @@ const SnackbarErrorMessage: React.FC<SnackbarErrorMessageProps> = ({
     </Stack>
   );
 };
+
 export { SnackbarMessage, SnackbarErrorMessage };

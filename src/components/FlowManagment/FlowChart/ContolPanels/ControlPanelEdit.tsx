@@ -3,7 +3,10 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { unwrapResult } from '@reduxjs/toolkit';
 
-import { formatFlowOnSave } from '../utils/formatFlowOnSave';
+import {
+  formatFlowOnSave,
+  parseFlowValidationErrors
+} from '../utils/flowUtils';
 import { ControlPanelEditProps } from '../types';
 
 import { StyledPanel } from './styled';
@@ -19,7 +22,8 @@ import { pushProductionFlow } from '@store/flowList/asyncThunk';
 import { selectFlowData } from '@store/flow/selectors';
 import { selectUserInfo } from '@store/auth/auth';
 import { permissionsMap } from '@constants/permissions';
-import { hasPermission } from '@utils/helpers';
+import { getFullUserName, hasPermission } from '@utils/helpers';
+import { updateFlowListItem } from '@store/flowList/flowList';
 
 const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
   rfInstance,
@@ -36,13 +40,18 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
     if (rfInstance && flow) {
       try {
         setLoading(true);
+        const username = getFullUserName(user);
         const formattedData = formatFlowOnSave({
-          flow: { ...flow, data: flowData },
+          flow: {
+            ...flow,
+            data: { ...flowData, editedBy: username }
+          },
           rfInstance
         });
         const resultAction = await dispatch(saveFlow(formattedData));
         const savedFlow = unwrapResult(resultAction);
         setCopyFlow(savedFlow);
+        dispatch(updateFlowListItem({ ...savedFlow.data, id: savedFlow.id }));
 
         enqueueSnackbar(
           <SnackbarMessage
@@ -83,8 +92,16 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
           { variant: SNACK_TYPE.SUCCESS }
         );
       } catch (error) {
+        const errors = parseFlowValidationErrors(
+          error,
+          rfInstance.toObject().nodes
+        );
         enqueueSnackbar(
-          <SnackbarErrorMessage message="Error" error={error} />,
+          <SnackbarErrorMessage
+            message="Error"
+            parsedErrors={errors}
+            error={error}
+          />,
           {
             variant: SNACK_TYPE.ERROR
           }

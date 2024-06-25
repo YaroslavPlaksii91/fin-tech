@@ -48,7 +48,9 @@ import { useActiveStep } from '@contexts/StepContext';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 import { deleteNodes } from '@store/flow/flow';
-import { useAppDispatch } from '@store/hooks';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { selectUserInfo } from '@store/auth/auth';
+import { getFullUserName } from '@utils/helpers';
 
 type FlowChartEditorProps = {
   flow: IFlow;
@@ -69,6 +71,7 @@ const withFlowChartEditor =
   // eslint-disable-next-line react/display-name
   (props: FlowChartEditorProps) => {
     const { flow, mainFlow, setCopyFlow, updateNodesInMainFlow } = props;
+    const user = useAppSelector(selectUserInfo);
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
     const [startDrag, setStartDrag] = useState<boolean>(false);
@@ -96,7 +99,8 @@ const withFlowChartEditor =
     const onAddNodeBetweenEdges = useCallback(
       (type: StepType, name: string, edgeId: string) => {
         const newEdgeId = uuidv4();
-        const newNode = createNewNode(type, name, newEdgeId);
+        const username = getFullUserName(user);
+        const newNode = createNewNode(type, name, username, newEdgeId);
 
         setNodes((nodes) => nodes.concat(newNode));
 

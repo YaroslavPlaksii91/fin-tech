@@ -29,6 +29,8 @@ export type NodeData = {
   stepId: string;
   stepType: StepType;
   name: string;
+  editedBy: string;
+  editedOn: string;
   tag?: string;
   note?: string | null;
 };

@@ -45,7 +45,9 @@ const StepListItem: React.FC<StepListItemProps> = ({
       <Typography variant="caption" color="textSecondary">
         {step.data.tag || NO_TAG_LABEL}
       </Typography>
-      <Typography variant="body2">{step.data.name}</Typography>
+      <Typography sx={{ whiteSpace: 'nowrap' }} variant="body2">
+        {step.data.name}
+      </Typography>
     </StyledStepItem>
     {!isProductionFlow && (
       <ListItemSecondaryAction>

@@ -22,18 +22,21 @@ export const findSubFlow = (
 
 export const updateNodesInSubFlow = (
   nodes: FlowNode[],
-  subFlow: IFlow
+  subFlow: IFlow,
+  username?: string
 ): FlowNode[] =>
   nodes.map((node: FlowNode) => {
     if (node.id === subFlow.id) {
       node.data = {
         ...node.data,
+        editedBy: username || '',
+        editedOn: new Date().toISOString(),
         nodes: [...subFlow.nodes],
         edges: [...subFlow.edges],
         viewport: { ...subFlow.viewport }
       };
     } else if (node.data?.nodes) {
-      updateNodesInSubFlow(node.data.nodes, subFlow);
+      updateNodesInSubFlow(node.data.nodes, subFlow, username);
     }
     return { ...node };
   });

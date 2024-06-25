@@ -8,6 +8,9 @@ import { FlowNode, IFlow } from '@domain/flow';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
 import { StepContainer } from '@views/styled';
 import SubFlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEditor/SubFlowChartEditor';
+import { selectUserInfo } from '@store/auth/auth';
+import { useAppSelector } from '@store/hooks';
+import { getFullUserName } from '@utils/helpers';
 
 interface SubFlowProps {
   mainFlow: IFlow;
@@ -23,6 +26,8 @@ const SubFlow: React.FC<SubFlowProps> = ({
   resetActiveStepId
 }) => {
   const mainFlowNodes: FlowNode[] = getNodes();
+  const user = useAppSelector(selectUserInfo);
+  const username = getFullUserName(user);
 
   const subFlow = useMemo(() => {
     const subFlowNode = cloneDeep(findSubFlow(activeStepId, mainFlowNodes));
@@ -49,7 +54,11 @@ const SubFlow: React.FC<SubFlowProps> = ({
 
   const saveSubflow = useCallback(
     (subFlow: IFlow) => {
-      const updatedNodes = updateNodesInSubFlow(mainFlowNodes, subFlow);
+      const updatedNodes = updateNodesInSubFlow(
+        mainFlowNodes,
+        subFlow,
+        username
+      );
       setNodes(updatedNodes);
       resetActiveStepId();
     },

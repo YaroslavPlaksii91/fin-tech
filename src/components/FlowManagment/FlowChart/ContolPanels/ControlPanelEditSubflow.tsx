@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 
-import { formatFlowOnSave } from '../utils/formatFlowOnSave';
+import { formatFlowOnSave } from '../utils/flowUtils';
 import { ControlPanelEditProps } from '../types';
 
 import { StyledPanel } from './styled';
