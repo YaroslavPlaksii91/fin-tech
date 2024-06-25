@@ -1,3 +1,7 @@
+import { getFormattedRows } from './utils';
+
+import { ExtractArrayElementType } from '@utils/types';
+
 export enum COLUMN_IDS {
   requestId = 'leadRequest/requestId',
   loanId = 'leadResponse/loanId',
@@ -24,9 +28,8 @@ export enum COLUMN_IDS {
   details = 'details'
 }
 
-export type RowData = Record<
-  Exclude<COLUMN_IDS, COLUMN_IDS.details>,
-  string | number
+export type RowData = ExtractArrayElementType<
+  ReturnType<typeof getFormattedRows>
 >;
 
 export type FetchList = {

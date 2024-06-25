@@ -5,7 +5,13 @@ import { COLUMN_IDS } from './types';
 
 import { theme } from '@theme';
 
-const dataGridColumns: GridColDef[] = [
+interface GetDataGridColumnsProps {
+  handleDetails: () => void;
+}
+
+const getDataGridColumns = ({
+  handleDetails
+}: GetDataGridColumnsProps): GridColDef[] => [
   {
     field: COLUMN_IDS.requestId,
     headerName: 'Request ID'
@@ -30,39 +36,29 @@ const dataGridColumns: GridColDef[] = [
   {
     field: COLUMN_IDS.decision,
     headerName: 'Decision',
+    align: 'left',
     renderCell: (row) => {
+      let color;
       switch (row.value) {
         case 'Approved':
-          return (
-            <Typography
-              sx={{
-                display: 'inline-flex',
-                height: 'auto',
-                alignItems: 'center'
-              }}
-              color={theme.palette.success.main}
-              variant="body2"
-            >
-              {row.value}
-            </Typography>
-          );
+          color = theme.palette.success.main;
+          break;
         case 'Denied':
-          return (
-            <Typography
-              sx={{
-                display: 'inline-flex',
-                height: 'auto',
-                alignItems: 'center'
-              }}
-              color={theme.palette.error.main}
-              variant="body2"
-            >
-              {row.value}
-            </Typography>
-          );
+          color = theme.palette.error.main;
+          break;
         default:
-          return '-';
+          color = undefined;
       }
+
+      return (
+        <Typography
+          sx={{ display: 'inline-flex' }}
+          color={color}
+          variant="body2"
+        >
+          {row.value}
+        </Typography>
+      );
     }
   },
   { field: COLUMN_IDS.denialReason, headerName: 'Denial Reason' },
@@ -77,11 +73,11 @@ const dataGridColumns: GridColDef[] = [
     sortable: false,
     resizable: false,
     renderCell: () => (
-      <Button size="small" variant="text">
+      <Button size="small" variant="text" onClick={handleDetails}>
         Details
       </Button>
     )
   }
 ];
 
-export default dataGridColumns;
+export default getDataGridColumns;

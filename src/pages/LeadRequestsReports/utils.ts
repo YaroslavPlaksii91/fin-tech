@@ -2,15 +2,18 @@ import dayjs from 'dayjs';
 
 import { COLUMN_IDS } from './types';
 
-import { LeadRequestsReports } from '@domain/leadRequestsReports';
+import { LeadRequestsReport } from '@domain/leadRequestsReports';
 import { FULL_DATE_TIME_FORMAT } from '@constants/common';
 
-export const getFormattedRows = (data: LeadRequestsReports[]) => {
+export const getFormattedRows = (data: LeadRequestsReport[]) => {
   const milliseconds = 1000;
 
-  return data.map(
-    ({ leadRequest, leadResponse, output, processingMetadata, id }) => ({
+  return data.map((row) => {
+    const { leadRequest, leadResponse, output, processingMetadata, id } = row;
+
+    return {
       id,
+      data: row,
       [COLUMN_IDS.requestId]: leadRequest.requestId ?? '-',
       [COLUMN_IDS.loanId]: leadResponse?.loanId ?? '-',
       [COLUMN_IDS.leadProvider]: leadRequest.leadProviderId ?? '-',
@@ -40,6 +43,6 @@ export const getFormattedRows = (data: LeadRequestsReports[]) => {
         ? `${processingMetadata.processingTime / milliseconds}`
         : '-',
       [COLUMN_IDS.cachedConnector]: processingMetadata?.cachedConnector ?? '-'
-    })
-  );
+    };
+  });
 };

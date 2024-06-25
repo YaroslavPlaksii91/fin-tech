@@ -1,25 +1,28 @@
-import { useEffect, useState } from 'react';
-import { GridSortModel } from '@mui/x-data-grid-premium';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
 import buildQuery from 'odata-query';
-import { Button, Paper, Stack, Typography } from '@mui/material';
+import { Button, Drawer, Paper, Stack, Typography } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 
 import { COLUMN_IDS, FetchList, OdataQueries, RowData } from './types';
 import { getFormattedRows } from './utils';
 import { DEFAULT_SORT } from './constants';
-import dataGridColumns from './columns';
+import getDataGridColumns from './columns';
 
 import { reportingService } from '@services/lead-requests-reports';
 import TablePagination from '@components/shared/TablePagination';
 import Filters from '@components/Filters/Filters';
 import { theme } from '@theme';
 import { StyledDataGridPremium } from '@components/shared/Table/styled';
+import Details from '@components/LeadRequestsReports/Details';
 import useTablePagination from '@hooks/useTablePagination';
 import Logger from '@utils/logger';
 import useFilters from '@hooks/useFilters';
 
 export default function LeadRequestsReportsPage() {
   const [rows, setRows] = useState<RowData[]>([]);
+  const [selectedRow, setSelectedRow] = useState<RowData | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [totalCount, setTotalCount] = useState(0);
@@ -42,10 +45,22 @@ export default function LeadRequestsReportsPage() {
     dateFilters: { dateFrom, dateTo }
   } = useFilters();
 
+  const handleDetailsOpen = useCallback(() => setIsDetailsOpen(true), []);
+
+  const handleDetailsClose = () => setIsDetailsOpen(false);
+
+  const columns = useMemo(
+    () => getDataGridColumns({ handleDetails: handleDetailsOpen }),
+    [handleDetailsOpen]
+  );
+
   const handleSortModelChange = (model: GridSortModel) => {
     const sortParams = `${model[0].field} ${model[0].sort}`;
     setSort(sortParams);
   };
+
+  const handleRowSelection = (data: GridRowParams<RowData>) =>
+    setSelectedRow(data.row);
 
   const fetchList = async ({ page, sort, startDate, endDate }: FetchList) => {
     setLoading(true);
@@ -112,7 +127,7 @@ export default function LeadRequestsReportsPage() {
         spacing={2}
         py={2}
       >
-        <Typography variant="h4">Lead requests</Typography>
+        <Typography variant="h4">Applications</Typography>
         <Stack
           direction="row"
           justifyContent="space-between"
@@ -145,12 +160,13 @@ export default function LeadRequestsReportsPage() {
           columnHeaderHeight={32}
           rowHeight={28}
           rows={rows}
-          columns={dataGridColumns}
+          columns={columns}
           loading={loading}
           sortingMode="server"
           paginationMode="client"
           pinnedColumns={{ right: [COLUMN_IDS.details] }}
           onSortModelChange={handleSortModelChange}
+          onRowClick={handleRowSelection}
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
           }
@@ -176,6 +192,11 @@ export default function LeadRequestsReportsPage() {
         handleApply={handleFiltersApply}
         handleClose={handleFiltersClose}
       />
+      <Drawer anchor="right" open={isDetailsOpen} onClose={handleDetailsClose}>
+        {selectedRow ? (
+          <Details handleClose={handleDetailsClose} data={selectedRow.data} />
+        ) : null}
+      </Drawer>
     </Stack>
   );
 }
