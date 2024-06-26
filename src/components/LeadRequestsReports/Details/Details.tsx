@@ -10,21 +10,23 @@ import { RowData } from './types';
 import Accordion from './Accordion';
 import AccordionContent from './AccordionContent';
 
-import { LeadRequestsReport } from '@domain/leadRequestsReports';
 import Dialog from '@components/shared/Modals/Dialog';
+import { LeadRequestsReport } from '@domain/leadRequestsReports';
+
 interface DetailsProps {
   data: LeadRequestsReport;
   handleClose: () => void;
 }
 
-const Details = ({ data, handleClose }: DetailsProps) => {
+export const Details = ({ data, handleClose }: DetailsProps) => {
   const [expandedAccordion, setExpandedAccordion] = useState<string | null>(
     null
   );
   const [isApiReviewDialogOpen, setIsApiReviewDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<RowData | null>(null);
+  const formattedData = getFormattedData(data);
+  const rows = getFormattedRows(formattedData);
 
-  const rows = useMemo(() => getFormattedRows(getFormattedData(data)), [data]);
   const columns = useMemo(
     () =>
       getColumns({
@@ -60,15 +62,10 @@ const Details = ({ data, handleClose }: DetailsProps) => {
     []
   );
 
-  const handleRowSelection = useCallback(
-    (data: GridRowParams<RowData>) => setSelectedRow(data.row),
-    []
-  );
+  const handleRowSelection = (data: GridRowParams<RowData>) =>
+    setSelectedRow(data.row);
 
-  const handleApiReviewDialogClose = useCallback(
-    () => setIsApiReviewDialogOpen(false),
-    []
-  );
+  const handleApiReviewDialogClose = () => setIsApiReviewDialogOpen(false);
 
   return (
     <Box sx={{ padding: '8px 24px' }}>
@@ -120,5 +117,3 @@ const Details = ({ data, handleClose }: DetailsProps) => {
     </Box>
   );
 };
-
-export default Details;

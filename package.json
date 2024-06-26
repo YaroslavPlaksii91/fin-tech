@@ -19,6 +19,7 @@
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
     "@hookform/resolvers": "^3.3.2",
+    "@microlink/react-json-view": "^1.23.0",
     "@mui/icons-material": "^5.14.16",
     "@mui/material": "^5.14.16",
     "@mui/x-data-grid-generator": "^7.1.1",
