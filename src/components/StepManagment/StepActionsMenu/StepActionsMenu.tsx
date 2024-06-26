@@ -2,7 +2,6 @@ import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { useReactFlow } from 'reactflow';
-import { Node } from '@reactflow/core';
 
 import Details from './Details';
 
@@ -47,10 +46,13 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   setActiveStep,
   activeStep
 }) => {
-  const { deleteElements } = useReactFlow();
+  const { getNodes, setNodes, deleteElements } = useReactFlow();
+  // const { deleteElements } = useReactFlow();
   const navigate = useNavigate();
   const { id } = useParams();
   const dispatch = useAppDispatch();
+
+  const nodes = getNodes();
 
   const menuRef: MutableRefObject<HTMLButtonElement | null> = useRef(null);
   const [open, setIsOpen] = useState(isOpen);
@@ -123,13 +125,25 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
           if (flowNode && flowNode.id === activeStep?.subFlowId) {
             setActiveStep?.({ subFlowId: null, stepId: null });
           }
-          deleteElements({ nodes: [flowNode as Node] });
-          dispatch(
-            deleteNodes({
-              deletedNodes: [flowNode as FlowNode],
-              flowId: subFlowId
-            })
-          );
+          if (flowNode) {
+            if (subFlowId) {
+              const updatedNodes = removeNodesInSubflow(
+                nodes,
+                [flowNode],
+                subFlowId
+              );
+              setNodes(updatedNodes);
+            } else {
+              deleteElements({ nodes: [flowNode] });
+            }
+
+            dispatch(
+              deleteNodes({
+                deletedNodes: [flowNode],
+                flowId: subFlowId
+              })
+            );
+          }
         }
         break;
       }
@@ -173,5 +187,37 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
     </>
   );
 };
+
+function removeNodesInSubflow(
+  nodes: FlowNode[],
+  deleteNodes: FlowNode[],
+  subflowId: string | null
+): FlowNode[] {
+  return nodes.map((node) => {
+    if (node.id === subflowId) {
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          edges: node.data.edges?.filter(
+            (edge) =>
+              !deleteNodes.find(
+                (item) => item.id === edge.source || item.id === edge.target
+              )
+          ),
+          nodes: node.data?.nodes?.filter(
+            (node) => !deleteNodes.find((item) => item.id === node.id)
+          )
+        }
+      };
+    } else if (node.data.nodes) {
+      return {
+        ...node,
+        nodes: removeNodesInSubflow(node.data.nodes, deleteNodes, subflowId)
+      };
+    }
+    return node;
+  });
+}
 
 export default StepActionsMenu;
