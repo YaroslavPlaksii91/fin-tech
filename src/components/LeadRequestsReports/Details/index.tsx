@@ -9,6 +9,7 @@ import { StyledDataGridPremium } from './styled';
 import { RowData } from './types';
 import Accordion from './Accordion';
 import AccordionContent from './AccordionContent';
+import Scores from './Scores';
 
 import { LeadRequestsReport } from '@domain/leadRequestsReports';
 import Dialog from '@components/shared/Modals/Dialog';
@@ -18,18 +19,19 @@ interface DetailsProps {
 }
 
 const Details = ({ data, handleClose }: DetailsProps) => {
+  const [selectedRow, setSelectedRow] = useState<RowData | null>(null);
   const [expandedAccordion, setExpandedAccordion] = useState<string | null>(
     null
   );
-  const [isApiReviewDialogOpen, setIsApiReviewDialogOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<RowData | null>(null);
+  const [isApiReviewOpen, setIsApiReviewOpen] = useState(false);
+  const [isScoresOpen, setIsScoresOpen] = useState(false);
 
   const rows = useMemo(() => getFormattedRows(getFormattedData(data)), [data]);
   const columns = useMemo(
     () =>
       getColumns({
-        handleScores: () => null,
-        handleRequestRespoonse: () => setIsApiReviewDialogOpen(true)
+        handleScores: () => setIsScoresOpen(true),
+        handleRequestRespoonse: () => setIsApiReviewOpen(true)
       }),
     []
   );
@@ -52,6 +54,13 @@ const Details = ({ data, handleClose }: DetailsProps) => {
     [selectedRow?.requestResponse]
   );
 
+  const handleScoresClose = useCallback(() => setIsScoresOpen(false), []);
+
+  const handleApiReviewDialogClose = useCallback(
+    () => setIsApiReviewOpen(false),
+    []
+  );
+
   const handleChange = useCallback(
     (accordionName: string) =>
       (_: React.SyntheticEvent, newExpanded: boolean) => {
@@ -62,11 +71,6 @@ const Details = ({ data, handleClose }: DetailsProps) => {
 
   const handleRowSelection = useCallback(
     (data: GridRowParams<RowData>) => setSelectedRow(data.row),
-    []
-  );
-
-  const handleApiReviewDialogClose = useCallback(
-    () => setIsApiReviewDialogOpen(false),
     []
   );
 
@@ -103,7 +107,7 @@ const Details = ({ data, handleClose }: DetailsProps) => {
       <Dialog
         title="Request/Response Details"
         cancelText="Close"
-        open={isApiReviewDialogOpen}
+        open={isApiReviewOpen}
         displayConfirmBtn={false}
         onClose={handleApiReviewDialogClose}
       >
@@ -116,6 +120,15 @@ const Details = ({ data, handleClose }: DetailsProps) => {
             content={accordion.content}
           />
         ))}
+      </Dialog>
+      <Dialog
+        displayConfirmBtn={false}
+        title={selectedRow?.api || ''}
+        open={isScoresOpen}
+        onClose={handleScoresClose}
+        cancelText="Close"
+      >
+        <Scores data={selectedRow?.scores} />
       </Dialog>
     </Box>
   );

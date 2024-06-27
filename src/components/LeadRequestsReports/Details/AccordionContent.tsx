@@ -6,7 +6,7 @@ import { jsonViewTheme } from './constants';
 
 const AccordionContent = ({ json }: { json?: string | null }) =>
   json ? (
-    <Typography component="div" variant="body2">
+    <Typography sx={{ overflow: 'auto' }} component="div" variant="body2">
       <ReactJson
         name={false}
         displayObjectSize={false}

@@ -8,6 +8,7 @@ import {
 import { theme } from '@theme';
 
 interface TablePaginationProps {
+  isDisabled?: boolean;
   count: number;
   page: number;
   totalPages: number;
@@ -25,6 +26,7 @@ interface TablePaginationProps {
 }
 
 const TablePagination = ({
+  isDisabled = false,
   count,
   page,
   totalPages,
@@ -45,6 +47,7 @@ const TablePagination = ({
       sx={{ flex: 1 }}
       showFirstButton
       showLastButton
+      disabled={isDisabled}
       component="div"
       count={count}
       page={page}
@@ -53,6 +56,7 @@ const TablePagination = ({
       onRowsPerPageChange={onRowsPerPageChange}
     />
     <TextField
+      disabled={isDisabled || !totalPages}
       type="number"
       sx={{ borderRadius: '8px', maxWidth: '64px', mr: 1 }}
       size="small"
