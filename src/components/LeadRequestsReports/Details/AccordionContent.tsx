@@ -1,41 +1,21 @@
 import ReactJson from '@microlink/react-json-view';
 import { memo } from 'react';
+import { Typography } from '@mui/material';
 
-import { theme } from '@theme';
-const {
-  palette: {
-    text: { primary },
-    common: { white }
-  }
-} = theme;
-
-const customTheme = {
-  base00: white,
-  base01: primary,
-  base02: white,
-  base03: primary,
-  base04: primary,
-  base05: primary,
-  base06: primary,
-  base07: primary,
-  base08: primary,
-  base09: primary,
-  base0A: primary,
-  base0B: primary,
-  base0C: primary,
-  base0D: primary,
-  base0E: primary,
-  base0F: primary
-};
+import { jsonViewTheme } from './constants';
 
 const AccordionContent = ({ json }: { json?: string | null }) =>
   json ? (
-    <ReactJson
-      displayObjectSize={false}
-      displayDataTypes={false}
-      src={JSON.parse(json) as object}
-      theme={customTheme}
-    />
+    <Typography component="div" variant="body2">
+      <ReactJson
+        name={false}
+        displayObjectSize={false}
+        displayDataTypes={false}
+        src={JSON.parse(json) as object}
+        theme={jsonViewTheme}
+        style={{ fontFamily: 'inherit', fontSize: 'inherit' }}
+      />
+    </Typography>
   ) : null;
 
 export default memo(AccordionContent);
