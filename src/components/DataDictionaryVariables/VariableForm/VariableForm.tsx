@@ -26,6 +26,7 @@ import { modifyFirstLetter } from '@utils/text';
 import { updateFlow } from '@store/flow/flow';
 import CalendarIcon from '@icons/calendar.svg';
 import { DATE_FORMAT } from '@constants/common';
+import { parseErrorMessages } from '@utils/helpers';
 
 type VariableFormProps = {
   flowId: string;
@@ -58,6 +59,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     control,
     watch,
     resetField,
+    setError,
     formState: { isSubmitting, errors }
   } = useForm({
     mode: 'onChange',
@@ -99,11 +101,16 @@ export const VariableForm: React.FC<VariableFormProps> = ({
         flowId && (await flowService.updateFlow(flowId, operations));
 
       newFlowData && dispatch(updateFlow(newFlowData));
+      onClose();
     } catch (error) {
+      const dataErrors = parseErrorMessages(error);
+      if (dataErrors) {
+        setError('name', {
+          message: dataErrors[0]
+        });
+      }
       Logger.error('Error updating temporary variables in the flow:', error);
     }
-
-    onClose();
   };
 
   const watchDataType = watch('dataType');
@@ -176,16 +183,8 @@ export const VariableForm: React.FC<VariableFormProps> = ({
               </MenuItem>
             ))}
           </SingleSelect>
-          {watchDataType === DATA_TYPE_WITHOUT_ENUM.Decimal && (
-            <InputText
-              fullWidth
-              type="number"
-              name="defaultValue"
-              label="Default Value"
-              control={control}
-            />
-          )}
-          {watchDataType === DATA_TYPE_WITHOUT_ENUM.Integer && (
+          {(watchDataType === DATA_TYPE_WITHOUT_ENUM.Decimal ||
+            watchDataType === DATA_TYPE_WITHOUT_ENUM.Integer) && (
             <InputText
               fullWidth
               type="number"
