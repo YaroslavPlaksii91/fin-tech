@@ -173,6 +173,7 @@ export default function LeadRequestsReportsPage() {
           slots={{
             footer: () => (
               <TablePagination
+                isDisabled={loading}
                 count={totalCount}
                 totalPages={totalPages}
                 page={page}
