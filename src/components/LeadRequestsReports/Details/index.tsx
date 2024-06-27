@@ -7,11 +7,12 @@ import getColumns from './columns';
 import { getFormattedData, getFormattedRows } from './utils';
 import { StyledDataGridPremium } from './styled';
 import { RowData } from './types';
+import Accordion from './Accordion';
+import AccordionContent from './AccordionContent';
 import Scores from './Scores';
 
 import { LeadRequestsReport } from '@domain/leadRequestsReports';
 import Dialog from '@components/shared/Modals/Dialog';
-
 interface DetailsProps {
   data: LeadRequestsReport;
   handleClose: () => void;
@@ -19,21 +20,54 @@ interface DetailsProps {
 
 const Details = ({ data, handleClose }: DetailsProps) => {
   const [selectedRow, setSelectedRow] = useState<RowData | null>(null);
+  const [expandedAccordion, setExpandedAccordion] = useState<string | null>(
+    null
+  );
+  const [isApiReviewOpen, setIsApiReviewOpen] = useState(false);
   const [isScoresOpen, setIsScoresOpen] = useState(false);
 
-  const formattedData = getFormattedData(data);
-  const rows = getFormattedRows(formattedData);
-
+  const rows = useMemo(() => getFormattedRows(getFormattedData(data)), [data]);
   const columns = useMemo(
     () =>
       getColumns({
         handleScores: () => setIsScoresOpen(true),
-        handleRequestRespoonse: () => null
+        handleRequestResponse: () => setIsApiReviewOpen(true)
       }),
     []
   );
 
+  const accordions = useMemo(
+    () => [
+      {
+        title: 'Request',
+        content: (
+          <AccordionContent json={selectedRow?.requestResponse?.requestJson} />
+        )
+      },
+      {
+        title: 'Response',
+        content: (
+          <AccordionContent json={selectedRow?.requestResponse?.responseJson} />
+        )
+      }
+    ],
+    [selectedRow?.requestResponse]
+  );
+
   const handleScoresClose = useCallback(() => setIsScoresOpen(false), []);
+
+  const handleApiReviewDialogClose = useCallback(
+    () => setIsApiReviewOpen(false),
+    []
+  );
+
+  const handleChange = useCallback(
+    (accordionName: string) =>
+      (_: React.SyntheticEvent, newExpanded: boolean) => {
+        setExpandedAccordion(newExpanded ? accordionName : null);
+      },
+    []
+  );
 
   const handleRowSelection = useCallback(
     (data: GridRowParams<RowData>) => setSelectedRow(data.row),
@@ -70,6 +104,23 @@ const Details = ({ data, handleClose }: DetailsProps) => {
         rows={rows}
         onRowClick={handleRowSelection}
       />
+      <Dialog
+        title="Request/Response Details"
+        cancelText="Close"
+        open={isApiReviewOpen}
+        displayConfirmBtn={false}
+        onClose={handleApiReviewDialogClose}
+      >
+        {accordions.map((accordion) => (
+          <Accordion
+            key={accordion.title}
+            isExpanded={expandedAccordion === accordion.title}
+            title={accordion.title}
+            onChange={handleChange(accordion.title)}
+            content={accordion.content}
+          />
+        ))}
+      </Dialog>
       <Dialog
         displayConfirmBtn={false}
         title={selectedRow?.api || ''}

@@ -5,12 +5,12 @@ import { COLUMN_IDS, RowData } from './types';
 
 interface GetDataGridColumnsProps {
   handleScores: () => void;
-  handleRequestRespoonse: () => void;
+  handleRequestResponse: () => void;
 }
 
 const getColumns = ({
   handleScores,
-  handleRequestRespoonse
+  handleRequestResponse
 }: GetDataGridColumnsProps): GridColDef[] => [
   {
     field: COLUMN_IDS.api,
@@ -54,7 +54,7 @@ const getColumns = ({
           size="small"
           variant="text"
           sx={{ minWidth: 'fit-content', padding: '4px 0px' }}
-          onClick={handleRequestRespoonse}
+          onClick={handleRequestResponse}
         >
           View
         </Button>
