@@ -31,7 +31,7 @@ const Details = ({ data, handleClose }: DetailsProps) => {
     () =>
       getColumns({
         handleScores: () => setIsScoresOpen(true),
-        handleRequestRespoonse: () => setIsApiReviewOpen(true)
+        handleRequestResponse: () => setIsApiReviewOpen(true)
       }),
     []
   );
