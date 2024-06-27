@@ -11,7 +11,7 @@ export const validationSchema = yup.object().shape({
     .string()
     .trim()
     .max(30, 'Variable name cannot have more than 30 characters')
-    .required()
+    .required('Variable name is a required field')
     .test(
       'no-dash',
       'Variable name cannot have dash characters',
@@ -36,7 +36,21 @@ export const validationSchema = yup.object().shape({
     .mixed<DATA_TYPE>()
     .oneOf(Object.values(DATA_TYPE_WITHOUT_ENUM))
     .required(),
-  defaultValue: yup.string(),
+  defaultValue: yup
+    .string()
+    .when('dataType', (dataType: DATA_TYPE_WITHOUT_ENUM[], schema) => {
+      if (
+        [
+          DATA_TYPE_WITHOUT_ENUM.Decimal,
+          DATA_TYPE_WITHOUT_ENUM.Boolean,
+          DATA_TYPE_WITHOUT_ENUM.DateTime,
+          DATA_TYPE_WITHOUT_ENUM.Integer
+        ].includes(dataType[0])
+      ) {
+        return schema.required('Default value is required');
+      }
+      return schema;
+    }),
   description: yup
     .string()
     .trim()
