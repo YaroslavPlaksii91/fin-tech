@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { indexOf, map } from 'lodash';
 import { TableHead, TableBody, IconButton, Table } from '@mui/material';
 import { AddBoxOutlined } from '@mui/icons-material';
+import dayjs from 'dayjs';
 
 import { VARIABLES_TABS } from '../constants';
 import {
@@ -23,7 +24,8 @@ import {
 import {
   Variable,
   VariableUsageParams,
-  VARIABLE_SOURCE_TYPE
+  VARIABLE_SOURCE_TYPE,
+  DATA_TYPE_WITHOUT_ENUM
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { useAppSelector } from '@store/hooks';
@@ -33,6 +35,7 @@ import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import useTablePagination from '@hooks/useTablePagination';
 import { checkIsProductionFlow } from '@utils/helpers';
+import { DATE_FORMAT } from '@constants/common';
 
 interface TableListProps {
   flowNodes: FlowNode[];
@@ -173,7 +176,16 @@ const TableList = ({
             <TableRow
               key={index}
               headers={headers}
-              row={variable}
+              row={
+                variable.dataType === DATA_TYPE_WITHOUT_ENUM.DateTime
+                  ? {
+                      ...variable,
+                      defaultValue: dayjs(variable.defaultValue).format(
+                        DATE_FORMAT
+                      )
+                    }
+                  : variable
+              }
               index={index}
               tabName={tabName}
               flowId={flowId}

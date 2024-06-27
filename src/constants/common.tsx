@@ -12,6 +12,8 @@ export const IAM_SERVICE_URL = import.meta.env.VITE_IAM_SERVICE_URL;
 
 export const FULL_DATE_TIME_FORMAT = 'MM/DD/YYYY hh:mm:ss A';
 
+export const DATE_FORMAT = 'MM/DD/YYYY';
+
 export const PRODUCTION_FLOW_ID = 'production-flow';
 
 export const NO_TAG_LABEL = 'No tag';

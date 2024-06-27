@@ -1,7 +1,10 @@
-import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Stack, MenuItem } from '@mui/material';
 import { useDispatch } from 'react-redux/es/hooks/useDispatch';
+import { DatePicker } from '@mui/x-date-pickers-pro';
+import dayjs from 'dayjs';
 
 import { validationSchema } from './validationSchema';
 
@@ -21,6 +24,8 @@ import { flowService } from '@services/flow-service';
 import Logger from '@utils/logger';
 import { modifyFirstLetter } from '@utils/text';
 import { updateFlow } from '@store/flow/flow';
+import CalendarIcon from '@icons/calendar.svg';
+import { DATE_FORMAT } from '@constants/common';
 
 type VariableFormProps = {
   flowId: string;
@@ -51,8 +56,11 @@ export const VariableForm: React.FC<VariableFormProps> = ({
   const {
     handleSubmit,
     control,
-    formState: { isSubmitting }
+    watch,
+    resetField,
+    formState: { isSubmitting, errors }
   } = useForm({
+    mode: 'onChange',
     resolver: yupResolver(validationSchema),
     defaultValues: {
       name: formData ? formData.name : '',
@@ -69,9 +77,16 @@ export const VariableForm: React.FC<VariableFormProps> = ({
       'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
     >
   ) => {
+    const formattedData = {
+      ...data,
+      defaultValue:
+        data.dataType === DATA_TYPE_WITHOUT_ENUM.DateTime && data.defaultValue
+          ? new Date(data.defaultValue).toISOString()
+          : data.defaultValue
+    };
     const operations: JSONPatchOperation[] = [
       {
-        value: data,
+        value: formattedData,
         path: formData
           ? `/${modifyFirstLetter(formData.sourceType)}s/${formData.index}`
           : `/${modifyFirstLetter(data.sourceType)}s/-`,
@@ -90,6 +105,14 @@ export const VariableForm: React.FC<VariableFormProps> = ({
 
     onClose();
   };
+
+  const watchDataType = watch('dataType');
+
+  useEffect(() => {
+    const initialDefaultValue =
+      watchDataType === DATA_TYPE_WITHOUT_ENUM.Boolean ? 'true' : '';
+    resetField('defaultValue', { defaultValue: initialDefaultValue });
+  }, [watchDataType, resetField, formData]);
 
   return (
     <Dialog
@@ -153,12 +176,78 @@ export const VariableForm: React.FC<VariableFormProps> = ({
               </MenuItem>
             ))}
           </SingleSelect>
-          <InputText
-            fullWidth
-            name="defaultValue"
-            label="Default Value"
-            control={control}
-          />
+          {watchDataType === DATA_TYPE_WITHOUT_ENUM.Decimal && (
+            <InputText
+              fullWidth
+              type="number"
+              name="defaultValue"
+              label="Default Value"
+              control={control}
+            />
+          )}
+          {watchDataType === DATA_TYPE_WITHOUT_ENUM.Integer && (
+            <InputText
+              fullWidth
+              type="number"
+              name="defaultValue"
+              label="Default Value"
+              control={control}
+            />
+          )}
+          {watchDataType === DATA_TYPE_WITHOUT_ENUM.String && (
+            <InputText
+              fullWidth
+              name="defaultValue"
+              label="Default Value"
+              control={control}
+            />
+          )}
+          {watchDataType === DATA_TYPE_WITHOUT_ENUM.Boolean && (
+            <SingleSelect
+              variant="outlined"
+              name="defaultValue"
+              displayEmpty
+              control={control}
+              fullWidth
+              sx={{
+                '& .MuiInputBase-root ': {
+                  height: '40px'
+                }
+              }}
+            >
+              <MenuItem selected value="false">
+                false
+              </MenuItem>
+              <MenuItem value="true">true</MenuItem>
+            </SingleSelect>
+          )}
+          {watchDataType === DATA_TYPE_WITHOUT_ENUM.DateTime && (
+            <Controller
+              control={control}
+              name="defaultValue"
+              render={({ field: { value, onChange, ref } }) => (
+                <DatePicker
+                  sx={{ width: '100%' }}
+                  label="Default Value"
+                  name="defaultValue"
+                  format={DATE_FORMAT}
+                  value={value ? dayjs(value) : null}
+                  onChange={onChange}
+                  inputRef={ref}
+                  slots={{ openPickerIcon: CalendarIcon }}
+                  slotProps={{
+                    textField: {
+                      size: 'small',
+                      error: !!errors.defaultValue,
+                      helperText: errors.defaultValue?.message
+                    },
+                    openPickerIcon: { color: 'black' },
+                    actionBar: { actions: ['cancel', 'accept'] }
+                  }}
+                />
+              )}
+            />
+          )}
           <Textarea
             fullWidth
             name="description"
