@@ -72,12 +72,12 @@ const Details = ({ data, handleClose }: DetailsProps) => {
       />
       <Dialog
         displayConfirmBtn={false}
-        title={selectedRow!.api}
+        title={selectedRow?.api || ''}
         open={isScoresOpen}
         onClose={handleScoresClose}
         cancelText="Close"
       >
-        <Scores data={selectedRow!.scores} />
+        <Scores data={selectedRow?.scores} />
       </Dialog>
     </Box>
   );
