@@ -58,10 +58,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
     if (tab === VARIABLES_TABS.userDefined) {
       const userDefinedHeaders = Object.values(
-        omitBy(
-          DEFAULT_HEADERS,
-          (_, key: keyof Variable) => key === 'isRequired'
-        )
+        omitBy(DEFAULT_HEADERS, { key: 'isRequired' })
       ) as TableHeader[];
       return userDefinedHeaders;
     }
