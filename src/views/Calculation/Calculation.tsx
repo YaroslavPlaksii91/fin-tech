@@ -38,6 +38,7 @@ import { useViewMode } from '@hooks/useViewMode';
 import { selectUserInfo } from '@store/auth/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
+import { theme } from '@theme';
 
 interface CalculationProps {
   step: FlowNode;
@@ -194,7 +195,7 @@ const Calculation: React.FC<CalculationProps> = ({
                                 }}
                                 width={40}
                               >
-                                {isViewMode && (
+                                {!isViewMode && (
                                   <Stack direction="row">
                                     <IconButton
                                       onClick={() => {
@@ -212,7 +213,9 @@ const Calculation: React.FC<CalculationProps> = ({
                                         remove(index);
                                       }}
                                     >
-                                      <TrashIcon />
+                                      <TrashIcon
+                                        color={theme.palette.error.main}
+                                      />
                                     </IconButton>
                                   </Stack>
                                 )}
