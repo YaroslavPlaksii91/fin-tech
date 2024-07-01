@@ -25,12 +25,10 @@ const LeavePageConfirmationDialog: React.FC<
   title = 'Leave page?',
   message = 'Changes that you made not be saved.'
 }) => {
-  const flow = useAppSelector(selectFlow);
-  const flowList = useAppSelector(selectFlowList);
+  const { flow } = useAppSelector(selectFlow);
+  const { flowList } = useAppSelector(selectFlowList);
 
-  const isFlowInFlowList = flowList.flowList.some(
-    (item) => item.id === flow.flow.id
-  );
+  const isFlowInFlowList = flowList.some((item) => item.id === flow.id);
   const isShowDialog = isDirty && isFlowInFlowList;
   const blocker = useBlocker(isShowDialog);
 
