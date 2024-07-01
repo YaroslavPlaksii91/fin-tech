@@ -86,6 +86,7 @@ export type UserDefinedVariable = {
   sourceType: VARIABLE_SOURCE_TYPE;
   allowedValues?: string | string[];
   usageMode?: string;
+  isRequired?: boolean;
 };
 
 export type Variable =
