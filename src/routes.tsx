@@ -12,8 +12,6 @@ import ChangeHistoryPage from '@pages/ChangeHistory.tsx';
 import AccessVerificationPage from '@pages/auth/AccessVerification.tsx';
 import LeadRequestsReportsPage from '@pages/LeadRequestsReports/LeadRequestReports';
 import FlowList from '@pages/FlowList';
-import { permissionsMap } from '@constants/permissions';
-import PermissionDeniedPage from '@pages/PermissionDenied';
 
 export const router = createBrowserRouter([
   {
@@ -62,7 +60,7 @@ export const router = createBrowserRouter([
       {
         path: routes.underwriting.leadRequest,
         element: (
-          <PrivateRoutes permission={permissionsMap.canViewLeadRequestReport}>
+          <PrivateRoutes>
             <LeadRequestsReportsPage />
           </PrivateRoutes>
         )
@@ -70,16 +68,8 @@ export const router = createBrowserRouter([
       {
         path: routes.underwriting.changeHistory,
         element: (
-          <PrivateRoutes permission={permissionsMap.canViewChangeHistory}>
-            <ChangeHistoryPage />
-          </PrivateRoutes>
-        )
-      },
-      {
-        path: routes.permissionDenied,
-        element: (
           <PrivateRoutes>
-            <PermissionDeniedPage />
+            <ChangeHistoryPage />
           </PrivateRoutes>
         )
       }

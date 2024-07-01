@@ -13,8 +13,7 @@ const routes = {
     },
     changeHistory: '/change-history',
     leadRequest: '/lead-request'
-  },
-  permissionDenied: '/permission-denied'
+  }
 };
 
 export default routes;
