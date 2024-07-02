@@ -160,13 +160,13 @@ const SelectVariableValueDialog = ({
           <LoadingButton
             loading={isSubmitting}
             disabled={isSubmitting}
-            variant="contained"
+            variant="text"
             color="primary"
             type="submit"
           >
             Confirm
           </LoadingButton>
-          <Button variant="outlined" onClick={handleClose}>
+          <Button variant="text" onClick={handleClose}>
             Cancel
           </Button>
         </Stack>
