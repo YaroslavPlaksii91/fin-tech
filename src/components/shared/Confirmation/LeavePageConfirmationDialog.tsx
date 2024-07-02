@@ -3,7 +3,7 @@ import { useBlocker, useBeforeUnload } from 'react-router-dom';
 import { Typography } from '@mui/material';
 
 import Dialog from '@components/shared/Modals/Dialog';
-import { ROURER_BLOCKED_STATE } from '@constants/common';
+import { ROUTER_BLOCKED_STATE } from '@constants/common';
 import { useAppSelector } from '@store/hooks';
 import { selectFlow } from '@store/flow/selectors';
 import { selectFlowList } from '@store/flowList/selectors';
@@ -33,13 +33,13 @@ const LeavePageConfirmationDialog: React.FC<
   const blocker = useBlocker(isShowDialog);
 
   const handleClose = useCallback(() => {
-    if (blocker.state === ROURER_BLOCKED_STATE) {
+    if (blocker.state === ROUTER_BLOCKED_STATE) {
       blocker.reset();
     }
   }, [blocker]);
 
   const handleConfirm = useCallback(() => {
-    if (blocker.state === ROURER_BLOCKED_STATE) {
+    if (blocker.state === ROUTER_BLOCKED_STATE) {
       blocker.proceed();
     }
   }, [blocker]);
@@ -58,7 +58,7 @@ const LeavePageConfirmationDialog: React.FC<
 
   return (
     <Dialog
-      open={blocker.state === ROURER_BLOCKED_STATE}
+      open={blocker.state === ROUTER_BLOCKED_STATE}
       title={title}
       confirmText={confirmText}
       cancelText={cancelText}

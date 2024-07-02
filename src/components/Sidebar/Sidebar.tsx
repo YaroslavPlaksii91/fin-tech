@@ -43,7 +43,7 @@ import { useLoading } from '@contexts/LoadingContext';
 import { AddFlow } from '@components/FlowManagment/AddFlow/AddFlowForm';
 import StepList from '@components/StepManagment/StepList/StepList';
 import { useActiveStep } from '@contexts/StepContext';
-import { theme } from '@theme';
+import { palette, theme } from '@theme';
 import { permissionsMap } from '@constants/permissions';
 import { hasPermission } from '@utils/helpers';
 import { selectUserInfo } from '@store/auth/auth';
@@ -97,6 +97,15 @@ const Sidebar = () => {
   const user = useAppSelector(selectUserInfo);
 
   const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
+
+  const handleExpandIconClick = (
+    e: React.MouseEvent<SVGSVGElement>,
+    flowItemId: string
+  ) => {
+    if (flowItemId === id) {
+      e.preventDefault();
+    }
+  };
 
   const handleMouseDown = () => {
     setIsResizing(true);
@@ -258,7 +267,17 @@ const Sidebar = () => {
                       to={`${routes.underwriting.flow.list}/${flowItem.id}`}
                     >
                       <StyledSubAccordionSummary
-                        expandIcon={<ExpandMoreIcon fontSize="medium" />}
+                        expandIcon={
+                          <ExpandMoreIcon
+                            sx={{
+                              color: flowItem.id === id ? palette.primary : ''
+                            }}
+                            onClick={(e: React.MouseEvent<SVGSVGElement>) => {
+                              handleExpandIconClick(e, flowItem.id);
+                            }}
+                            fontSize="medium"
+                          />
+                        }
                         aria-controls={`${flowItem.name}-content`}
                         id={flowItem.name}
                       >
