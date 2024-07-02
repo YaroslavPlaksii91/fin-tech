@@ -157,9 +157,6 @@ const SelectVariableValueDialog = ({
         </Stack>
 
         <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
-          <Button variant="outlined" onClick={handleClose}>
-            Cancel
-          </Button>
           <LoadingButton
             loading={isSubmitting}
             disabled={isSubmitting}
@@ -169,6 +166,9 @@ const SelectVariableValueDialog = ({
           >
             Confirm
           </LoadingButton>
+          <Button variant="outlined" onClick={handleClose}>
+            Cancel
+          </Button>
         </Stack>
       </form>
     </Dialog>
