@@ -78,7 +78,7 @@ const checkIsProductionFlow = () => {
   return id === PRODUCTION_FLOW_ID;
 };
 
-type PermissionCheckTarget = MenuItem | string;
+type PermissionCheckTarget = MenuItem | string | undefined;
 
 const hasPermission = (
   permissions: string[] | undefined,
