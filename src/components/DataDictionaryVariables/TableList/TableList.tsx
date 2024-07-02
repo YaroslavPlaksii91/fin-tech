@@ -4,7 +4,7 @@ import { TableHead, TableBody, IconButton, Table } from '@mui/material';
 import { AddBoxOutlined } from '@mui/icons-material';
 import dayjs from 'dayjs';
 
-import { VARIABLES_TABS } from '../constants';
+import { TableHeader, VARIABLES_TABS } from '../constants';
 import {
   getProductionUserDefinedUsage,
   getUserDefinedUsage,
@@ -12,7 +12,6 @@ import {
 } from '../utils';
 import { VariableForm } from '../VariableForm/VariableForm';
 import { DeleteVariable } from '../DeleteVariable/DeleteVariable';
-import { TableHeader } from '../DataDictionaryVariables';
 
 import { TableRow } from './TableRow';
 

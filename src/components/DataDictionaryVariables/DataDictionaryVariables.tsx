@@ -1,13 +1,17 @@
 import { useState, useMemo } from 'react';
 import { Box, Stack, Tabs, Typography, Button } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
+import { omitBy } from 'lodash';
 
 import {
   VARIABLES_TABS,
   TABS_LABELS,
   SOURCES_DESCRIPTIONS,
   FILTER_GROUPS,
-  INITIAL_FILTERS
+  INITIAL_FILTERS,
+  CRA_REPORTS_HEADERS,
+  DEFAULT_HEADERS,
+  TableHeader
 } from './constants';
 import TableList from './TableList/TableList';
 import TabPanel from './Tabs/TabPanel';
@@ -19,12 +23,6 @@ import { IFlow } from '@domain/flow';
 import { DATA_TYPE_WITHOUT_ENUM, Variable } from '@domain/dataDictionary';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import useFilters from '@hooks/useFilters';
-
-export interface TableHeader {
-  key: keyof Variable;
-  label?: string;
-  render?: (row: Variable) => void;
-}
 
 const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const [tab, setTab] = useState(VARIABLES_TABS.laPMSVariables);
@@ -53,23 +51,20 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     return variables[tab];
   }, [tab, variables]);
 
-  const defaultHeaders: TableHeader[] = [
-    { key: 'name', label: 'Variable Name' },
-    { key: 'dataType', label: 'Data Type' },
-    { key: 'defaultValue', label: 'Default Value' },
-    { key: 'description', label: 'Description' }
-  ];
+  const headers: TableHeader[] = useMemo(() => {
+    if (tab === VARIABLES_TABS.craReportVariables) {
+      return CRA_REPORTS_HEADERS;
+    }
 
-  const craReportsHeaders: TableHeader[] = [
-    { key: 'source', label: 'CRA' },
-    { key: 'sourceType', label: 'ReportName' },
-    ...defaultHeaders
-  ];
+    if (tab === VARIABLES_TABS.userDefined) {
+      const userDefinedHeaders = Object.values(
+        omitBy(DEFAULT_HEADERS, { key: 'isRequired' })
+      ) as TableHeader[];
+      return userDefinedHeaders;
+    }
 
-  const headers =
-    tab === VARIABLES_TABS.craReportVariables
-      ? craReportsHeaders
-      : defaultHeaders;
+    return DEFAULT_HEADERS;
+  }, [tab]);
 
   const filterGroupsToShow = useMemo(
     () =>
