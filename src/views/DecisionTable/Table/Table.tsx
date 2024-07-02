@@ -34,7 +34,6 @@ import SelectComponent from '@views/DecisionTable/SelectComponent/SelectComponen
 import {
   DataDictionaryVariable,
   DATA_TYPE_WITHOUT_ENUM,
-  DATA_TYPE_WITH_ENUM_PREFIX,
   Variable
 } from '@domain/dataDictionary';
 
@@ -266,11 +265,6 @@ const Table = ({
                     dataType
                   ) && !isBooleanDataType;
 
-                const isDataTypeWithEnum =
-                  Object.values<string>(DATA_TYPE_WITH_ENUM_PREFIX).includes(
-                    dataType
-                  ) || isBooleanDataType;
-
                 const enumTypeSelectOptions =
                   !isBooleanDataType && allowedValues
                     ? allowedValues
@@ -298,9 +292,7 @@ const Table = ({
                             : 'Enter Condition '}
                         </Typography>
                       </StyledStack>
-                    ) : null}
-                    {/* Controller for the enum type of variables */}
-                    {isDataTypeWithEnum && (
+                    ) : (
                       <SelectComponent
                         fullWidth
                         placeholder="Select Value"
