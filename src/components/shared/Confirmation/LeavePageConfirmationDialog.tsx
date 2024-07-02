@@ -4,6 +4,9 @@ import { Typography } from '@mui/material';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import { ROURER_BLOCKED_STATE } from '@constants/common';
+import { useAppSelector } from '@store/hooks';
+import { selectFlow } from '@store/flow/selectors';
+import { selectFlowList } from '@store/flowList/selectors';
 
 interface LeavePageConfirmationDialogProps {
   isDirty: boolean;
@@ -22,7 +25,12 @@ const LeavePageConfirmationDialog: React.FC<
   title = 'Leave page?',
   message = 'Changes that you made not be saved.'
 }) => {
-  const blocker = useBlocker(isDirty);
+  const { flow } = useAppSelector(selectFlow);
+  const { flowList } = useAppSelector(selectFlowList);
+
+  const isFlowInFlowList = flowList.some((item) => item.id === flow.id);
+  const isShowDialog = isDirty && isFlowInFlowList;
+  const blocker = useBlocker(isShowDialog);
 
   const handleClose = useCallback(() => {
     if (blocker.state === ROURER_BLOCKED_STATE) {
