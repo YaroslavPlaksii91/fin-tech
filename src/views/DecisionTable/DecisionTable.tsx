@@ -478,7 +478,6 @@ const DecisionTableStep = ({
             variant="outlined"
             onClick={handleAddNewLayer}
             startIcon={<PlusSquareIcon />}
-            disabled={rowsToShow.length >= searchableSelectOptions.length}
           >
             Add new business layer
           </Button>
