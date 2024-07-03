@@ -36,21 +36,49 @@ export const validationSchema = yup.object().shape({
     .mixed<DATA_TYPE>()
     .oneOf(Object.values(DATA_TYPE_WITHOUT_ENUM))
     .required(),
-  defaultValue: yup
-    .string()
-    .when('dataType', (dataType: DATA_TYPE_WITHOUT_ENUM[], schema) => {
-      if (
-        [
-          DATA_TYPE_WITHOUT_ENUM.Decimal,
-          DATA_TYPE_WITHOUT_ENUM.Boolean,
-          DATA_TYPE_WITHOUT_ENUM.DateTime,
-          DATA_TYPE_WITHOUT_ENUM.Integer
-        ].includes(dataType[0])
-      ) {
-        return schema.required('Default value is required');
-      }
-      return schema;
-    }),
+  defaultValue: yup.string().when('dataType', {
+    is: (val: DATA_TYPE_WITHOUT_ENUM) =>
+      [
+        DATA_TYPE_WITHOUT_ENUM.Decimal,
+        DATA_TYPE_WITHOUT_ENUM.Boolean,
+        DATA_TYPE_WITHOUT_ENUM.DateTime,
+        DATA_TYPE_WITHOUT_ENUM.Integer
+      ].includes(val),
+    then: (schema) =>
+      schema
+        .required('Default value is required')
+        .test(
+          'is-decimal',
+          'Default value must be a valid decimal',
+          function (val) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            if (this.parent.dataType === DATA_TYPE_WITHOUT_ENUM.Decimal) {
+              return (
+                val !== undefined &&
+                !isNaN(+val) &&
+                parseFloat(val).toString() === val &&
+                !Number.isInteger(parseFloat(val))
+              );
+            }
+            return true;
+          }
+        )
+        .test(
+          'is-integer',
+          'Default value must be a valid integer',
+          function (val) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            if (this.parent.dataType === DATA_TYPE_WITHOUT_ENUM.Integer) {
+              return (
+                val !== undefined &&
+                !isNaN(+val) &&
+                Number.isInteger(parseFloat(val))
+              );
+            }
+            return true;
+          }
+        )
+  }),
   description: yup
     .string()
     .trim()
