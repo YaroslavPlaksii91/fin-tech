@@ -327,7 +327,7 @@ const DecisionTableStep = ({
       .filter((edg) => edg.source !== step.id)
       .concat(filteredSplitEdges);
 
-    const updatedNodes = nodes.map((node: FlowNode) => {
+    const updatedNodes = storedNodes.map((node: FlowNode) => {
       if (node.id === step.id) {
         // This updates data inside the node. Since React Flow uses Zustand under the hood, it is necessary to recreate the data
         const updatedCaseEntries = node.data.caseEntries ?? [];
