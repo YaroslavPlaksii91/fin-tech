@@ -17,7 +17,7 @@ const createAPIClient = ({ baseURL }: { baseURL: string }) => {
   });
 
   api.interceptors.request.use(async (config) => {
-    await authService.axiosRequestMiddleware();
+    await authService.axiosRequestMiddleware(config.headers);
     config.headers.Authorization = `Bearer ${authService.getToken()}`;
     return config;
   });
@@ -25,7 +25,7 @@ const createAPIClient = ({ baseURL }: { baseURL: string }) => {
   api.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
-      authService.axiosResponseMiddleware(error);
+      void authService.axiosResponseMiddleware(error.response?.status);
       return Promise.reject(error);
     }
   );
