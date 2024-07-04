@@ -20,7 +20,9 @@ export enum DATA_TYPE_WITHOUT_ENUM {
   Decimal = 'Decimal',
   String = 'String',
   Boolean = 'Boolean',
-  DateTime = 'DateTime'
+  DateTime = 'DateTime',
+  'Object:CraClarity' = 'Object:CraClarity',
+  'Object:CraFactorTrust' = 'Object:CraFactorTrust'
 }
 
 export type DATA_TYPE = DATA_TYPE_WITHOUT_ENUM | DATA_TYPE_WITH_ENUM_PREFIX;

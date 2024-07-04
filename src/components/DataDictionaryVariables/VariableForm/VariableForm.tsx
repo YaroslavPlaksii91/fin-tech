@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Stack, MenuItem } from '@mui/material';
@@ -46,6 +46,18 @@ const VARIABLE_SOURCE_TYPE_OPTIONS = [
   }
 ];
 
+const ALL_DATA_TYPES = Object.keys(DATA_TYPE_WITHOUT_ENUM) as Array<
+  keyof typeof DATA_TYPE_WITHOUT_ENUM
+>;
+
+const DATA_TYPES_OF_PERMANENT_VARIABLE = ALL_DATA_TYPES.filter(
+  (type) =>
+    ![
+      DATA_TYPE_WITHOUT_ENUM['Object:CraClarity'],
+      DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']
+    ].includes(type as DATA_TYPE_WITHOUT_ENUM)
+);
+
 export const VariableForm: React.FC<VariableFormProps> = ({
   flowId,
   isOpen,
@@ -53,6 +65,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
   formData
 }) => {
   const dispatch = useDispatch();
+  const [dataTypeOptions, setDataTypeOptions] = useState(ALL_DATA_TYPES);
 
   const {
     handleSubmit,
@@ -114,12 +127,22 @@ export const VariableForm: React.FC<VariableFormProps> = ({
   };
 
   const watchDataType = watch('dataType');
+  const watchSourceType = watch('sourceType');
 
   useEffect(() => {
     const initialDefaultValue =
       watchDataType === DATA_TYPE_WITHOUT_ENUM.Boolean ? 'true' : '';
     resetField('defaultValue', { defaultValue: initialDefaultValue });
-  }, [watchDataType, resetField, formData]);
+  }, [watchDataType, resetField]);
+
+  useEffect(() => {
+    if (watchSourceType === VARIABLE_SOURCE_TYPE.PermanentVariable) {
+      setDataTypeOptions(DATA_TYPES_OF_PERMANENT_VARIABLE);
+    } else {
+      setDataTypeOptions(ALL_DATA_TYPES);
+    }
+    resetField('dataType');
+  }, [watchSourceType]);
 
   return (
     <Dialog
@@ -173,11 +196,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
               }
             }}
           >
-            {(
-              Object.keys(DATA_TYPE_WITHOUT_ENUM) as Array<
-                keyof typeof DATA_TYPE_WITHOUT_ENUM
-              >
-            ).map((dataType, index) => (
+            {dataTypeOptions.map((dataType, index) => (
               <MenuItem key={index} value={dataType}>
                 {dataType}
               </MenuItem>
