@@ -76,24 +76,48 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
     setIsOpen((prev) => !prev);
   };
 
+  const handleStep = (flowNode: FlowNode | null, subFlowId: string | null) => {
+    if (!flowNode) return { activeSubflowId: null, activeStepId: null };
+
+    let activeSubflowId = subFlowId;
+    let activeStepId: null | string = flowNode.id;
+
+    if (flowNode.type === StepType.SUBFLOW) {
+      activeSubflowId = flowNode.id;
+      activeStepId = null;
+    }
+
+    return { activeSubflowId, activeStepId };
+  };
+
   const handleSelectedActions = async (action: ActionTypes) => {
     switch (action) {
       case ActionTypes.STEP_TEXT_VIEW:
-        navigate(routes.underwriting.flow.view(id as string), {
-          state: { subFlowId, stepId: flowNode?.id }
-        });
-        flowNode && setActiveStep?.({ subFlowId, stepId: flowNode.id });
+        {
+          const { activeSubflowId, activeStepId } = handleStep(
+            flowNode,
+            subFlowId
+          );
+          if (!activeSubflowId && !activeStepId) return;
+
+          navigate(routes.underwriting.flow.view(id as string), {
+            state: { subFlowId: activeSubflowId, stepId: activeStepId }
+          });
+          flowNode &&
+            setActiveStep?.({
+              subFlowId: activeSubflowId,
+              stepId: activeStepId
+            });
+        }
 
         break;
       case ActionTypes.EDIT_STEP: {
-        if (!flowNode) return;
-        let activeSubflowId = subFlowId;
-        let activeStepId: null | string = flowNode.id;
+        const { activeSubflowId, activeStepId } = handleStep(
+          flowNode,
+          subFlowId
+        );
+        if (!activeSubflowId && !activeStepId) return;
 
-        if (flowNode.type === StepType.SUBFLOW) {
-          activeSubflowId = flowNode.id;
-          activeStepId = null;
-        }
         if (isEditMode) {
           setActiveStep?.({
             subFlowId: activeSubflowId,

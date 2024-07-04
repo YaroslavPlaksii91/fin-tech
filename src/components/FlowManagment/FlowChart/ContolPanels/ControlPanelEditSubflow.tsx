@@ -15,6 +15,8 @@ import { SNACK_TYPE } from '@constants/common';
 import { useActiveStep } from '@contexts/StepContext';
 import Dialog from '@components/shared/Modals/Dialog';
 import StepBreadcrumbs from '@components/StepManagment/StepDetailsHeader/StepBreadcrumbs';
+import { permissionsMap } from '@constants/permissions';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
 
 const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
   rfInstance,
@@ -23,8 +25,8 @@ const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
 }) => {
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
   const { resetActive } = useActiveStep();
-
   const handleDiscardChanges = () => resetActive();
+  const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const onSave = useCallback(() => {
     if (rfInstance && flow) {
@@ -65,12 +67,16 @@ const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
         direction="row"
         justifyContent="flex-end"
       >
-        <Button size="small" variant="outlined">
-          Cancel
-        </Button>
-        <Button size="small" variant="contained" onClick={onSave}>
-          Save changes
-        </Button>
+        {canUserUpdateFlow && (
+          <Button size="small" variant="outlined">
+            Cancel
+          </Button>
+        )}
+        {canUserUpdateFlow && (
+          <Button size="small" variant="contained" onClick={onSave}>
+            Save changes
+          </Button>
+        )}
       </Stack>
       <Dialog
         title="Cancel Changes"

@@ -11,6 +11,8 @@ import { options } from './options';
 
 import { AddIcon } from '@components/shared/Icons';
 import Menu from '@components/shared/Menu/Menu';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
+import { permissionsMap } from '@constants/permissions';
 
 interface StepSelectionMenuProps {
   id: string;
@@ -24,6 +26,7 @@ export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [addStepModalOpen, setAddStepModalOpen] = useState<boolean>(false);
   const [selectedStep, setSelectedStep] = useState<FunctionalStepType | null>();
+  const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -39,9 +42,11 @@ export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
 
   return (
     <div>
-      <StyledRhombButton onClick={handleOpenMenu}>
-        <AddIcon />
-      </StyledRhombButton>
+      {canUserUpdateFlow && (
+        <StyledRhombButton onClick={handleOpenMenu}>
+          <AddIcon />
+        </StyledRhombButton>
+      )}
       <Menu
         anchorOrigin={{
           vertical: 'top',
