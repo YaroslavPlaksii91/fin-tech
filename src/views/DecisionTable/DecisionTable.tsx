@@ -327,25 +327,16 @@ const DecisionTableStep = ({
       .filter((edg) => edg.source !== step.id)
       .concat(filteredSplitEdges);
 
-    const updatedNodes = storedNodes.map((node: FlowNode) => {
+    const updatedNodes = nodes.map((node: FlowNode) => {
       if (node.id === step.id) {
-        // This updates data inside the node. Since React Flow uses Zustand under the hood, it is necessary to recreate the data
-        const updatedCaseEntries = node.data.caseEntries ?? [];
-
-        updatedCaseEntries.length = 0;
-        updatedCaseEntries.push(
-          ...caseEntries.map((row, caseEntryIndex) => ({
-            edgeId: splitEdges[caseEntryIndex]?.id || null,
-            conditions: row.conditions.map((condition) => ({ ...condition })),
-            actions: row.actions.map((action) => ({
-              ...action,
-              destinationType: 'TemporaryVariable'
-            }))
+        const updatedCaseEntries = caseEntries.map((row, caseEntryIndex) => ({
+          edgeId: splitEdges[caseEntryIndex]?.id || null,
+          conditions: row.conditions.map((condition) => ({ ...condition })),
+          actions: row.actions.map((action) => ({
+            ...action,
+            destinationType: 'TemporaryVariable'
           }))
-        );
-        node.data.defaultEdgeId = defaultStepId
-          ? splitEdges[splitEdges.length - 1].id
-          : null;
+        }));
 
         const updatedDefaultActions = defaultActions.map((defaultAction) => ({
           ...defaultAction,
@@ -362,6 +353,10 @@ const DecisionTableStep = ({
 
         node.data = {
           ...node.data,
+          defaultEdgeId: defaultStepId
+            ? splitEdges[splitEdges.length - 1].id
+            : null,
+          caseEntries: updatedCaseEntries,
           editedBy: username,
           editedOn: new Date().toISOString(),
           note: noteValue,
