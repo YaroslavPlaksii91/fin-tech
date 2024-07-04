@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { theme } from '@theme';
 import ArrowLeftAndRightSquareIcon from '@icons/arrowLeftAndRightSquare.svg';
@@ -5,6 +7,8 @@ import CalculatorIcon from '@icons/calculator.svg';
 import BlocksIcon from '@icons/blocks.svg';
 import LineChartDotsSquareIcon from '@icons/lineChartDotsSquare.svg';
 import FlagTriangleIcon from '@icons/flagTriangle.svg';
+
+export const TODAY = dayjs();
 
 export const MUI_LICENSE_KEY = import.meta.env.VITE_MUI_LICENSE_KEY;
 export const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;

@@ -9,13 +9,13 @@ import {
 } from '@mui/material';
 import { Control, Controller } from 'react-hook-form';
 
-import { IFilterGroups, IFilters, IFormState } from './types';
+import { IFilterGroup, FiltersType, IFormState } from './types';
 
 import { ExpandMoreIcon } from '@components/shared/Icons';
 
 interface CheckboxGroupsProps {
-  filterGroupsToShow?: IFilterGroups[];
-  filters: IFilters;
+  filterGroupsToShow?: IFilterGroup[];
+  filters: FiltersType;
   control: Control<IFormState>;
   hasExpandIcon?: boolean;
   hasAccordionControl?: boolean;

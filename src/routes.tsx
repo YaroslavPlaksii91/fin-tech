@@ -8,9 +8,10 @@ import routes from '@constants/routes';
 import Home from '@pages/Home';
 import FlowEdit from '@pages/FlowEdit';
 import DataDictionary from '@pages/DataDictionary';
-import ChangeHistoryPage from '@pages/ChangeHistory.tsx';
-import AccessVerificationPage from '@pages/auth/AccessVerification.tsx';
-import LeadRequestsReportsPage from '@pages/LeadRequestsReports/LeadRequestReports';
+import ChangeHistoryPage from '@pages/ChangeHistory';
+import AccessVerificationPage from '@pages/auth/AccessVerification';
+import LeadRequestsReportsPage from '@pages/LeadRequestsReports';
+import DenielReasons from '@pages/DenielReasons';
 import FlowList from '@pages/FlowList';
 
 export const router = createBrowserRouter([
@@ -62,6 +63,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoutes>
             <LeadRequestsReportsPage />
+          </PrivateRoutes>
+        )
+      },
+      {
+        path: routes.underwriting.denialReasons,
+        element: (
+          <PrivateRoutes>
+            <DenielReasons />
           </PrivateRoutes>
         )
       },

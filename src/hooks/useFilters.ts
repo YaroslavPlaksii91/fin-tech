@@ -2,24 +2,24 @@ import { useState } from 'react';
 
 import {
   IDateFilters,
-  IFilters,
+  FiltersType,
   IFormState,
-  Search
+  InputFiltersType
 } from '@components/Filters/types';
 
 interface UseFiltersProps {
   initialDateFilters?: IDateFilters;
-  initialFilters?: IFilters;
-  initialSearch?: Search;
+  initialFilters?: FiltersType;
+  initialInputFilters?: InputFiltersType;
 }
 
 const useFilters = ({
   initialDateFilters = { dateFrom: null, dateTo: null },
   initialFilters = {},
-  initialSearch = ''
+  initialInputFilters = {}
 }: UseFiltersProps = {}) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [search, setSearch] = useState(initialSearch);
+  const [inputFilters, setInputFilters] = useState(initialInputFilters);
   const [filters, setFilters] = useState(initialFilters);
   const [dateFrom, setDateFrom] = useState(initialDateFilters.dateFrom);
   const [dateTo, setDateTo] = useState(initialDateFilters.dateTo);
@@ -31,19 +31,23 @@ const useFilters = ({
   const handleFiltersReset = () => {
     setDateFrom(initialDateFilters.dateFrom);
     setDateTo(initialDateFilters.dateTo);
-    setSearch(initialSearch);
+    setInputFilters(initialInputFilters);
     setFilters(initialFilters);
     handleFiltersClose();
   };
 
-  const handleFiltersApply = ({ dateFilters, filters, search }: IFormState) => {
+  const handleFiltersApply = ({
+    dateFilters,
+    filters,
+    inputFilters
+  }: IFormState) => {
     if (dateFilters) {
       setDateFrom(dateFilters.dateFrom);
       setDateTo(dateFilters.dateTo);
     }
 
     if (filters) setFilters(filters);
-    if (search) setSearch(search);
+    if (inputFilters) setInputFilters(inputFilters);
 
     handleFiltersClose();
   };
@@ -54,7 +58,7 @@ const useFilters = ({
     handleFiltersClose,
     handleFiltersReset,
     handleFiltersApply,
-    search,
+    inputFilters,
     filters,
     dateFilters: { dateFrom, dateTo }
   };

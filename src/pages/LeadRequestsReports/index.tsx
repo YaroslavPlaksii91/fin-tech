@@ -6,8 +6,8 @@ import TuneIcon from '@mui/icons-material/Tune';
 
 import { COLUMN_IDS, FetchList, OdataQueries, RowData } from './types';
 import { getFormattedRows } from './utils';
-import { DEFAULT_SORT } from './constants';
 import getDataGridColumns from './columns';
+import { DEFAULT_SORT } from './constants';
 
 import { reportingService } from '@services/lead-requests-reports';
 import TablePagination from '@components/shared/TablePagination';
@@ -62,33 +62,37 @@ export default function LeadRequestsReportsPage() {
   const handleRowSelection = (data: GridRowParams<RowData>) =>
     setSelectedRow(data.row);
 
-  const fetchList = async ({ page, sort, startDate, endDate }: FetchList) => {
+  const fetchList = async ({
+    page,
+    sort,
+    filter: { startDate, endDate }
+  }: FetchList) => {
     setLoading(true);
 
     const queries: OdataQueries = {
       top: rowsPerPage,
       skip: rowsPerPage * page,
       orderBy: sort,
-      count: true
-    };
-
-    if (startDate && endDate) {
-      queries.filter = {
+      count: true,
+      filter: {
         processingMetadata: {
           processingDateTimeUtc: {
             ge: startDate,
             le: endDate
           }
         }
-      };
-    }
+      }
+    };
 
     const params = buildQuery(queries);
 
-    const removeSingleQuotes = () =>
-      params.replace(/'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z)'/g, '$1');
+    const removeSingleQuotes = (odataParams: string) =>
+      odataParams.replace(
+        /'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z)'/g,
+        '$1'
+      );
 
-    const correctedParams = removeSingleQuotes();
+    const correctedParams = removeSingleQuotes(params);
 
     try {
       const data =
@@ -105,12 +109,14 @@ export default function LeadRequestsReportsPage() {
   };
 
   const fetch = () => {
-    const params: FetchList = { page, sort };
-
-    if (dateFrom && dateTo) {
-      params.startDate = dateFrom.toISOString();
-      params.endDate = dateTo.toISOString();
-    }
+    const params: FetchList = {
+      page,
+      sort,
+      filter: {
+        startDate: dateFrom ? dateFrom.toISOString() : undefined,
+        endDate: dateTo ? dateTo.toISOString() : undefined
+      }
+    };
 
     void fetchList(params);
   };
@@ -118,12 +124,11 @@ export default function LeadRequestsReportsPage() {
   useEffect(() => fetch(), [page, rowsPerPage, sort, dateFrom, dateTo]);
 
   return (
-    <Stack sx={{ padding: '16px 32px' }}>
+    <Stack sx={{ padding: '16px 32px', minWidth: '680px', width: '100%' }}>
       <Stack
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        overflow="auto"
         spacing={2}
         py={2}
       >
@@ -150,8 +155,7 @@ export default function LeadRequestsReportsPage() {
         sx={{
           border: `1px solid ${theme.palette.divider}`,
           borderRadius: '16px',
-          overflow: 'hidden',
-          minWidth: '680px'
+          overflow: 'hidden'
         }}
       >
         <StyledDataGridPremium

@@ -64,3 +64,14 @@ export const FILTER_GROUPS = [
     applyFor: [VARIABLES_TABS.craReportVariables]
   }
 ];
+
+export const INITIAL_INPUT_FILTERS = {
+  search: ''
+};
+
+export const INPUT_GROUPS = [
+  {
+    field: 'search',
+    placeholder: 'Search By Keyword'
+  }
+];

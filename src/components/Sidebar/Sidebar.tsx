@@ -77,6 +77,12 @@ const pages = [
     text: 'Reports',
     to: routes.underwriting.leadRequest,
     permission: permissionsMap.canViewLeadRequestReport
+  },
+  {
+    icon: <DocumentPaperIcon color={theme.palette.primary.dark} />,
+    text: 'Deniel Reasons',
+    to: routes.underwriting.denialReasons,
+    permission: permissionsMap.canViewDenialReasonReport
   }
 ];
 

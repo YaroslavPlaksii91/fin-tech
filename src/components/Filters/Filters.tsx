@@ -1,32 +1,34 @@
 import { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import {
   Box,
   Stack,
   Typography,
   Drawer,
   Button,
-  TextField,
   IconButton
 } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import {
   IDateFilters,
-  IFilterGroups,
-  IFilters,
+  IFilterGroup,
+  FiltersType,
   IFormState,
-  Search
+  InputFiltersType,
+  IInputGroup
 } from './types';
 import CheckboxGroups from './CheckboxGroups';
 import DateFilters from './DateFilters';
+import { InputFilters } from './InputFilters';
 
 interface FiltersProps {
   isOpen: boolean;
-  filters?: IFilters;
-  filterGroupsToShow?: IFilterGroups[];
+  filters?: FiltersType;
   dateFilters?: IDateFilters;
-  search?: Search;
+  inputFilters?: InputFiltersType;
+  inputGroupsToshow?: IInputGroup[];
+  filterGroupsToShow?: IFilterGroup[];
   handleReset: () => void;
   handleApply: (data: IFormState) => void;
   handleClose: () => void;
@@ -36,19 +38,20 @@ const Filters = ({
   isOpen,
   filters,
   dateFilters,
-  search,
+  inputFilters,
   filterGroupsToShow,
+  inputGroupsToshow,
   handleReset,
   handleApply,
   handleClose
 }: FiltersProps) => {
   const { handleSubmit, control, reset } = useForm<IFormState>({
-    defaultValues: { search, filters, dateFilters }
+    defaultValues: { inputFilters, filters, dateFilters }
   });
 
   useEffect(() => {
-    reset({ filters, dateFilters, search });
-  }, [isOpen, filters, dateFilters, search]);
+    reset({ filters, dateFilters, inputFilters });
+  }, [isOpen, filters, dateFilters, inputFilters]);
 
   return (
     <Drawer anchor="right" open={isOpen} onClose={handleClose}>
@@ -87,20 +90,10 @@ const Filters = ({
               </Box>
             </Stack>
             <Stack sx={{ width: '100%' }} direction="column" spacing={1}>
-              {typeof search !== 'undefined' ? (
-                <Controller
+              {inputFilters ? (
+                <InputFilters
                   control={control}
-                  name="search"
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      fullWidth
-                      placeholder="Search by Keyword"
-                      type="text"
-                      size="small"
-                      value={value}
-                      onChange={onChange}
-                    />
-                  )}
+                  inputGroupsToshow={inputGroupsToshow}
                 />
               ) : null}
               {filters ? (

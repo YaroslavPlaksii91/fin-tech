@@ -1,10 +1,8 @@
 import { Dayjs } from 'dayjs';
 
-export interface IFilters {
-  [key: string]: string[];
-}
+export type FiltersType = Record<string, string[]>;
 
-export type Search = string;
+export type InputFiltersType = Record<string, string>;
 
 export interface IDateFilters {
   dateFrom: Dayjs | null;
@@ -12,15 +10,20 @@ export interface IDateFilters {
 }
 
 export interface IFormState {
-  filters?: IFilters;
+  filters?: FiltersType;
   dateFilters?: IDateFilters;
-  search?: Search;
+  inputFilters?: InputFiltersType;
 }
 
-export interface IFilterGroups {
-  filterBy: keyof IFilters;
+export interface IFilterGroup {
+  filterBy: keyof FiltersType;
   title: string;
   fields: string[];
   fieldsFormatting?: { key: string; value: string }[];
   applyFor: string[];
+}
+
+export interface IInputGroup {
+  placeholder: string;
+  field: string;
 }
