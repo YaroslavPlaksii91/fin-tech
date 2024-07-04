@@ -14,7 +14,8 @@ const routes = {
     changeHistory: '/change-history',
     leadRequest: '/lead-request',
     denialReasons: '/denial-reasons'
-  }
+  },
+  permissionDenied: '/permission-denied'
 };
 
 export default routes;

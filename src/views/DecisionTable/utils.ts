@@ -42,7 +42,8 @@ export const getOperatorOptions = (dataType: DATA_TYPE_WITHOUT_ENUM) => {
         ANY_OPERATOR
       ];
       break;
-    case Integer || Decimal:
+    case Integer:
+    case Decimal:
       operators = [
         EQUAL_OPERATOR,
         NOT_EQUAL_OPERATOR,

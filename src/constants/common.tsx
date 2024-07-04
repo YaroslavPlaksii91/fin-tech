@@ -31,7 +31,7 @@ export const GENERAL_SERVER_ERROR = 'Something went wrong';
 
 export const NOT_FOUND = 'Not found';
 
-export const ROURER_BLOCKED_STATE = 'blocked';
+export const ROUTER_BLOCKED_STATE = 'blocked';
 
 export const SPECIAL_KEY_CODES = {
   Dot: '.',

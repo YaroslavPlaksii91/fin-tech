@@ -3,8 +3,7 @@ import { IconButton, Stack, Button, Collapse, Typography } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
-import { VARIABLES_TABS } from '../constants';
-import { TableHeader } from '../DataDictionaryVariables';
+import { TableHeader, VARIABLES_TABS } from '../constants';
 
 import StepBreadcrumbs from './StepBreadcrumbs';
 
@@ -127,7 +126,7 @@ export const TableRow = ({
           </IconButton>
         </StyledTableCell>
         {headers.map(({ key }) => (
-          <StyledTableCell key={key}>{row[key]}</StyledTableCell>
+          <StyledTableCell key={key}>{row[key]?.toString()}</StyledTableCell>
         ))}
         {tabName === VARIABLES_TABS.userDefined && (
           <StyledTableCell>

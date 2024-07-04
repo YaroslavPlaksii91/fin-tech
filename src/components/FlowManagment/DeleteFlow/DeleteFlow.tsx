@@ -44,7 +44,7 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
         { variant: SNACK_TYPE.SUCCESS }
       );
       if (id === flowId) {
-        navigate(`${routes.underwriting.flow.list}`);
+        navigate(routes.index);
         return;
       }
     } catch (error) {

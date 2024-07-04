@@ -44,7 +44,7 @@ function Navigation() {
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
             <MenuItem
               onClick={() => {
-                authService.logout();
+                void authService.logout();
                 handleClose();
               }}
             >

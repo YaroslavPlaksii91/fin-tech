@@ -2,7 +2,8 @@ import {
   DATA_TYPE_WITHOUT_ENUM,
   DATA_TYPE_WITH_ENUM_PREFIX,
   INTEGRATION_VARIABLE_SOURCE_TYPE,
-  INTEGRATION_VARIABLE_SOURCE_SUB_TYPE
+  INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
+  Variable
 } from '@domain/dataDictionary';
 
 export const TABS_LABELS: { [key: string]: string } = {
@@ -74,4 +75,23 @@ export const INPUT_GROUPS = [
     field: 'search',
     placeholder: 'Search By Keyword'
   }
+];
+export interface TableHeader {
+  key: keyof Variable;
+  label?: string;
+  render?: (row: Variable) => void;
+}
+
+export const DEFAULT_HEADERS: TableHeader[] = [
+  { key: 'name', label: 'Variable Name' },
+  { key: 'dataType', label: 'Data Type' },
+  { key: 'defaultValue', label: 'Default Value' },
+  { key: 'description', label: 'Description' },
+  { key: 'isRequired', label: 'Required' }
+];
+
+export const CRA_REPORTS_HEADERS: TableHeader[] = [
+  { key: 'source', label: 'CRA' },
+  { key: 'sourceType', label: 'ReportName' },
+  ...DEFAULT_HEADERS
 ];

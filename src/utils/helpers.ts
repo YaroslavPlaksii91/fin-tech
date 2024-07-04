@@ -82,7 +82,7 @@ type PermissionCheckTarget = MenuItem | string;
 
 const hasPermission = (
   permissions: string[] | undefined,
-  target: PermissionCheckTarget
+  target?: PermissionCheckTarget
 ): boolean | undefined => {
   if (typeof target === 'string') {
     return permissions ? permissions.includes(target) : true;
