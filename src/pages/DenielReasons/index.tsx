@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import buildQuery from 'odata-query';
-import { GridSortModel } from '@mui/x-data-grid-premium';
+import {
+  GRID_AGGREGATION_FUNCTIONS,
+  GridSortModel
+} from '@mui/x-data-grid-premium';
 import { Button, Paper, Stack, Typography } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 
-import { FetchList, RowData } from './types';
+import { COLUMN_IDS, FetchList, RowData } from './types';
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
@@ -161,14 +164,23 @@ const DenielReasons = () => {
           columnHeaderHeight={32}
           rowHeight={28}
           rows={rows}
+          aggregationFunctions={{
+            // To not show the header aggregation label for columns in aggregationModel according to design
+            sum: { ...GRID_AGGREGATION_FUNCTIONS.sum, label: '' }
+          }}
+          aggregationModel={{
+            [COLUMN_IDS.totalCount]: 'sum',
+            [COLUMN_IDS.percentage]: 'sum'
+          }}
           columns={getDataGridColumns()}
           loading={loading}
           sortingMode="server"
           paginationMode="client"
           onSortModelChange={handleSortModelChange}
-          getRowClassName={(params) =>
-            params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
-          }
+          getRowClassName={(params) => {
+            if (!rows.length) return '';
+            return params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd';
+          }}
           slots={{
             footer: () => (
               <TablePagination
@@ -187,6 +199,7 @@ const DenielReasons = () => {
       </Paper>
       <Filters
         isOpen={isFiltersOpen}
+        hasTimePicker={false}
         dateFilters={{ dateFrom, dateTo }}
         inputFilters={inputFilters}
         inputGroupsToshow={INPUT_GROUPS_TO_SHOW}

@@ -1,5 +1,6 @@
 import { Paper, TableContainer, TableRow } from '@mui/material';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import { blueGrey } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import { DataGridPremium, gridClasses } from '@mui/x-data-grid-premium';
 
@@ -49,15 +50,24 @@ export const StyledPaper = styled(Paper)(() => ({
 export const StyledDataGridPremium = styled(DataGridPremium)(() => ({
   border: 'transparent',
 
+  [`& .${gridClasses.pinnedRows} .${gridClasses.row}`]: {
+    backgroundColor: 'var(--unstable_DataGrid-overlayBackground)',
+    [`&.even .${gridClasses.cell}`]: {
+      backgroundColor: blueGrey[50]
+    },
+    [`&.odd .${gridClasses.cell}`]: {
+      backgroundColor: blueGrey[50]
+    }
+  },
   [`& .${gridClasses.row}`]: {
     borderBottom: `1px solid ${theme.palette.divider}`,
-
+    backgroundColor: 'var(--unstable_DataGrid-overlayBackground)',
     [`&.even .${gridClasses.cell}`]: {
-      backgroundColor: `${theme.palette.common.white} !important`
+      backgroundColor: theme.palette.common.white
     },
 
     [`&.odd .${gridClasses.cell}`]: {
-      backgroundColor: `${theme.palette.background.default} !important`
+      backgroundColor: theme.palette.background.default
     }
   },
   [`& .${gridClasses.columnHeader}`]: {
@@ -81,5 +91,9 @@ export const StyledDataGridPremium = styled(DataGridPremium)(() => ({
   },
   [`& .${gridClasses['columnHeader--pinnedRight']}`]: {
     boxShadow: 'rgba(0, 0, 0, 0.21) -2px 0px 4px -2px'
+  },
+  [`& .${gridClasses.footerCell}`]: {
+    fontWeight: 500,
+    color: theme.palette.text.primary
   }
 }));

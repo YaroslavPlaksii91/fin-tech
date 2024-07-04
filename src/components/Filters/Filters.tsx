@@ -24,6 +24,7 @@ import { InputFilters } from './InputFilters';
 
 interface FiltersProps {
   isOpen: boolean;
+  hasTimePicker?: boolean;
   filters?: FiltersType;
   dateFilters?: IDateFilters;
   inputFilters?: InputFiltersType;
@@ -36,6 +37,7 @@ interface FiltersProps {
 
 const Filters = ({
   isOpen,
+  hasTimePicker,
   filters,
   dateFilters,
   inputFilters,
@@ -103,7 +105,9 @@ const Filters = ({
                   filterGroupsToShow={filterGroupsToShow}
                 />
               ) : null}
-              {dateFilters ? <DateFilters control={control} /> : null}
+              {dateFilters ? (
+                <DateFilters hasTimePicker={hasTimePicker} control={control} />
+              ) : null}
             </Stack>
           </Stack>
         </Box>

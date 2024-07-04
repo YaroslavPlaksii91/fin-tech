@@ -11,7 +11,7 @@ import DataDictionary from '@pages/DataDictionary';
 import ChangeHistoryPage from '@pages/ChangeHistory';
 import AccessVerificationPage from '@pages/auth/AccessVerification';
 import LeadRequestsReportsPage from '@pages/LeadRequestsReports';
-import DenielReasons from '@pages/DenielReasons';
+import DenielReasonsPage from '@pages/DenielReasons';
 import FlowList from '@pages/FlowList';
 
 export const router = createBrowserRouter([
@@ -70,7 +70,7 @@ export const router = createBrowserRouter([
         path: routes.underwriting.denialReasons,
         element: (
           <PrivateRoutes>
-            <DenielReasons />
+            <DenielReasonsPage />
           </PrivateRoutes>
         )
       },
