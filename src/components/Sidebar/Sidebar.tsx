@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo
+} from 'react';
 import {
   Accordion,
   Box,
@@ -149,6 +155,18 @@ const Sidebar = () => {
     setSidebarWidth(width);
   }, [expanded]);
 
+  const getDefaultFlowListLink = useMemo(() => {
+    const flowListLink = routes.underwriting.flow.list;
+    if (flowList.length) {
+      return `${flowListLink}/${flowList[0].id}`;
+    }
+
+    if (flowProduction.id) {
+      return `${flowListLink}/${flowProduction.id}`;
+    }
+    return flowListLink;
+  }, [flowList, flowProduction]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -229,9 +247,14 @@ const Sidebar = () => {
               aria-controls="flowList-content"
               id="flowList-header"
             >
-              <ListItemIcon>
-                <LineChartDotsIcon />
-              </ListItemIcon>
+              <NavLink
+                onClick={(e) => e.stopPropagation()}
+                to={getDefaultFlowListLink}
+              >
+                <ListItemIcon>
+                  <LineChartDotsIcon />
+                </ListItemIcon>
+              </NavLink>
               <Typography sx={animationStyles(expanded)}>Flow List</Typography>
             </StyledMainAccordionSummary>
             <StyledAccordionDetails>
@@ -312,7 +335,11 @@ const Sidebar = () => {
             </StyledAccordionDetails>
           </Accordion>
         ) : (
-          <ListItemButton sx={{ height: '32px', marginBottom: '8px' }}>
+          <ListItemButton
+            component={NavLink}
+            to={getDefaultFlowListLink}
+            sx={{ height: '32px', marginBottom: '8px' }}
+          >
             <ListItemIcon>
               <LineChartDotsIcon />
             </ListItemIcon>
