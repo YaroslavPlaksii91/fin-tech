@@ -66,6 +66,16 @@ export const FILTER_GROUPS = [
   }
 ];
 
+export const INITIAL_INPUT_FILTERS = {
+  search: ''
+};
+
+export const INPUT_GROUPS = [
+  {
+    field: 'search',
+    placeholder: 'Search By Keyword'
+  }
+];
 export interface TableHeader {
   key: keyof Variable;
   label?: string;

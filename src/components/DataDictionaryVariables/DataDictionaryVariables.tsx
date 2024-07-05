@@ -9,6 +9,8 @@ import {
   SOURCES_DESCRIPTIONS,
   FILTER_GROUPS,
   INITIAL_FILTERS,
+  INITIAL_INPUT_FILTERS,
+  INPUT_GROUPS,
   CRA_REPORTS_HEADERS,
   DEFAULT_HEADERS,
   TableHeader
@@ -34,8 +36,11 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     handleFiltersReset,
     handleFiltersApply,
     filters,
-    search
-  } = useFilters({ initialFilters: INITIAL_FILTERS });
+    inputFilters
+  } = useFilters({
+    initialFilters: INITIAL_FILTERS,
+    initialInputFilters: INITIAL_INPUT_FILTERS
+  });
 
   const { variables } = useDataDictionaryVariables(flow);
 
@@ -77,7 +82,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   );
 
   const filteredBySearch = useMemo(() => {
-    const filterBySearch = search.trim().toUpperCase();
+    const filterBySearch = inputFilters.search.trim().toUpperCase();
 
     if (filterBySearch)
       return tableData.filter((tableEl) =>
@@ -85,7 +90,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       );
 
     return tableData;
-  }, [tableData, search]);
+  }, [tableData, inputFilters]);
 
   const filteredBySelects = useMemo(() => {
     const filtersEntries = Object.entries(filters) as [
@@ -209,7 +214,8 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       <Filters
         isOpen={isFiltersOpen}
         filters={filters}
-        search={search}
+        inputFilters={inputFilters}
+        inputGroupsToshow={INPUT_GROUPS}
         filterGroupsToShow={filterGroupsToShow}
         handleReset={handleFiltersReset}
         handleApply={handleFiltersApply}

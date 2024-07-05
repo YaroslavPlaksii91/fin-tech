@@ -12,7 +12,8 @@ const routes = {
       dataDictionary: (id: string) => `/flow-list/${id}/data-dictionary`
     },
     changeHistory: '/change-history',
-    leadRequest: '/lead-request'
+    leadRequest: '/lead-request',
+    denialReasons: '/denial-reasons'
   },
   permissionDenied: '/permission-denied'
 };

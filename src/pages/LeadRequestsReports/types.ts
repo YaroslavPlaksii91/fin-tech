@@ -35,8 +35,7 @@ export type RowData = ExtractArrayElementType<
 export type FetchList = {
   page: number;
   sort: string;
-  startDate?: string;
-  endDate?: string;
+  filter: { startDate?: string; endDate?: string };
 };
 
 export type OdataQueries = {
