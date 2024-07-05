@@ -11,7 +11,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 import { palette } from '@theme';
 import routes from '@constants/routes.ts';
-import { changeHistoryService } from '@services/change-history.tsx';
+import { changeHistoryService } from '@services/change-history';
 import Logger from '@utils/logger.ts';
 import { ChangeHistoryRecord } from '@domain/changeHistory.ts';
 import { useLoading } from '@contexts/LoadingContext.tsx';

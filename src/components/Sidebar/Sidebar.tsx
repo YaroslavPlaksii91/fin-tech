@@ -23,6 +23,7 @@ import {
   StyledSubAccordionSummary
 } from './styled';
 
+import DotIcon from '@icons/dot.svg';
 import LineChartDotsIcon from '@icons/lineChartDots.svg';
 import AngleLeftSquareIcon from '@icons/angleLeftSquare.svg';
 import TimePastIcon from '@icons/timePast.svg';
@@ -71,12 +72,21 @@ const pages = [
     text: 'Changes History',
     to: routes.underwriting.changeHistory,
     permission: permissionsMap.canViewChangeHistory
-  },
+  }
+];
+
+const reportPages = [
   {
-    icon: <DocumentPaperIcon color={theme.palette.primary.dark} />,
-    text: 'Reports',
+    icon: <DotIcon color={theme.palette.primary.dark} />,
+    text: 'Lead Requests',
     to: routes.underwriting.leadRequest,
     permission: permissionsMap.canViewLeadRequestReport
+  },
+  {
+    icon: <DotIcon color={theme.palette.primary.dark} />,
+    text: 'Deniel Reasons',
+    to: routes.underwriting.denialReasons,
+    permission: permissionsMap.canViewDenialReasonReport
   }
 ];
 
@@ -87,16 +97,18 @@ const Sidebar = () => {
   const { startLoading, stopLoading } = useLoading();
   const { flowList, flowProduction } = useAppSelector(selectFlowList);
   const { flow } = useAppSelector(selectFlow);
+  const user = useAppSelector(selectUserInfo);
 
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [isResizing, setIsResizing] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
 
   const [expanded, setExpanded] = useState(true);
   const [expandedFlow, setExpandedFlow] = useState<string | false>(false);
   const [expandedFlowList, setExpandedFlowList] = useState<boolean>(true);
-  const user = useAppSelector(selectUserInfo);
+  const [expandedReports, setExpandedReports] = useState(false);
 
-  const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
+  const handleReportsToggle = () => setExpandedReports((prev) => !prev);
 
   const handleExpandIconClick = (
     e: React.MouseEvent<SVGSVGElement>,
@@ -321,6 +333,54 @@ const Sidebar = () => {
               />
             </ListItemButton>
           ) : null
+        )}
+        {expanded ? (
+          <StyledAccordion
+            disableGutters
+            expanded={expandedReports}
+            onChange={handleReportsToggle}
+          >
+            <StyledMainAccordionSummary
+              expandIcon={<ExpandMoreIcon color="primary" />}
+              aria-controls="flowList-content"
+              id="flowList-header"
+            >
+              <ListItemIcon>
+                <DocumentPaperIcon />
+              </ListItemIcon>
+              <Typography sx={animationStyles(expanded)}>Reports</Typography>
+            </StyledMainAccordionSummary>
+            <StyledAccordionDetails>
+              {reportPages.map((item, index) =>
+                hasPermission(user?.policies, item) ? (
+                  <ListItemButton
+                    key={index}
+                    component={NavLink}
+                    to={item.to}
+                    sx={{
+                      height: '32px',
+                      marginBottom: '8px',
+                      marginLeft: '4px'
+                    }}
+                  >
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText
+                      primary={
+                        <Typography variant="body2">{item.text}</Typography>
+                      }
+                      sx={animationStyles(expanded)}
+                    />
+                  </ListItemButton>
+                ) : null
+              )}
+            </StyledAccordionDetails>
+          </StyledAccordion>
+        ) : (
+          <ListItemButton sx={{ height: '32px', marginBottom: '8px' }}>
+            <ListItemIcon>
+              <DocumentPaperIcon />
+            </ListItemIcon>
+          </ListItemButton>
         )}
       </List>
     </StyledPaper>
