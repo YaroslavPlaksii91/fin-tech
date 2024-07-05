@@ -368,7 +368,7 @@ const Sidebar = () => {
             <StyledAccordionDetails>
               {reportPages.map((item, index) =>
                 hasPermission(user?.policies, item) ? (
-                  <ListItemButton
+                  <StyledListItemButton
                     key={index}
                     component={NavLink}
                     to={item.to}
@@ -385,7 +385,7 @@ const Sidebar = () => {
                       }
                       sx={animationStyles(expanded)}
                     />
-                  </ListItemButton>
+                  </StyledListItemButton>
                 ) : null
               )}
             </StyledAccordionDetails>

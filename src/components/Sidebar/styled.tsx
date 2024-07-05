@@ -21,9 +21,12 @@ export const Label = styled(Typography)(({ theme: { palette } }) => ({
 }));
 
 export const SidebarToggle = styled(Button)<ButtonProps & { rotated: number }>(
-  ({ rotated }) => ({
+  ({ rotated, theme }) => ({
     justifyContent: 'flex-start',
     padding: '6px 16px',
+    '&:hover': {
+      background: theme.palette.background.default
+    },
     '& .MuiButton-startIcon': {
       ...(rotated && {
         transform: 'rotate(180deg)'
@@ -71,6 +74,9 @@ export const StyledMainAccordionSummary = styled(AccordionSummary)(
   ({ theme: { palette } }) => ({
     minHeight: '32px',
     backgroundColor: palette.sidebarBackground,
+    '&:hover': {
+      background: palette.background.default
+    },
     '&.Mui-expanded': {
       minHeight: '32px'
     },
