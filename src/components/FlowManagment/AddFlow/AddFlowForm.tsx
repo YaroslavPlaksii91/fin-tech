@@ -10,6 +10,7 @@ import {
   validationSchema,
   createInitialFlowDataHelper
 } from './validationSchema';
+import { StyledButton, StyledDiv } from './styled';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
@@ -80,14 +81,16 @@ export const AddFlow: React.FC = () => {
   return (
     <>
       {canUserCreateFlow && (
-        <Button
-          onClick={handleOpenModal}
-          sx={{ marginLeft: '14px' }}
-          variant="text"
-          startIcon={<AddIcon />}
-        >
-          Create New Flow
-        </Button>
+        <StyledDiv>
+          <StyledButton
+            onClick={handleOpenModal}
+            sx={{ marginLeft: '14px' }}
+            variant="text"
+            startIcon={<AddIcon />}
+          >
+            Create New Flow
+          </StyledButton>
+        </StyledDiv>
       )}
       <Dialog
         title="Create New Flow"

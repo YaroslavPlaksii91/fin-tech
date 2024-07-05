@@ -7,5 +7,6 @@ export const StyledLayoutContainer = styled(Box)(() => ({
   position: 'relative',
   display: 'flex',
   height: `calc(100vh - ${HEADER_HEIGHT}px)`,
-  overflow: 'auto'
+  overflow: 'auto',
+  top: '64px'
 }));

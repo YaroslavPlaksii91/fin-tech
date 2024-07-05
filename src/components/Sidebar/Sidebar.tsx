@@ -17,6 +17,7 @@ import {
   SidebarToggle,
   StyledAccordion,
   StyledAccordionDetails,
+  StyledListItemButton,
   StyledMainAccordionSummary,
   StyledNavLink,
   StyledPaper,
@@ -55,7 +56,7 @@ const animationStyles = (expanded: boolean) => ({
   whiteSpace: 'nowrap'
 });
 
-const DEFAULT_SIDEBAR_WIDTH = 256;
+const DEFAULT_SIDEBAR_WIDTH = 239;
 const MIN_SIDEBAR_WIDTH = 70;
 
 export interface MenuItem {
@@ -189,7 +190,13 @@ const Sidebar = () => {
       <SidebarToggle
         fullWidth
         onClick={toggleSidebar}
-        startIcon={<AngleLeftSquareIcon color={theme.palette.common.black} />}
+        startIcon={
+          <AngleLeftSquareIcon
+            height={18}
+            width={18}
+            color={theme.palette.common.black}
+          />
+        }
         rotated={expanded ? 0 : 1}
       >
         <Typography
@@ -224,13 +231,17 @@ const Sidebar = () => {
             </StyledMainAccordionSummary>
             <StyledAccordionDetails>
               <Label variant="body2">Flow on Production</Label>
-              <Accordion
+              <StyledAccordion
                 expanded={
                   expandedFlow === PRODUCTION_FLOW_ID && expandedFlow === id
                 }
                 onChange={handleChangeFlow(PRODUCTION_FLOW_ID)}
               >
-                <Box sx={{ position: 'relative' }}>
+                <Box
+                  sx={{
+                    position: 'relative'
+                  }}
+                >
                   <StyledNavLink
                     to={`${routes.underwriting.flow.list}/${PRODUCTION_FLOW_ID}`}
                   >
@@ -254,7 +265,7 @@ const Sidebar = () => {
                 <StyledAccordionDetails>
                   <StepList nodes={flow.nodes} isProductionFlow />
                 </StyledAccordionDetails>
-              </Accordion>
+              </StyledAccordion>
               <Label variant="body2">Draft Flows</Label>
               {flowList.map((flowItem) => (
                 <StyledAccordion
@@ -262,7 +273,11 @@ const Sidebar = () => {
                   expanded={expandedFlow === flowItem.id && expandedFlow === id}
                   onChange={handleChangeFlow(flowItem.id)}
                 >
-                  <Box sx={{ position: 'relative' }}>
+                  <Box
+                    sx={{
+                      position: 'relative'
+                    }}
+                  >
                     <StyledNavLink
                       to={`${routes.underwriting.flow.list}/${flowItem.id}`}
                     >
@@ -308,7 +323,7 @@ const Sidebar = () => {
         )}
         {pages.map((item, index) =>
           hasPermission(user?.policies, item) ? (
-            <ListItemButton
+            <StyledListItemButton
               key={index}
               component={NavLink}
               to={item.to}
@@ -319,7 +334,7 @@ const Sidebar = () => {
                 primary={item.text}
                 sx={animationStyles(expanded)}
               />
-            </ListItemButton>
+            </StyledListItemButton>
           ) : null
         )}
       </List>

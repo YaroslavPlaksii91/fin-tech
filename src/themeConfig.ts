@@ -13,7 +13,7 @@ interface CustomPalette {
   errorBackground: string;
   blue: string;
   aliceBlue: string;
-  amber: string;
+  sidebarBackground: string;
 }
 
 export const palette = {
@@ -31,7 +31,8 @@ export const palette = {
   errorBackground: '#FFCCCC',
   error: '#E24A4A',
   aliceBlue: '#F8F9FB',
-  amber: '#FFF8E1'
+  primaryDark: '#1e4620',
+  sidebarBackground: '#E7E8EB'
 };
 
 declare module '@mui/material/styles' {

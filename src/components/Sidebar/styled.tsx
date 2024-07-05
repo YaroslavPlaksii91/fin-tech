@@ -5,10 +5,12 @@ import {
   AccordionDetails,
   AccordionSummary,
   Button,
+  ListItemButton,
+  ListItemButtonProps,
   Typography
 } from '@mui/material';
 import { ButtonProps } from '@mui/base';
-import { NavLink } from 'react-router-dom';
+import { NavLink, NavLinkProps } from 'react-router-dom';
 
 export const Label = styled(Typography)(({ theme: { palette } }) => ({
   borderRadius: '4px',
@@ -38,7 +40,7 @@ export const StyledNavLink = styled(NavLink)(({ theme: { palette } }) => ({
   alignItems: 'center',
   borderRadius: '4px',
   '&.active, &:hover': {
-    backgroundColor: palette.amber,
+    backgroundColor: palette.background.default,
     color: palette.primary.main,
     '.MuiListItemIcon-root': {
       svg: {
@@ -65,22 +67,29 @@ export const StyledSubAccordionSummary = styled(AccordionSummary)(() => ({
   }
 }));
 
-export const StyledMainAccordionSummary = styled(AccordionSummary)(() => ({
-  minHeight: '32px',
-  '&.Mui-expanded': {
-    minHeight: '32px'
-  },
-  '& .MuiAccordionSummary-content': {
-    margin: '0 !important'
-  }
-}));
+export const StyledMainAccordionSummary = styled(AccordionSummary)(
+  ({ theme: { palette } }) => ({
+    minHeight: '32px',
+    backgroundColor: palette.sidebarBackground,
+    '&.Mui-expanded': {
+      minHeight: '32px'
+    },
+    '& .MuiAccordionSummary-content': {
+      margin: '0 !important'
+    }
+  })
+);
 
-export const StyledAccordionDetails = styled(AccordionDetails)(() => ({
-  padding: '4px 0'
-}));
+export const StyledAccordionDetails = styled(AccordionDetails)(
+  ({ theme: { palette } }) => ({
+    padding: '4px 0',
+    backgroundColor: palette.sidebarBackground
+  })
+);
 
-export const StyledAccordion = styled(Accordion)(() => ({
+export const StyledAccordion = styled(Accordion)(({ theme: { palette } }) => ({
   padding: '2px 0',
+  backgroundColor: palette.sidebarBackground,
   '&:before': {
     display: 'none'
   },
@@ -99,7 +108,8 @@ export const StyledPaper = styled(Paper)(({ theme: { palette } }) => ({
   position: 'relative',
   flexGrow: 0,
   flexShrink: 0,
-  maxWidth: '30%'
+  maxWidth: '30%',
+  backgroundColor: palette.sidebarBackground
 }));
 
 export const Resizer = styled('div')(({ theme: { palette } }) => ({
@@ -113,6 +123,13 @@ export const Resizer = styled('div')(({ theme: { palette } }) => ({
 
   '&:hover': {
     width: '2px',
-    background: `${palette.divider}`
+    background: palette.divider
+  }
+}));
+export const StyledListItemButton = styled(ListItemButton)<
+  ListItemButtonProps & NavLinkProps
+>(({ theme: { palette } }) => ({
+  '&:hover': {
+    background: palette.background.default
   }
 }));

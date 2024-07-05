@@ -13,7 +13,7 @@ export const StyledListItem = styled(ListItem)(({ theme: { palette } }) => ({
   paddingLeft: '40px',
   '&.active, &:hover': {
     cursor: 'pointer',
-    background: palette.amber,
+    background: palette.background.default,
     '& .MuiTypography-body2': {
       color: palette.primary.main
     },
