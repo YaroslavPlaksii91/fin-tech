@@ -49,6 +49,7 @@ import { palette, theme } from '@theme';
 import { permissionsMap } from '@constants/permissions';
 import { hasPermission } from '@utils/helpers';
 import { selectUserInfo } from '@store/auth/auth';
+import { CROSS_PLATFORM_DRAWER_WIDTH } from '@constants/themeConstants';
 
 const animationStyles = (expanded: boolean) => ({
   maxWidth: expanded ? '100%' : 0,
@@ -194,6 +195,7 @@ const Sidebar = () => {
       elevation={0}
       ref={sidebarRef}
       style={{
+        marginLeft: CROSS_PLATFORM_DRAWER_WIDTH,
         width: sidebarWidth,
         transition: !isResizing ? 'width 0.2s ease-in-out' : ''
       }}

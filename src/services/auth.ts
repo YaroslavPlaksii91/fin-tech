@@ -6,6 +6,7 @@ import { CLIENT_ID, SCOPES_LIST } from '@constants/common.tsx';
 import { api } from '@utils/api.ts';
 import { authApiBaseUrl } from '@constants/api-urls.ts';
 import routes from '@constants/routes.ts';
+import IAMApi from '@utils/iamApi.ts';
 
 export const authService = new Auth.IAMAuthService({
   clientId: CLIENT_ID,
@@ -15,8 +16,10 @@ export const authService = new Auth.IAMAuthService({
   onTokenChange(token: string | null) {
     if (token) {
       api.defaults.headers.Authorization = `Bearer ${token}`;
+      IAMApi.defaults.headers.Authorization = `Bearer ${token}`;
     } else {
       delete api.defaults.headers.Authorization;
+      delete IAMApi.defaults.headers.Authorization;
     }
   },
   onLogin() {
