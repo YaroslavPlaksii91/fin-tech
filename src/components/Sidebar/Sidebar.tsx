@@ -155,7 +155,7 @@ const Sidebar = () => {
     setSidebarWidth(width);
   }, [expanded]);
 
-  const getDefaultFlowListLink = useMemo(() => {
+  const defaultFlowListLink = useMemo(() => {
     const flowListLink = routes.underwriting.flow.list;
     if (flowList.length) {
       return `${flowListLink}/${flowList[0].id}`;
@@ -249,7 +249,7 @@ const Sidebar = () => {
             >
               <NavLink
                 onClick={(e) => e.stopPropagation()}
-                to={getDefaultFlowListLink}
+                to={defaultFlowListLink}
               >
                 <ListItemIcon>
                   <LineChartDotsIcon />
@@ -337,7 +337,7 @@ const Sidebar = () => {
         ) : (
           <ListItemButton
             component={NavLink}
-            to={getDefaultFlowListLink}
+            to={defaultFlowListLink}
             sx={{ height: '32px', marginBottom: '8px' }}
           >
             <ListItemIcon>
