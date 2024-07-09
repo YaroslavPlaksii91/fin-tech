@@ -36,6 +36,9 @@ const SubFlow: React.FC<SubFlowProps> = ({
 }) => {
   const user = useAppSelector(selectUserInfo);
   const username = getFullUserName(user);
+  const viewMode = useViewMode();
+  const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const isViewMode = viewMode || !canUserUpdateFlow;
 
   const subFlow = useMemo(() => {
     const mainFlowNodes: FlowNode[] = getNodes();
@@ -94,9 +97,6 @@ const SubFlow: React.FC<SubFlowProps> = ({
     },
     []
   );
-  const viewMode = useViewMode();
-  const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
-  const isViewMode = viewMode || !canUserUpdateFlow;
 
   return (
     // As subFlow is sub instance main flow, it needs own flow provider
