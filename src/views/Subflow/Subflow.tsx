@@ -2,7 +2,12 @@ import { Edge, ReactFlowProvider } from 'reactflow';
 import { useCallback, useMemo } from 'react';
 import { cloneDeep } from 'lodash';
 
-import { addNodeInSubFlow, findSubFlow, updateNodesInSubFlow } from './utils';
+import {
+  addNodeInSubFlow,
+  findSubFlow,
+  removeNodesAndEdgesInSubFlow,
+  updateNodesInSubFlow
+} from './utils';
 
 import { FlowNode, IFlow } from '@domain/flow';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
@@ -78,6 +83,18 @@ const SubFlow: React.FC<SubFlowProps> = ({
     [mainFlowNodes]
   );
 
+  const deleteNodesInSubflow = useCallback(
+    (deleteNodes: FlowNode[], subFlowId: string) => {
+      const updatedNodes = removeNodesAndEdgesInSubFlow(
+        mainFlowNodes,
+        deleteNodes,
+        subFlowId
+      );
+      setNodes(updatedNodes);
+    },
+    [mainFlowNodes]
+  );
+
   return (
     // As subFlow is sub instance main flow, it needs own flow provider
     <StepContainer>
@@ -88,6 +105,7 @@ const SubFlow: React.FC<SubFlowProps> = ({
             flow={subFlow}
             setCopyFlow={saveSubflow}
             updateNodesInMainFlow={updateNodesInMainFlow}
+            deleteNodesInSubflow={deleteNodesInSubflow}
           />
         </ReactFlowProvider>
       )}

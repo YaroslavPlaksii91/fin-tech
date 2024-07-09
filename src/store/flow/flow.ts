@@ -55,10 +55,10 @@ export const flowSlicer = createSlice({
         state,
         action: PayloadAction<{
           deletedNodes: FlowNode[];
-          flowId: string | null;
+          subFlowId: string | null;
         }>
       ) => {
-        if (state.flow.id === action.payload.flowId) {
+        if (!action.payload.subFlowId) {
           state.flow.nodes = state.flow.nodes.filter((node) =>
             action.payload.deletedNodes.find((item) => item.id !== node.id)
           );
@@ -67,7 +67,7 @@ export const flowSlicer = createSlice({
           state.flow.nodes = removeNodesInSubflow(
             nodes,
             action.payload.deletedNodes,
-            action.payload.flowId
+            action.payload.subFlowId
           );
         }
       }

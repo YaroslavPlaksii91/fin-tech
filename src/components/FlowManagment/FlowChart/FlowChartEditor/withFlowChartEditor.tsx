@@ -40,15 +40,14 @@ import {
   updateEdges
 } from '../utils/workflowElementsUtils';
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
-import { DEFAULT_SOURCE_HANDLE } from '../constants';
+import { CUSTOM_FLOW_EVENT, DEFAULT_SOURCE_HANDLE } from '../constants';
 
 import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
 import { FlowNode, IFlow } from '@domain/flow';
 import { useActiveStep } from '@contexts/StepContext';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
-import { deleteNodes } from '@store/flow/flow';
-import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { useAppSelector } from '@store/hooks';
 import { selectUserInfo } from '@store/auth/auth';
 import { getFullUserName } from '@utils/helpers';
 
@@ -61,6 +60,7 @@ type FlowChartEditorProps = {
     newNode: FlowNode,
     edges: Edge[]
   ) => void;
+  deleteNodesInSubflow?: (deleteNodes: FlowNode[], subFlowId: string) => void;
 };
 
 const withFlowChartEditor =
@@ -70,7 +70,13 @@ const withFlowChartEditor =
   ) =>
   // eslint-disable-next-line react/display-name
   (props: FlowChartEditorProps) => {
-    const { flow, mainFlow, setCopyFlow, updateNodesInMainFlow } = props;
+    const {
+      flow,
+      mainFlow,
+      setCopyFlow,
+      updateNodesInMainFlow,
+      deleteNodesInSubflow
+    } = props;
     const user = useAppSelector(selectUserInfo);
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
@@ -81,13 +87,32 @@ const withFlowChartEditor =
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-    const dispatch = useAppDispatch();
-
     const { setViewport } = useReactFlow();
 
     const { activeStep, setActiveStep } = useActiveStep();
 
     const [newNode, setNewNode] = useState<FlowNode | null>(null);
+
+    const handleDeleteElements = useCallback(
+      (e: CustomEvent<{ subFlowId: string; deleteNodes: FlowNode[] }>) => {
+        const { subFlowId, deleteNodes } = e.detail;
+        if (subFlowId === flow.id && rfInstance) {
+          rfInstance.deleteElements({ nodes: deleteNodes });
+          deleteNodesInSubflow?.(deleteNodes, subFlowId);
+        }
+      },
+      [rfInstance]
+    );
+
+    useEffect(() => {
+      document.addEventListener(CUSTOM_FLOW_EVENT, (e) => {
+        handleDeleteElements(e);
+      });
+
+      return () => {
+        document.removeEventListener(CUSTOM_FLOW_EVENT, handleDeleteElements);
+      };
+    }, [rfInstance]);
 
     useEffect(() => {
       if (mainFlow && newNode) {
@@ -357,10 +382,6 @@ const withFlowChartEditor =
       [rfInstance, nodes]
     );
 
-    const onNodesDelete = useCallback((deletedNodes: Node[]) => {
-      dispatch(deleteNodes({ deletedNodes, flowId: flow.id }));
-    }, []);
-
     useEffect(() => {
       setEdges((eds: Edge<EdgeData>[]) =>
         eds.map((edge) => ({
@@ -385,12 +406,12 @@ const withFlowChartEditor =
           edges={edges}
           autoPanOnNodeDrag
           onPaneClick={onPaneClick}
+          deleteKeyCode={null}
           onNodeContextMenu={onNodeContextMenu}
           onNodeDragStop={onNodeDragStop}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onEdgesDelete={onEdgesDelete}
-          onNodesDelete={onNodesDelete}
           onNodeDragStart={onNodeDragStart}
           onInit={(instance) => {
             setRfInstance({

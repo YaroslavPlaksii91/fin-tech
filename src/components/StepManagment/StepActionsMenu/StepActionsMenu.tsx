@@ -22,6 +22,8 @@ import { ActiveStep } from '@contexts/StepContext';
 import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
+import { CUSTOM_FLOW_EVENT } from '@components/FlowManagment/FlowChart/constants';
+import { removeNodesAndEdgesInSubFlow } from '@views/Subflow/utils';
 
 interface StepActionsMenuOnNode {
   isOpen?: boolean;
@@ -47,7 +49,6 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   activeStep
 }) => {
   const { getNodes, setNodes, deleteElements } = useReactFlow();
-  // const { deleteElements } = useReactFlow();
   const navigate = useNavigate();
   const { id } = useParams();
   const dispatch = useAppDispatch();
@@ -118,32 +119,47 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
           message: 'Are you sure you want to delete this step from the flow?',
           confirmText: 'Delete'
         });
-        if (answer) {
-          if (flowNode && flowNode.id === activeStep?.stepId) {
-            setActiveStep?.({ subFlowId, stepId: null });
-          }
-          if (flowNode && flowNode.id === activeStep?.subFlowId) {
-            setActiveStep?.({ subFlowId: null, stepId: null });
-          }
-          if (flowNode) {
-            if (subFlowId) {
-              const updatedNodes = removeNodesInSubflow(
-                nodes,
-                [flowNode],
-                subFlowId
-              );
-              setNodes(updatedNodes);
-            } else {
-              deleteElements({ nodes: [flowNode] });
-            }
+        if (!answer) break;
 
-            dispatch(
-              deleteNodes({
-                deletedNodes: [flowNode],
-                flowId: subFlowId
+        if (!flowNode) break;
+
+        if (flowNode.id === activeStep?.stepId) {
+          setActiveStep?.({ subFlowId, stepId: null });
+        }
+
+        if (flowNode.id === activeStep?.subFlowId) {
+          setActiveStep?.({ subFlowId: null, stepId: null });
+        }
+
+        if (subFlowId) {
+          if (activeStep?.subFlowId === subFlowId) {
+            document.dispatchEvent(
+              new CustomEvent(CUSTOM_FLOW_EVENT, {
+                detail: { deleteNodes: [flowNode], subFlowId }
               })
             );
+          } else {
+            const updatedNodes = removeNodesAndEdgesInSubFlow(
+              nodes,
+              [flowNode],
+              subFlowId
+            );
+            setNodes(updatedNodes);
           }
+          dispatch(
+            deleteNodes({
+              deletedNodes: [flowNode],
+              subFlowId
+            })
+          );
+        } else {
+          deleteElements({ nodes: [flowNode] });
+          dispatch(
+            deleteNodes({
+              deletedNodes: [flowNode],
+              subFlowId: null
+            })
+          );
         }
         break;
       }
@@ -187,37 +203,5 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
     </>
   );
 };
-
-function removeNodesInSubflow(
-  nodes: FlowNode[],
-  deleteNodes: FlowNode[],
-  subflowId: string | null
-): FlowNode[] {
-  return nodes.map((node) => {
-    if (node.id === subflowId) {
-      return {
-        ...node,
-        data: {
-          ...node.data,
-          edges: node.data.edges?.filter(
-            (edge) =>
-              !deleteNodes.find(
-                (item) => item.id === edge.source || item.id === edge.target
-              )
-          ),
-          nodes: node.data?.nodes?.filter(
-            (node) => !deleteNodes.find((item) => item.id === node.id)
-          )
-        }
-      };
-    } else if (node.data.nodes) {
-      return {
-        ...node,
-        nodes: removeNodesInSubflow(node.data.nodes, deleteNodes, subflowId)
-      };
-    }
-    return node;
-  });
-}
 
 export default StepActionsMenu;
