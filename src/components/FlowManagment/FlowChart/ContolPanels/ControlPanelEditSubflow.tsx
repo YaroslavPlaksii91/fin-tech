@@ -23,6 +23,7 @@ const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
 }) => {
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
   const { resetActive } = useActiveStep();
+
   const handleDiscardChanges = () => resetActive();
 
   const onSave = useCallback(() => {
@@ -67,7 +68,6 @@ const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
         <Button size="small" variant="outlined">
           Cancel
         </Button>
-
         <Button size="small" variant="contained" onClick={onSave}>
           Save changes
         </Button>
