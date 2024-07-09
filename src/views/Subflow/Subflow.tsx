@@ -70,7 +70,7 @@ const SubFlow: React.FC<SubFlowProps> = ({
     [mainFlowNodes]
   );
 
-  const updateNodesInMainFlow = useCallback(
+  const addNodeAndSyncMainFlow = useCallback(
     (subFlowId: string, newNode: FlowNode, edges: Edge[]) => {
       const updatedNodes = addNodeInSubFlow(
         mainFlowNodes,
@@ -83,7 +83,7 @@ const SubFlow: React.FC<SubFlowProps> = ({
     [mainFlowNodes]
   );
 
-  const deleteNodesInSubflow = useCallback(
+  const deleteNodeAndSyncMainFlow = useCallback(
     (deleteNodes: FlowNode[], subFlowId: string) => {
       const updatedNodes = removeNodesAndEdgesInSubFlow(
         mainFlowNodes,
@@ -104,8 +104,8 @@ const SubFlow: React.FC<SubFlowProps> = ({
             mainFlow={mainFlow}
             flow={subFlow}
             setCopyFlow={saveSubflow}
-            updateNodesInMainFlow={updateNodesInMainFlow}
-            deleteNodesInSubflow={deleteNodesInSubflow}
+            addNodeAndSyncMainFlow={addNodeAndSyncMainFlow}
+            deleteNodeAndSyncMainFlow={deleteNodeAndSyncMainFlow}
           />
         </ReactFlowProvider>
       )}

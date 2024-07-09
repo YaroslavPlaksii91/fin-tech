@@ -55,12 +55,15 @@ type FlowChartEditorProps = {
   flow: IFlow;
   mainFlow?: IFlow;
   setCopyFlow: (flow: IFlow) => void;
-  updateNodesInMainFlow?: (
+  addNodeAndSyncMainFlow?: (
     subflowId: string,
     newNode: FlowNode,
     edges: Edge[]
   ) => void;
-  deleteNodesInSubflow?: (deleteNodes: FlowNode[], subFlowId: string) => void;
+  deleteNodeAndSyncMainFlow?: (
+    deleteNodes: FlowNode[],
+    subFlowId: string
+  ) => void;
 };
 
 const withFlowChartEditor =
@@ -74,8 +77,8 @@ const withFlowChartEditor =
       flow,
       mainFlow,
       setCopyFlow,
-      updateNodesInMainFlow,
-      deleteNodesInSubflow
+      addNodeAndSyncMainFlow,
+      deleteNodeAndSyncMainFlow
     } = props;
     const user = useAppSelector(selectUserInfo);
     const [isDirty, setIsDirty] = useState<boolean>(false);
@@ -98,7 +101,7 @@ const withFlowChartEditor =
         const { subFlowId, deleteNodes } = e.detail;
         if (subFlowId === flow.id && rfInstance) {
           rfInstance.deleteElements({ nodes: deleteNodes });
-          deleteNodesInSubflow?.(deleteNodes, subFlowId);
+          deleteNodeAndSyncMainFlow?.(deleteNodes, subFlowId);
         }
       },
       [rfInstance]
@@ -116,7 +119,7 @@ const withFlowChartEditor =
 
     useEffect(() => {
       if (mainFlow && newNode) {
-        updateNodesInMainFlow?.(flow.id, newNode, edges);
+        addNodeAndSyncMainFlow?.(flow.id, newNode, edges);
         setNewNode(null);
       }
     }, [newNode]);
