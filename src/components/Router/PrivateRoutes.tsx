@@ -21,10 +21,6 @@ const PrivateRoutes = (props: {
     void dispatch(fetchUserInfo());
   }, [dispatch]);
 
-  useEffect(() => {
-    void authService.fetchAllowedApplications();
-  }, []);
-
   if (!authService.isTokenSet()) {
     return <Navigate to={routes.auth.login} state={{ from: location }} />;
   }
