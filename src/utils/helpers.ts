@@ -8,7 +8,7 @@ import {
   NOT_FOUND,
   PRODUCTION_FLOW_ID
 } from '@constants/common';
-import { MenuItem } from '@components/Sidebar/Sidebar';
+import { MenuItem } from '@components/Sidebar/config';
 
 type Errors = {
   [key: string]: string[];
@@ -97,7 +97,7 @@ const hasPermission = (
 };
 
 const getFullUserName = (user: UserInfoModel | null) =>
-  user ? user.firstName + user.lastName : '';
+  user ? `${user.firstName} ${user.lastName}` : '';
 
 export {
   parseErrorMessages,
