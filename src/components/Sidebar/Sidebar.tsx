@@ -26,7 +26,8 @@ import {
   StyledMainAccordionSummary,
   StyledNavLink,
   StyledPaper,
-  StyledSubAccordionSummary
+  StyledSubAccordionSummary,
+  StyledWrapper
 } from './styled';
 import {
   DEFAULT_SIDEBAR_WIDTH,
@@ -224,6 +225,7 @@ const Sidebar = () => {
             fontSize="13px"
             fontWeight="500"
             variant="body2"
+            lineHeight="22px"
             color={theme.palette.text.secondary}
             sx={animationStyles(expanded)}
           >
@@ -240,15 +242,7 @@ const Sidebar = () => {
           transition: '0.2s'
         })}
       />
-      <Box
-        ref={scrollableRef}
-        component="nav"
-        sx={{
-          maxHeight: '100%',
-          overflowX: 'hidden',
-          overflowY: 'auto'
-        }}
-      >
+      <StyledWrapper ref={scrollableRef} component="nav">
         <StyledList>
           {expanded ? (
             <StyledAccordion
@@ -409,8 +403,20 @@ const Sidebar = () => {
                       key={index}
                       component={NavLink}
                       to={item.to}
+                      sx={{
+                        '&:hover svg, &.active svg': {
+                          transform: 'scale(1.5)',
+                          color: theme.palette.primary.main
+                        }
+                      }}
                     >
-                      <ListItemIcon>{item.icon}</ListItemIcon>
+                      <ListItemIcon
+                        sx={{
+                          paddingLeft: 2
+                        }}
+                      >
+                        {item.icon}
+                      </ListItemIcon>
                       <ListItemText
                         primary={
                           <Typography variant="body2">{item.text}</Typography>
@@ -430,7 +436,7 @@ const Sidebar = () => {
             </StyledListItemButton>
           )}
         </StyledList>
-      </Box>
+      </StyledWrapper>
     </StyledPaper>
   );
 };
