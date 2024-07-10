@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { unwrapResult } from '@reduxjs/toolkit';
+import cloneDeep from 'lodash/cloneDeep';
 
 import {
   formatFlowOnSave,
@@ -50,7 +51,7 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
         });
         const resultAction = await dispatch(saveFlow(formattedData));
         const savedFlow = unwrapResult(resultAction);
-        setCopyFlow(savedFlow);
+        setCopyFlow(cloneDeep(savedFlow));
         dispatch(updateFlowListItem({ ...savedFlow.data, id: savedFlow.id }));
 
         enqueueSnackbar(
