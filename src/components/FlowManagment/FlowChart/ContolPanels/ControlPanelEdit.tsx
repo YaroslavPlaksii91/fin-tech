@@ -36,12 +36,12 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
   const dispatch = useAppDispatch();
   const flowData = useAppSelector(selectFlowData);
   const user = useAppSelector(selectUserInfo);
+  const username = getFullUserName(user);
 
   const onSave = useCallback(async () => {
     if (rfInstance && flow) {
       try {
         setLoading(true);
-        const username = getFullUserName(user);
         const formattedData = formatFlowOnSave({
           flow: {
             ...flow,
@@ -82,7 +82,12 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
           flow: { ...flow, data: flowData },
           rfInstance
         });
-        const resultAction = await dispatch(pushProductionFlow(formattedData));
+        const resultAction = await dispatch(
+          pushProductionFlow({
+            flow: formattedData,
+            params: { pushedBy: username, note: '' }
+          })
+        );
         const pushedFlow = unwrapResult(resultAction);
 
         enqueueSnackbar(
