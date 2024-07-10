@@ -6,7 +6,6 @@ import { CLIENT_ID, SCOPES_LIST } from '@constants/common.tsx';
 import { api, integrationApi, reportApi } from '@utils/api.ts';
 import { authApiBaseUrl } from '@constants/api-urls.ts';
 import routes from '@constants/routes.ts';
-import IAMApi from '@utils/iamApi.ts';
 
 export const authService = new Auth.IAMAuthService({
   clientId: CLIENT_ID,

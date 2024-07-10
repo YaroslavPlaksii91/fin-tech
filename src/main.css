@@ -1,4 +1,11 @@
+@property --color-opacity {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 8%;
+}
+
 body {
   margin: 0;
   font-family: Inter, sans-serif;
+  background-color: #f8f8fa;
 }

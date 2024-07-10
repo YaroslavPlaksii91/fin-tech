@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import { Typography, Breadcrumbs, Stack, Link } from '@mui/material';
 
 import { theme } from '@theme';
-import { LayoutContainer } from '@components/Layouts/MainLayout';
 import DataDictionaryVariables from '@components/DataDictionaryVariables/DataDictionaryVariables.tsx';
 import { useLoading } from '@contexts/LoadingContext';
 import routes from '@constants/routes';
@@ -66,20 +65,13 @@ export default function DataDictionary() {
   if (!flow) return null;
 
   return (
-    <LayoutContainer>
-      <Stack
-        px={3}
-        pt={2}
-        pb={3}
-        sx={{ width: '100%', background: theme.palette.background.default }}
-      >
-        <Stack spacing={2}>
-          <Breadcrumbs separator="/" aria-label="breadcrumb">
-            {breadcrumbs}
-          </Breadcrumbs>
-        </Stack>
-        <DataDictionaryVariables flow={flow} />
+    <Stack px={3} pt={2} pb={3}>
+      <Stack spacing={2}>
+        <Breadcrumbs separator="/" aria-label="breadcrumb">
+          {breadcrumbs}
+        </Breadcrumbs>
       </Stack>
-    </LayoutContainer>
+      <DataDictionaryVariables flow={flow} />
+    </Stack>
   );
 }

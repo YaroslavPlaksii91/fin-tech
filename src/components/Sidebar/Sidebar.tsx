@@ -61,6 +61,7 @@ import { palette, theme } from '@theme';
 import { hasPermission } from '@utils/helpers';
 import { selectUserInfo } from '@store/auth/auth';
 import { useThrottle } from '@hooks/useThrottle';
+import { CROSS_PLATFORM_DRAWER_WIDTH } from '@constants/themeConstants';
 
 const Sidebar = () => {
   const { id } = useParams();
@@ -226,7 +227,6 @@ const Sidebar = () => {
             fontSize="13px"
             fontWeight="500"
             variant="body2"
-            lineHeight="22px"
             color={theme.palette.text.secondary}
             sx={animationStyles(expanded)}
           >

@@ -3,11 +3,12 @@ import { Box } from '@mui/material';
 
 import { HEADER_HEIGHT } from '@constants/themeConstants';
 
-export const StyledLayoutContainer = styled(Box)(() => ({
+export const StyledLayoutContainer = styled(Box)(({ theme: { palette } }) => ({
   marginTop: HEADER_HEIGHT,
   position: 'fixed',
   display: 'flex',
   height: `calc(100vh - ${HEADER_HEIGHT}px)`,
-  width: '100vw',
-  overflow: 'auto'
+  width: '100%',
+  overflow: 'auto',
+  backgroundColor: palette.background.default
 }));

@@ -8,15 +8,19 @@ import { useLoading } from '@contexts/LoadingContext';
 
 interface LayoutContainerProps {
   children: React.ReactNode;
+  sx?: React.CSSProperties;
 }
-const LayoutContainer: React.FC<LayoutContainerProps> = ({ children }) => {
+const LayoutContainer: React.FC<LayoutContainerProps> = ({
+  children,
+  ...props
+}) => {
   const { loading } = useLoading();
 
   return (
-    <StyledLayoutContainer>
+    <>
       {loading && <LoadingFullscreen />}
-      {children}
-    </StyledLayoutContainer>
+      <StyledLayoutContainer {...props}>{children}</StyledLayoutContainer>
+    </>
   );
 };
 interface MainContainerProps {

@@ -4,15 +4,18 @@ import { CircularProgress } from './Icons';
 
 const LoadingFullscreen = () => (
   <Box
-    height="100%"
-    width="100%"
-    display="flex"
-    justifyContent="center"
-    alignItems="center"
-    position="absolute"
-    top="0"
-    left="0"
-    sx={{ background: 'white', zIndex: '1', opacity: '0.8' }}
+    sx={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      background: 'rgba(256, 256, 256, 0.6)',
+      zIndex: 4
+    }}
   >
     <CircularProgress />
   </Box>

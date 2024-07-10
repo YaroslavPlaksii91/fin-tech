@@ -176,13 +176,6 @@ export const Resizer = styled('div')(({ theme: { palette } }) => ({
     background: palette.divider
   }
 }));
-export const StyledListItemButton = styled(ListItemButton)<
-  ListItemButtonProps & NavLinkProps
->(({ theme: { palette } }) => ({
-  '&:hover': {
-    background: palette.background.default
-  }
-}));
 
 export const StyledListItemButton = styled(ListItemButton)<
   ListItemButtonProps & Partial<NavLinkProps> & { expanded?: boolean }
