@@ -409,7 +409,6 @@ const withFlowChartEditor =
           edges={edges}
           autoPanOnNodeDrag
           onPaneClick={onPaneClick}
-          deleteKeyCode={null}
           onNodeContextMenu={onNodeContextMenu}
           onNodeDragStop={onNodeDragStop}
           onNodesChange={onNodesChange}
