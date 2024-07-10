@@ -129,7 +129,6 @@ export const StyledPaper = styled(Paper)(({ theme: { palette } }) => ({
   position: 'relative',
   flexGrow: 0,
   flexShrink: 0,
-  // maxWidth: '30%',
   backgroundColor: palette.sidebarBackground,
   boxSizing: 'border-box'
 }));
