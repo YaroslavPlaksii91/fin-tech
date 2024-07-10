@@ -11,7 +11,6 @@ import StepActionsMenu from '../StepActionsMenu/StepActionsMenu';
 import StepListItem from './StepListItem';
 import { StyledListItem, StyledStepItem } from './styled';
 
-import BezierIcon from '@icons/bezier.svg';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { ExpandMoreIcon } from '@components/shared/Icons';
 import {
@@ -21,6 +20,7 @@ import {
 } from '@components/Sidebar/styled';
 import { FlowNode } from '@domain/flow';
 import { ActiveStep } from '@contexts/StepContext';
+import { STEP_ICONS } from '@constants/common';
 
 interface RecursiveStepListItemProps {
   step: FlowNode;
@@ -79,9 +79,7 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
           aria-controls={`${step.data.name}-content`}
           id={step.data.name}
         >
-          <ListItemIcon>
-            <BezierIcon />
-          </ListItemIcon>
+          <ListItemIcon>{STEP_ICONS[step.data.$type]}</ListItemIcon>
           <Typography sx={{ whiteSpace: 'nowrap' }} variant="body2">
             {step.data.name}
           </Typography>

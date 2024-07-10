@@ -1,6 +1,6 @@
-import { Stack } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import Stack from '@mui/material/Stack';
 import Link from '@mui/material/Link';
 
 import {
@@ -16,13 +16,18 @@ import { authService } from '@services/auth.ts';
 import { palette } from '@theme';
 import routes from '@constants/routes';
 import Dialog from '@components/shared/Modals/Dialog';
-import { selectUserInfo } from '@store/auth/auth.ts';
-import { useAppSelector } from '@store/hooks.ts';
 import { getFullUserName } from '@utils/helpers';
+import { fetchUserInfo, selectUserInfo } from '@store/auth/auth.ts';
+import { useAppDispatch, useAppSelector } from '@store/hooks.ts';
 
 function Navigation() {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const userInfo = useAppSelector(selectUserInfo);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    void dispatch(fetchUserInfo());
+  }, [dispatch]);
 
   return (
     <>

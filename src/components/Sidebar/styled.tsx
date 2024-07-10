@@ -5,6 +5,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   AccordionSummaryProps,
+  Box,
   Button,
   List,
   ListItemButton,
@@ -15,9 +16,14 @@ import {
 import { ButtonProps } from '@mui/base';
 import { NavLink, NavLinkProps } from 'react-router-dom';
 
+import { HEADER_HEIGHT } from '@constants/themeConstants';
+
+const SIDEBAR_TOGGLE_BUTTON_HEIGHT = 62;
+
 export const Label = styled(Typography)(({ theme: { palette } }) => ({
   borderRadius: '4px',
   padding: '2px 24px',
+  marginTop: '4px',
   marginBottom: '4px',
   background: palette.background.default,
   color: palette.text.secondary
@@ -26,9 +32,8 @@ export const Label = styled(Typography)(({ theme: { palette } }) => ({
 export const SidebarToggle = styled(Button)<ButtonProps & { expanded: number }>(
   ({ expanded }) => ({
     minWidth: 'auto',
-    height: 52,
-    marginTop: 6,
-    marginBottom: 8,
+    marginTop: 12,
+    marginBottom: 12,
     padding: expanded ? '8px 18px' : '8px',
     justifyContent: expanded ? 'flex-start' : 'center',
     gap: 8,
@@ -48,9 +53,16 @@ export const StyledNavLink = styled(NavLink)(({ theme: { palette } }) => ({
   flexGrow: 1,
   alignItems: 'center',
   borderRadius: '4px',
+
+  '&.active': {
+    backgroundColor: palette.background.default
+  },
+  '&:hover': {
+    backgroundColor: palette.sidebarItemHover
+  },
   '&.active, &:hover': {
-    backgroundColor: palette.background.default,
     color: palette.primary.main,
+
     '.MuiListItemIcon-root': {
       svg: {
         path: {
@@ -59,6 +71,11 @@ export const StyledNavLink = styled(NavLink)(({ theme: { palette } }) => ({
         }
       }
     }
+  },
+
+  '& .MuiTypography-root': {
+    paddingRight: '36px',
+    wordBreak: 'break-word'
   }
 }));
 
@@ -74,7 +91,14 @@ export const StyledSubAccordionSummary = styled(AccordionSummary)(() => ({
   },
   '& .MuiAccordionSummary-content': {
     alignItems: 'center',
-    margin: 0
+    margin: 0,
+    gap: 8
+  },
+  '& .MuiAccordionSummary-expandIconWrapper': {
+    transform: 'rotate(-90deg)',
+    '&.Mui-expanded': {
+      transform: 'rotate(0deg)'
+    }
   }
 }));
 
@@ -102,7 +126,12 @@ export const StyledMainAccordionSummary = styled(AccordionSummary)<
 export const StyledAccordionDetails = styled(AccordionDetails)(
   ({ theme: { palette } }) => ({
     backgroundColor: palette.sidebarBackground,
-    padding: '4px 0'
+    padding: 0,
+
+    '& .MuiList-root': {
+      paddingTop: 0,
+      paddingBottom: 0
+    }
   })
 );
 
@@ -129,7 +158,6 @@ export const StyledPaper = styled(Paper)(({ theme: { palette } }) => ({
   position: 'relative',
   flexGrow: 0,
   flexShrink: 0,
-  // maxWidth: '30%',
   backgroundColor: palette.sidebarBackground,
   boxSizing: 'border-box'
 }));
@@ -166,19 +194,25 @@ export const StyledListItemButton = styled(ListItemButton)<
   height: 32,
   transition: 'all 0.2s',
 
-  '&:hover': {
-    background: palette.sidebarItemHover
-  },
   '&.active': {
     backgroundColor: palette.background.default
+  },
+  '&:hover': {
+    background: palette.sidebarItemHover
   }
 }));
 
 export const StyledList = styled(List)<ListProps>(() => ({
   paddingTop: 0,
-  paddingBottom: 0,
+  paddingBottom: 40,
 
   '& .MuiListItemIcon-root': {
     paddingRight: 0
   }
+}));
+
+export const StyledWrapper = styled(Box)(() => ({
+  height: `calc(100vh - ${HEADER_HEIGHT}px - ${SIDEBAR_TOGGLE_BUTTON_HEIGHT}px)`,
+  overflowX: 'hidden',
+  overflowY: 'auto'
 }));

@@ -27,5 +27,8 @@ export const authService = new Auth.IAMAuthService({
   },
   onLogout() {
     void router.navigate(routes.auth.login);
+  },
+  onError() {
+    void router.navigate(routes.auth.login);
   }
 });
