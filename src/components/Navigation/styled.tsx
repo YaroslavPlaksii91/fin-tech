@@ -1,16 +1,15 @@
-import { AppBar, Button, IconButton } from '@mui/material';
-import { styled, alpha } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
+import AppBar from '@mui/material/AppBar';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 
 import { palette } from '@theme';
 
-export const StyledNavButton = styled(Button)(({ theme: { palette } }) => ({
-  borderColor: alpha(palette.common.white, 0.5),
-  padding: '5px',
-  minWidth: '36px',
-  '&:hover': {
-    borderColor: palette.common.white
-  }
-}));
+const headerButtonStyles = {
+  borderRadius: '6px',
+  color: palette.white,
+  border: '1px solid rgba(225, 225, 225, 0.5) !important'
+};
 
 export const StyledAppBar = styled(AppBar)(() => ({
   backgroundColor: palette.primaryDark,
@@ -19,8 +18,18 @@ export const StyledAppBar = styled(AppBar)(() => ({
   boxShadow: 'none'
 }));
 
-export const StyledHeaderButton = styled(IconButton)(() => ({
+export const StyledHeaderIconButton = styled(IconButton)(() => ({
   padding: '4px',
-  borderRadius: '6px',
-  border: '1px solid rgba(225, 225, 225, 0.5)'
+  ...headerButtonStyles,
+
+  '&::after': {
+    content: '""',
+    display: 'block',
+    paddingBottom: '100%'
+  }
+}));
+
+export const StyledHeaderButton = styled(Button)(() => ({
+  padding: '4px 8px',
+  ...headerButtonStyles
 }));

@@ -104,11 +104,7 @@ export const router = createBrowserRouter([
   },
   {
     path: routes.auth.accessVerification,
-    element: (
-      <PrivateAuthRoute>
-        <AccessVerificationPage />
-      </PrivateAuthRoute>
-    )
+    element: <AccessVerificationPage />
   },
   { path: '*', element: <p>Not found</p> }
 ]);

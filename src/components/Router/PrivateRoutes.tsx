@@ -6,6 +6,7 @@ import { authService } from '@services/auth.ts';
 import { fetchUserInfo, selectUserInfo } from '@store/auth/auth.ts';
 import { useAppDispatch, useAppSelector } from '@store/hooks.ts';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
+import LoadingFullscreen from '@components/shared/LoadingFullscreen';
 
 const PrivateRoutes = (props: {
   children: React.ReactNode;
@@ -28,7 +29,7 @@ const PrivateRoutes = (props: {
     return <Navigate to={routes.permissionDenied} />;
   }
   if (!user) {
-    return <div>Loader...</div>;
+    return <LoadingFullscreen />;
   }
 
   return props.children;

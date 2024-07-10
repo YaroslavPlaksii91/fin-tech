@@ -81,6 +81,10 @@ export const operatorsConfig: OperatorConfig[] = [
     category: ExpressionOperatorCategory.LOGICAL
   },
   {
+    literal: 'IN',
+    category: ExpressionOperatorCategory.INCLUSION
+  },
+  {
     literal: '=',
     category: ExpressionOperatorCategory.COMPARISON
   },

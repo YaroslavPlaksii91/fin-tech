@@ -4,9 +4,12 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  AccordionSummaryProps,
   Button,
+  List,
   ListItemButton,
   ListItemButtonProps,
+  ListProps,
   Typography
 } from '@mui/material';
 import { ButtonProps } from '@mui/base';
@@ -20,17 +23,20 @@ export const Label = styled(Typography)(({ theme: { palette } }) => ({
   color: palette.text.secondary
 }));
 
-export const SidebarToggle = styled(Button)<ButtonProps & { rotated: number }>(
-  ({ rotated, theme }) => ({
-    justifyContent: 'flex-start',
-    padding: '6px 16px',
-    '&:hover': {
-      background: theme.palette.background.default
-    },
+export const SidebarToggle = styled(Button)<ButtonProps & { expanded: number }>(
+  ({ expanded }) => ({
+    minWidth: 'auto',
+    height: 52,
+    marginTop: 6,
+    marginBottom: 8,
+    padding: expanded ? '8px 18px' : '8px',
+    justifyContent: expanded ? 'flex-start' : 'center',
+    gap: 8,
+    transition: 'all 0.2s',
     '& .MuiButton-startIcon': {
-      ...(rotated && {
-        transform: 'rotate(180deg)'
-      })
+      marginRight: '0 !important',
+      marginLeft: '0 !important',
+      transform: expanded ? 'rotate(0)' : 'rotate(180deg)'
     }
   })
 );
@@ -61,6 +67,8 @@ export const StyledSubAccordionSummary = styled(AccordionSummary)(() => ({
   flexDirection: 'row-reverse',
   minHeight: '28px',
   width: '100%',
+  backgroundColor: 'transparent',
+
   '&.Mui-expanded': {
     minHeight: '28px'
   },
@@ -70,32 +78,39 @@ export const StyledSubAccordionSummary = styled(AccordionSummary)(() => ({
   }
 }));
 
-export const StyledMainAccordionSummary = styled(AccordionSummary)(
-  ({ theme: { palette } }) => ({
-    minHeight: '32px',
-    backgroundColor: palette.sidebarBackground,
-    '&:hover': {
-      background: palette.background.default
-    },
-    '&.Mui-expanded': {
-      minHeight: '32px'
-    },
-    '& .MuiAccordionSummary-content': {
-      margin: '0 !important'
-    }
-  })
-);
+export const StyledMainAccordionSummary = styled(AccordionSummary)<
+  AccordionSummaryProps & { expanded: boolean }
+>(({ expanded, theme: { palette } }) => ({
+  minHeight: '32px',
+  backgroundColor: palette.sidebarBackground,
+  justifyContent: expanded ? 'flex-start' : 'center',
+
+  '&:hover': {
+    borderRadius: '4px',
+    backgroundColor: palette.sidebarItemHover
+  },
+
+  '&.Mui-expanded': {
+    minHeight: '32px'
+  },
+  '& .MuiAccordionSummary-content': {
+    margin: '0 !important',
+    gap: 8
+  }
+}));
 
 export const StyledAccordionDetails = styled(AccordionDetails)(
   ({ theme: { palette } }) => ({
-    padding: '4px 0',
-    backgroundColor: palette.sidebarBackground
+    backgroundColor: palette.sidebarBackground,
+    padding: '4px 0'
   })
 );
 
 export const StyledAccordion = styled(Accordion)(({ theme: { palette } }) => ({
-  padding: '2px 0',
   backgroundColor: palette.sidebarBackground,
+  borderBottomLeftRadius: 4,
+  borderBottomRightRadius: 4,
+
   '&:before': {
     display: 'none'
   },
@@ -107,15 +122,16 @@ export const StyledAccordion = styled(Accordion)(({ theme: { palette } }) => ({
 }));
 
 export const StyledPaper = styled(Paper)(({ theme: { palette } }) => ({
-  padding: '16px 8px',
   borderRadius: 0,
+  padding: '0px 8px',
   borderRight: `1px solid ${palette.divider}`,
   overflow: 'hidden',
   position: 'relative',
   flexGrow: 0,
   flexShrink: 0,
-  maxWidth: '30%',
-  backgroundColor: palette.sidebarBackground
+  // maxWidth: '30%',
+  backgroundColor: palette.sidebarBackground,
+  boxSizing: 'border-box'
 }));
 
 export const Resizer = styled('div')(({ theme: { palette } }) => ({
@@ -137,5 +153,32 @@ export const StyledListItemButton = styled(ListItemButton)<
 >(({ theme: { palette } }) => ({
   '&:hover': {
     background: palette.background.default
+  }
+}));
+
+export const StyledListItemButton = styled(ListItemButton)<
+  ListItemButtonProps & Partial<NavLinkProps> & { expanded?: boolean }
+>(({ expanded, theme: { palette } }) => ({
+  paddingLeft: expanded ? 16 : 4,
+  paddingRight: expanded ? 16 : 4,
+  justifyContent: expanded ? 'flex-start' : 'center',
+  gap: 8,
+  height: 32,
+  transition: 'all 0.2s',
+
+  '&:hover': {
+    background: palette.sidebarItemHover
+  },
+  '&.active': {
+    backgroundColor: palette.background.default
+  }
+}));
+
+export const StyledList = styled(List)<ListProps>(() => ({
+  paddingTop: 0,
+  paddingBottom: 0,
+
+  '& .MuiListItemIcon-root': {
+    paddingRight: 0
   }
 }));
