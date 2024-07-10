@@ -56,3 +56,5 @@ export interface ControlPanelEditProps {
   setCopyFlow: (flow: IFlow) => void;
   rfInstance: CustomReactFlowInstance;
 }
+
+export type CustomEventDetail = { subFlowId: string; deleteNodes: FlowNode[] };

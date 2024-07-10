@@ -2,7 +2,12 @@ import { Edge, ReactFlowProvider } from 'reactflow';
 import { useCallback, useMemo } from 'react';
 import { cloneDeep } from 'lodash';
 
-import { addNodeInSubFlow, findSubFlow, updateNodesInSubFlow } from './utils';
+import {
+  addNodeInSubFlow,
+  findSubFlow,
+  removeNodesAndEdgesInSubFlow,
+  updateNodesInSubFlow
+} from './utils';
 
 import { FlowNode, IFlow } from '@domain/flow';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
@@ -65,13 +70,25 @@ const SubFlow: React.FC<SubFlowProps> = ({
     [mainFlowNodes]
   );
 
-  const updateNodesInMainFlow = useCallback(
+  const addNodeAndSyncMainFlow = useCallback(
     (subFlowId: string, newNode: FlowNode, edges: Edge[]) => {
       const updatedNodes = addNodeInSubFlow(
         mainFlowNodes,
         subFlowId,
         newNode,
         edges
+      );
+      setNodes(updatedNodes);
+    },
+    [mainFlowNodes]
+  );
+
+  const deleteNodeAndSyncMainFlow = useCallback(
+    (deleteNodes: FlowNode[], subFlowId: string) => {
+      const updatedNodes = removeNodesAndEdgesInSubFlow(
+        mainFlowNodes,
+        deleteNodes,
+        subFlowId
       );
       setNodes(updatedNodes);
     },
@@ -87,7 +104,8 @@ const SubFlow: React.FC<SubFlowProps> = ({
             mainFlow={mainFlow}
             flow={subFlow}
             setCopyFlow={saveSubflow}
-            updateNodesInMainFlow={updateNodesInMainFlow}
+            addNodeAndSyncMainFlow={addNodeAndSyncMainFlow}
+            deleteNodeAndSyncMainFlow={deleteNodeAndSyncMainFlow}
           />
         </ReactFlowProvider>
       )}

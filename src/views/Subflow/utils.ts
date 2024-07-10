@@ -59,3 +59,38 @@ export const addNodeInSubFlow = (
     }
     return node;
   });
+
+export const removeNodesAndEdgesInSubFlow = (
+  nodes: FlowNode[],
+  deleteNodes: FlowNode[],
+  subFlowId: string | null
+): FlowNode[] =>
+  nodes.map((node) => {
+    if (node.id === subFlowId) {
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          edges: node.data.edges?.filter(
+            (edge) =>
+              !deleteNodes.find(
+                (item) => item.id === edge.source || item.id === edge.target
+              )
+          ),
+          nodes: node.data?.nodes?.filter(
+            (node) => !deleteNodes.find((item) => item.id === node.id)
+          )
+        }
+      };
+    } else if (node.data.nodes) {
+      return {
+        ...node,
+        nodes: removeNodesAndEdgesInSubFlow(
+          node.data.nodes,
+          deleteNodes,
+          subFlowId
+        )
+      };
+    }
+    return node;
+  });
