@@ -57,9 +57,15 @@ export const createFlow = createAsyncThunk(
 
 export const pushProductionFlow = createAsyncThunk(
   'push/flow',
-  async (data: IFlow, { rejectWithValue }) => {
+  async (
+    data: { flow: IFlow; params: { pushedBy: string; note: string } },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await flowService.pushProductionFlow(data);
+      const response = await flowService.pushProductionFlow(
+        data.flow,
+        data.params
+      );
       return response;
     } catch (err) {
       return rejectWithValue(err);
