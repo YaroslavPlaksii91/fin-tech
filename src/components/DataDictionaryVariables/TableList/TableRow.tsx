@@ -22,6 +22,7 @@ import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { checkIsProductionFlow } from '@utils/helpers';
 import routes from '@constants/routes';
+import { PRODUCTION_FLOW_ID } from '@constants/common';
 
 type TableRowProps = {
   headers: TableHeader[];
@@ -47,10 +48,12 @@ export const TableRow = ({
   onEdit
 }: TableRowProps) => {
   const [isExpanded, setisExpanded] = useState(false);
+  const [stepIds, setStepIds] = useState<string[]>([]);
+
   const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
   const navigate = useNavigate();
   const isProductionFlow = checkIsProductionFlow();
-  const [stepIds, setStepIds] = useState<string[]>([]);
+  const isViewMode = isProductionFlow || !hasUserPermission;
 
   const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
 
@@ -96,7 +99,8 @@ export const TableRow = ({
           state: { subFlowId, stepId }
         });
       } else {
-        navigate(routes.underwriting.flow.view(flowId), {
+        const id = isProductionFlow ? PRODUCTION_FLOW_ID : flowId;
+        navigate(routes.underwriting.flow.view(id), {
           state: { subFlowId, stepId }
         });
       }
@@ -130,7 +134,7 @@ export const TableRow = ({
         ))}
         {tabName === VARIABLES_TABS.userDefined && (
           <StyledTableCell>
-            {hasUserPermission && (
+            {!isViewMode && (
               <Stack spacing={1} direction="row">
                 <Button
                   sx={{
