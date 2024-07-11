@@ -168,11 +168,11 @@ export const Resizer = styled('div')(({ theme: { palette } }) => ({
   bottom: 0,
   right: 0,
   width: 8,
-  cursor: 'url(./src/assets/icons/resize-drag.svg) 12 4, col-resize',
-  resize: 'horizontal',
+  cursor: "url('/resize-drag.svg') 12 4, col-resize",
+  userSelect: 'none',
 
   '&:hover': {
-    borderRight: `1px solid ${palette.divider}`
+    borderRight: `2px solid ${palette.divider}`
   }
 }));
 
