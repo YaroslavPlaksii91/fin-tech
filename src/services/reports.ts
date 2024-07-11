@@ -1,10 +1,11 @@
 import { DenialReasonsReportOData } from '@domain/denielReasonsReports';
 import { LeadRequestsReportsOData } from '@domain/leadRequestsReports';
-import { reportApi } from '@utils/api.ts';
+import { GetWaterfallReport, WaterfallReport } from '@domain/waterfallReport';
+import { reportApi, reportOdataApi } from '@utils/api.ts';
 
 class ReportingService {
   async getLeadRequestsReports(params: string) {
-    const { data } = await reportApi.get<LeadRequestsReportsOData>(
+    const { data } = await reportOdataApi.get<LeadRequestsReportsOData>(
       `/lead-request-processing-history${params}`,
       {}
     );
@@ -12,10 +13,17 @@ class ReportingService {
   }
 
   async getDenialReasonsReport(params: string) {
-    const { data } = await reportApi.get<DenialReasonsReportOData>(
+    const { data } = await reportOdataApi.get<DenialReasonsReportOData>(
       `/lead-request-denial-reasons${params}`,
       {}
     );
+    return data;
+  }
+
+  async getWaterfallReport({ params }: GetWaterfallReport) {
+    const { data } = await reportApi.get<WaterfallReport>(`/waterfall-report`, {
+      params
+    });
     return data;
   }
 }

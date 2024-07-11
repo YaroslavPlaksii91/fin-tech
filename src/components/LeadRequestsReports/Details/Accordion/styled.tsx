@@ -14,6 +14,7 @@ export const StyledAccordion = styled(Accordion)(() => ({
 export const StyledAccordionSummary = styled(AccordionSummary)(() => ({
   minHeight: '40px',
   '&.Mui-expanded': {
+    margin: 0,
     minHeight: '40px',
     background: `${theme.palette.background.default}`
   },

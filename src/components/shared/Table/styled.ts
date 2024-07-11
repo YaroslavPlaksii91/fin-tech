@@ -51,7 +51,10 @@ export const StyledDataGridPremium = styled(DataGridPremium)(() => ({
   border: 'transparent',
 
   [`& .${gridClasses.pinnedRows} .${gridClasses.row}`]: {
+    fontWeight: 500,
+    color: theme.palette.text.primary,
     backgroundColor: 'var(--unstable_DataGrid-overlayBackground)',
+    '&:last-child': { borderBottom: 0 },
     [`&.even .${gridClasses.cell}`]: {
       backgroundColor: blueGrey[50]
     },

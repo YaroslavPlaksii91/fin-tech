@@ -3,7 +3,8 @@ import axios, { AxiosError, AxiosInstance } from 'axios';
 import {
   apiBaseUrl,
   apiReportBaseUrl,
-  apiIntegrationBaseUrl
+  apiIntegrationBaseUrl,
+  apiReportOdataBaseUrl
 } from '@constants/api-urls';
 import { authService } from '@services/auth.ts';
 
@@ -35,6 +36,9 @@ const createAPIClient = ({ baseURL }: { baseURL: string }) => {
 
 export const api = createAPIClient({ baseURL: apiBaseUrl });
 export const reportApi = createAPIClient({ baseURL: apiReportBaseUrl });
+export const reportOdataApi = createAPIClient({
+  baseURL: apiReportOdataBaseUrl
+});
 export const integrationApi = createAPIClient({
   baseURL: apiIntegrationBaseUrl
 });

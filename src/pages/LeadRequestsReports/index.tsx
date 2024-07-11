@@ -9,7 +9,7 @@ import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import { DEFAULT_SORT } from './constants';
 
-import { reportingService } from '@services/lead-requests-reports';
+import { reportingService } from '@services/reports';
 import TablePagination from '@components/shared/TablePagination';
 import Filters from '@components/Filters/Filters';
 import { theme } from '@theme';
@@ -163,6 +163,9 @@ export default function LeadRequestsReportsPage() {
           disableColumnMenu
           columnHeaderHeight={32}
           rowHeight={28}
+          // We have border bottom 1px for each row, to include it in rowHeight calculation need also add spacing here
+          getRowSpacing={() => ({ bottom: 1 })}
+          rowSpacingType="border"
           rows={rows}
           columns={columns}
           loading={loading}
