@@ -18,6 +18,7 @@ import Details from '@components/LeadRequestsReports/Details';
 import useTablePagination from '@hooks/useTablePagination';
 import Logger from '@utils/logger';
 import useFilters from '@hooks/useFilters';
+import { TABLE } from '@constants/themeConstants';
 
 export default function LeadRequestsReportsPage() {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -161,8 +162,8 @@ export default function LeadRequestsReportsPage() {
         <StyledDataGridPremium
           autoHeight
           disableColumnMenu
-          columnHeaderHeight={32}
-          rowHeight={28}
+          columnHeaderHeight={TABLE.COLUMN_HEIGHT}
+          rowHeight={TABLE.ROW_HEIGHT}
           // We have border bottom 1px for each row, to include it in rowHeight calculation need also add spacing here
           getRowSpacing={() => ({ bottom: 1 })}
           rowSpacingType="border"
