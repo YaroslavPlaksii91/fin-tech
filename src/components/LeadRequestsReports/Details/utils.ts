@@ -33,7 +33,7 @@ export const getFormattedData = (data: LeadRequestsReport) => {
     responseJson: data.leadResponse ? JSON.stringify(data.leadResponse) : null
   };
 
-  const externalCalls = (data.executionHistory.externalCalls || []).map(
+  const externalCalls = (data.executionHistory?.externalCalls || []).map(
     (externalCall) => ({
       id: externalCall.callType,
       api: externalCall.callType,

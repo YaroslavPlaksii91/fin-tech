@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
 import { Box, Stack, Tabs, Typography, Button } from '@mui/material';
-import TuneIcon from '@mui/icons-material/Tune';
 import { omitBy } from 'lodash';
 
 import {
@@ -19,6 +18,7 @@ import TableList from './TableList/TableList';
 import TabPanel from './Tabs/TabPanel';
 import { StyledTab } from './styled';
 
+import TuneIcon from '@icons/tune.svg';
 import Filters from '@components/Filters/Filters';
 import { theme } from '@theme';
 import { IFlow } from '@domain/flow';
@@ -173,7 +173,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
                 color="inherit"
                 variant="outlined"
                 sx={{ minWidth: '80px', borderRadius: '6px' }}
-                startIcon={<TuneIcon sx={{ transform: 'rotate(180deg)' }} />}
+                startIcon={<TuneIcon />}
                 onClick={handleFiltersOpen}
               >
                 Filters
@@ -196,7 +196,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
               size="small"
               color="inherit"
               variant="outlined"
-              startIcon={<TuneIcon sx={{ transform: 'rotate(180deg)' }} />}
+              startIcon={<TuneIcon />}
               onClick={handleFiltersOpen}
             >
               Filters

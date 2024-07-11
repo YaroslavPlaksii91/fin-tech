@@ -12,6 +12,7 @@ import ChangeHistoryPage from '@pages/ChangeHistory';
 import AccessVerificationPage from '@pages/auth/AccessVerification';
 import LeadRequestsReportsPage from '@pages/LeadRequestsReports';
 import DenielReasonsPage from '@pages/DenielReasons';
+import WaterfallPage from '@pages/Waterfall';
 import FlowList from '@pages/FlowList';
 import { permissionsMap } from '@constants/permissions';
 import PermissionDeniedPage from '@pages/PermissionDenied';
@@ -73,6 +74,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoutes>
             <DenielReasonsPage />
+          </PrivateRoutes>
+        )
+      },
+      {
+        path: routes.underwriting.waterfall,
+        element: (
+          <PrivateRoutes>
+            <WaterfallPage />
           </PrivateRoutes>
         )
       },

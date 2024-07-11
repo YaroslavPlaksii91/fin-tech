@@ -84,15 +84,21 @@ const pages = [
 const reportPages = [
   {
     icon: <DotIcon color={theme.palette.primary.dark} />,
-    text: 'Lead Requests',
+    text: 'Applications',
     to: routes.underwriting.leadRequest,
     permission: permissionsMap.canViewLeadRequestReport
   },
   {
     icon: <DotIcon color={theme.palette.primary.dark} />,
-    text: 'Deniel Reasons',
+    text: 'Denial Reasons ',
     to: routes.underwriting.denialReasons,
     permission: permissionsMap.canViewDenialReasonReport
+  },
+  {
+    icon: <DotIcon color={theme.palette.primary.dark} />,
+    text: 'Waterfall',
+    to: routes.underwriting.waterfall,
+    permission: permissionsMap.canViewWaterfallReport
   }
 ];
 

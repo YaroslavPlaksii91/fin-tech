@@ -14,7 +14,6 @@ export type RowData = ExtractArrayElementType<
 >;
 
 export type FetchList = {
-  page: number;
   sort: string;
   filter: {
     startDate?: string;
