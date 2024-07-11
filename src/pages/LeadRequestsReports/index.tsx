@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
 import buildQuery from 'odata-query';
 import { Button, Drawer, Paper, Stack, Typography } from '@mui/material';
-import TuneIcon from '@mui/icons-material/Tune';
 
 import { COLUMN_IDS, FetchList, OdataQueries, RowData } from './types';
 import { getFormattedRows } from './utils';
@@ -19,6 +18,7 @@ import useTablePagination from '@hooks/useTablePagination';
 import Logger from '@utils/logger';
 import useFilters from '@hooks/useFilters';
 import { TABLE } from '@constants/themeConstants';
+import TuneIcon from '@icons/tune.svg';
 
 export default function LeadRequestsReportsPage() {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -145,7 +145,7 @@ export default function LeadRequestsReportsPage() {
             color="inherit"
             variant="outlined"
             sx={{ minWidth: '80px', borderRadius: '6px' }}
-            startIcon={<TuneIcon sx={{ transform: 'rotate(180deg)' }} />}
+            startIcon={<TuneIcon />}
             onClick={handleFiltersOpen}
           >
             Filters

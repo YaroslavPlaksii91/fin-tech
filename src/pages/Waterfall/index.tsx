@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { GridSortModel } from '@mui/x-data-grid-premium';
 import { Button, Paper, Stack, Typography } from '@mui/material';
-import TuneIcon from '@mui/icons-material/Tune';
 
 import { FetchList, RowData } from './types';
 import { getFormattedRows } from './utils';
@@ -20,6 +19,7 @@ import { theme } from '@theme';
 import { reportingService } from '@services/reports';
 import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
+import TuneIcon from '@icons/tune.svg';
 
 const Waterfall = () => {
   const [loading, setLoading] = useState(false);
@@ -100,7 +100,7 @@ const Waterfall = () => {
             color="inherit"
             variant="outlined"
             sx={{ minWidth: '80px', borderRadius: '6px' }}
-            startIcon={<TuneIcon sx={{ transform: 'rotate(180deg)' }} />}
+            startIcon={<TuneIcon />}
             onClick={handleFiltersOpen}
           >
             Filters
