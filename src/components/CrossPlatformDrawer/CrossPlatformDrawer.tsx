@@ -1,28 +1,24 @@
 import { useState, useEffect } from 'react';
 import ListItem from '@mui/material/ListItem';
 import Tooltip from '@mui/material/Tooltip';
+import { ApplicationModel } from '@eloanwarehouse/frontend-core';
 
 import { StyledDrawer, StyledList, StyledListItemButton } from './styled';
 import { applications } from './config';
 
 import { LAUNCHER_URL } from '@constants/common';
-import IAMApi from '@utils/iamApi';
 import HomeIcon from '@icons/home.svg';
-
-interface IAllowedApplication {
-  name: string;
-  url: string;
-}
+import { authService } from '@services/auth';
 
 const CrossPlatformDrawer: React.FC = () => {
   const [allowedApplications, setAllowedApplications] = useState<
-    IAllowedApplication[] | []
+    ApplicationModel[] | []
   >([]);
+
   const fetchAllowedApplications = async () => {
     try {
-      const response: { data: IAllowedApplication[] } =
-        await IAMApi.get('/Applications/all');
-      setAllowedApplications(response.data);
+      const response = await authService.fetchAllowedApplications();
+      setAllowedApplications(response.data as ApplicationModel[]);
     } catch (error) {
       //
     }
