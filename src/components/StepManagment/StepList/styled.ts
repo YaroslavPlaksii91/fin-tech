@@ -11,9 +11,10 @@ export const StyledStepItem = styled(Box)(() => ({
 export const StyledListItem = styled(ListItem)(({ theme: { palette } }) => ({
   borderRadius: '4px',
   paddingLeft: '40px',
+  gap: '8px',
   '&.active, &:hover': {
     cursor: 'pointer',
-    background: palette.amber,
+    background: palette.background.default,
     '& .MuiTypography-body2': {
       color: palette.primary.main
     },

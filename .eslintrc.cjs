@@ -40,7 +40,8 @@ module.exports = {
           '@views': './src/views',
           '@public': './public',
           '@theme': './src/themeConfig',
-          '@icons': './src/assets/icons'
+          '@icons': './src/assets/icons',
+          '@images': './src/assets/images'
         },
         extensions: ['.js', '.jsx', '.ts', '.tsx']
       }

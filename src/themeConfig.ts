@@ -14,6 +14,8 @@ interface CustomPalette {
   blue: string;
   aliceBlue: string;
   amber: string;
+  sidebarBackground: string;
+  sidebarItemHover: string;
 }
 
 export const palette = {
@@ -21,6 +23,7 @@ export const palette = {
   grayBorder: '#D1D9E2',
   dark: '#2E3646',
   primary: '#2E3646',
+  primaryDark: '#1e4620',
   secondary: '#E6E9EC',
   white: '#FFF',
   whiteSmoke: '#F4F4F4',
@@ -31,7 +34,9 @@ export const palette = {
   errorBackground: '#FFCCCC',
   error: '#E24A4A',
   aliceBlue: '#F8F9FB',
-  amber: '#FFF8E1'
+  amber: '#FFF8E1',
+  sidebarBackground: '#E7E8EB',
+  sidebarItemHover: '#dedfe2'
 };
 
 declare module '@mui/material/styles' {
@@ -104,7 +109,8 @@ export const theme = createTheme({
         root: {
           textTransform: 'none',
           borderRadius: '6px',
-          boxShadow: 'none'
+          boxShadow: 'none',
+          minWidth: 'auto'
         }
       }
     },
@@ -141,7 +147,6 @@ export const theme = createTheme({
       styleOverrides: {
         paper: {
           minWidth: '444px',
-          boxShadow: 'none',
           borderRadius: '12px'
         }
       }
@@ -149,7 +154,13 @@ export const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius: '8px',
+          borderRadius: '8px'
+        }
+      }
+    },
+    MuiAccordion: {
+      styleOverrides: {
+        root: {
           boxShadow: 'none'
         }
       }

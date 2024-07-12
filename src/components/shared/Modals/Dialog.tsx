@@ -1,13 +1,14 @@
 import React from 'react';
-import MuiDialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
-import { IconButton, Typography } from '@mui/material';
+import { DialogContentText, IconButton } from '@mui/material';
 import { Breakpoint } from '@mui/system';
 
 import LoadingButton from '../LoadingButton';
 import { CloseIcon } from '../Icons';
+
+import { StyledDialog, StyledDialogTitle } from './styled';
 
 interface DialogProps {
   open: boolean;
@@ -32,8 +33,8 @@ const Dialog: React.FC<DialogProps> = ({
   onConfirm,
   title,
   children,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  confirmText = 'Yes',
+  cancelText = 'No',
   confirmLoading = false,
   displayedCancelBtn = true,
   displayConfirmBtn = true,
@@ -42,15 +43,14 @@ const Dialog: React.FC<DialogProps> = ({
   maxWidth,
   isConfirmBtnDisabled = false
 }) => (
-  <MuiDialog
+  <StyledDialog
     open={open}
+    keepMounted
     onClose={onClose}
     maxWidth={maxWidth}
     fullWidth={fullWidth}
   >
-    <Typography pt={2} pl={3} pr={3} variant="h6">
-      {title}
-    </Typography>
+    <StyledDialogTitle>{title}</StyledDialogTitle>
     {isCloseButton && (
       <IconButton
         aria-label="close"
@@ -64,7 +64,11 @@ const Dialog: React.FC<DialogProps> = ({
         <CloseIcon />
       </IconButton>
     )}
-    <DialogContent>{children}</DialogContent>
+    <DialogContent>
+      <DialogContentText sx={{ wordWrap: 'break-word' }}>
+        {children}
+      </DialogContentText>
+    </DialogContent>
     {(displayedCancelBtn || displayConfirmBtn) && (
       <DialogActions>
         <>
@@ -73,19 +77,20 @@ const Dialog: React.FC<DialogProps> = ({
               loading={confirmLoading}
               disabled={confirmLoading || isConfirmBtnDisabled}
               variant="text"
+              size="medium"
               onClick={onConfirm}
             >
               {confirmText}
             </LoadingButton>
           )}
           {displayedCancelBtn && (
-            <Button variant="text" onClick={onClose}>
+            <Button variant="text" size="medium" onClick={onClose}>
               {cancelText}
             </Button>
           )}
         </>
       </DialogActions>
     )}
-  </MuiDialog>
+  </StyledDialog>
 );
 export default Dialog;

@@ -7,6 +7,7 @@
     "max-nesting-depth": 4,
     "declaration-colon-newline-after": null,
     "declaration-block-no-redundant-longhand-properties": null,
+    "no-invalid-double-slash-comments": null,
     "selector-class-pattern": null,
     "order/order": [
       "dollar-variables",

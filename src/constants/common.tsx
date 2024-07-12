@@ -13,6 +13,7 @@ export const TODAY = dayjs();
 export const MUI_LICENSE_KEY = import.meta.env.VITE_MUI_LICENSE_KEY;
 export const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 export const IAM_SERVICE_URL = import.meta.env.VITE_IAM_SERVICE_URL;
+export const LAUNCHER_URL = import.meta.env.VITE_LAUNCHER_URL;
 
 export const FULL_DATE_TIME_FORMAT = 'MM/DD/YYYY hh:mm:ss A';
 

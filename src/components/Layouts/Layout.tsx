@@ -7,6 +7,7 @@ import { LayoutContainer, MainContainer } from './MainLayout';
 
 import Sidebar from '@components/Sidebar/Sidebar';
 import { ActiveStepProvider } from '@contexts/StepContext';
+import CrossPlatformDrawer from '@components/CrossPlatformDrawer/CrossPlatformDrawer';
 
 export default function Layout() {
   return (
@@ -15,6 +16,7 @@ export default function Layout() {
       <ReactFlowProvider>
         <ActiveStepProvider>
           <LayoutContainer>
+            <CrossPlatformDrawer />
             <Sidebar />
             <MainContainer>
               <Outlet />

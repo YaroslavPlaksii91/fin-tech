@@ -6,10 +6,8 @@ import React, {
   useMemo
 } from 'react';
 import {
-  Accordion,
   Box,
-  List,
-  ListItemButton,
+  Divider,
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
@@ -23,16 +21,25 @@ import {
   SidebarToggle,
   StyledAccordion,
   StyledAccordionDetails,
+  StyledList,
+  StyledListItemButton,
   StyledMainAccordionSummary,
   StyledNavLink,
   StyledPaper,
-  StyledSubAccordionSummary
+  StyledSubAccordionSummary,
+  StyledWrapper
 } from './styled';
+import {
+  DEFAULT_SIDEBAR_WIDTH,
+  MIN_SIDEBAR_WIDTH,
+  animationStyles,
+  itemIconProps,
+  pages,
+  reportPages
+} from './config';
 
-import DotIcon from '@icons/dot.svg';
 import LineChartDotsIcon from '@icons/lineChartDots.svg';
 import AngleLeftSquareIcon from '@icons/angleLeftSquare.svg';
-import TimePastIcon from '@icons/timePast.svg';
 import DocumentPaperIcon from '@icons/documentPaper.svg';
 import BezierIcon from '@icons/bezier.svg';
 import { ExpandMoreIcon } from '@components/shared/Icons';
@@ -51,56 +58,10 @@ import { AddFlow } from '@components/FlowManagment/AddFlow/AddFlowForm';
 import StepList from '@components/StepManagment/StepList/StepList';
 import { useActiveStep } from '@contexts/StepContext';
 import { palette, theme } from '@theme';
-import { permissionsMap } from '@constants/permissions';
 import { hasPermission } from '@utils/helpers';
 import { selectUserInfo } from '@store/auth/auth';
-
-const animationStyles = (expanded: boolean) => ({
-  maxWidth: expanded ? '100%' : 0,
-  transition: 'max-width 0.2s ease-in-out',
-  overflow: 'hidden',
-  whiteSpace: 'nowrap'
-});
-
-const DEFAULT_SIDEBAR_WIDTH = 256;
-const MIN_SIDEBAR_WIDTH = 70;
-
-export interface MenuItem {
-  icon: React.ReactElement;
-  text: string;
-  to: string;
-  permission: string;
-}
-
-const pages = [
-  {
-    icon: <TimePastIcon color={theme.palette.primary.dark} />,
-    text: 'Changes History',
-    to: routes.underwriting.changeHistory,
-    permission: permissionsMap.canViewChangeHistory
-  }
-];
-
-const reportPages = [
-  {
-    icon: <DotIcon color={theme.palette.primary.dark} />,
-    text: 'Applications',
-    to: routes.underwriting.leadRequest,
-    permission: permissionsMap.canViewLeadRequestReport
-  },
-  {
-    icon: <DotIcon color={theme.palette.primary.dark} />,
-    text: 'Denial Reasons ',
-    to: routes.underwriting.denialReasons,
-    permission: permissionsMap.canViewDenialReasonReport
-  },
-  {
-    icon: <DotIcon color={theme.palette.primary.dark} />,
-    text: 'Waterfall',
-    to: routes.underwriting.waterfall,
-    permission: permissionsMap.canViewWaterfallReport
-  }
-];
+import { useThrottle } from '@hooks/useThrottle';
+import { CROSS_PLATFORM_DRAWER_WIDTH } from '@constants/themeConstants';
 
 const Sidebar = () => {
   const { id } = useParams();
@@ -119,6 +80,10 @@ const Sidebar = () => {
   const [expandedFlow, setExpandedFlow] = useState<string | false>(false);
   const [expandedFlowList, setExpandedFlowList] = useState<boolean>(true);
   const [expandedReports, setExpandedReports] = useState(false);
+
+  const [isScrolled, setIsScrolled] = useState(false);
+  const scrollableRef = useRef<HTMLDivElement | null>(null);
+  const throttle = useThrottle();
 
   const handleReportsToggle = () => setExpandedReports((prev) => !prev);
 
@@ -154,6 +119,28 @@ const Sidebar = () => {
     (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpandedFlow(newExpanded ? panel : false);
     };
+
+  const handleScroll = () => {
+    if (scrollableRef.current && scrollableRef.current.scrollTop > 0) {
+      setIsScrolled(true);
+    } else {
+      setIsScrolled(false);
+    }
+  };
+
+  const throttleHandleScroll = () => throttle(handleScroll, 2000);
+
+  useEffect(() => {
+    const scrollableElement = scrollableRef.current;
+
+    if (scrollableElement) {
+      scrollableElement.addEventListener('scroll', throttleHandleScroll);
+
+      return () => {
+        scrollableElement.removeEventListener('scroll', throttleHandleScroll);
+      };
+    }
+  }, []);
 
   const toggleSidebar = useCallback(() => {
     setExpanded(!expanded);
@@ -217,205 +204,244 @@ const Sidebar = () => {
       elevation={0}
       ref={sidebarRef}
       style={{
+        marginLeft: CROSS_PLATFORM_DRAWER_WIDTH,
         width: sidebarWidth,
-        transition: !isResizing ? 'width 0.2s ease-in-out' : ''
+        transition: !isResizing ? 'all 0.2s' : ''
       }}
     >
       {expanded && <Resizer onMouseDown={handleMouseDown} />}
       <SidebarToggle
         fullWidth
         onClick={toggleSidebar}
-        startIcon={<AngleLeftSquareIcon color={theme.palette.common.black} />}
-        rotated={expanded ? 0 : 1}
+        expanded={expanded ? 1 : 0}
+        startIcon={
+          <AngleLeftSquareIcon
+            color={theme.palette.common.black}
+            width={18}
+            height={18}
+          />
+        }
       >
-        <Typography
-          fontSize="15px"
-          fontWeight="500"
-          variant="body2"
-          color={theme.palette.text.secondary}
-          sx={animationStyles(expanded)}
-        >
-          Collapse Sidebar
-        </Typography>
-      </SidebarToggle>
-      <List
-        style={{ overflow: 'auto', height: 'calc(100% - 68px)' }}
-        component="nav"
-      >
-        {expanded ? (
-          <Accordion
-            expanded={expandedFlowList}
-            onChange={() => setExpandedFlowList(!expandedFlowList)}
-            sx={{ marginBottom: '8px' }}
+        {expanded && (
+          <Typography
+            fontSize="13px"
+            fontWeight="500"
+            variant="body2"
+            color={theme.palette.text.secondary}
+            sx={animationStyles(expanded)}
           >
-            <StyledMainAccordionSummary
-              expandIcon={<ExpandMoreIcon color="primary" />}
-              aria-controls="flowList-content"
-              id="flowList-header"
+            Collapse Sidebar
+          </Typography>
+        )}
+      </SidebarToggle>
+      <Divider
+        sx={(theme) => ({
+          borderColor: isScrolled
+            ? theme.palette.grayBorder
+            : theme.palette.sidebarBackground,
+          width: '100%',
+          transition: '0.2s'
+        })}
+      />
+      <StyledWrapper ref={scrollableRef} component="nav">
+        <StyledList>
+          {expanded ? (
+            <StyledAccordion
+              expanded={expandedFlowList}
+              onChange={() => setExpandedFlowList(!expandedFlowList)}
             >
-              <NavLink
-                onClick={(e) => e.stopPropagation()}
-                to={defaultFlowListLink}
+              <StyledMainAccordionSummary
+                expandIcon={<ExpandMoreIcon color="primary" />}
+                aria-controls="flowList-content"
+                id="flowList-header"
+                expanded={expanded}
               >
-                <ListItemIcon>
-                  <LineChartDotsIcon />
-                </ListItemIcon>
-              </NavLink>
-              <Typography sx={animationStyles(expanded)}>Flow List</Typography>
-            </StyledMainAccordionSummary>
-            <StyledAccordionDetails>
-              <Label variant="body2">Flow on Production</Label>
-              <Accordion
-                expanded={
-                  expandedFlow === PRODUCTION_FLOW_ID && expandedFlow === id
-                }
-                onChange={handleChangeFlow(PRODUCTION_FLOW_ID)}
-              >
-                <Box sx={{ position: 'relative' }}>
-                  <StyledNavLink
-                    to={`${routes.underwriting.flow.list}/${PRODUCTION_FLOW_ID}`}
-                  >
-                    <StyledSubAccordionSummary
-                      expandIcon={<ExpandMoreIcon fontSize="small" />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                    >
-                      <ListItemIcon>
-                        <BezierIcon />
-                      </ListItemIcon>
-                      <Typography variant="body2">
-                        {flowProduction?.name}
-                      </Typography>
-                    </StyledSubAccordionSummary>
-                  </StyledNavLink>
-                  <ListItemSecondaryAction>
-                    <ActionsMenu isProductionFlow flow={flowProduction} />
-                  </ListItemSecondaryAction>
-                </Box>
-                <StyledAccordionDetails>
-                  <StepList nodes={flow.nodes} isProductionFlow />
-                </StyledAccordionDetails>
-              </Accordion>
-              <Label variant="body2">Draft Flows</Label>
-              {flowList.map((flowItem) => (
-                <StyledAccordion
-                  key={flowItem.id}
-                  expanded={expandedFlow === flowItem.id && expandedFlow === id}
-                  onChange={handleChangeFlow(flowItem.id)}
+                <NavLink
+                  onClick={(e) => e.stopPropagation()}
+                  to={defaultFlowListLink}
                 >
-                  <Box sx={{ position: 'relative' }}>
+                  <ListItemIcon>
+                    <LineChartDotsIcon {...itemIconProps} />
+                  </ListItemIcon>
+                </NavLink>
+                {expanded && (
+                  <Typography sx={animationStyles(expanded)}>
+                    Flow List
+                  </Typography>
+                )}
+              </StyledMainAccordionSummary>
+              <StyledAccordionDetails>
+                <Label variant="body2">Flow on Production</Label>
+                <StyledAccordion
+                  expanded={
+                    expandedFlow === PRODUCTION_FLOW_ID && expandedFlow === id
+                  }
+                  onChange={handleChangeFlow(PRODUCTION_FLOW_ID)}
+                >
+                  <Box
+                    sx={{
+                      position: 'relative'
+                    }}
+                  >
                     <StyledNavLink
-                      to={`${routes.underwriting.flow.list}/${flowItem.id}`}
+                      to={`${routes.underwriting.flow.list}/${PRODUCTION_FLOW_ID}`}
                     >
                       <StyledSubAccordionSummary
-                        expandIcon={
-                          <ExpandMoreIcon
-                            sx={{
-                              color: flowItem.id === id ? palette.primary : ''
-                            }}
-                            onClick={(e: React.MouseEvent<SVGSVGElement>) => {
-                              handleExpandIconClick(e, flowItem.id);
-                            }}
-                            fontSize="medium"
-                          />
-                        }
-                        aria-controls={`${flowItem.name}-content`}
-                        id={flowItem.name}
+                        expandIcon={<ExpandMoreIcon fontSize="small" />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
                       >
                         <ListItemIcon>
                           <BezierIcon />
                         </ListItemIcon>
-                        <Typography variant="body2">{flowItem.name}</Typography>
+                        <Typography variant="body2">
+                          {flowProduction?.name}
+                        </Typography>
                       </StyledSubAccordionSummary>
                     </StyledNavLink>
                     <ListItemSecondaryAction>
-                      <ActionsMenu flow={flowItem} />
+                      <ActionsMenu isProductionFlow flow={flowProduction} />
                     </ListItemSecondaryAction>
                   </Box>
                   <StyledAccordionDetails>
-                    <StepList nodes={flow.nodes} />
+                    <StepList nodes={flow.nodes} isProductionFlow />
                   </StyledAccordionDetails>
                 </StyledAccordion>
-              ))}
-              <AddFlow />
-            </StyledAccordionDetails>
-          </Accordion>
-        ) : (
-          <ListItemButton
-            component={NavLink}
-            to={defaultFlowListLink}
-            sx={{ height: '32px', marginBottom: '8px' }}
-          >
-            <ListItemIcon>
-              <LineChartDotsIcon />
-            </ListItemIcon>
-          </ListItemButton>
-        )}
-        {pages.map((item, index) =>
-          hasPermission(user?.policies, item) ? (
-            <ListItemButton
-              key={index}
-              component={NavLink}
-              to={item.to}
-              sx={{ height: '32px', marginBottom: '8px' }}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText
-                primary={item.text}
-                sx={animationStyles(expanded)}
-              />
-            </ListItemButton>
-          ) : null
-        )}
-        {expanded ? (
-          <StyledAccordion
-            disableGutters
-            expanded={expandedReports}
-            onChange={handleReportsToggle}
-          >
-            <StyledMainAccordionSummary
-              expandIcon={<ExpandMoreIcon color="primary" />}
-              aria-controls="flowList-content"
-              id="flowList-header"
-            >
-              <ListItemIcon>
-                <DocumentPaperIcon />
-              </ListItemIcon>
-              <Typography sx={animationStyles(expanded)}>Reports</Typography>
-            </StyledMainAccordionSummary>
-            <StyledAccordionDetails>
-              {reportPages.map((item, index) =>
-                hasPermission(user?.policies, item) ? (
-                  <ListItemButton
-                    key={index}
-                    component={NavLink}
-                    to={item.to}
-                    sx={{
-                      height: '32px',
-                      marginBottom: '8px',
-                      marginLeft: '4px'
-                    }}
+                <Label variant="body2">Draft Flows</Label>
+                {flowList.map((flowItem) => (
+                  <StyledAccordion
+                    key={flowItem.id}
+                    expanded={
+                      expandedFlow === flowItem.id && expandedFlow === id
+                    }
+                    onChange={handleChangeFlow(flowItem.id)}
                   >
-                    <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText
-                      primary={
-                        <Typography variant="body2">{item.text}</Typography>
-                      }
-                      sx={animationStyles(expanded)}
-                    />
-                  </ListItemButton>
-                ) : null
-              )}
-            </StyledAccordionDetails>
-          </StyledAccordion>
-        ) : (
-          <ListItemButton sx={{ height: '32px', marginBottom: '8px' }}>
-            <ListItemIcon>
-              <DocumentPaperIcon />
-            </ListItemIcon>
-          </ListItemButton>
-        )}
-      </List>
+                    <Box sx={{ position: 'relative' }}>
+                      <StyledNavLink
+                        to={`${routes.underwriting.flow.list}/${flowItem.id}`}
+                      >
+                        <StyledSubAccordionSummary
+                          expandIcon={
+                            <ExpandMoreIcon
+                              sx={{
+                                color: flowItem.id === id ? palette.primary : ''
+                              }}
+                              onClick={(e: React.MouseEvent<SVGSVGElement>) => {
+                                handleExpandIconClick(e, flowItem.id);
+                              }}
+                              fontSize="medium"
+                            />
+                          }
+                          aria-controls={`${flowItem.name}-content`}
+                          id={flowItem.name}
+                        >
+                          <ListItemIcon>
+                            <BezierIcon />
+                          </ListItemIcon>
+                          <Typography variant="body2">
+                            {flowItem.name}
+                          </Typography>
+                        </StyledSubAccordionSummary>
+                      </StyledNavLink>
+                      <ListItemSecondaryAction>
+                        <ActionsMenu flow={flowItem} />
+                      </ListItemSecondaryAction>
+                    </Box>
+                    <StyledAccordionDetails>
+                      <StepList nodes={flow.nodes} />
+                    </StyledAccordionDetails>
+                  </StyledAccordion>
+                ))}
+                <AddFlow />
+              </StyledAccordionDetails>
+            </StyledAccordion>
+          ) : (
+            <StyledListItemButton component={NavLink} to={defaultFlowListLink}>
+              <ListItemIcon>
+                <LineChartDotsIcon {...itemIconProps} />
+              </ListItemIcon>
+            </StyledListItemButton>
+          )}
+          {pages.map((item, index) =>
+            hasPermission(user?.policies, item) ? (
+              <StyledListItemButton
+                key={index}
+                component={NavLink}
+                to={item.to}
+                expanded={expanded}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                {expanded && (
+                  <ListItemText
+                    primary={item.text}
+                    sx={animationStyles(expanded)}
+                  />
+                )}
+              </StyledListItemButton>
+            ) : null
+          )}
+          {expanded ? (
+            <StyledAccordion
+              disableGutters
+              expanded={expandedReports}
+              onChange={handleReportsToggle}
+            >
+              <StyledMainAccordionSummary
+                expandIcon={<ExpandMoreIcon color="primary" />}
+                aria-controls="flowList-content"
+                id="flowList-header"
+                expanded={expanded}
+              >
+                <ListItemIcon>
+                  <DocumentPaperIcon {...itemIconProps} />
+                </ListItemIcon>
+                {expanded && (
+                  <Typography sx={animationStyles(expanded)}>
+                    Reports
+                  </Typography>
+                )}
+              </StyledMainAccordionSummary>
+              <StyledAccordionDetails>
+                {reportPages.map((item, index) =>
+                  hasPermission(user?.policies, item) ? (
+                    <StyledListItemButton
+                      key={index}
+                      component={NavLink}
+                      to={item.to}
+                      sx={{
+                        '&:hover svg, &.active svg': {
+                          transform: 'scale(1.5)',
+                          color: theme.palette.primary.main
+                        }
+                      }}
+                    >
+                      <ListItemIcon
+                        sx={{
+                          paddingLeft: 2
+                        }}
+                      >
+                        {item.icon}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={
+                          <Typography variant="body2">{item.text}</Typography>
+                        }
+                        sx={animationStyles(expanded)}
+                      />
+                    </StyledListItemButton>
+                  ) : null
+                )}
+              </StyledAccordionDetails>
+            </StyledAccordion>
+          ) : (
+            <StyledListItemButton>
+              <ListItemIcon>
+                <DocumentPaperIcon {...itemIconProps} />
+              </ListItemIcon>
+            </StyledListItemButton>
+          )}
+        </StyledList>
+      </StyledWrapper>
     </StyledPaper>
   );
 };

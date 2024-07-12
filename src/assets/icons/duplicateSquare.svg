@@ -4,7 +4,7 @@
   viewBox="0 0 24 24"
   fill="currentColor"
   xmlns="http://www.w3.org/2000/svg"
-  fill-opacity="0.56"
+  fill-opacity="1"
 >
   <path
     d="M9.625 7H17V5.625C17 3.875 16.125 3 14.375 3H5.625C3.875 3 3 3.875 3 5.625V14.375C3 16.125 3.875 17 5.625 17H7V9.625C7 7.875 7.875 7 9.625 7Z"
