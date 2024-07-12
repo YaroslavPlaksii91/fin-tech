@@ -18,7 +18,7 @@ import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
-import FlowChartReadOnlyView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyView';
+import FlowChartReadOnlyView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyViewTest';
 import { useViewMode } from '@hooks/useViewMode';
 
 interface SubFlowProps {
