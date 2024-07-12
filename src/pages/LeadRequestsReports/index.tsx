@@ -2,14 +2,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
 import buildQuery from 'odata-query';
 import { Button, Drawer, Paper, Stack, Typography } from '@mui/material';
-import TuneIcon from '@mui/icons-material/Tune';
 
 import { COLUMN_IDS, FetchList, OdataQueries, RowData } from './types';
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import { DEFAULT_SORT } from './constants';
 
-import { reportingService } from '@services/lead-requests-reports';
+import { reportingService } from '@services/reports';
 import TablePagination from '@components/shared/TablePagination';
 import Filters from '@components/Filters/Filters';
 import { theme } from '@theme';
@@ -18,6 +17,8 @@ import Details from '@components/LeadRequestsReports/Details';
 import useTablePagination from '@hooks/useTablePagination';
 import Logger from '@utils/logger';
 import useFilters from '@hooks/useFilters';
+import { TABLE } from '@constants/themeConstants';
+import TuneIcon from '@icons/tune.svg';
 
 export default function LeadRequestsReportsPage() {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -144,7 +145,7 @@ export default function LeadRequestsReportsPage() {
             color="inherit"
             variant="outlined"
             sx={{ minWidth: '80px', borderRadius: '6px' }}
-            startIcon={<TuneIcon sx={{ transform: 'rotate(180deg)' }} />}
+            startIcon={<TuneIcon />}
             onClick={handleFiltersOpen}
           >
             Filters
@@ -161,8 +162,11 @@ export default function LeadRequestsReportsPage() {
         <StyledDataGridPremium
           autoHeight
           disableColumnMenu
-          columnHeaderHeight={32}
-          rowHeight={28}
+          columnHeaderHeight={TABLE.COLUMN_HEIGHT}
+          rowHeight={TABLE.ROW_HEIGHT}
+          // We have border bottom 1px for each row, to include it in rowHeight calculation need also add spacing here
+          getRowSpacing={() => ({ bottom: 1 })}
+          rowSpacingType="border"
           rows={rows}
           columns={columns}
           loading={loading}

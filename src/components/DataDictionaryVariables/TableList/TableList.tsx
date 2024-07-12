@@ -57,8 +57,9 @@ const TableList = ({
 
   const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
   const isProductionFlow = checkIsProductionFlow();
+  const isViewMode = isProductionFlow || !hasUserPermission;
 
   const [userDefinedUsage, setUserDefinedUsage] =
     useState<VariableUsageParams>();
@@ -153,7 +154,7 @@ const TableList = ({
             ))}
             {tabName === VARIABLES_TABS.userDefined && (
               <StyledTableCell align="right">
-                {canUserUpdateFlow && (
+                {!isViewMode && (
                   <IconButton
                     onClick={() => {
                       setSelectedVariable(undefined);

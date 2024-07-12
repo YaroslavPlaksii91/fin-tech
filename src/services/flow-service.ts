@@ -45,12 +45,12 @@ class FlowService {
     return data;
   }
 
-  async pushProductionFlow(flow: IFlow) {
-    const { data } = await api.post<IFlow>('/production-flow', flow, {
-      params: {
-        // @TODO: Real username
-        pushedBy: 'username'
-      }
+  async pushProductionFlow(
+    flow: IFlow,
+    params: { pushedBy: string; note: string }
+  ) {
+    const { data } = await api.post<IFlow>(`/production-flow`, flow, {
+      params
     });
     return data;
   }

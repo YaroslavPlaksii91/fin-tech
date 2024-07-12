@@ -13,7 +13,8 @@ const routes = {
     },
     changeHistory: '/change-history',
     leadRequest: '/lead-request',
-    denialReasons: '/denial-reasons'
+    denialReasons: '/denial-reasons',
+    waterfall: 'waterfall'
   },
   permissionDenied: '/permission-denied'
 };

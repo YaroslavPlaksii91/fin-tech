@@ -11,7 +11,7 @@ export interface LeadRequestsReport {
   leadRequest: LeadRequest;
   output: null | Output;
   processingMetadata: null | ProcessingMetadata;
-  executionHistory: ExecutionHistory;
+  executionHistory: null | ExecutionHistory;
   isPreProcessedForBillingReporting: null | boolean;
 }
 

@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { unwrapResult } from '@reduxjs/toolkit';
+import cloneDeep from 'lodash/cloneDeep';
 
 import {
   formatFlowOnSave,
@@ -35,12 +36,12 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
   const dispatch = useAppDispatch();
   const flowData = useAppSelector(selectFlowData);
   const user = useAppSelector(selectUserInfo);
+  const username = getFullUserName(user);
 
   const onSave = useCallback(async () => {
     if (rfInstance && flow) {
       try {
         setLoading(true);
-        const username = getFullUserName(user);
         const formattedData = formatFlowOnSave({
           flow: {
             ...flow,
@@ -50,7 +51,7 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
         });
         const resultAction = await dispatch(saveFlow(formattedData));
         const savedFlow = unwrapResult(resultAction);
-        setCopyFlow(savedFlow);
+        setCopyFlow(cloneDeep(savedFlow));
         dispatch(updateFlowListItem({ ...savedFlow.data, id: savedFlow.id }));
 
         enqueueSnackbar(
@@ -81,7 +82,12 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
           flow: { ...flow, data: flowData },
           rfInstance
         });
-        const resultAction = await dispatch(pushProductionFlow(formattedData));
+        const resultAction = await dispatch(
+          pushProductionFlow({
+            flow: formattedData,
+            params: { pushedBy: username, note: '' }
+          })
+        );
         const pushedFlow = unwrapResult(resultAction);
 
         enqueueSnackbar(

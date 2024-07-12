@@ -12,7 +12,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import isEmpty from 'lodash/isEmpty';
 import { enqueueSnackbar } from 'notistack';
-import { cloneDeep } from 'lodash';
 
 import { formatFlowDataForValidation, getConnectableNodes } from './utils';
 import validationSchema from './validationSchema';
@@ -146,9 +145,6 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       };
     });
 
-    const storedNodes = cloneDeep(nodes);
-    const storedEdges = cloneDeep(edges);
-
     const newEdges = edges
       .filter((edg) => !existingSplitEdges.includes(edg.id))
       .filter((edg) => !targetNodesIds.includes(edg.target))
@@ -191,8 +187,6 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       );
       resetActiveStepId();
     } catch (error) {
-      setNodes(storedNodes);
-      setEdges(storedEdges);
       enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
         variant: SNACK_TYPE.ERROR
       });

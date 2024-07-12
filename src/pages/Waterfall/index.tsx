@@ -1,15 +1,12 @@
-import { useEffect, useState } from 'react';
-import buildQuery from 'odata-query';
-import {
-  GRID_AGGREGATION_FUNCTIONS,
-  GridSortModel
-} from '@mui/x-data-grid-premium';
+import { useCallback, useEffect, useState } from 'react';
+import { GridSortModel } from '@mui/x-data-grid-premium';
 import { Button, Paper, Stack, Typography } from '@mui/material';
 
-import { COLUMN_IDS, FetchList, RowData } from './types';
+import { FetchList, RowData } from './types';
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
+  AGGREGATION_ROW_STACK_NAME,
   DEFAULT_SORT,
   INITIAL_INPUT_FILTERS,
   INPUT_GROUPS_TO_SHOW
@@ -24,10 +21,11 @@ import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
 import TuneIcon from '@icons/tune.svg';
 
-const DenielReasons = () => {
+const Waterfall = () => {
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [rows, setRows] = useState<RowData[]>([]);
+  const [pinnedRows, setPinnedRows] = useState<RowData[]>([]);
 
   const {
     isFiltersOpen,
@@ -40,47 +38,25 @@ const DenielReasons = () => {
   } = useFilters({ initialInputFilters: INITIAL_INPUT_FILTERS });
 
   const handleSortModelChange = (model: GridSortModel) => {
-    const sortParams = `${model[0].field} ${model[0].sort}`;
+    const formatedSortField = model[0].sort === 'asc' ? '' : '-';
+    const sortParams = `${formatedSortField}${model[0].field}`;
+
     setSort(sortParams);
   };
 
-  const fetchList = async ({
-    sort,
-    filter: { startDate, endDate, deniedBy, rejectionReason } = {}
-  }: FetchList) => {
+  const fetchList = async (params: FetchList) => {
     setLoading(true);
 
-    const queries = {
-      orderBy: sort,
-      count: true,
-      filter: {
-        deniedBy,
-        rejectionReason,
-        date: {
-          ge: startDate,
-          le: endDate
-        }
-      }
-    };
-
-    // We need to replace default odata $filter with entityFilter,
-    // Because this is expected on backend for this Report
-    const params = buildQuery(queries).replace('$filter', 'entityFilter');
-
-    const removeSingleQuotes = (odataParams: string) =>
-      odataParams.replace(
-        /'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z)'/g,
-        '$1'
-      );
-
-    const correctedParams = removeSingleQuotes(params);
-
     try {
-      const data =
-        await reportingService.getDenialReasonsReport(correctedParams);
-      const rows = getFormattedRows(data.value);
+      const data = await reportingService.getWaterfallReport({ params });
+      const rows = getFormattedRows(data.item2);
+      const aggregationRow = rows.find(
+        (row) => row.stack === AGGREGATION_ROW_STACK_NAME
+      );
+      const filteredRows = rows.filter((row) => aggregationRow?.id !== row.id);
 
-      setRows(rows);
+      setRows(filteredRows);
+      setPinnedRows(aggregationRow ? [aggregationRow] : []);
     } catch (e) {
       Logger.error(e);
     } finally {
@@ -88,21 +64,20 @@ const DenielReasons = () => {
     }
   };
 
-  const fetch = () => {
+  const fetch = useCallback(() => {
     const params: FetchList = {
-      sort,
-      filter: {
-        startDate: dateFrom ? dateFrom.toISOString() : undefined,
-        endDate: dateTo ? dateTo.toISOString() : undefined,
-        rejectionReason: inputFilters.denialReasons || undefined,
-        deniedBy: inputFilters.deniedBy || undefined
-      }
+      sortBy: sort,
+      pageSize: 10000, // temporary desion to retrive all records
+      stack: inputFilters.stack || undefined,
+      campaign: inputFilters.campaignId || undefined,
+      startTime: dateFrom ? dateFrom.toISOString() : undefined,
+      endTime: dateTo ? dateTo.toISOString() : undefined
     };
 
     void fetchList(params);
-  };
+  }, [sort, inputFilters, dateFrom, dateTo]);
 
-  useEffect(() => fetch(), [sort, dateFrom, dateTo, inputFilters]);
+  useEffect(() => fetch(), [fetch]);
 
   return (
     <Stack sx={{ padding: '16px 32px', minWidth: '680px', width: '100%' }}>
@@ -113,7 +88,7 @@ const DenielReasons = () => {
         spacing={2}
         py={2}
       >
-        <Typography variant="h4">Denial Reasons</Typography>
+        <Typography variant="h4">Waterfall</Typography>
         <Stack
           direction="row"
           justifyContent="space-between"
@@ -149,24 +124,11 @@ const DenielReasons = () => {
           // We have border bottom 1px for each row, to include it in rowHeight calculation need also add spacing here
           getRowSpacing={() => ({ bottom: 1 })}
           rowSpacingType="border"
+          pinnedRows={rows.length ? { bottom: pinnedRows } : undefined}
           rows={rows}
-          aggregationFunctions={{
-            totalLabel: {
-              apply: () => 'Total',
-              label: ''
-            },
-            // To not show the header aggregation label for columns in aggregationModel according to design
-            sum: { ...GRID_AGGREGATION_FUNCTIONS.sum, label: '' }
-          }}
-          aggregationModel={{
-            [COLUMN_IDS.denialReason]: 'totalLabel',
-            [COLUMN_IDS.totalCount]: 'sum',
-            [COLUMN_IDS.percentage]: 'sum'
-          }}
           columns={getDataGridColumns()}
           loading={loading}
           sortingMode="server"
-          paginationMode="client"
           onSortModelChange={handleSortModelChange}
           getRowClassName={(params) => {
             if (!rows.length) return '';
@@ -188,4 +150,4 @@ const DenielReasons = () => {
   );
 };
 
-export default DenielReasons;
+export default Waterfall;

@@ -7,7 +7,7 @@ import {
   Typography
 } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
-import { keyBy, cloneDeep } from 'lodash';
+import { keyBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -306,8 +306,6 @@ const DecisionTableStep = ({
   };
 
   const onApplyChangesClick = async () => {
-    const storedNodes = cloneDeep(nodes);
-    const storedEdges = cloneDeep(edges);
     const targetNodesIds = [...stepIds, defaultStepId];
 
     const splitEdges = targetNodesIds.map((targetNodeId, index) => ({
@@ -388,8 +386,6 @@ const DecisionTableStep = ({
       );
       resetActiveStepId();
     } catch (error) {
-      setNodes(storedNodes);
-      setEdges(storedEdges);
       enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
         variant: SNACK_TYPE.ERROR
       });

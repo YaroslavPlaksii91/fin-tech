@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Box, IconButton, Typography } from '@mui/material';
+import { Box, IconButton, Stack, Typography } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { GridRowParams } from '@mui/x-data-grid-premium';
 
@@ -111,15 +111,17 @@ const Details = ({ data, handleClose }: DetailsProps) => {
         displayConfirmBtn={false}
         onClose={handleApiReviewDialogClose}
       >
-        {accordions.map((accordion) => (
-          <Accordion
-            key={accordion.title}
-            isExpanded={expandedAccordion === accordion.title}
-            title={accordion.title}
-            onChange={handleChange(accordion.title)}
-            content={accordion.content}
-          />
-        ))}
+        <Stack spacing={1}>
+          {accordions.map((accordion) => (
+            <Accordion
+              key={accordion.title}
+              isExpanded={expandedAccordion === accordion.title}
+              title={accordion.title}
+              onChange={handleChange(accordion.title)}
+              content={accordion.content}
+            />
+          ))}
+        </Stack>
       </Dialog>
       <Dialog
         displayConfirmBtn={false}

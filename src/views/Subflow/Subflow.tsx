@@ -2,7 +2,12 @@ import { Edge, ReactFlowProvider } from 'reactflow';
 import { useCallback, useMemo } from 'react';
 import { cloneDeep } from 'lodash';
 
-import { addNodeInSubFlow, findSubFlow, updateNodesInSubFlow } from './utils';
+import {
+  addNodeInSubFlow,
+  findSubFlow,
+  removeNodesAndEdgesInSubFlow,
+  updateNodesInSubFlow
+} from './utils';
 
 import { FlowNode, IFlow } from '@domain/flow';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
@@ -25,11 +30,11 @@ const SubFlow: React.FC<SubFlowProps> = ({
   activeStepId,
   resetActiveStepId
 }) => {
-  const mainFlowNodes: FlowNode[] = getNodes();
   const user = useAppSelector(selectUserInfo);
   const username = getFullUserName(user);
 
   const subFlow = useMemo(() => {
+    const mainFlowNodes: FlowNode[] = getNodes();
     const subFlowNode = cloneDeep(findSubFlow(activeStepId, mainFlowNodes));
     if (subFlowNode) {
       return {
@@ -52,21 +57,16 @@ const SubFlow: React.FC<SubFlowProps> = ({
     return undefined;
   }, [activeStepId]);
 
-  const saveSubflow = useCallback(
-    (subFlow: IFlow) => {
-      const updatedNodes = updateNodesInSubFlow(
-        mainFlowNodes,
-        subFlow,
-        username
-      );
-      setNodes(updatedNodes);
-      resetActiveStepId();
-    },
-    [mainFlowNodes]
-  );
+  const saveSubflow = useCallback((subFlow: IFlow) => {
+    const mainFlowNodes: FlowNode[] = getNodes();
+    const updatedNodes = updateNodesInSubFlow(mainFlowNodes, subFlow, username);
+    setNodes(updatedNodes);
+    resetActiveStepId();
+  }, []);
 
-  const updateNodesInMainFlow = useCallback(
+  const addNodeAndSyncMainFlow = useCallback(
     (subFlowId: string, newNode: FlowNode, edges: Edge[]) => {
+      const mainFlowNodes: FlowNode[] = getNodes();
       const updatedNodes = addNodeInSubFlow(
         mainFlowNodes,
         subFlowId,
@@ -75,7 +75,20 @@ const SubFlow: React.FC<SubFlowProps> = ({
       );
       setNodes(updatedNodes);
     },
-    [mainFlowNodes]
+    []
+  );
+
+  const deleteNodeAndSyncMainFlow = useCallback(
+    (deleteNodes: FlowNode[], subFlowId: string) => {
+      const mainFlowNodes: FlowNode[] = getNodes();
+      const updatedNodes = removeNodesAndEdgesInSubFlow(
+        mainFlowNodes,
+        deleteNodes,
+        subFlowId
+      );
+      setNodes(updatedNodes);
+    },
+    []
   );
 
   return (
@@ -87,7 +100,8 @@ const SubFlow: React.FC<SubFlowProps> = ({
             mainFlow={mainFlow}
             flow={subFlow}
             setCopyFlow={saveSubflow}
-            updateNodesInMainFlow={updateNodesInMainFlow}
+            addNodeAndSyncMainFlow={addNodeAndSyncMainFlow}
+            deleteNodeAndSyncMainFlow={deleteNodeAndSyncMainFlow}
           />
         </ReactFlowProvider>
       )}
