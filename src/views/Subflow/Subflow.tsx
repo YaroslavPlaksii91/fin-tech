@@ -16,6 +16,10 @@ import SubFlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEdi
 import { selectUserInfo } from '@store/auth/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
+import { permissionsMap } from '@constants/permissions';
+import FlowChartReadOnlyView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyView';
+import { useViewMode } from '@hooks/useViewMode';
 
 interface SubFlowProps {
   mainFlow: IFlow;
@@ -90,19 +94,30 @@ const SubFlow: React.FC<SubFlowProps> = ({
     },
     []
   );
+  const viewMode = useViewMode();
+  const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const isViewMode = viewMode || !canUserUpdateFlow;
 
   return (
     // As subFlow is sub instance main flow, it needs own flow provider
     <StepContainer>
       {subFlow && (
         <ReactFlowProvider>
-          <SubFlowChartEditor
-            mainFlow={mainFlow}
-            flow={subFlow}
-            setCopyFlow={saveSubflow}
-            addNodeAndSyncMainFlow={addNodeAndSyncMainFlow}
-            deleteNodeAndSyncMainFlow={deleteNodeAndSyncMainFlow}
-          />
+          {!isViewMode ? (
+            <SubFlowChartEditor
+              mainFlow={mainFlow}
+              flow={subFlow}
+              setCopyFlow={saveSubflow}
+              addNodeAndSyncMainFlow={addNodeAndSyncMainFlow}
+              deleteNodeAndSyncMainFlow={deleteNodeAndSyncMainFlow}
+            />
+          ) : (
+            <FlowChartReadOnlyView
+              showControlPanel={false}
+              flow={subFlow}
+              isProductionFlow={false}
+            />
+          )}
         </ReactFlowProvider>
       )}
     </StepContainer>
