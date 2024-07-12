@@ -38,6 +38,7 @@ const Waterfall = () => {
   } = useFilters({ initialInputFilters: INITIAL_INPUT_FILTERS });
 
   const handleSortModelChange = (model: GridSortModel) => {
+    if (!model.length) return;
     const formatedSortField = model[0].sort === 'asc' ? '' : '-';
     const sortParams = `${formatedSortField}${model[0].field}`;
 
