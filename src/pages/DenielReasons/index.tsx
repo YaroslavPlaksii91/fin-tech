@@ -40,6 +40,8 @@ const DenielReasons = () => {
   } = useFilters({ initialInputFilters: INITIAL_INPUT_FILTERS });
 
   const handleSortModelChange = (model: GridSortModel) => {
+    if (!model.length) return;
+
     const sortParams = `${model[0].field} ${model[0].sort}`;
     setSort(sortParams);
   };

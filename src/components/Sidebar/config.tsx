@@ -61,5 +61,17 @@ export const reportPages = [
     text: 'Denial Reasons',
     to: routes.underwriting.denialReasons,
     permission: permissionsMap.canViewDenialReasonReport
+  },
+  {
+    icon: (
+      <DotIcon
+        height={iconSize}
+        width={iconSize}
+        color={theme.palette.action.active}
+      />
+    ),
+    text: 'Waterfall',
+    to: routes.underwriting.waterfall,
+    permission: permissionsMap.canViewWaterfallReport
   }
 ];

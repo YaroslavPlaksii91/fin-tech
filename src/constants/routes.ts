@@ -14,7 +14,7 @@ const routes = {
     changeHistory: '/change-history',
     leadRequest: '/lead-request',
     denialReasons: '/denial-reasons',
-    waterfall: 'waterfall'
+    waterfall: '/waterfall'
   },
   permissionDenied: '/permission-denied'
 };
