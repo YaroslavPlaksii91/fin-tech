@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { GridSortModel } from '@mui/x-data-grid-premium';
-import { Button, Paper, Stack, Typography } from '@mui/material';
+import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 
 import { FetchList, RowData } from './types';
 import { getFormattedRows } from './utils';
@@ -81,7 +81,7 @@ const Waterfall = () => {
   useEffect(() => fetch(), [fetch]);
 
   return (
-    <Stack sx={{ padding: '16px 32px', minWidth: '680px', width: '100%' }}>
+    <Box sx={{ padding: '16px 24px' }}>
       <Stack
         direction="row"
         justifyContent="space-between"
@@ -147,7 +147,7 @@ const Waterfall = () => {
         handleApply={handleFiltersApply}
         handleClose={handleFiltersClose}
       />
-    </Stack>
+    </Box>
   );
 };
 
