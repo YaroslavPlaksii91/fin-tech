@@ -15,6 +15,9 @@ import { SNACK_TYPE } from '@constants/common';
 import { useActiveStep } from '@contexts/StepContext';
 import Dialog from '@components/shared/Modals/Dialog';
 import StepBreadcrumbs from '@components/StepManagment/StepDetailsHeader/StepBreadcrumbs';
+import { useViewMode } from '@hooks/useViewMode';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
+import { permissionsMap } from '@constants/permissions';
 
 const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
   rfInstance,
@@ -23,6 +26,9 @@ const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
 }) => {
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
   const { resetActive } = useActiveStep();
+  const viewMode = useViewMode();
+  const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const isViewMode = viewMode || !canUserUpdateFlow;
 
   const handleDiscardChanges = () => resetActive();
 
@@ -59,19 +65,21 @@ const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
         <StepBreadcrumbs stepId={flow.id} title={flow.data.name} />
         <Typography variant="h4">{flow.data.name}</Typography>
       </Box>
-      <Stack
-        onClick={() => setOpenDiscardModal(true)}
-        spacing={1}
-        direction="row"
-        justifyContent="flex-end"
-      >
-        <Button size="small" variant="outlined">
-          Cancel
-        </Button>
-        <Button size="small" variant="contained" onClick={onSave}>
-          Save changes
-        </Button>
-      </Stack>
+      {!isViewMode && (
+        <Stack
+          onClick={() => setOpenDiscardModal(true)}
+          spacing={1}
+          direction="row"
+          justifyContent="flex-end"
+        >
+          <Button size="small" variant="outlined">
+            Cancel
+          </Button>
+          <Button size="small" variant="contained" onClick={onSave}>
+            Save changes
+          </Button>
+        </Stack>
+      )}
       <Dialog
         title="Cancel Changes"
         open={openDiscardModal}

@@ -25,6 +25,7 @@ import {
   ADD_BUTTON_ON_EDGE,
   ControlPanelEditProps,
   CustomReactFlowInstance,
+  DEFAULT_EDGE_TYPE,
   EdgeData,
   StepConfigureViewProps,
   StepType
@@ -55,6 +56,7 @@ type FlowChartEditorProps = {
   flow: IFlow;
   mainFlow?: IFlow;
   setCopyFlow: (flow: IFlow) => void;
+  isViewMode?: boolean;
   addNodeAndSyncMainFlow?: (
     subflowId: string,
     newNode: FlowNode,
@@ -78,7 +80,8 @@ const withFlowChartEditor =
       mainFlow,
       setCopyFlow,
       addNodeAndSyncMainFlow,
-      deleteNodeAndSyncMainFlow
+      deleteNodeAndSyncMainFlow,
+      isViewMode
     } = props;
     const user = useAppSelector(selectUserInfo);
     const [isDirty, setIsDirty] = useState<boolean>(false);
@@ -153,12 +156,12 @@ const withFlowChartEditor =
         getLayoutedElements(flow.nodes, flow.edges);
       const edges = layoutedEdges.map((edge) => ({
         ...edge,
-        type: ADD_BUTTON_ON_EDGE,
+        type: isViewMode ? DEFAULT_EDGE_TYPE : ADD_BUTTON_ON_EDGE,
         data: { onAdd: onAddNodeBetweenEdges }
       }));
       const nodes = layoutedNodes;
       return { edges, nodes };
-    }, [flow]);
+    }, [flow, isViewMode]);
 
     useEffect(() => {
       setEdges(initialElements.edges);
@@ -426,7 +429,9 @@ const withFlowChartEditor =
           edgeTypes={edgeTypes}
           attributionPosition="bottom-left"
           connectionMode={ConnectionMode.Loose}
+          nodesConnectable={!isViewMode}
           connectionLineType={ConnectionLineType.SmoothStep}
+          deleteKeyCode={isViewMode ? null : 'Backspace'}
         >
           <Background variant={BackgroundVariant.Dots} />
           {rfInstance && (
@@ -454,7 +459,7 @@ const withFlowChartEditor =
           flowNode={flowNode}
           isOpen={Boolean(flowNode)}
           onClose={onPaneClick}
-          isEditMode
+          isEditMode={!isViewMode}
           setActiveStep={setActiveStep}
         />
         <LeavePageConfirmationDialog isDirty={isDirty} />

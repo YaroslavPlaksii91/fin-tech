@@ -58,6 +58,7 @@ const FlowChartReadOnlyView: React.FC<FlowChartViewProps> = ({
       <ReactFlow
         nodesDraggable={false}
         deleteKeyCode={null}
+        nodesConnectable={false}
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
