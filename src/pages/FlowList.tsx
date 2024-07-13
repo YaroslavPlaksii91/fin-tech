@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import FlowChartReadOnlyView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyView';
+import FlowChartReadOnlyView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyViewTest';
 import { selectFlow } from '@store/flow/selectors';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { PRODUCTION_FLOW_ID } from '@constants/common';

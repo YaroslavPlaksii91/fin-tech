@@ -115,6 +115,7 @@ const SubFlow: React.FC<SubFlowProps> = ({
             <FlowChartReadOnlyView
               showControlPanel={false}
               flow={subFlow}
+              mainFlow={mainFlow}
               isProductionFlow={false}
             />
           )}

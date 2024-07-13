@@ -25,6 +25,7 @@ import { useActiveStep } from '@contexts/StepContext';
 
 interface FlowChartViewProps {
   flow: IFlow;
+  mainFlow?: IFlow;
   isProductionFlow: boolean;
   showControlPanel?: boolean;
 }
@@ -32,10 +33,11 @@ interface FlowChartViewProps {
 const FlowChartReadOnlyView: React.FC<FlowChartViewProps> = ({
   flow,
   isProductionFlow,
+  mainFlow,
   showControlPanel = false
 }) => {
-  const [nodes, setNodes] = useNodesState(flow.nodes);
-  const [edges, setEdges] = useEdgesState(flow.edges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(flow.nodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(flow.edges);
   const { setViewport } = useReactFlow();
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
   const { flowNode, nodeElement, onPaneClick, onNodeContextMenu } =
@@ -54,10 +56,14 @@ const FlowChartReadOnlyView: React.FC<FlowChartViewProps> = ({
   return (
     <>
       <ReactFlow
+        nodesDraggable={false}
+        deleteKeyCode={null}
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
         attributionPosition="bottom-left"
         onPaneClick={onPaneClick}
         onInit={(instance) => {
@@ -68,7 +74,7 @@ const FlowChartReadOnlyView: React.FC<FlowChartViewProps> = ({
         <Background variant={BackgroundVariant.Dots} />
         <Controls />
         <StepActionsMenu
-          subFlowId={null}
+          subFlowId={mainFlow ? flow.id : null}
           anchorElement={nodeElement}
           flowNode={flowNode}
           isOpen={Boolean(flowNode)}
@@ -79,7 +85,6 @@ const FlowChartReadOnlyView: React.FC<FlowChartViewProps> = ({
       {/* Open read mode for subFlow steps */}
       {rfInstance && activeStep.stepId && activeStep.subFlowId && (
         <StepConfigureView
-          mainFlow={flow}
           flow={flow}
           activeStepId={activeStep.stepId}
           rfInstance={rfInstance as CustomReactFlowInstance}
