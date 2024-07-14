@@ -414,8 +414,8 @@ const withFlowChartEditor =
           onPaneClick={onPaneClick}
           onNodeContextMenu={onNodeContextMenu}
           onNodeDragStop={onNodeDragStop}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
+          onNodesChange={isViewMode ? undefined : onNodesChange}
+          onEdgesChange={isViewMode ? undefined : onEdgesChange}
           onEdgesDelete={onEdgesDelete}
           onNodeDragStart={onNodeDragStart}
           onInit={(instance) => {
@@ -429,9 +429,7 @@ const withFlowChartEditor =
           edgeTypes={edgeTypes}
           attributionPosition="bottom-left"
           connectionMode={ConnectionMode.Loose}
-          nodesConnectable={!isViewMode}
           connectionLineType={ConnectionLineType.SmoothStep}
-          deleteKeyCode={isViewMode ? null : 'Backspace'}
         >
           <Background variant={BackgroundVariant.Dots} />
           {rfInstance && (

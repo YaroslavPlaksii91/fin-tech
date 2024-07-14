@@ -18,7 +18,6 @@ import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
-// import FlowChartReadOnlyView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyViewTest';
 import { useViewMode } from '@hooks/useViewMode';
 
 interface SubFlowProps {
@@ -103,22 +102,6 @@ const SubFlow: React.FC<SubFlowProps> = ({
     <StepContainer>
       {subFlow && (
         <ReactFlowProvider>
-          {/* {!isViewMode ? (
-            <SubFlowChartEditor
-              mainFlow={mainFlow}
-              flow={subFlow}
-              setCopyFlow={saveSubflow}
-              addNodeAndSyncMainFlow={addNodeAndSyncMainFlow}
-              deleteNodeAndSyncMainFlow={deleteNodeAndSyncMainFlow}
-            />
-          ) : (
-            <FlowChartReadOnlyView
-              showControlPanel={false}
-              flow={subFlow}
-              mainFlow={mainFlow}
-              isProductionFlow={false}
-            />
-          )} */}
           <SubFlowChartEditor
             mainFlow={mainFlow}
             flow={subFlow}
