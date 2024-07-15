@@ -33,6 +33,11 @@ const SelectVariableValueDialog = ({
   category,
   handleSubmitSelectedRowCellData
 }: SelectVariableValueDialogProps) => {
+  const bounds =
+    selectedRowCell.operator === OPERATORS.Between
+      ? selectedRowCell.expression.split(' ')
+      : [];
+
   const {
     handleSubmit,
     control,
@@ -42,11 +47,11 @@ const SelectVariableValueDialog = ({
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      variableName: selectedRowCell.variableName,
-      operator: '',
-      value: '',
-      lowerBound: null || undefined,
-      upperBound: null || undefined
+      name: selectedRowCell.name,
+      operator: selectedRowCell.operator,
+      value: selectedRowCell?.expression || '',
+      lowerBound: bounds.length > 0 ? +bounds[0] : undefined,
+      upperBound: bounds.length > 0 ? +bounds[1] : undefined
     }
   });
 
@@ -86,7 +91,7 @@ const SelectVariableValueDialog = ({
         >
           <InputText
             fullWidth
-            name="variableName"
+            name="name"
             control={control}
             InputProps={{
               startAdornment: category === CATEGORIES.Conditions && (

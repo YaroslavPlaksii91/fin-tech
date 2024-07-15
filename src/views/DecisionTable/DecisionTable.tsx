@@ -279,7 +279,7 @@ const DecisionTableStep = ({
           return {
             ...row,
             [data.category]: row[data.category].map((column) =>
-              column.name !== data.variableName
+              column.name !== data.name
                 ? column
                 : {
                     ...column,

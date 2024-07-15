@@ -3,7 +3,7 @@ import * as yup from 'yup';
 import { OPERATORS } from '../constants';
 
 export const validationSchema = yup.object().shape({
-  variableName: yup.string().required(),
+  name: yup.string().required(),
   operator: yup.string().required(),
   value: yup
     .string()

@@ -29,12 +29,11 @@ export type VariableRowData = {
   };
 };
 
-export type SelectedCellInRowData = {
-  rowIndex: number;
-  variableName: string;
-  dataType: string;
+export interface SelectedCellInRowData extends CaseEntry {
   category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
-};
+  rowIndex: number;
+  dataType: DATA_TYPE | string;
+}
 
 export type VariableColumnData = {
   name: string;
@@ -51,7 +50,7 @@ export type VariableColumnDataUpdate = {
 };
 
 export type FormFieldsProps = {
-  variableName: string;
+  name: string;
   operator?: string;
   value?: string;
   lowerBound?: number | null;
