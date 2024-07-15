@@ -5,7 +5,7 @@ import { selectFlow } from '@store/flow/selectors';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
 import { useLoading } from '@contexts/LoadingContext';
-import { getProductionFlow, getFlow } from '@store/flow/asyncThunk';
+import { getFlow } from '@store/flow/asyncThunk';
 import { setInitialFlow } from '@store/flow/flow';
 import { useActiveStep } from '@contexts/StepContext';
 import Logger from '@utils/logger';
@@ -25,9 +25,7 @@ export default function FlowList() {
     const fetchFlow = async (flowId: string) => {
       try {
         startLoading();
-        if (id === PRODUCTION_FLOW_ID) {
-          await dispatch(getProductionFlow());
-        } else {
+        if (id !== PRODUCTION_FLOW_ID) {
           await dispatch(getFlow(flowId));
         }
       } catch (error) {

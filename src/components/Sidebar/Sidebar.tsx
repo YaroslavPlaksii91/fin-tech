@@ -319,7 +319,6 @@ const Sidebar = () => {
                   >
                     <Box sx={{ position: 'relative' }}>
                       <StyledNavLink
-                        // to={`${routes.underwriting.flow.list}/${flowItem.id}`}
                         to={`${routes.underwriting.flow.list(flowItem.id)}`}
                       >
                         <StyledSubAccordionSummary

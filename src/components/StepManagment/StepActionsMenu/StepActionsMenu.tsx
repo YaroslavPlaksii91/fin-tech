@@ -79,7 +79,7 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
       return getProductionFlowOptions({ canUserViewFlow });
     }
     return getOptions({ canUserViewFlow, canUserUpdateFlow });
-  }, [id]);
+  }, [id, isEditMode]);
 
   useEffect(() => {
     setIsOpen(isOpen);
