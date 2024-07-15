@@ -246,7 +246,7 @@ const Table = ({
                   );
                 }
 
-                if (!row[name])
+                if (!name.length || !row[name])
                   return (
                     <StyledTableCell key={columnIndex}>
                       {columnIndex === 0 && rows.length - 1 === rowIndex
@@ -279,8 +279,8 @@ const Table = ({
                             setSelectedRowCell({
                               rowIndex,
                               category,
-                              variableName: name,
-                              dataType
+                              dataType,
+                              ...row[name]
                             });
                         }}
                         disabled={!dataType.length}
@@ -304,7 +304,7 @@ const Table = ({
                             category,
                             rowIndex,
                             dataType,
-                            variableName: name
+                            ...row[name]
                           })
                         }
                       />
