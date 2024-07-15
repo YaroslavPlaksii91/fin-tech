@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
 import buildQuery from 'odata-query';
-import { Button, Drawer, Paper, Stack, Typography } from '@mui/material';
+import { Box, Button, Drawer, Paper, Stack, Typography } from '@mui/material';
 
 import { COLUMN_IDS, FetchList, OdataQueries, RowData } from './types';
 import { getFormattedRows } from './utils';
@@ -126,7 +126,7 @@ export default function LeadRequestsReportsPage() {
   useEffect(() => fetch(), [page, rowsPerPage, sort, dateFrom, dateTo]);
 
   return (
-    <Stack sx={{ padding: '16px 32px', minWidth: '680px', width: '100%' }}>
+    <Box sx={{ padding: '16px 24px' }}>
       <Stack
         direction="row"
         justifyContent="space-between"
@@ -207,6 +207,6 @@ export default function LeadRequestsReportsPage() {
           <Details handleClose={handleDetailsClose} data={selectedRow.data} />
         ) : null}
       </Drawer>
-    </Stack>
+    </Box>
   );
 }

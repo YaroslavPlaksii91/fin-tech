@@ -46,7 +46,7 @@ export const reportPages = [
         color={theme.palette.action.active}
       />
     ),
-    text: 'Lead Requests',
+    text: 'Applications',
     to: routes.underwriting.leadRequest,
     permission: permissionsMap.canViewLeadRequestReport
   },
