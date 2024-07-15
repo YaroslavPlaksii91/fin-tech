@@ -3,7 +3,7 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 
 import { formatFlowOnSave } from '../utils/flowUtils';
-import { ControlPanelEditProps } from '../types';
+import { ControlPanelProps } from '../types';
 
 import { StyledPanel } from './styled';
 
@@ -15,20 +15,19 @@ import { SNACK_TYPE } from '@constants/common';
 import { useActiveStep } from '@contexts/StepContext';
 import Dialog from '@components/shared/Modals/Dialog';
 import StepBreadcrumbs from '@components/StepManagment/StepDetailsHeader/StepBreadcrumbs';
-import { useViewMode } from '@hooks/useViewMode';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
 
-const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
+const ControlPanelSubFlow: React.FC<ControlPanelProps> = ({
   rfInstance,
   flow,
-  setCopyFlow
+  setCopyFlow,
+  isViewMode
 }) => {
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
   const { resetActive } = useActiveStep();
-  const viewMode = useViewMode();
   const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
-  const isViewMode = viewMode || !canUserUpdateFlow;
+  const isPreview = isViewMode || !canUserUpdateFlow;
 
   const handleDiscardChanges = () => resetActive();
 
@@ -65,7 +64,7 @@ const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
         <StepBreadcrumbs stepId={flow.id} title={flow.data.name} />
         <Typography variant="h4">{flow.data.name}</Typography>
       </Box>
-      {!isViewMode && (
+      {!isPreview && (
         <Stack
           onClick={() => setOpenDiscardModal(true)}
           spacing={1}
@@ -97,4 +96,4 @@ const ControlPanelSubflowEdit: React.FC<ControlPanelEditProps> = ({
   );
 };
 
-export default ControlPanelSubflowEdit;
+export default ControlPanelSubFlow;

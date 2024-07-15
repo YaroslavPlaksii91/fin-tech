@@ -49,7 +49,6 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
         activeStep={activeStep}
         setActiveStep={setActiveStep}
         isEditMode={isEditMode}
-        isProductionFlow={isProductionFlow}
         step={step}
       />
     );

@@ -3,12 +3,13 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { unwrapResult } from '@reduxjs/toolkit';
 import cloneDeep from 'lodash/cloneDeep';
+import { NavLink } from 'react-router-dom';
 
 import {
   formatFlowOnSave,
   parseFlowValidationErrors
 } from '../utils/flowUtils';
-import { ControlPanelEditProps } from '../types';
+import { ControlPanelProps } from '../types';
 
 import { StyledPanel } from './styled';
 
@@ -23,20 +24,30 @@ import { pushProductionFlow } from '@store/flowList/asyncThunk';
 import { selectFlowData } from '@store/flow/selectors';
 import { selectUserInfo } from '@store/auth/auth';
 import { permissionsMap } from '@constants/permissions';
-import { getFullUserName, hasPermission } from '@utils/helpers';
+import { checkIsProductionFlow, getFullUserName } from '@utils/helpers';
 import { updateFlowListItem } from '@store/flowList/flowList';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
+import routes from '@constants/routes';
 
-const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
+const ControlPanelMainFlow: React.FC<ControlPanelProps> = ({
   rfInstance,
   flow,
   isDirty,
-  setCopyFlow
+  setCopyFlow,
+  isViewMode
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const flowData = useAppSelector(selectFlowData);
   const user = useAppSelector(selectUserInfo);
   const username = getFullUserName(user);
+  const isProductionFlow = checkIsProductionFlow();
+
+  const canPushFlowToProduction = useHasUserPermission(
+    permissionsMap.canPushFlowToProduction
+  );
+
+  const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const onSave = useCallback(async () => {
     if (rfInstance && flow) {
@@ -122,35 +133,51 @@ const ControlPanelEdit: React.FC<ControlPanelEditProps> = ({
     <StyledPanel position="top-right">
       <Box>
         <Typography variant="body1" mb={1}>
-          {flowData.name}
+          {isProductionFlow ? 'Flow on Production' : 'Draft Flow'}
         </Typography>
         <Typography variant="h4">{flowData.name}</Typography>
       </Box>
       <Stack spacing={1} direction="row" justifyContent="flex-end">
-        <Button
-          size="small"
-          variant="outlined"
-          onClick={onSave}
-          disabled={loading}
-        >
-          Save changes
-        </Button>
-        {hasPermission(
-          user?.policies,
-          permissionsMap.canPushFlowToProduction
-        ) && (
-          <Button
-            size="small"
-            variant="contained"
-            disabled={isDirty}
-            onClick={onPushFlow}
-          >
-            Push changes
-          </Button>
+        {isViewMode ? (
+          !isProductionFlow &&
+          canUpdateFlow && (
+            <Button
+              sx={{ marginLeft: 'auto' }}
+              variant="contained"
+              size="small"
+              component={NavLink}
+              to={routes.underwriting.flow.edit(flow.id)}
+            >
+              Edit Flow
+            </Button>
+          )
+        ) : (
+          <>
+            {canUpdateFlow && (
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={onSave}
+                disabled={loading}
+              >
+                Save changes
+              </Button>
+            )}
+            {canPushFlowToProduction && (
+              <Button
+                size="small"
+                variant="contained"
+                disabled={isDirty}
+                onClick={onPushFlow}
+              >
+                Push changes
+              </Button>
+            )}
+          </>
         )}
       </Stack>
     </StyledPanel>
   );
 };
 
-export default ControlPanelEdit;
+export default ControlPanelMainFlow;

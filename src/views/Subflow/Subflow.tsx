@@ -16,28 +16,24 @@ import SubFlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEdi
 import { selectUserInfo } from '@store/auth/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
-import { useHasUserPermission } from '@hooks/useHasUserPermission';
-import { permissionsMap } from '@constants/permissions';
-import { useViewMode } from '@hooks/useViewMode';
 
 interface SubFlowProps {
   mainFlow: IFlow;
   activeStepId: string;
   resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
+  isViewMode: boolean;
 }
 
 const SubFlow: React.FC<SubFlowProps> = ({
   mainFlow,
   rfInstance: { getNodes, setNodes },
   activeStepId,
-  resetActiveStepId
+  resetActiveStepId,
+  isViewMode
 }) => {
   const user = useAppSelector(selectUserInfo);
   const username = getFullUserName(user);
-  const viewMode = useViewMode();
-  const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
-  const isViewMode = viewMode || !canUserUpdateFlow;
 
   const subFlow = useMemo(() => {
     const mainFlowNodes: FlowNode[] = getNodes();

@@ -23,7 +23,7 @@ import NodePositioning from '../Nodes/NodePositioning';
 import '../overview.css';
 import {
   ADD_BUTTON_ON_EDGE,
-  ControlPanelEditProps,
+  ControlPanelProps,
   CustomReactFlowInstance,
   DEFAULT_EDGE_TYPE,
   EdgeData,
@@ -56,7 +56,7 @@ type FlowChartEditorProps = {
   flow: IFlow;
   mainFlow?: IFlow;
   setCopyFlow: (flow: IFlow) => void;
-  isViewMode?: boolean;
+  isViewMode: boolean;
   addNodeAndSyncMainFlow?: (
     subflowId: string,
     newNode: FlowNode,
@@ -71,7 +71,7 @@ type FlowChartEditorProps = {
 const withFlowChartEditor =
   (
     StepConfigureView: React.ComponentType<StepConfigureViewProps>,
-    ControlPanel: React.ComponentType<ControlPanelEditProps>
+    ControlPanel: React.ComponentType<ControlPanelProps>
   ) =>
   // eslint-disable-next-line react/display-name
   (props: FlowChartEditorProps) => {
@@ -432,13 +432,14 @@ const withFlowChartEditor =
           connectionLineType={ConnectionLineType.SmoothStep}
         >
           <Background variant={BackgroundVariant.Dots} />
-          {rfInstance && (
+          {rfInstance && flow.id && (
             <ControlPanel
               mainFlow={mainFlow}
               flow={flow}
               setCopyFlow={setCopyFlow}
               isDirty={isDirty}
               rfInstance={rfInstance}
+              isViewMode={isViewMode}
             />
           )}
           <Controls />
@@ -448,6 +449,7 @@ const withFlowChartEditor =
             mainFlow={mainFlow}
             flow={flow}
             rfInstance={rfInstance}
+            isViewMode={isViewMode}
           />
         )}
         <StepActionsMenu

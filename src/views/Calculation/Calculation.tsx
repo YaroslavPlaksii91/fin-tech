@@ -34,7 +34,6 @@ import StepNoteSection from '@views/DecisionTable/StepNoteSection/StepNoteSectio
 import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
-import { useViewMode } from '@hooks/useViewMode';
 import { selectUserInfo } from '@store/auth/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
@@ -44,12 +43,14 @@ interface CalculationProps {
   step: FlowNode;
   resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
+  isViewMode: boolean;
 }
 
 const Calculation: React.FC<CalculationProps> = ({
   step,
   resetActiveStepId,
-  rfInstance: { getNodes, setNodes }
+  rfInstance: { getNodes, setNodes },
+  isViewMode
 }) => {
   const nodes: FlowNode[] = getNodes();
   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
@@ -59,9 +60,8 @@ const Calculation: React.FC<CalculationProps> = ({
     Expression & { id: string }
   >();
 
-  const viewMode = useViewMode();
-  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
-  const isViewMode = viewMode || !hasUserPermission;
+  const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const isPreview = isViewMode || !canUpdateFlow;
   const user = useAppSelector(selectUserInfo);
   const username = getFullUserName(user);
 
@@ -145,7 +145,7 @@ const Calculation: React.FC<CalculationProps> = ({
             <form onSubmit={handleSubmit(onSubmit)}>
               <StepDetailsHeader
                 step={step}
-                title={`${isViewMode ? 'View' : 'Edit'} Step: ${step.data.name}`}
+                title={`${isPreview ? 'View' : 'Edit'} Step: ${step.data.name}`}
                 details="Calculation is a step that allows the User to set a value for the parameter."
               />
               <Stack>
@@ -195,7 +195,7 @@ const Calculation: React.FC<CalculationProps> = ({
                                 }}
                                 width={40}
                               >
-                                {!isViewMode && (
+                                {!isPreview && (
                                   <Stack direction="row">
                                     <IconButton
                                       onClick={() => {
@@ -241,7 +241,7 @@ const Calculation: React.FC<CalculationProps> = ({
                     </CardContent>
                   </Card>
                 </Box>
-                {!isViewMode && (
+                {!isPreview && (
                   <Button
                     disabled={fields.length === RULES_LIMIT}
                     variant="outlined"
@@ -258,7 +258,7 @@ const Calculation: React.FC<CalculationProps> = ({
                 )}
               </Stack>
             </form>
-            {!isViewMode && (
+            {!isPreview && (
               <StepNoteSection
                 modalOpen={openNoteModal}
                 handleCloseModal={handleCloseNoteModal}
@@ -299,7 +299,7 @@ const Calculation: React.FC<CalculationProps> = ({
             onApplyChangesClick={() => {
               void handleSubmit(onSubmit)();
             }}
-            isShow={!isViewMode}
+            isShow={!isPreview}
           />
         </>
       )}

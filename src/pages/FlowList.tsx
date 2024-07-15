@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import FlowChartReadOnlyView from '@components/FlowManagment/FlowChart/FlowChartReadOnlyView';
 import { selectFlow } from '@store/flow/selectors';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
@@ -10,15 +9,17 @@ import { getProductionFlow, getFlow } from '@store/flow/asyncThunk';
 import { setInitialFlow } from '@store/flow/flow';
 import { useActiveStep } from '@contexts/StepContext';
 import Logger from '@utils/logger';
+import MainFlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEditor/MainFlowChartEditor';
+import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
+import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 
-export default function FlowsNew() {
+export default function FlowList() {
   const { id } = useParams();
   const { flow } = useAppSelector(selectFlow);
   const dispatch = useAppDispatch();
   const { resetActive } = useActiveStep();
   const { startLoading, stopLoading } = useLoading();
-
-  const isProductionFlow = id === PRODUCTION_FLOW_ID;
+  const { variables } = useDataDictionaryVariables(flow);
 
   useEffect(() => {
     const fetchFlow = async (flowId: string) => {
@@ -45,12 +46,14 @@ export default function FlowsNew() {
   }, []);
 
   return (
-    flow && (
-      <FlowChartReadOnlyView
-        showControlPanel={!!flow.id}
-        flow={flow}
-        isProductionFlow={isProductionFlow}
-      />
-    )
+    <DataDictionaryContext.Provider value={{ variables }}>
+      {flow && (
+        <MainFlowChartEditor
+          isViewMode={true}
+          flow={flow}
+          setCopyFlow={() => undefined}
+        />
+      )}
+    </DataDictionaryContext.Provider>
   );
 }

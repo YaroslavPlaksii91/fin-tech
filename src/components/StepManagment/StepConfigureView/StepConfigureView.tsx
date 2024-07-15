@@ -14,6 +14,7 @@ interface StepConfigureViewProps {
   rfInstance: CustomReactFlowInstance;
   activeStepId: string;
   resetActiveStepId: () => void;
+  isViewMode: boolean;
 }
 
 const StepConfigureView: React.FC<StepConfigureViewProps> = ({
@@ -21,7 +22,8 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
   resetActiveStepId,
   flow,
   mainFlow,
-  rfInstance
+  rfInstance,
+  isViewMode
 }) => {
   const currentNode = rfInstance.getNode(activeStepId);
   const step = currentNode;
@@ -35,6 +37,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
           mainFlow={mainFlow}
           rfInstance={rfInstance}
           resetActiveStepId={resetActiveStepId}
+          isViewMode={isViewMode}
         />
       )}
       {step?.type === StepType.DECISION_TABLE && (
@@ -44,6 +47,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
           step={step}
           rfInstance={rfInstance}
           resetActiveStepId={resetActiveStepId}
+          isViewMode={isViewMode}
         />
       )}
       {step?.type === StepType.CALCULATION && (
@@ -51,6 +55,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
           step={step}
           rfInstance={rfInstance}
           resetActiveStepId={resetActiveStepId}
+          isViewMode={isViewMode}
         />
       )}
     </StepContainer>

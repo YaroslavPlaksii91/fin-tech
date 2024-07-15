@@ -52,6 +52,10 @@ export const getOptions = ({
   { ...editStepOption, hide: !canUserUpdateFlow }
 ];
 
+export const getProductionFlowOptions = ({
+  canUserViewFlow
+}: OptionsFlowParams) => [{ ...viewStepOption, hide: !canUserViewFlow }];
+
 export const getEditModeOptions = ({
   canUserViewFlow,
   canUserUpdateFlow

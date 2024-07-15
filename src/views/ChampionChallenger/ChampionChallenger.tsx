@@ -48,7 +48,6 @@ import StepNoteSection from '@views/DecisionTable/StepNoteSection/StepNoteSectio
 import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
-import { useViewMode } from '@hooks/useViewMode';
 import { useAppSelector } from '@store/hooks';
 import { selectUserInfo } from '@store/auth/auth';
 import { getFullUserName } from '@utils/helpers';
@@ -61,6 +60,7 @@ interface ChampionChallengerProps {
   rfInstance: CustomReactFlowInstance;
   flow: IFlow;
   mainFlow?: IFlow;
+  isViewMode: boolean;
 }
 
 const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
@@ -68,6 +68,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   resetActiveStepId,
   flow,
   mainFlow,
+  isViewMode,
   rfInstance: {
     getEdge,
     getNodes,
@@ -85,9 +86,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
 
-  const viewMode = useViewMode();
-  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
-  const isViewMode = viewMode || !hasUserPermission;
+  const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const isPreview = isViewMode || !canUpdateFlow;
   const user = useAppSelector(selectUserInfo);
   const username = getFullUserName(user);
 
@@ -233,7 +233,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <StepDetailsHeader
             step={step}
-            title={`${isViewMode ? 'View' : 'Edit'} Step: ${step.data.name}`}
+            title={`${isPreview ? 'View' : 'Edit'} Step: ${step.data.name}`}
             details="A Champion Challenger is a step that allows you to split traffic into several groups and run experiment."
           />
           <Stack>
@@ -264,7 +264,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                             control={control}
                             name={`splits.${index}.percentage`}
                             onChangeCb={() => clearErrors()}
-                            disabled={isViewMode}
+                            disabled={isPreview}
                           />
                         </StyledTableCell>
                         <StyledTableCell sx={{ p: 0 }}>
@@ -276,11 +276,11 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                             options={options}
                             selectedOptions={selectedOptions}
                             setSelectedOptions={setSelectedOptions}
-                            disabled={isViewMode}
+                            disabled={isPreview}
                           />
                         </StyledTableCell>
                         <StyledTableCell sx={{ p: 0 }} width={40}>
-                          {!isViewMode && (
+                          {!isPreview && (
                             <Button
                               fullWidth
                               sx={{ p: '10px' }}
@@ -313,7 +313,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
               </StyledTableContainer>
             </StyledPaper>
             <ErrorMessage errors={errors} name="splits" />
-            {!isViewMode && (
+            {!isPreview && (
               <Button
                 sx={{ width: '135px' }}
                 disabled={fields.length === RULES_LIMIT}
@@ -329,7 +329,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
             )}
           </Stack>
         </form>
-        {!isViewMode && (
+        {!isPreview && (
           <StepNoteSection
             modalOpen={openNoteModal}
             handleCloseModal={handleCloseNoteModal}
@@ -356,7 +356,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         onApplyChangesClick={() => {
           void handleSubmit(onSubmit)();
         }}
-        isShow={!isViewMode}
+        isShow={!isPreview}
       />
       <Dialog
         title="Discard changes"

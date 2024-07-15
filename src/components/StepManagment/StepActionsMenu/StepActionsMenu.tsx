@@ -1,4 +1,10 @@
-import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
+import React, {
+  MutableRefObject,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { useReactFlow } from 'reactflow';
@@ -10,7 +16,8 @@ import Logger from '@utils/logger';
 import {
   ActionTypes,
   getEditModeOptions,
-  getOptions
+  getOptions,
+  getProductionFlowOptions
 } from '@components/StepManagment/StepActionsMenu/types';
 import { FlowNode } from '@domain/flow.ts';
 import routes from '@constants/routes.ts';
@@ -24,6 +31,7 @@ import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { CUSTOM_FLOW_EVENT } from '@components/FlowManagment/FlowChart/constants';
 import { removeNodesAndEdgesInSubFlow } from '@views/Subflow/utils';
+import { PRODUCTION_FLOW_ID } from '@constants/common';
 
 interface StepActionsMenuOnNode {
   isOpen?: boolean;
@@ -60,12 +68,18 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   const canUserViewFlow = useHasUserPermission(permissionsMap.canViewFlow);
   const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
 
-  const options = isEditMode
-    ? getEditModeOptions({
+  const options = useMemo(() => {
+    if (isEditMode) {
+      return getEditModeOptions({
         canUserViewFlow,
         canUserUpdateFlow
-      })
-    : getOptions({ canUserViewFlow, canUserUpdateFlow });
+      });
+    }
+    if (id === PRODUCTION_FLOW_ID) {
+      return getProductionFlowOptions({ canUserViewFlow });
+    }
+    return getOptions({ canUserViewFlow, canUserUpdateFlow });
+  }, [id]);
 
   useEffect(() => {
     setIsOpen(isOpen);
@@ -100,14 +114,9 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
           );
           if (!activeSubflowId && !activeStepId) return;
 
-          navigate(routes.underwriting.flow.view(id as string), {
+          navigate(routes.underwriting.flow.list(id as string), {
             state: { subFlowId: activeSubflowId, stepId: activeStepId }
           });
-          flowNode &&
-            setActiveStep?.({
-              subFlowId: activeSubflowId,
-              stepId: activeStepId
-            });
         }
 
         break;

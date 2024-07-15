@@ -57,7 +57,7 @@ export const AddFlow: React.FC = () => {
 
       handleCloseModal();
       const createdFlow = unwrapResult(resultAction);
-      navigate(`${routes.underwriting.flow.list}/${createdFlow.id}`);
+      navigate(`${routes.underwriting.flow.list(createdFlow.id)}`);
       enqueueSnackbar(
         <SnackbarMessage
           message="Success"

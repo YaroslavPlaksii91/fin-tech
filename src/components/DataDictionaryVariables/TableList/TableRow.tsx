@@ -100,7 +100,7 @@ export const TableRow = ({
         });
       } else {
         const id = isProductionFlow ? PRODUCTION_FLOW_ID : flowId;
-        navigate(routes.underwriting.flow.view(id), {
+        navigate(routes.underwriting.flow.list(id), {
           state: { subFlowId, stepId }
         });
       }
