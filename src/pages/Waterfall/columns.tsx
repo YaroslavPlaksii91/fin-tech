@@ -1,8 +1,12 @@
 import { GridColDef } from '@mui/x-data-grid-premium';
 
 import { COLUMN_IDS } from './types';
+import { getExternalSystemsColumns } from './utils';
+import { EXTERNAL_SYSTEM_KEYS, GROUP_COLORS_NAMES } from './constants';
 
-const getDataGridColumns = (): GridColDef[] => [
+import { WaterfallReport } from '@domain/waterfallReport';
+
+const STATIC_COLUMNS: GridColDef[] = [
   {
     field: COLUMN_IDS.stack,
     headerName: 'Stack',
@@ -54,5 +58,31 @@ const getDataGridColumns = (): GridColDef[] => [
     headerName: 'Total Cached Lead'
   }
 ];
+
+const getDataGridColumns = (data: WaterfallReport['item2']) => {
+  const externalSystemsColumns = getExternalSystemsColumns(data);
+
+  const dynamicColumns: GridColDef[] = externalSystemsColumns.map(
+    (column, index) => ({
+      field: column,
+      sortable: false,
+      disableReorder: true,
+      cellClassName: () => {
+        const colorGroupIndex =
+          Math.floor(index / EXTERNAL_SYSTEM_KEYS.length) %
+          GROUP_COLORS_NAMES.length;
+
+        return GROUP_COLORS_NAMES[colorGroupIndex];
+      },
+      headerName: column
+        .split('/')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' '),
+      renderCell: (params) => (params.value as string) ?? '-'
+    })
+  );
+
+  return [...STATIC_COLUMNS, ...dynamicColumns];
+};
 
 export default getDataGridColumns;

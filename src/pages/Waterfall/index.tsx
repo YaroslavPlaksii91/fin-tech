@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridSortModel } from '@mui/x-data-grid-premium';
 import { Button, Paper, Stack, Typography } from '@mui/material';
 
-import { FetchList, RowData } from './types';
+import { FetchList } from './types';
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
@@ -11,21 +11,21 @@ import {
   INITIAL_INPUT_FILTERS,
   INPUT_GROUPS_TO_SHOW
 } from './constants';
+import { StyledDataGridPremium } from './styled';
 
 import useFilters from '@hooks/useFilters';
-import { StyledDataGridPremium } from '@components/shared/Table/styled';
 import Filters from '@components/Filters/Filters';
 import { theme } from '@theme';
 import { reportingService } from '@services/reports';
 import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
 import TuneIcon from '@icons/tune.svg';
+import { WaterfallReport } from '@domain/waterfallReport';
 
 const Waterfall = () => {
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState(DEFAULT_SORT);
-  const [rows, setRows] = useState<RowData[]>([]);
-  const [pinnedRows, setPinnedRows] = useState<RowData[]>([]);
+  const [data, setData] = useState<WaterfallReport>({ item1: 0, item2: [] });
 
   const {
     isFiltersOpen,
@@ -37,6 +37,15 @@ const Waterfall = () => {
     dateFilters: { dateFrom, dateTo }
   } = useFilters({ initialInputFilters: INITIAL_INPUT_FILTERS });
 
+  const columns = useMemo(() => getDataGridColumns(data.item2), [data.item2]);
+
+  const rows = useMemo(() => getFormattedRows(data.item2), [data.item2]);
+
+  const aggregationTotalRow = useMemo(
+    () => rows.filter((row) => row.stack === AGGREGATION_ROW_STACK_NAME),
+    [rows]
+  );
+
   const handleSortModelChange = (model: GridSortModel) => {
     if (!model.length) return;
     const formatedSortField = model[0].sort === 'asc' ? '' : '-';
@@ -45,25 +54,19 @@ const Waterfall = () => {
     setSort(sortParams);
   };
 
-  const fetchList = async (params: FetchList) => {
+  const fetchList = useCallback(async (params: FetchList) => {
     setLoading(true);
 
     try {
       const data = await reportingService.getWaterfallReport({ params });
-      const rows = getFormattedRows(data.item2);
-      const aggregationRow = rows.find(
-        (row) => row.stack === AGGREGATION_ROW_STACK_NAME
-      );
-      const filteredRows = rows.filter((row) => aggregationRow?.id !== row.id);
 
-      setRows(filteredRows);
-      setPinnedRows(aggregationRow ? [aggregationRow] : []);
+      setData(data);
     } catch (e) {
       Logger.error(e);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const fetch = useCallback(() => {
     const params: FetchList = {
@@ -125,9 +128,9 @@ const Waterfall = () => {
           // We have border bottom 1px for each row, to include it in rowHeight calculation need also add spacing here
           getRowSpacing={() => ({ bottom: 1 })}
           rowSpacingType="border"
-          pinnedRows={rows.length ? { bottom: pinnedRows } : undefined}
+          pinnedRows={{ bottom: aggregationTotalRow }}
           rows={rows}
-          columns={getDataGridColumns()}
+          columns={columns}
           loading={loading}
           sortingMode="server"
           onSortModelChange={handleSortModelChange}
