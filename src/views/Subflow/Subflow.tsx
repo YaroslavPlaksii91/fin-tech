@@ -80,18 +80,14 @@ const SubFlow: React.FC<SubFlowProps> = ({
     []
   );
 
-  const deleteNodeAndSyncMainFlow = useCallback(
-    (deleteNodes: FlowNode[], subFlowId: string) => {
-      const mainFlowNodes: FlowNode[] = getNodes();
-      const updatedNodes = removeNodesAndEdgesInSubFlow(
-        mainFlowNodes,
-        deleteNodes,
-        subFlowId
-      );
-      setNodes(updatedNodes);
-    },
-    []
-  );
+  const deleteNodeAndSyncMainFlow = useCallback((deleteNodes: FlowNode[]) => {
+    const mainFlowNodes: FlowNode[] = getNodes();
+    const updatedNodes = removeNodesAndEdgesInSubFlow(
+      mainFlowNodes,
+      deleteNodes
+    );
+    setNodes(updatedNodes);
+  }, []);
 
   return (
     // As subFlow is sub instance main flow, it needs own flow provider

@@ -165,35 +165,29 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
         }
 
         if (subFlowId) {
-          if (activeStep?.subFlowId === subFlowId) {
-            document.dispatchEvent(
-              new CustomEvent(CUSTOM_FLOW_EVENT, {
-                detail: { deleteNodes: [flowNode], subFlowId }
-              })
-            );
-          } else {
-            const updatedNodes = removeNodesAndEdgesInSubFlow(
-              nodes,
-              [flowNode],
-              subFlowId
-            );
-            setNodes(updatedNodes);
-          }
-          dispatch(
-            deleteNodes({
-              deletedNodes: [flowNode],
-              subFlowId
+          const updatedNodes = removeNodesAndEdgesInSubFlow(nodes, [flowNode]);
+          setNodes(updatedNodes);
+        }
+
+        if (activeStep?.subFlowId) {
+          document.dispatchEvent(
+            new CustomEvent(CUSTOM_FLOW_EVENT, {
+              detail: {
+                deleteNodes: [flowNode],
+                subFlowId: activeStep.subFlowId
+              }
             })
           );
         } else {
           deleteElements({ nodes: [flowNode] });
-          dispatch(
-            deleteNodes({
-              deletedNodes: [flowNode],
-              subFlowId: null
-            })
-          );
         }
+
+        dispatch(
+          deleteNodes({
+            deletedNodes: [flowNode]
+          })
+        );
+
         break;
       }
       default:

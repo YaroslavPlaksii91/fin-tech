@@ -60,37 +60,33 @@ export const addNodeInSubFlow = (
     return node;
   });
 
-export const removeNodesAndEdgesInSubFlow = (
+export function removeNodesAndEdgesInSubFlow(
   nodes: FlowNode[],
-  deleteNodes: FlowNode[],
-  subFlowId: string | null
-): FlowNode[] =>
-  nodes.map((node) => {
-    if (node.id === subFlowId) {
-      return {
-        ...node,
-        data: {
-          ...node.data,
-          edges: node.data.edges?.filter(
-            (edge) =>
-              !deleteNodes.find(
-                (item) => item.id === edge.source || item.id === edge.target
-              )
-          ),
-          nodes: node.data?.nodes?.filter(
-            (node) => !deleteNodes.find((item) => item.id === node.id)
-          )
-        }
-      };
-    } else if (node.data.nodes) {
-      return {
-        ...node,
-        nodes: removeNodesAndEdgesInSubFlow(
-          node.data.nodes,
-          deleteNodes,
-          subFlowId
+  deleteNodes: FlowNode[]
+) {
+  const deleteIds = new Set(deleteNodes.map((node) => node.id));
+
+  function filterTree(node: FlowNode) {
+    if (deleteIds.has(node.id)) {
+      return null;
+    }
+
+    const newNode = { ...node };
+
+    if (newNode.data?.nodes) {
+      newNode.data = {
+        ...newNode.data,
+        nodes: newNode.data.nodes
+          .map((childNode) => filterTree(childNode))
+          .filter((childNode) => childNode !== null),
+        edges: newNode.data.edges?.filter(
+          (edge) => !deleteIds.has(edge.source) && !deleteIds.has(edge.target)
         )
       };
     }
-    return node;
-  });
+
+    return newNode;
+  }
+
+  return nodes.map((node) => filterTree(node)).filter((node) => node !== null);
+}

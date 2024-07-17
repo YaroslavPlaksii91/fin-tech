@@ -48,9 +48,10 @@ import { FlowNode, IFlow } from '@domain/flow';
 import { useActiveStep } from '@contexts/StepContext';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
-import { useAppSelector } from '@store/hooks';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { selectUserInfo } from '@store/auth/auth';
 import { getFullUserName } from '@utils/helpers';
+import { deleteNodes } from '@store/flow/flow';
 
 type FlowChartEditorProps = {
   flow: IFlow;
@@ -62,10 +63,7 @@ type FlowChartEditorProps = {
     newNode: FlowNode,
     edges: Edge[]
   ) => void;
-  deleteNodeAndSyncMainFlow?: (
-    deleteNodes: FlowNode[],
-    subFlowId: string
-  ) => void;
+  deleteNodeAndSyncMainFlow?: (deleteNodes: FlowNode[]) => void;
 };
 
 const withFlowChartEditor =
@@ -84,6 +82,8 @@ const withFlowChartEditor =
       isViewMode
     } = props;
     const user = useAppSelector(selectUserInfo);
+    const dispatch = useAppDispatch();
+
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
     const [startDrag, setStartDrag] = useState<boolean>(false);
@@ -104,10 +104,9 @@ const withFlowChartEditor =
         const { subFlowId, deleteNodes } = e.detail;
         if (subFlowId === flow.id && rfInstance) {
           rfInstance.deleteElements({ nodes: deleteNodes });
-          deleteNodeAndSyncMainFlow?.(deleteNodes, subFlowId);
         }
       },
-      [rfInstance]
+      [rfInstance, flow.id]
     );
 
     useEffect(() => {
@@ -118,7 +117,7 @@ const withFlowChartEditor =
       return () => {
         document.removeEventListener(CUSTOM_FLOW_EVENT, handleDeleteElements);
       };
-    }, [rfInstance]);
+    }, [rfInstance, flow.id]);
 
     useEffect(() => {
       if (mainFlow && newNode) {
@@ -397,6 +396,16 @@ const withFlowChartEditor =
       );
     }, [startDrag]);
 
+    const onNodesDelete = useCallback(
+      (deletedNodes: FlowNode[]) => {
+        if (mainFlow) {
+          deleteNodeAndSyncMainFlow?.(deletedNodes);
+        }
+        dispatch(deleteNodes({ deletedNodes }));
+      },
+      [flow.id]
+    );
+
     return (
       <>
         <NodePositioning
@@ -411,11 +420,12 @@ const withFlowChartEditor =
           nodes={nodes}
           edges={edges}
           autoPanOnNodeDrag
+          onNodesDelete={isViewMode ? undefined : onNodesDelete}
+          onNodesChange={isViewMode ? undefined : onNodesChange}
+          onEdgesChange={isViewMode ? undefined : onEdgesChange}
           onPaneClick={onPaneClick}
           onNodeContextMenu={onNodeContextMenu}
           onNodeDragStop={onNodeDragStop}
-          onNodesChange={isViewMode ? undefined : onNodesChange}
-          onEdgesChange={isViewMode ? undefined : onEdgesChange}
           onEdgesDelete={onEdgesDelete}
           onNodeDragStart={onNodeDragStart}
           onInit={(instance) => {
