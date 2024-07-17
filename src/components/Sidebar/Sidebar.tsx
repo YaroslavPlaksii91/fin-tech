@@ -284,7 +284,6 @@ const Sidebar = () => {
                     }}
                   >
                     <StyledNavLink
-                      // to={`${routes.underwriting.flow.list}/${PRODUCTION_FLOW_ID}`}
                       to={`${routes.underwriting.flow.list(PRODUCTION_FLOW_ID)}`}
                     >
                       <StyledSubAccordionSummary

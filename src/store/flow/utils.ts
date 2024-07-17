@@ -39,11 +39,13 @@ export function removeNodes(nodes: FlowNode[], deleteNodes: FlowNode[]) {
     if (node.data?.nodes) {
       node.data.nodes = node.data.nodes
         .map((node) => filterNodes(node))
-        .filter((node) => node !== null);
+        .filter((node) => node !== null) as FlowNode[];
     }
 
     return node;
   }
 
-  return nodes.map((node) => filterNodes(node)).filter((node) => node !== null);
+  return nodes
+    .map((node) => filterNodes(node))
+    .filter((node) => node !== null) as FlowNode[];
 }

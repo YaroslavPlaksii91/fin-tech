@@ -78,7 +78,7 @@ export function removeNodesAndEdgesInSubFlow(
         ...newNode.data,
         nodes: newNode.data.nodes
           .map((childNode) => filterTree(childNode))
-          .filter((childNode) => childNode !== null),
+          .filter((childNode) => childNode !== null) as FlowNode[],
         edges: newNode.data.edges?.filter(
           (edge) => !deleteIds.has(edge.source) && !deleteIds.has(edge.target)
         )
@@ -88,5 +88,7 @@ export function removeNodesAndEdgesInSubFlow(
     return newNode;
   }
 
-  return nodes.map((node) => filterTree(node)).filter((node) => node !== null);
+  return nodes
+    .map((node) => filterTree(node))
+    .filter((node) => node !== null) as FlowNode[];
 }
