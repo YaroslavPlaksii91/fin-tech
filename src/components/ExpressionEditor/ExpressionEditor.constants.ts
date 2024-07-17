@@ -38,7 +38,7 @@ enum ExpressionEditorFunction {
   CONTAIN = 'CONTAIN',
   LEN = 'LEN',
   SUBSTRING = 'SUBSTRING',
-  DATEDIF = 'DATEDIF',
+  DATEDIFF = 'DATEDIFF',
   GET_REPORT = 'GET_REPORT'
 }
 
@@ -189,9 +189,9 @@ export const functionsConfig: FunctionConfig[] = [
     category: ExpressionOperatorCategory.BASIC_TEXT
   },
   {
-    literal: ExpressionEditorFunction.DATEDIF,
+    literal: ExpressionEditorFunction.DATEDIFF,
     description: 'Calculates the difference between two dates',
-    domesticDescription: 'DATEDIF(start_date, end_date, unit)',
+    domesticDescription: 'DATEDIFF(start_date, end_date, unit)',
     category: ExpressionOperatorCategory.MISCELANEOUS
   },
   {
