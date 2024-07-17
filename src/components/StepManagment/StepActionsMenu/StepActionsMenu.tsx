@@ -1,4 +1,10 @@
-import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
+import React, {
+  MutableRefObject,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { useReactFlow } from 'reactflow';
@@ -10,7 +16,8 @@ import Logger from '@utils/logger';
 import {
   ActionTypes,
   getEditModeOptions,
-  getOptions
+  getOptions,
+  getProductionFlowOptions
 } from '@components/StepManagment/StepActionsMenu/types';
 import { FlowNode } from '@domain/flow.ts';
 import routes from '@constants/routes.ts';
@@ -24,6 +31,7 @@ import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { CUSTOM_FLOW_EVENT } from '@components/FlowManagment/FlowChart/constants';
 import { removeNodesAndEdgesInSubFlow } from '@views/Subflow/utils';
+import { PRODUCTION_FLOW_ID } from '@constants/common';
 
 interface StepActionsMenuOnNode {
   isOpen?: boolean;
@@ -60,12 +68,18 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   const canUserViewFlow = useHasUserPermission(permissionsMap.canViewFlow);
   const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
 
-  const options = isEditMode
-    ? getEditModeOptions({
+  const options = useMemo(() => {
+    if (isEditMode) {
+      return getEditModeOptions({
         canUserViewFlow,
         canUserUpdateFlow
-      })
-    : getOptions({ canUserViewFlow, canUserUpdateFlow });
+      });
+    }
+    if (id === PRODUCTION_FLOW_ID) {
+      return getProductionFlowOptions({ canUserViewFlow });
+    }
+    return getOptions({ canUserViewFlow, canUserUpdateFlow });
+  }, [id, isEditMode]);
 
   useEffect(() => {
     setIsOpen(isOpen);
@@ -76,24 +90,43 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
     setIsOpen((prev) => !prev);
   };
 
+  const handleStep = (flowNode: FlowNode | null, subFlowId: string | null) => {
+    if (!flowNode) return { activeSubflowId: null, activeStepId: null };
+
+    let activeSubflowId = subFlowId;
+    let activeStepId: null | string = flowNode.id;
+
+    if (flowNode.type === StepType.SUBFLOW) {
+      activeSubflowId = flowNode.id;
+      activeStepId = null;
+    }
+
+    return { activeSubflowId, activeStepId };
+  };
+
   const handleSelectedActions = async (action: ActionTypes) => {
     switch (action) {
       case ActionTypes.STEP_TEXT_VIEW:
-        navigate(routes.underwriting.flow.view(id as string), {
-          state: { subFlowId, stepId: flowNode?.id }
-        });
-        flowNode && setActiveStep?.({ subFlowId, stepId: flowNode.id });
+        {
+          const { activeSubflowId, activeStepId } = handleStep(
+            flowNode,
+            subFlowId
+          );
+          if (!activeSubflowId && !activeStepId) return;
+
+          navigate(routes.underwriting.flow.list(id as string), {
+            state: { subFlowId: activeSubflowId, stepId: activeStepId }
+          });
+        }
 
         break;
       case ActionTypes.EDIT_STEP: {
-        if (!flowNode) return;
-        let activeSubflowId = subFlowId;
-        let activeStepId: null | string = flowNode.id;
+        const { activeSubflowId, activeStepId } = handleStep(
+          flowNode,
+          subFlowId
+        );
+        if (!activeSubflowId && !activeStepId) return;
 
-        if (flowNode.type === StepType.SUBFLOW) {
-          activeSubflowId = flowNode.id;
-          activeStepId = null;
-        }
         if (isEditMode) {
           setActiveStep?.({
             subFlowId: activeSubflowId,
@@ -132,35 +165,29 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
         }
 
         if (subFlowId) {
-          if (activeStep?.subFlowId === subFlowId) {
-            document.dispatchEvent(
-              new CustomEvent(CUSTOM_FLOW_EVENT, {
-                detail: { deleteNodes: [flowNode], subFlowId }
-              })
-            );
-          } else {
-            const updatedNodes = removeNodesAndEdgesInSubFlow(
-              nodes,
-              [flowNode],
-              subFlowId
-            );
-            setNodes(updatedNodes);
-          }
-          dispatch(
-            deleteNodes({
-              deletedNodes: [flowNode],
-              subFlowId
+          const updatedNodes = removeNodesAndEdgesInSubFlow(nodes, [flowNode]);
+          setNodes(updatedNodes);
+        }
+
+        if (activeStep?.subFlowId) {
+          document.dispatchEvent(
+            new CustomEvent(CUSTOM_FLOW_EVENT, {
+              detail: {
+                deleteNodes: [flowNode],
+                subFlowId: activeStep.subFlowId
+              }
             })
           );
         } else {
           deleteElements({ nodes: [flowNode] });
-          dispatch(
-            deleteNodes({
-              deletedNodes: [flowNode],
-              subFlowId: null
-            })
-          );
         }
+
+        dispatch(
+          deleteNodes({
+            deletedNodes: [flowNode]
+          })
+        );
+
         break;
       }
       default:

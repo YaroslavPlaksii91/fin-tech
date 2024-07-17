@@ -6,9 +6,8 @@ const routes = {
   },
   underwriting: {
     flow: {
-      list: '/flow-list',
+      list: (id?: string) => (id ? `/flow-list/${id}` : '/flow-list'),
       edit: (id: string) => `/flow-list/${id}/edit`,
-      view: (id: string) => `/flow-list/${id}/view`,
       dataDictionary: (id: string) => `/flow-list/${id}/data-dictionary`
     },
     changeHistory: '/change-history',

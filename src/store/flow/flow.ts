@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { getFlow, getProductionFlow, saveFlow } from './asyncThunk';
-import { removeNodesInSubflow, addNodeToSubflow } from './utils';
+import { addNodeToSubflow, removeNodes } from './utils';
 
 import { FlowData, FlowNode, IFlow } from '@domain/flow';
 
@@ -55,21 +55,10 @@ export const flowSlicer = createSlice({
         state,
         action: PayloadAction<{
           deletedNodes: FlowNode[];
-          subFlowId: string | null;
         }>
       ) => {
-        if (!action.payload.subFlowId) {
-          state.flow.nodes = state.flow.nodes.filter((node) =>
-            action.payload.deletedNodes.find((item) => item.id !== node.id)
-          );
-        } else {
-          const { nodes } = state.flow;
-          state.flow.nodes = removeNodesInSubflow(
-            nodes,
-            action.payload.deletedNodes,
-            action.payload.subFlowId
-          );
-        }
+        const { nodes } = state.flow;
+        state.flow.nodes = removeNodes(nodes, action.payload.deletedNodes);
       }
     ),
     updateFlowData: create.reducer(

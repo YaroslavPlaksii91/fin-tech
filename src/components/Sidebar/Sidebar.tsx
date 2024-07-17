@@ -151,13 +151,13 @@ const Sidebar = () => {
   const defaultFlowListLink = useMemo(() => {
     const flowListLink = routes.underwriting.flow.list;
     if (flowList.length) {
-      return `${flowListLink}/${flowList[0].id}`;
+      return flowListLink(flowList[0].id);
     }
 
     if (flowProduction.id) {
-      return `${flowListLink}/${flowProduction.id}`;
+      return flowListLink(flowProduction.id);
     }
-    return flowListLink;
+    return flowListLink();
   }, [flowList, flowProduction]);
 
   useEffect(() => {
@@ -284,7 +284,7 @@ const Sidebar = () => {
                     }}
                   >
                     <StyledNavLink
-                      to={`${routes.underwriting.flow.list}/${PRODUCTION_FLOW_ID}`}
+                      to={`${routes.underwriting.flow.list(PRODUCTION_FLOW_ID)}`}
                     >
                       <StyledSubAccordionSummary
                         expandIcon={<ExpandMoreIcon fontSize="small" />}
@@ -318,7 +318,7 @@ const Sidebar = () => {
                   >
                     <Box sx={{ position: 'relative' }}>
                       <StyledNavLink
-                        to={`${routes.underwriting.flow.list}/${flowItem.id}`}
+                        to={`${routes.underwriting.flow.list(flowItem.id)}`}
                       >
                         <StyledSubAccordionSummary
                           expandIcon={

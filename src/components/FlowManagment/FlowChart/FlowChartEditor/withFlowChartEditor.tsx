@@ -23,8 +23,9 @@ import NodePositioning from '../Nodes/NodePositioning';
 import '../overview.css';
 import {
   ADD_BUTTON_ON_EDGE,
-  ControlPanelEditProps,
+  ControlPanelProps,
   CustomReactFlowInstance,
+  DEFAULT_EDGE_TYPE,
   EdgeData,
   StepConfigureViewProps,
   StepType
@@ -47,29 +48,28 @@ import { FlowNode, IFlow } from '@domain/flow';
 import { useActiveStep } from '@contexts/StepContext';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
-import { useAppSelector } from '@store/hooks';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { selectUserInfo } from '@store/auth/auth';
 import { getFullUserName } from '@utils/helpers';
+import { deleteNodes } from '@store/flow/flow';
 
 type FlowChartEditorProps = {
   flow: IFlow;
   mainFlow?: IFlow;
   setCopyFlow: (flow: IFlow) => void;
+  isViewMode: boolean;
   addNodeAndSyncMainFlow?: (
     subflowId: string,
     newNode: FlowNode,
     edges: Edge[]
   ) => void;
-  deleteNodeAndSyncMainFlow?: (
-    deleteNodes: FlowNode[],
-    subFlowId: string
-  ) => void;
+  deleteNodeAndSyncMainFlow?: (deleteNodes: FlowNode[]) => void;
 };
 
 const withFlowChartEditor =
   (
     StepConfigureView: React.ComponentType<StepConfigureViewProps>,
-    ControlPanel: React.ComponentType<ControlPanelEditProps>
+    ControlPanel: React.ComponentType<ControlPanelProps>
   ) =>
   // eslint-disable-next-line react/display-name
   (props: FlowChartEditorProps) => {
@@ -78,9 +78,12 @@ const withFlowChartEditor =
       mainFlow,
       setCopyFlow,
       addNodeAndSyncMainFlow,
-      deleteNodeAndSyncMainFlow
+      deleteNodeAndSyncMainFlow,
+      isViewMode
     } = props;
     const user = useAppSelector(selectUserInfo);
+    const dispatch = useAppDispatch();
+
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
     const [startDrag, setStartDrag] = useState<boolean>(false);
@@ -101,10 +104,9 @@ const withFlowChartEditor =
         const { subFlowId, deleteNodes } = e.detail;
         if (subFlowId === flow.id && rfInstance) {
           rfInstance.deleteElements({ nodes: deleteNodes });
-          deleteNodeAndSyncMainFlow?.(deleteNodes, subFlowId);
         }
       },
-      [rfInstance]
+      [rfInstance, flow.id]
     );
 
     useEffect(() => {
@@ -115,7 +117,7 @@ const withFlowChartEditor =
       return () => {
         document.removeEventListener(CUSTOM_FLOW_EVENT, handleDeleteElements);
       };
-    }, [rfInstance]);
+    }, [rfInstance, flow.id]);
 
     useEffect(() => {
       if (mainFlow && newNode) {
@@ -153,12 +155,12 @@ const withFlowChartEditor =
         getLayoutedElements(flow.nodes, flow.edges);
       const edges = layoutedEdges.map((edge) => ({
         ...edge,
-        type: ADD_BUTTON_ON_EDGE,
+        type: isViewMode ? DEFAULT_EDGE_TYPE : ADD_BUTTON_ON_EDGE,
         data: { onAdd: onAddNodeBetweenEdges }
       }));
       const nodes = layoutedNodes;
       return { edges, nodes };
-    }, [flow]);
+    }, [flow, isViewMode]);
 
     useEffect(() => {
       setEdges(initialElements.edges);
@@ -394,6 +396,16 @@ const withFlowChartEditor =
       );
     }, [startDrag]);
 
+    const onNodesDelete = useCallback(
+      (deletedNodes: FlowNode[]) => {
+        if (mainFlow) {
+          deleteNodeAndSyncMainFlow?.(deletedNodes);
+        }
+        dispatch(deleteNodes({ deletedNodes }));
+      },
+      [flow.id]
+    );
+
     return (
       <>
         <NodePositioning
@@ -408,11 +420,12 @@ const withFlowChartEditor =
           nodes={nodes}
           edges={edges}
           autoPanOnNodeDrag
+          onNodesDelete={isViewMode ? undefined : onNodesDelete}
+          onNodesChange={isViewMode ? undefined : onNodesChange}
+          onEdgesChange={isViewMode ? undefined : onEdgesChange}
           onPaneClick={onPaneClick}
           onNodeContextMenu={onNodeContextMenu}
           onNodeDragStop={onNodeDragStop}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
           onEdgesDelete={onEdgesDelete}
           onNodeDragStart={onNodeDragStart}
           onInit={(instance) => {
@@ -429,13 +442,14 @@ const withFlowChartEditor =
           connectionLineType={ConnectionLineType.SmoothStep}
         >
           <Background variant={BackgroundVariant.Dots} />
-          {rfInstance && (
+          {rfInstance && flow.id && (
             <ControlPanel
               mainFlow={mainFlow}
               flow={flow}
               setCopyFlow={setCopyFlow}
               isDirty={isDirty}
               rfInstance={rfInstance}
+              isViewMode={isViewMode}
             />
           )}
           <Controls />
@@ -445,6 +459,7 @@ const withFlowChartEditor =
             mainFlow={mainFlow}
             flow={flow}
             rfInstance={rfInstance}
+            isViewMode={isViewMode}
           />
         )}
         <StepActionsMenu
@@ -454,7 +469,7 @@ const withFlowChartEditor =
           flowNode={flowNode}
           isOpen={Boolean(flowNode)}
           onClose={onPaneClick}
-          isEditMode
+          isEditMode={!isViewMode}
           setActiveStep={setActiveStep}
         />
         <LeavePageConfirmationDialog isDirty={isDirty} />

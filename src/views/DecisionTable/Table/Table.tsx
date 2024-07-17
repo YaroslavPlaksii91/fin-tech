@@ -56,7 +56,7 @@ interface Table {
   handleSubmitVariableValue: (
     data: SelectedCellInRowData & FormFieldsProps
   ) => void;
-  hasUserPermission?: boolean;
+  hasUserPermission: boolean;
 }
 
 const Table = ({
@@ -298,6 +298,7 @@ const Table = ({
                         placeholder="Select Value"
                         value={row[name].expression || ''}
                         options={getFormatedOptions(enumTypeSelectOptions)}
+                        disabled={!hasUserPermission}
                         handleChange={(value) =>
                           handleSubmitSelectedRowCellData({
                             value,

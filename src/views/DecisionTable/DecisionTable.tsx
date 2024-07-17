@@ -60,7 +60,6 @@ import { DataDictionaryVariable } from '@domain/dataDictionary';
 import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
-import { useViewMode } from '@hooks/useViewMode';
 import { selectUserInfo } from '@store/auth/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
@@ -71,6 +70,7 @@ type DecisionTableStepProps = {
   step: FlowNode;
   resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
+  isViewMode: boolean;
 };
 
 const DecisionTableStep = ({
@@ -78,6 +78,7 @@ const DecisionTableStep = ({
   flow,
   mainFlow,
   resetActiveStepId,
+  isViewMode,
   rfInstance: {
     getNodes,
     getEdge,
@@ -101,9 +102,8 @@ const DecisionTableStep = ({
 
   const dataDictionary = useContext(DataDictionaryContext);
 
-  const viewMode = useViewMode();
-  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
-  const isViewMode = viewMode || !hasUserPermission;
+  const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const isPreview = isViewMode || !canUpdateFlow;
   const user = useAppSelector(selectUserInfo);
   const username = getFullUserName(user);
 
@@ -438,7 +438,7 @@ const DecisionTableStep = ({
       <StepContentWrapper>
         <StepDetailsHeader
           step={step}
-          title={`${isViewMode ? 'View' : 'Edit'} Step: ${step.data.name}`}
+          title={`${isPreview ? 'View' : 'Edit'} Step: ${step.data.name}`}
           details={STEP_DETAILS}
         />
         <Paper>
@@ -458,12 +458,12 @@ const DecisionTableStep = ({
               handleDeleteCategoryColumn={handleDeleteCategoryColumn}
               handleChangeColumnVariable={handleChangeColumnVariable}
               handleSubmitVariableValue={handleSubmitVariableValue}
-              hasUserPermission={!isViewMode}
+              hasUserPermission={!isPreview}
             />
           </TableContainer>
         </Paper>
 
-        {!isViewMode && (
+        {!isPreview && (
           <Button
             sx={{ width: 'fit-content', mt: 1 }}
             variant="outlined"
@@ -474,7 +474,7 @@ const DecisionTableStep = ({
           </Button>
         )}
 
-        {!isViewMode && (
+        {!isPreview && (
           <StepNoteSection
             modalOpen={openNoteModal}
             handleCloseModal={handleCloseNoteModal}
@@ -498,7 +498,7 @@ const DecisionTableStep = ({
       <StepDetailsControlBar
         onDiscard={() => setOpenDiscardModal(true)}
         onApplyChangesClick={onApplyChangesClick}
-        isShow={!isViewMode}
+        isShow={!isPreview}
       />
       <Dialog
         title="Discard changes"

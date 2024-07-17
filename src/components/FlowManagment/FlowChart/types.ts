@@ -45,16 +45,18 @@ export type StepListData = NodeData &
   DecisionTableData;
 export interface StepConfigureViewProps {
   flow: IFlow;
-  mainFlow?: IFlow;
   rfInstance: CustomReactFlowInstance;
+  mainFlow?: IFlow;
+  isViewMode: boolean;
 }
 
-export interface ControlPanelEditProps {
+export interface ControlPanelProps {
   flow: IFlow;
   mainFlow?: IFlow;
   isDirty: boolean;
   setCopyFlow: (flow: IFlow) => void;
   rfInstance: CustomReactFlowInstance;
+  isViewMode: boolean;
 }
 
 export type CustomEventDetail = { subFlowId: string; deleteNodes: FlowNode[] };

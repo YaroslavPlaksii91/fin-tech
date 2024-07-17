@@ -1,5 +1,5 @@
 import { StepConfigureViewProps } from '../types';
-import ControlPanelEdit from '../ContolPanels/ControlPanelEdit';
+import ControlPanelMainFlow from '../ContolPanels/ControlPanelMainFlow';
 
 import withFlowChartEditor from './withFlowChartEditor';
 
@@ -9,7 +9,8 @@ import Subflow from '@views/Subflow/Subflow';
 
 const StepConfigureViewMainFlow: React.FC<StepConfigureViewProps> = ({
   flow,
-  rfInstance
+  rfInstance,
+  isViewMode
 }) => {
   const { activeStep, resetActive } = useActiveStep();
   return (
@@ -20,6 +21,7 @@ const StepConfigureViewMainFlow: React.FC<StepConfigureViewProps> = ({
           resetActiveStepId={resetActive}
           rfInstance={rfInstance}
           activeStepId={activeStep.stepId}
+          isViewMode={isViewMode}
         />
       )}
       {activeStep.subFlowId && (
@@ -28,6 +30,7 @@ const StepConfigureViewMainFlow: React.FC<StepConfigureViewProps> = ({
           resetActiveStepId={resetActive}
           activeStepId={activeStep.subFlowId}
           rfInstance={rfInstance}
+          isViewMode={isViewMode}
         />
       )}
     </>
@@ -36,7 +39,7 @@ const StepConfigureViewMainFlow: React.FC<StepConfigureViewProps> = ({
 
 const MainFlowChartEditor = withFlowChartEditor(
   StepConfigureViewMainFlow,
-  ControlPanelEdit
+  ControlPanelMainFlow
 );
 
 export default MainFlowChartEditor;

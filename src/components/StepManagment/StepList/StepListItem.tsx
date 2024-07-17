@@ -19,7 +19,6 @@ interface StepListItemProps {
   activeStep: ActiveStep;
   setActiveStep: (value: ActiveStep) => void;
   isEditMode: boolean;
-  isProductionFlow: boolean;
 }
 
 const StepListItem: React.FC<StepListItemProps> = ({
@@ -28,7 +27,6 @@ const StepListItem: React.FC<StepListItemProps> = ({
   setActiveStep,
   isEditMode,
   subFlowId = null,
-  isProductionFlow,
   level
 }) => (
   <StyledListItem
@@ -46,18 +44,17 @@ const StepListItem: React.FC<StepListItemProps> = ({
         {step.data.name}
       </Typography>
     </StyledStepItem>
-    {!isProductionFlow && (
-      <ListItemSecondaryAction>
-        <StepActionsMenu
-          subFlowId={subFlowId}
-          activeStep={activeStep}
-          setActiveStep={setActiveStep}
-          flowNode={step}
-          showActionMenuButton={true}
-          isEditMode={isEditMode}
-        />
-      </ListItemSecondaryAction>
-    )}
+
+    <ListItemSecondaryAction>
+      <StepActionsMenu
+        subFlowId={subFlowId}
+        activeStep={activeStep}
+        setActiveStep={setActiveStep}
+        flowNode={step}
+        showActionMenuButton={true}
+        isEditMode={isEditMode}
+      />
+    </ListItemSecondaryAction>
   </StyledListItem>
 );
 

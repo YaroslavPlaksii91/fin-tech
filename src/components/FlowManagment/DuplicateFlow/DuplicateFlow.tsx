@@ -41,7 +41,7 @@ export const DuplicateFlow: React.FC<DuplicateFlowProps> = ({
       const flowDuplicateData = createDuplicateFlowData(flowDetails);
       const resultAction = await dispatch(createFlow(flowDuplicateData));
       const createdFlow = unwrapResult(resultAction);
-      navigate(`${routes.underwriting.flow.list}/${createdFlow.id}`);
+      navigate(`${routes.underwriting.flow.list(createdFlow.id)}`);
       enqueueSnackbar(
         <SnackbarMessage
           message="Success"

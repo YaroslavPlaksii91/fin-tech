@@ -22,13 +22,15 @@ interface SubFlowProps {
   activeStepId: string;
   resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
+  isViewMode: boolean;
 }
 
 const SubFlow: React.FC<SubFlowProps> = ({
   mainFlow,
   rfInstance: { getNodes, setNodes },
   activeStepId,
-  resetActiveStepId
+  resetActiveStepId,
+  isViewMode
 }) => {
   const user = useAppSelector(selectUserInfo);
   const username = getFullUserName(user);
@@ -78,18 +80,14 @@ const SubFlow: React.FC<SubFlowProps> = ({
     []
   );
 
-  const deleteNodeAndSyncMainFlow = useCallback(
-    (deleteNodes: FlowNode[], subFlowId: string) => {
-      const mainFlowNodes: FlowNode[] = getNodes();
-      const updatedNodes = removeNodesAndEdgesInSubFlow(
-        mainFlowNodes,
-        deleteNodes,
-        subFlowId
-      );
-      setNodes(updatedNodes);
-    },
-    []
-  );
+  const deleteNodeAndSyncMainFlow = useCallback((deleteNodes: FlowNode[]) => {
+    const mainFlowNodes: FlowNode[] = getNodes();
+    const updatedNodes = removeNodesAndEdgesInSubFlow(
+      mainFlowNodes,
+      deleteNodes
+    );
+    setNodes(updatedNodes);
+  }, []);
 
   return (
     // As subFlow is sub instance main flow, it needs own flow provider
@@ -99,6 +97,7 @@ const SubFlow: React.FC<SubFlowProps> = ({
           <SubFlowChartEditor
             mainFlow={mainFlow}
             flow={subFlow}
+            isViewMode={isViewMode}
             setCopyFlow={saveSubflow}
             addNodeAndSyncMainFlow={addNodeAndSyncMainFlow}
             deleteNodeAndSyncMainFlow={deleteNodeAndSyncMainFlow}
