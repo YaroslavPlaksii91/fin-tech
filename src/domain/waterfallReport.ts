@@ -29,7 +29,7 @@ export interface WaterfallReport {
   }[];
 }
 
-type ExternalSystemsData = {
+export type ExternalSystemsData = {
   reportType: string;
   name: null | string;
   looks: number;
