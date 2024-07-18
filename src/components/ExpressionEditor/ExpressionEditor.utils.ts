@@ -31,7 +31,7 @@ export const regExpHelpers = {
     const substringBeforeCaret = input.substring(0, caretPosition);
 
     const openFunctions = Array.from(
-      substringBeforeCaret.matchAll(/[A-Z]+\(/g)
+      substringBeforeCaret.matchAll(/[A-Z_]+\(/g)
     );
     const closingBrackets = Array.from(substringBeforeCaret.matchAll(/\)/g));
 
@@ -109,3 +109,12 @@ export function highlightChunks(textToHighlight: string): string {
     })
     .join('');
 }
+
+export const getDomesticDescriptionForGetReportFunction = (
+  domesticDescription: string,
+  controlFiles: string[]
+) => {
+  const textControlFiles = controlFiles.map((file) => `"${file}"`).join(', ');
+
+  return `${domesticDescription} ${textControlFiles})`;
+};

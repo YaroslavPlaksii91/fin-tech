@@ -7,26 +7,47 @@ import { IFlow } from '@domain/flow';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 import MainFlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEditor/MainFlowChartEditor';
+import Logger from '@utils/logger';
+import { integrationsService } from '@services/integrations';
+import { CRAClarityControlFilesContext } from '@contexts/CRAClarityControlFilesContext';
 
 function FlowEdit() {
   const { flow } = useAppSelector(selectFlow);
   const [copyFlow, setCopyFlow] = useState<IFlow>();
   const { variables } = useDataDictionaryVariables(flow);
+  const [craClarityControlFiles, setCRAClarityControlFiles] = useState<
+    string[]
+  >([]);
 
   useEffect(() => {
     const flowDeepCopy = cloneDeep(flow);
     setCopyFlow(flowDeepCopy);
   }, [flow.id]);
 
+  useEffect(() => {
+    const fetchCRAClarityControlFiles = async () => {
+      try {
+        const data = await integrationsService.getCRAClarityControlFiles();
+        setCRAClarityControlFiles(data);
+      } catch (error) {
+        Logger.error('Error fetching control files data:', error);
+      }
+    };
+
+    void fetchCRAClarityControlFiles();
+  }, []);
+
   return (
     <DataDictionaryContext.Provider value={{ variables }}>
-      {copyFlow && (
-        <MainFlowChartEditor
-          isViewMode={false}
-          flow={copyFlow}
-          setCopyFlow={setCopyFlow}
-        />
-      )}
+      <CRAClarityControlFilesContext.Provider value={craClarityControlFiles}>
+        {copyFlow && (
+          <MainFlowChartEditor
+            isViewMode={false}
+            flow={copyFlow}
+            setCopyFlow={setCopyFlow}
+          />
+        )}
+      </CRAClarityControlFilesContext.Provider>
     </DataDictionaryContext.Provider>
   );
 }

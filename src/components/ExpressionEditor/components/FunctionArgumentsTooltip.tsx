@@ -2,15 +2,22 @@ import React from 'react';
 import { ListItemText, MenuItem, Paper } from '@mui/material';
 import Highlighter from 'react-highlight-words';
 
-import { functionsConfigDict } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
-import { regExpHelpers } from '@components/ExpressionEditor/ExpressionEditor.utils.ts';
+import {
+  ExpressionEditorFunction,
+  functionsConfigDict
+} from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
+import {
+  getDomesticDescriptionForGetReportFunction,
+  regExpHelpers
+} from '@components/ExpressionEditor/ExpressionEditor.utils.ts';
 import styles from '@components/ExpressionEditor/ExpressionEditor.module.scss';
 
 // @TODO: Based on the cursor position in post-MVP?
 const FunctionArgumentsTooltip: React.FC<FunctionArgumentsTooltipProps> = ({
   value,
   currentOperatorIndex,
-  currentOperatorLiteral
+  currentOperatorLiteral,
+  controlFiles
 }) => {
   if (!currentOperatorLiteral) {
     return null;
@@ -18,7 +25,15 @@ const FunctionArgumentsTooltip: React.FC<FunctionArgumentsTooltipProps> = ({
 
   const currentConfig = functionsConfigDict[currentOperatorLiteral];
 
-  const domesticDescription = currentConfig.domesticDescription || '';
+  //@TODO: Temporary tooltip for GET_REPORT
+  const domesticDescription =
+    currentConfig.literal == ExpressionEditorFunction.GET_REPORT
+      ? getDomesticDescriptionForGetReportFunction(
+          currentConfig.domesticDescription,
+          controlFiles
+        )
+      : currentConfig.domesticDescription || '';
+
   const rightSideValue = value.substring(currentOperatorIndex);
 
   const descriptionArgs = regExpHelpers
@@ -35,21 +50,30 @@ const FunctionArgumentsTooltip: React.FC<FunctionArgumentsTooltipProps> = ({
     .replace(/[()]/g, '')
     .split(',');
 
+  //@TODO: Turn off search by word for GET_REPORT as the tooltip does not contain arguments.
   const searchWord =
-    descriptionArgs[
-      valueArgs.length > descriptionArgs.length
-        ? descriptionArgs.length - 1
-        : valueArgs.length - 1
-    ];
+    currentConfig.literal !== ExpressionEditorFunction.GET_REPORT
+      ? [
+          descriptionArgs[
+            valueArgs.length > descriptionArgs.length
+              ? descriptionArgs.length - 1
+              : valueArgs.length - 1
+          ]
+        ]
+      : [];
 
   return (
     <Paper className={styles.suggestBox} variant="outlined" elevation={12}>
       <MenuItem disableRipple dense>
-        <ListItemText>
+        <ListItemText
+          primaryTypographyProps={{
+            style: { textWrap: 'wrap' }
+          }}
+        >
           {currentOperatorLiteral}
           <Highlighter
             autoEscape={true}
-            searchWords={[searchWord]}
+            searchWords={searchWord}
             textToHighlight={domesticDescription.replace(
               currentOperatorLiteral,
               ''
@@ -64,6 +88,7 @@ const FunctionArgumentsTooltip: React.FC<FunctionArgumentsTooltipProps> = ({
 interface FunctionArgumentsTooltipProps {
   value: string;
   currentOperatorIndex: number;
+  controlFiles: string[];
   currentOperatorLiteral?: string;
 }
 
