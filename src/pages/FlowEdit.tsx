@@ -39,9 +39,7 @@ function FlowEdit() {
 
   return (
     <DataDictionaryContext.Provider value={{ variables }}>
-      <CRAClarityControlFilesContext.Provider
-        value={{ controlFiles: craClarityControlFiles }}
-      >
+      <CRAClarityControlFilesContext.Provider value={craClarityControlFiles}>
         {copyFlow && (
           <MainFlowChartEditor
             isViewMode={false}

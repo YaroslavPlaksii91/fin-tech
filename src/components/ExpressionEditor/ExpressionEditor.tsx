@@ -47,8 +47,7 @@ const ExpressionEditor: ForwardRefRenderFunction<
   },
   ref
 ) => {
-  const data = useContext(CRAClarityControlFilesContext);
-  const controlFiles = data?.controlFiles || [];
+  const controlFiles = useContext(CRAClarityControlFilesContext) ?? [];
 
   const textareaRef: MutableRefObject<HTMLTextAreaElement | null> =
     useRef(null);

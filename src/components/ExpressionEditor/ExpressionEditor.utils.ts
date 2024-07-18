@@ -110,7 +110,7 @@ export function highlightChunks(textToHighlight: string): string {
     .join('');
 }
 
-export const getDomesticDescriptionForGetReport = (
+export const getDomesticDescriptionForGetReportFunction = (
   domesticDescription: string,
   controlFiles: string[]
 ) => {

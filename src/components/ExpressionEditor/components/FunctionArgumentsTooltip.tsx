@@ -7,7 +7,7 @@ import {
   functionsConfigDict
 } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
 import {
-  getDomesticDescriptionForGetReport,
+  getDomesticDescriptionForGetReportFunction,
   regExpHelpers
 } from '@components/ExpressionEditor/ExpressionEditor.utils.ts';
 import styles from '@components/ExpressionEditor/ExpressionEditor.module.scss';
@@ -25,14 +25,14 @@ const FunctionArgumentsTooltip: React.FC<FunctionArgumentsTooltipProps> = ({
 
   const currentConfig = functionsConfigDict[currentOperatorLiteral];
 
-  // TODO add check to ''
+  //@TODO: Temporary tooltip for GET_REPORT
   const domesticDescription =
     currentConfig.literal == ExpressionEditorFunction.GET_REPORT
-      ? getDomesticDescriptionForGetReport(
+      ? getDomesticDescriptionForGetReportFunction(
           currentConfig.domesticDescription,
           controlFiles
         )
-      : currentConfig.domesticDescription;
+      : currentConfig.domesticDescription || '';
 
   const rightSideValue = value.substring(currentOperatorIndex);
 
@@ -50,6 +50,7 @@ const FunctionArgumentsTooltip: React.FC<FunctionArgumentsTooltipProps> = ({
     .replace(/[()]/g, '')
     .split(',');
 
+  //@TODO: Turn off search by word for GET_REPORT as the tooltip does not contain arguments.
   const searchWord =
     currentConfig.literal !== ExpressionEditorFunction.GET_REPORT
       ? [
