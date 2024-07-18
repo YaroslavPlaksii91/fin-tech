@@ -1,6 +1,7 @@
 import React, {
   ForwardRefRenderFunction,
   MutableRefObject,
+  useContext,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -25,6 +26,7 @@ import FunctionArgumentsTooltip from '@components/ExpressionEditor/components/Fu
 import FunctionsAutosuggestion, {
   FunctionsAutosuggestionAPI
 } from '@components/ExpressionEditor/components/FunctionsAutosuggestion.tsx';
+import { CRAClarityControlFilesContext } from '@contexts/CRAClarityControlFilesContext';
 
 export interface ExpressionEditorAPI {
   focus: (payload: { selectionStart: number }) => void;
@@ -45,6 +47,9 @@ const ExpressionEditor: ForwardRefRenderFunction<
   },
   ref
 ) => {
+  const data = useContext(CRAClarityControlFilesContext);
+  const controlFiles = data?.controlFiles || [];
+
   const textareaRef: MutableRefObject<HTMLTextAreaElement | null> =
     useRef(null);
 
@@ -163,6 +168,7 @@ const ExpressionEditor: ForwardRefRenderFunction<
       />
       <FunctionArgumentsTooltip
         value={value}
+        controlFiles={controlFiles}
         currentOperatorIndex={currentOperatorIndex}
         currentOperatorLiteral={currentOperatorLiteral}
       />

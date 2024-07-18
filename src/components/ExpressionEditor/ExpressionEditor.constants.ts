@@ -25,7 +25,7 @@ export interface OperatorConfig {
   category: ExpressionOperatorCategory | string;
 }
 
-enum ExpressionEditorFunction {
+export enum ExpressionEditorFunction {
   MIN = 'MIN',
   MAX = 'MAX',
   SIGN = 'SIGN',
@@ -197,7 +197,8 @@ export const functionsConfig: FunctionConfig[] = [
   {
     literal: ExpressionEditorFunction.GET_REPORT,
     description: 'Retrieve report from the external data sources such as CRA',
-    domesticDescription: 'GET_REPORT(query)',
+    domesticDescription:
+      'GET_REPORT(This function accepts two arguments. CRA the Enum that allows two different values: ReportType.CraFactorTrust, ReportType.CraClarity. Should you choose ReportType.CraFactorTrust you do not need to provide the second argument. Whereas if you choose ReportType.CraClarity, you must provide the second argument - the name of the control file in string format e.g.',
     category: ExpressionOperatorCategory.MISCELANEOUS
   }
 ];
