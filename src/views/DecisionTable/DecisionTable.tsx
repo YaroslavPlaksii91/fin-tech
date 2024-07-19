@@ -7,7 +7,7 @@ import {
   Typography
 } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
-import { keyBy } from 'lodash';
+import { debounce, keyBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -63,6 +63,7 @@ import { permissionsMap } from '@constants/permissions';
 import { selectUserInfo } from '@store/auth/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
+import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog';
 
 type DecisionTableStepProps = {
   flow: IFlow;
@@ -88,6 +89,7 @@ const DecisionTableStep = ({
     onAddNodeBetweenEdges
   }
 }: DecisionTableStepProps) => {
+  const [isDirty, setIsDirty] = useState<boolean>(false);
   const [noteValue, setNoteValue] = useState('');
   const [selectedColumn, setSelectedColumn] =
     useState<VariableColumnDataUpdate | null>(null);
@@ -392,7 +394,7 @@ const DecisionTableStep = ({
     }
   };
 
-  const setInitialData = useCallback(() => {
+  const initialData = useMemo(() => {
     const { data } = step;
 
     if (!data.caseEntries) return;
@@ -422,14 +424,89 @@ const DecisionTableStep = ({
       }))
     }));
 
-    setStepIds(savedStepIds);
-    setCaseEntries(savedCaseEntries);
-    setDefaultActions(savedDefaultActions);
-    setDefaultStepId(savedDefaultStepId);
-    setNoteValue(data.note ?? '');
+    return {
+      savedDefaultStepId,
+      savedStepIds,
+      savedDefaultActions,
+      savedCaseEntries,
+      savedNote: data.note
+    };
   }, [step]);
 
+  const setInitialData = useCallback(() => {
+    // const { data } = step;
+
+    // if (!data.caseEntries) return;
+
+    // const savedDefaultStepId =
+    //   getEdge(data.defaultEdgeId || '')?.target || null;
+
+    // const savedStepIds = data.caseEntries.map((entry) => {
+    //   const connectedEdge = getEdge(entry.edgeId || '');
+
+    //   return connectedEdge?.target || null;
+    // });
+
+    // // if some defaultActions were saved already into the flow
+    // const savedDefaultActions =
+    //   data.defaultActions?.map((column) => ({
+    //     ...column,
+    //     operator: column.expression ? '=' : ''
+    //   })) || [];
+
+    // // if some CaseEntries were saved already into the flow
+    // const savedCaseEntries = data.caseEntries.map((row) => ({
+    //   ...row,
+    //   actions: row.actions.map((column) => ({
+    //     ...column,
+    //     operator: column.expression ? '=' : ''
+    //   }))
+    // }));
+    if (initialData) {
+      setStepIds(initialData.savedStepIds);
+      setCaseEntries(initialData.savedCaseEntries);
+      setDefaultActions(initialData.savedDefaultActions);
+      setDefaultStepId(initialData.savedDefaultStepId);
+      setNoteValue(initialData.savedNote ?? '');
+    }
+  }, [initialData]);
+
   useEffect(() => setInitialData(), [step.data]);
+
+  const checkIsDirty = (
+    caseEntries: CaseEntriesDate[],
+    defaultActions: CaseEntry[],
+    defaultStepId: string | null,
+    noteValue: string,
+    stepIds: (string | null)[]
+  ) => {
+    const isEdit =
+      JSON.stringify(initialData?.savedCaseEntries) !==
+        JSON.stringify(caseEntries) ||
+      JSON.stringify(initialData?.savedDefaultActions) !==
+        JSON.stringify(defaultActions) ||
+      initialData?.savedDefaultStepId !== defaultStepId ||
+      initialData.savedNote !== noteValue ||
+      JSON.stringify(initialData?.savedStepIds) !== JSON.stringify(stepIds);
+
+    if (isEdit) {
+      setIsDirty(true);
+    } else {
+      setIsDirty(false);
+    }
+  };
+
+  const debounceCheckIsDirty = useCallback(debounce(checkIsDirty, 300), []);
+
+  useEffect(() => {
+    debounceCheckIsDirty(
+      caseEntries,
+      defaultActions,
+      defaultStepId,
+      noteValue,
+      stepIds
+    );
+  }, [caseEntries, defaultActions, defaultStepId, noteValue, stepIds]);
 
   if (!variables) return null;
 
@@ -512,6 +589,7 @@ const DecisionTableStep = ({
           cannot be canceled. Are you sure you want to cancel the changes?
         </Typography>
       </Dialog>
+      <LeavePageConfirmationDialog isDirty={isDirty} />
     </>
   );
 };
