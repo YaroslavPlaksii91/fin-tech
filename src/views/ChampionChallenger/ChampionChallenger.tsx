@@ -51,6 +51,7 @@ import { permissionsMap } from '@constants/permissions';
 import { useAppSelector } from '@store/hooks';
 import { selectUserInfo } from '@store/auth/auth';
 import { getFullUserName } from '@utils/helpers';
+import { useIsDirty } from '@contexts/IsDirtyContext';
 
 const DEFAULT_PERCENTAGE_SPLIT = 10;
 
@@ -86,6 +87,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
   const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
 
+  const { setIsDirty } = useIsDirty();
+
   const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
   const isPreview = isViewMode || !canUpdateFlow;
   const user = useAppSelector(selectUserInfo);
@@ -99,11 +102,12 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     control,
     clearErrors,
     getValues,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, dirtyFields },
     setValue
   } = useForm<FieldValues, unknown, FieldValues>({
     mode: 'onChange',
-    defaultValues: { splits: [], note: '' },
+    // default values note
+    defaultValues: { splits: step.data.splits, note: '' },
     // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
     resolver: yupResolver(validationSchema)
   });
@@ -112,6 +116,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     name: 'splits',
     control
   });
+
+  const isEdited = Object.keys(dirtyFields).length !== 0;
 
   const handleOpenNoteModal = () => setOpenNoteModal(true);
 
@@ -125,7 +131,9 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     setOpenNoteModal(false);
   };
 
-  const handleDiscardChanges = () => resetActiveStepId();
+  const handleDiscardChanges = useCallback(() => {
+    isEdited ? setOpenDiscardModal(true) : resetActiveStepId();
+  }, [isEdited]);
 
   const onSubmit = async (data: FieldValues) => {
     const existingSplitEdges =
@@ -226,6 +234,10 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   useEffect(() => {
     setInitialData();
   }, [step.data]);
+
+  useEffect(() => {
+    setIsDirty(isEdited);
+  }, [isEdited]);
 
   return (
     <>
@@ -351,7 +363,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       </StepContentWrapper>
       <StepDetailsControlBar
         disabled={!isEmpty(errors) || isSubmitting}
-        onDiscard={() => setOpenDiscardModal(true)}
+        onDiscard={handleDiscardChanges}
         isSubmitting={isSubmitting}
         onApplyChangesClick={() => {
           void handleSubmit(onSubmit)();
@@ -359,14 +371,15 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         isShow={!isPreview}
       />
       <Dialog
-        title="Discard changes"
+        title="Cancel Changes"
         open={openDiscardModal}
-        onConfirm={handleDiscardChanges}
+        onConfirm={() => resetActiveStepId()}
         onClose={() => setOpenDiscardModal(false)}
-        confirmText="Discard changes"
+        confirmText="Yes"
+        cancelText="No"
       >
         <Typography sx={{ maxWidth: '416px' }} variant="body2">
-          Discarding changes will delete all edits in this step, this action
+          Canceling changes will delete all edits in this step, this action
           cannot be canceled. Are you sure you want to cancel the changes?
         </Typography>
       </Dialog>

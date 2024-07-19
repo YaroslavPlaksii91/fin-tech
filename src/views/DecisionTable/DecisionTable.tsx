@@ -63,7 +63,7 @@ import { permissionsMap } from '@constants/permissions';
 import { selectUserInfo } from '@store/auth/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
-import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog';
+import { useIsDirty } from '@contexts/IsDirtyContext';
 
 type DecisionTableStepProps = {
   flow: IFlow;
@@ -89,7 +89,9 @@ const DecisionTableStep = ({
     onAddNodeBetweenEdges
   }
 }: DecisionTableStepProps) => {
-  const [isDirty, setIsDirty] = useState<boolean>(false);
+  const { setIsDirty } = useIsDirty();
+  const [isEdited, setIsEdited] = useState(false);
+
   const [noteValue, setNoteValue] = useState('');
   const [selectedColumn, setSelectedColumn] =
     useState<VariableColumnDataUpdate | null>(null);
@@ -167,7 +169,9 @@ const DecisionTableStep = ({
     setOpenNoteModal(false);
   };
 
-  const handleDiscardChanges = () => resetActiveStepId();
+  const handleDiscardChanges = useCallback(() => {
+    isEdited ? setOpenDiscardModal(true) : resetActiveStepId();
+  }, [isEdited]);
 
   const handleAddNewLayer = () => {
     const addNewLayerColumns = (
@@ -490,9 +494,9 @@ const DecisionTableStep = ({
       JSON.stringify(initialData?.savedStepIds) !== JSON.stringify(stepIds);
 
     if (isEdit) {
-      setIsDirty(true);
+      setIsEdited(true);
     } else {
-      setIsDirty(false);
+      setIsEdited(false);
     }
   };
 
@@ -507,6 +511,10 @@ const DecisionTableStep = ({
       stepIds
     );
   }, [caseEntries, defaultActions, defaultStepId, noteValue, stepIds]);
+
+  useEffect(() => {
+    setIsDirty(isEdited);
+  }, [isEdited]);
 
   if (!variables) return null;
 
@@ -573,23 +581,23 @@ const DecisionTableStep = ({
         )}
       </StepContentWrapper>
       <StepDetailsControlBar
-        onDiscard={() => setOpenDiscardModal(true)}
+        onDiscard={handleDiscardChanges}
         onApplyChangesClick={onApplyChangesClick}
         isShow={!isPreview}
       />
       <Dialog
-        title="Discard changes"
+        title="Cancel Changes"
         open={openDiscardModal}
-        onConfirm={handleDiscardChanges}
+        onConfirm={() => resetActiveStepId()}
         onClose={() => setOpenDiscardModal(false)}
-        confirmText="Discard changes"
+        confirmText="Yes"
+        cancelText="No"
       >
         <Typography sx={{ maxWidth: '416px' }} variant="body2">
-          Discarding changes will delete all edits in this step, this action
+          Canceling changes will delete all edits in this step, this action
           cannot be canceled. Are you sure you want to cancel the changes?
         </Typography>
       </Dialog>
-      <LeavePageConfirmationDialog isDirty={isDirty} />
     </>
   );
 };

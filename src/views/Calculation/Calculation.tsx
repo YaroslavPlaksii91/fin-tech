@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -38,6 +38,7 @@ import { selectUserInfo } from '@store/auth/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
 import { theme } from '@theme';
+import { useIsDirty } from '@contexts/IsDirtyContext';
 
 interface CalculationProps {
   step: FlowNode;
@@ -70,8 +71,13 @@ const Calculation: React.FC<CalculationProps> = ({
     control,
     setValue,
     getValues,
-    formState: { isSubmitting }
-  } = useForm<FieldValues>({ defaultValues: { expressions: [], note: '' } });
+    formState: { isSubmitting, dirtyFields }
+  } = useForm<FieldValues>({
+    defaultValues: { expressions: step.data.expressions, note: '' }
+  });
+
+  const isEdited = Object.keys(dirtyFields).length !== 0;
+  const { setIsDirty } = useIsDirty();
 
   const { fields, append, remove, update } = useFieldArray({
     name: 'expressions',
@@ -89,8 +95,6 @@ const Calculation: React.FC<CalculationProps> = ({
     setValue('note', getValues('note'));
     setOpenNoteModal(false);
   };
-
-  const handleDiscardChanges = () => resetActiveStepId();
 
   const onSubmit = (data: FieldValues) => {
     const updatedNodes = nodes.map((node: FlowNode) => {
@@ -116,11 +120,6 @@ const Calculation: React.FC<CalculationProps> = ({
     resetActiveStepId();
   };
 
-  useEffect(() => {
-    setValue('expressions', step.data.expressions || []);
-    setValue('note', step.data.note || '');
-  }, [step.data]);
-
   const handleAddNewBussinesRule = ({
     data,
     id
@@ -136,6 +135,19 @@ const Calculation: React.FC<CalculationProps> = ({
     }
     setOpenExpEditorView(false);
   };
+
+  const handleDiscardChanges = useCallback(() => {
+    isEdited ? setOpenDiscardModal(true) : resetActiveStepId();
+  }, [isEdited]);
+
+  useEffect(() => {
+    setValue('expressions', step.data.expressions || []);
+    setValue('note', step.data.note || '');
+  }, [step.data]);
+
+  useEffect(() => {
+    setIsDirty(isEdited);
+  }, [isEdited]);
 
   return (
     <>
@@ -280,7 +292,7 @@ const Calculation: React.FC<CalculationProps> = ({
             <Dialog
               title="Cancel Changes"
               open={openDiscardModal}
-              onConfirm={handleDiscardChanges}
+              onConfirm={() => resetActiveStepId()}
               onClose={() => setOpenDiscardModal(false)}
               confirmText="Yes"
               cancelText="No"
@@ -294,7 +306,7 @@ const Calculation: React.FC<CalculationProps> = ({
           </StepContentWrapper>
           <StepDetailsControlBar
             disabled={isSubmitting}
-            onDiscard={() => setOpenDiscardModal(true)}
+            onDiscard={handleDiscardChanges}
             isSubmitting={isSubmitting}
             onApplyChangesClick={() => {
               void handleSubmit(onSubmit)();
