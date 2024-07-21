@@ -1,1 +1,3 @@
-export const DEFAULT_SORT = 'id asc';
+import { COLUMN_IDS } from './types';
+
+export const DEFAULT_SORT = `${COLUMN_IDS.requestDate} desc`;
