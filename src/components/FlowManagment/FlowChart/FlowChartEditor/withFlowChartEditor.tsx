@@ -474,7 +474,7 @@ const withFlowChartEditor =
           isEditMode={!isViewMode}
           setActiveStep={setActiveStep}
         />
-        <LeavePageConfirmationDialog isDirty={isDirty} />
+        {!isViewMode && <LeavePageConfirmationDialog isDirty={isDirty} />}
       </>
     );
   };

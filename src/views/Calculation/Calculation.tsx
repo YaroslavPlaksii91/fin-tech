@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -25,7 +25,6 @@ import { FlowNode } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
 import { RULES_LIMIT, SNACK_TYPE } from '@constants/common';
-import Dialog from '@components/shared/Modals/Dialog';
 import { ExpressionForm } from '@components/ExpressionForm/ExpressionForm.tsx';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import { InputText } from '@components/shared/Forms/InputText';
@@ -55,12 +54,12 @@ const Calculation: React.FC<CalculationProps> = ({
 }) => {
   const nodes: FlowNode[] = getNodes();
   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
-  const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
   const [openExpEditorView, setOpenExpEditorView] = useState<boolean>(false);
   const [initialValue, setInitialValue] = useState<
     Expression & { id: string }
   >();
 
+  const { setIsDirty } = useIsDirty();
   const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
   const isPreview = isViewMode || !canUpdateFlow;
   const user = useAppSelector(selectUserInfo);
@@ -71,13 +70,20 @@ const Calculation: React.FC<CalculationProps> = ({
     control,
     setValue,
     getValues,
+    watch,
     formState: { isSubmitting, dirtyFields }
   } = useForm<FieldValues>({
-    defaultValues: { expressions: step.data.expressions, note: '' }
+    defaultValues: {
+      expressions: step.data.expressions,
+      note: step.data.note ?? ''
+    }
   });
+  const watchNote = watch('note');
 
-  const isEdited = Object.keys(dirtyFields).length !== 0;
-  const { setIsDirty } = useIsDirty();
+  const isEdited = useMemo(
+    () => Object.keys(dirtyFields).length !== 0 || watchNote !== step.data.note,
+    [dirtyFields, watchNote, step.data.note]
+  );
 
   const { fields, append, remove, update } = useFieldArray({
     name: 'expressions',
@@ -135,10 +141,6 @@ const Calculation: React.FC<CalculationProps> = ({
     }
     setOpenExpEditorView(false);
   };
-
-  const handleDiscardChanges = useCallback(() => {
-    isEdited ? setOpenDiscardModal(true) : resetActiveStepId();
-  }, [isEdited]);
 
   useEffect(() => {
     setValue('expressions', step.data.expressions || []);
@@ -289,24 +291,11 @@ const Calculation: React.FC<CalculationProps> = ({
                 )}
               />
             )}
-            <Dialog
-              title="Cancel Changes"
-              open={openDiscardModal}
-              onConfirm={() => resetActiveStepId()}
-              onClose={() => setOpenDiscardModal(false)}
-              confirmText="Yes"
-              cancelText="No"
-            >
-              <Typography sx={{ maxWidth: '416px' }} variant="body2">
-                Canceling changes will delete all edits in this step, this
-                action cannot be canceled. Are you sure you want to cancel the
-                changes?
-              </Typography>
-            </Dialog>
           </StepContentWrapper>
           <StepDetailsControlBar
             disabled={isSubmitting}
-            onDiscard={handleDiscardChanges}
+            isEdited={isEdited}
+            resetActiveStepId={resetActiveStepId}
             isSubmitting={isSubmitting}
             onApplyChangesClick={() => {
               void handleSubmit(onSubmit)();

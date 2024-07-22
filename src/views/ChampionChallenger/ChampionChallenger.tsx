@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Button,
   Stack,
@@ -40,7 +40,6 @@ import {
   SnackbarErrorMessage,
   SnackbarMessage
 } from '@components/shared/Snackbar/SnackbarMessage';
-import Dialog from '@components/shared/Modals/Dialog';
 import { flowService } from '@services/flow-service';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
 import { theme } from '@theme';
@@ -85,7 +84,6 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
-  const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
 
   const { setIsDirty } = useIsDirty();
 
@@ -103,11 +101,12 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     clearErrors,
     getValues,
     formState: { errors, isSubmitting, dirtyFields },
-    setValue
+    setValue,
+    watch
   } = useForm<FieldValues, unknown, FieldValues>({
     mode: 'onChange',
     // default values note
-    defaultValues: { splits: step.data.splits, note: '' },
+    defaultValues: { splits: step.data.splits, note: step.data.note ?? '' },
     // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
     resolver: yupResolver(validationSchema)
   });
@@ -117,7 +116,11 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     control
   });
 
-  const isEdited = Object.keys(dirtyFields).length !== 0;
+  const watchNote = watch('note');
+  const isEdited = useMemo(
+    () => Object.keys(dirtyFields).length !== 0 || watchNote !== step.data.note,
+    [dirtyFields, watchNote, step.data.note]
+  );
 
   const handleOpenNoteModal = () => setOpenNoteModal(true);
 
@@ -130,10 +133,6 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     setValue('note', getValues('note'));
     setOpenNoteModal(false);
   };
-
-  const handleDiscardChanges = useCallback(() => {
-    isEdited ? setOpenDiscardModal(true) : resetActiveStepId();
-  }, [isEdited]);
 
   const onSubmit = async (data: FieldValues) => {
     const existingSplitEdges =
@@ -363,26 +362,14 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       </StepContentWrapper>
       <StepDetailsControlBar
         disabled={!isEmpty(errors) || isSubmitting}
-        onDiscard={handleDiscardChanges}
+        resetActiveStepId={resetActiveStepId}
+        isEdited={isEdited}
         isSubmitting={isSubmitting}
         onApplyChangesClick={() => {
           void handleSubmit(onSubmit)();
         }}
         isShow={!isPreview}
       />
-      <Dialog
-        title="Cancel Changes"
-        open={openDiscardModal}
-        onConfirm={() => resetActiveStepId()}
-        onClose={() => setOpenDiscardModal(false)}
-        confirmText="Yes"
-        cancelText="No"
-      >
-        <Typography sx={{ maxWidth: '416px' }} variant="body2">
-          Canceling changes will delete all edits in this step, this action
-          cannot be canceled. Are you sure you want to cancel the changes?
-        </Typography>
-      </Dialog>
     </>
   );
 };

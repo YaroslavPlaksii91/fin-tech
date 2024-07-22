@@ -1,11 +1,5 @@
 import { useEffect, useState, useContext, useMemo, useCallback } from 'react';
-import {
-  Button,
-  Paper,
-  TableContainer,
-  TextField,
-  Typography
-} from '@mui/material';
+import { Button, Paper, TableContainer, TextField } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { debounce, keyBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -54,7 +48,6 @@ import {
   SnackbarErrorMessage,
   SnackbarMessage
 } from '@components/shared/Snackbar/SnackbarMessage';
-import Dialog from '@components/shared/Modals/Dialog';
 import { SNACK_TYPE } from '@constants/common';
 import { DataDictionaryVariable } from '@domain/dataDictionary';
 import { StepContentWrapper } from '@views/styled';
@@ -96,7 +89,6 @@ const DecisionTableStep = ({
   const [selectedColumn, setSelectedColumn] =
     useState<VariableColumnDataUpdate | null>(null);
   const [openNoteModal, setOpenNoteModal] = useState(false);
-  const [openDiscardModal, setOpenDiscardModal] = useState(false);
   const [caseEntries, setCaseEntries] = useState<CaseEntriesDate[]>([]);
 
   const [defaultActions, setDefaultActions] = useState<CaseEntry[]>([]);
@@ -168,10 +160,6 @@ const DecisionTableStep = ({
     setNoteValue(note);
     setOpenNoteModal(false);
   };
-
-  const handleDiscardChanges = useCallback(() => {
-    isEdited ? setOpenDiscardModal(true) : resetActiveStepId();
-  }, [isEdited]);
 
   const handleAddNewLayer = () => {
     const addNewLayerColumns = (
@@ -438,34 +426,6 @@ const DecisionTableStep = ({
   }, [step]);
 
   const setInitialData = useCallback(() => {
-    // const { data } = step;
-
-    // if (!data.caseEntries) return;
-
-    // const savedDefaultStepId =
-    //   getEdge(data.defaultEdgeId || '')?.target || null;
-
-    // const savedStepIds = data.caseEntries.map((entry) => {
-    //   const connectedEdge = getEdge(entry.edgeId || '');
-
-    //   return connectedEdge?.target || null;
-    // });
-
-    // // if some defaultActions were saved already into the flow
-    // const savedDefaultActions =
-    //   data.defaultActions?.map((column) => ({
-    //     ...column,
-    //     operator: column.expression ? '=' : ''
-    //   })) || [];
-
-    // // if some CaseEntries were saved already into the flow
-    // const savedCaseEntries = data.caseEntries.map((row) => ({
-    //   ...row,
-    //   actions: row.actions.map((column) => ({
-    //     ...column,
-    //     operator: column.expression ? '=' : ''
-    //   }))
-    // }));
     if (initialData) {
       setStepIds(initialData.savedStepIds);
       setCaseEntries(initialData.savedCaseEntries);
@@ -490,7 +450,7 @@ const DecisionTableStep = ({
       JSON.stringify(initialData?.savedDefaultActions) !==
         JSON.stringify(defaultActions) ||
       initialData?.savedDefaultStepId !== defaultStepId ||
-      initialData.savedNote !== noteValue ||
+      initialData?.savedNote !== noteValue ||
       JSON.stringify(initialData?.savedStepIds) !== JSON.stringify(stepIds);
 
     if (isEdit) {
@@ -581,23 +541,11 @@ const DecisionTableStep = ({
         )}
       </StepContentWrapper>
       <StepDetailsControlBar
-        onDiscard={handleDiscardChanges}
+        isEdited={isEdited}
+        resetActiveStepId={resetActiveStepId}
         onApplyChangesClick={onApplyChangesClick}
         isShow={!isPreview}
       />
-      <Dialog
-        title="Cancel Changes"
-        open={openDiscardModal}
-        onConfirm={() => resetActiveStepId()}
-        onClose={() => setOpenDiscardModal(false)}
-        confirmText="Yes"
-        cancelText="No"
-      >
-        <Typography sx={{ maxWidth: '416px' }} variant="body2">
-          Canceling changes will delete all edits in this step, this action
-          cannot be canceled. Are you sure you want to cancel the changes?
-        </Typography>
-      </Dialog>
     </>
   );
 };
