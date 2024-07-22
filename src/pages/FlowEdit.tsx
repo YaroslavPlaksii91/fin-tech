@@ -10,6 +10,7 @@ import MainFlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEd
 import Logger from '@utils/logger';
 import { integrationsService } from '@services/integrations';
 import { CRAClarityControlFilesContext } from '@contexts/CRAClarityControlFilesContext';
+import { IsDirtyProvider } from '@contexts/IsDirtyContext';
 
 function FlowEdit() {
   const { flow } = useAppSelector(selectFlow);
@@ -40,13 +41,15 @@ function FlowEdit() {
   return (
     <DataDictionaryContext.Provider value={{ variables }}>
       <CRAClarityControlFilesContext.Provider value={craClarityControlFiles}>
-        {copyFlow && (
-          <MainFlowChartEditor
-            isViewMode={false}
-            flow={copyFlow}
-            setCopyFlow={setCopyFlow}
-          />
-        )}
+        <IsDirtyProvider>
+          {copyFlow && (
+            <MainFlowChartEditor
+              isViewMode={false}
+              flow={copyFlow}
+              setCopyFlow={setCopyFlow}
+            />
+          )}
+        </IsDirtyProvider>
       </CRAClarityControlFilesContext.Provider>
     </DataDictionaryContext.Provider>
   );

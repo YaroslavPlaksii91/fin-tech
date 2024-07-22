@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -25,7 +25,6 @@ import { FlowNode } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
 import { RULES_LIMIT, SNACK_TYPE } from '@constants/common';
-import Dialog from '@components/shared/Modals/Dialog';
 import { ExpressionForm } from '@components/ExpressionForm/ExpressionForm.tsx';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import { InputText } from '@components/shared/Forms/InputText';
@@ -38,6 +37,7 @@ import { selectUserInfo } from '@store/auth/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
 import { theme } from '@theme';
+import { useIsDirty } from '@contexts/IsDirtyContext';
 
 interface CalculationProps {
   step: FlowNode;
@@ -54,12 +54,12 @@ const Calculation: React.FC<CalculationProps> = ({
 }) => {
   const nodes: FlowNode[] = getNodes();
   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
-  const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
   const [openExpEditorView, setOpenExpEditorView] = useState<boolean>(false);
   const [initialValue, setInitialValue] = useState<
     Expression & { id: string }
   >();
 
+  const { setIsDirty } = useIsDirty();
   const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
   const isPreview = isViewMode || !canUpdateFlow;
   const user = useAppSelector(selectUserInfo);
@@ -70,8 +70,22 @@ const Calculation: React.FC<CalculationProps> = ({
     control,
     setValue,
     getValues,
-    formState: { isSubmitting }
-  } = useForm<FieldValues>({ defaultValues: { expressions: [], note: '' } });
+    watch,
+    formState: { isSubmitting, dirtyFields }
+  } = useForm<FieldValues>({
+    defaultValues: {
+      expressions: step.data.expressions,
+      note: step.data.note ?? ''
+    }
+  });
+  const watchNote = watch('note');
+
+  const isEdited = useMemo(
+    () =>
+      Object.keys(dirtyFields).length !== 0 ||
+      watchNote !== (step.data.note ?? ''),
+    [dirtyFields, watchNote, step.data.note]
+  );
 
   const { fields, append, remove, update } = useFieldArray({
     name: 'expressions',
@@ -89,8 +103,6 @@ const Calculation: React.FC<CalculationProps> = ({
     setValue('note', getValues('note'));
     setOpenNoteModal(false);
   };
-
-  const handleDiscardChanges = () => resetActiveStepId();
 
   const onSubmit = (data: FieldValues) => {
     const updatedNodes = nodes.map((node: FlowNode) => {
@@ -116,11 +128,6 @@ const Calculation: React.FC<CalculationProps> = ({
     resetActiveStepId();
   };
 
-  useEffect(() => {
-    setValue('expressions', step.data.expressions || []);
-    setValue('note', step.data.note || '');
-  }, [step.data]);
-
   const handleAddNewBussinesRule = ({
     data,
     id
@@ -136,6 +143,15 @@ const Calculation: React.FC<CalculationProps> = ({
     }
     setOpenExpEditorView(false);
   };
+
+  useEffect(() => {
+    setValue('expressions', step.data.expressions || []);
+    setValue('note', step.data.note || '');
+  }, [step.data]);
+
+  useEffect(() => {
+    setIsDirty(isEdited);
+  }, [isEdited]);
 
   return (
     <>
@@ -277,24 +293,11 @@ const Calculation: React.FC<CalculationProps> = ({
                 )}
               />
             )}
-            <Dialog
-              title="Cancel Changes"
-              open={openDiscardModal}
-              onConfirm={handleDiscardChanges}
-              onClose={() => setOpenDiscardModal(false)}
-              confirmText="Yes"
-              cancelText="No"
-            >
-              <Typography sx={{ maxWidth: '416px' }} variant="body2">
-                Canceling changes will delete all edits in this step, this
-                action cannot be canceled. Are you sure you want to cancel the
-                changes?
-              </Typography>
-            </Dialog>
           </StepContentWrapper>
           <StepDetailsControlBar
             disabled={isSubmitting}
-            onDiscard={() => setOpenDiscardModal(true)}
+            isEdited={isEdited}
+            resetActiveStepId={resetActiveStepId}
             isSubmitting={isSubmitting}
             onApplyChangesClick={() => {
               void handleSubmit(onSubmit)();

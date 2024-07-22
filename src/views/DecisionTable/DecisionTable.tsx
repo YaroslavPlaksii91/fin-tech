@@ -1,13 +1,7 @@
 import { useEffect, useState, useContext, useMemo, useCallback } from 'react';
-import {
-  Button,
-  Paper,
-  TableContainer,
-  TextField,
-  Typography
-} from '@mui/material';
+import { Button, Paper, TableContainer, TextField } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
-import { keyBy } from 'lodash';
+import { debounce, keyBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -54,7 +48,6 @@ import {
   SnackbarErrorMessage,
   SnackbarMessage
 } from '@components/shared/Snackbar/SnackbarMessage';
-import Dialog from '@components/shared/Modals/Dialog';
 import { SNACK_TYPE } from '@constants/common';
 import { DataDictionaryVariable } from '@domain/dataDictionary';
 import { StepContentWrapper } from '@views/styled';
@@ -63,6 +56,7 @@ import { permissionsMap } from '@constants/permissions';
 import { selectUserInfo } from '@store/auth/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
+import { useIsDirty } from '@contexts/IsDirtyContext';
 
 type DecisionTableStepProps = {
   flow: IFlow;
@@ -88,11 +82,13 @@ const DecisionTableStep = ({
     onAddNodeBetweenEdges
   }
 }: DecisionTableStepProps) => {
+  const { setIsDirty } = useIsDirty();
+  const [isEdited, setIsEdited] = useState(false);
+
   const [noteValue, setNoteValue] = useState('');
   const [selectedColumn, setSelectedColumn] =
     useState<VariableColumnDataUpdate | null>(null);
   const [openNoteModal, setOpenNoteModal] = useState(false);
-  const [openDiscardModal, setOpenDiscardModal] = useState(false);
   const [caseEntries, setCaseEntries] = useState<CaseEntriesDate[]>([]);
 
   const [defaultActions, setDefaultActions] = useState<CaseEntry[]>([]);
@@ -164,8 +160,6 @@ const DecisionTableStep = ({
     setNoteValue(note);
     setOpenNoteModal(false);
   };
-
-  const handleDiscardChanges = () => resetActiveStepId();
 
   const handleAddNewLayer = () => {
     const addNewLayerColumns = (
@@ -392,7 +386,7 @@ const DecisionTableStep = ({
     }
   };
 
-  const setInitialData = useCallback(() => {
+  const initialData = useMemo(() => {
     const { data } = step;
 
     if (!data.caseEntries) return;
@@ -422,14 +416,79 @@ const DecisionTableStep = ({
       }))
     }));
 
-    setStepIds(savedStepIds);
-    setCaseEntries(savedCaseEntries);
-    setDefaultActions(savedDefaultActions);
-    setDefaultStepId(savedDefaultStepId);
-    setNoteValue(data.note ?? '');
+    return {
+      savedDefaultStepId,
+      savedStepIds,
+      savedDefaultActions,
+      savedCaseEntries,
+      savedNote: data.note
+    };
   }, [step]);
 
+  const setInitialData = useCallback(() => {
+    if (initialData) {
+      setStepIds(initialData.savedStepIds);
+      setCaseEntries(initialData.savedCaseEntries);
+      setDefaultActions(initialData.savedDefaultActions);
+      setDefaultStepId(initialData.savedDefaultStepId);
+      setNoteValue(initialData.savedNote ?? '');
+    }
+  }, [initialData]);
+
   useEffect(() => setInitialData(), [step.data]);
+
+  const checkIsDirty = (
+    caseEntries: CaseEntriesDate[],
+    defaultActions: CaseEntry[],
+    defaultStepId: string | null,
+    noteValue: string,
+    stepIds: (string | null)[]
+  ) => {
+    const hasChangesInCaseEntries =
+      JSON.stringify(initialData?.savedCaseEntries) !==
+      JSON.stringify(caseEntries);
+
+    const hasChangesInDefaultActions =
+      JSON.stringify(initialData?.savedDefaultActions) !==
+      JSON.stringify(defaultActions);
+
+    const hasChangesDefaultStepId =
+      initialData?.savedDefaultStepId !== defaultStepId;
+
+    const hasChangesNoteValue = initialData?.savedNote !== noteValue;
+
+    const hasChangesStepIds =
+      JSON.stringify(initialData?.savedStepIds) !== JSON.stringify(stepIds);
+
+    const isEdit =
+      hasChangesInCaseEntries ||
+      hasChangesInDefaultActions ||
+      hasChangesDefaultStepId ||
+      hasChangesNoteValue ||
+      hasChangesStepIds;
+
+    if (isEdit) {
+      setIsEdited(true);
+    } else {
+      setIsEdited(false);
+    }
+  };
+
+  const debounceCheckIsDirty = useCallback(debounce(checkIsDirty, 300), []);
+
+  useEffect(() => {
+    debounceCheckIsDirty(
+      caseEntries,
+      defaultActions,
+      defaultStepId,
+      noteValue,
+      stepIds
+    );
+  }, [caseEntries, defaultActions, defaultStepId, noteValue, stepIds]);
+
+  useEffect(() => {
+    setIsDirty(isEdited);
+  }, [isEdited]);
 
   if (!variables) return null;
 
@@ -496,22 +555,11 @@ const DecisionTableStep = ({
         )}
       </StepContentWrapper>
       <StepDetailsControlBar
-        onDiscard={() => setOpenDiscardModal(true)}
+        isEdited={isEdited}
+        resetActiveStepId={resetActiveStepId}
         onApplyChangesClick={onApplyChangesClick}
         isShow={!isPreview}
       />
-      <Dialog
-        title="Discard changes"
-        open={openDiscardModal}
-        onConfirm={handleDiscardChanges}
-        onClose={() => setOpenDiscardModal(false)}
-        confirmText="Discard changes"
-      >
-        <Typography sx={{ maxWidth: '416px' }} variant="body2">
-          Discarding changes will delete all edits in this step, this action
-          cannot be canceled. Are you sure you want to cancel the changes?
-        </Typography>
-      </Dialog>
     </>
   );
 };
