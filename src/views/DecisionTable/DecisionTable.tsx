@@ -455,7 +455,7 @@ const DecisionTableStep = ({
     const hasChangesDefaultStepId =
       initialData?.savedDefaultStepId !== defaultStepId;
 
-    const hasChangesNoteValue = initialData?.savedNote !== noteValue;
+    const hasChangesNoteValue = (initialData?.savedNote ?? '') !== noteValue;
 
     const hasChangesStepIds =
       JSON.stringify(initialData?.savedStepIds) !== JSON.stringify(stepIds);
