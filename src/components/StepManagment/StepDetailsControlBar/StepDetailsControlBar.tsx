@@ -47,7 +47,7 @@ const StepDetailsControlBar: React.FC<StepDetailsControlBarProps> = ({
         <Dialog
           title="Cancel Changes"
           open={openDiscardModal}
-          onConfirm={() => resetActiveStepId()}
+          onConfirm={resetActiveStepId}
           onClose={() => setOpenDiscardModal(false)}
           confirmText="Yes"
           cancelText="No"

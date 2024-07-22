@@ -444,14 +444,28 @@ const DecisionTableStep = ({
     noteValue: string,
     stepIds: (string | null)[]
   ) => {
-    const isEdit =
+    const hasChangesInCaseEntries =
       JSON.stringify(initialData?.savedCaseEntries) !==
-        JSON.stringify(caseEntries) ||
+      JSON.stringify(caseEntries);
+
+    const hasChangesInDefaultActions =
       JSON.stringify(initialData?.savedDefaultActions) !==
-        JSON.stringify(defaultActions) ||
-      initialData?.savedDefaultStepId !== defaultStepId ||
-      initialData?.savedNote !== noteValue ||
+      JSON.stringify(defaultActions);
+
+    const hasChangesDefaultStepId =
+      initialData?.savedDefaultStepId !== defaultStepId;
+
+    const hasChangesNoteValue = initialData?.savedNote !== noteValue;
+
+    const hasChangesStepIds =
       JSON.stringify(initialData?.savedStepIds) !== JSON.stringify(stepIds);
+
+    const isEdit =
+      hasChangesInCaseEntries ||
+      hasChangesInDefaultActions ||
+      hasChangesDefaultStepId ||
+      hasChangesNoteValue ||
+      hasChangesStepIds;
 
     if (isEdit) {
       setIsEdited(true);

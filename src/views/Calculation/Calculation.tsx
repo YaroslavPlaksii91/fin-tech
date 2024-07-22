@@ -81,7 +81,9 @@ const Calculation: React.FC<CalculationProps> = ({
   const watchNote = watch('note');
 
   const isEdited = useMemo(
-    () => Object.keys(dirtyFields).length !== 0 || watchNote !== step.data.note,
+    () =>
+      Object.keys(dirtyFields).length !== 0 ||
+      watchNote !== (step.data.note ?? ''),
     [dirtyFields, watchNote, step.data.note]
   );
 
