@@ -1,3 +1,5 @@
+import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
+
 export const OPERATORS = {
   Equal: '=',
   In: 'in',
@@ -51,6 +53,12 @@ export const ANY_OPERATOR = {
   key: 'any-operator',
   value: 'any'
 };
+
+export const OBJECT_DATA_TYPES: string[] = [
+  'Object', // @TODO need to clarify if we need this
+  DATA_TYPE_WITHOUT_ENUM['Object:CraClarity'],
+  DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']
+];
 
 export enum CATEGORIES {
   Conditions = 'conditions',

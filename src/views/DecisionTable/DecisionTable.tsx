@@ -1,11 +1,5 @@
 import { useEffect, useState, useContext, useMemo, useCallback } from 'react';
-import {
-  Button,
-  Paper,
-  TableContainer,
-  TextField,
-  Typography
-} from '@mui/material';
+import { Button, Paper, TextField, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { keyBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -20,7 +14,7 @@ import {
 } from './constants';
 import {
   VariableColumnDataUpdate,
-  SelectedCellInRowData,
+  SelectedCell,
   FormFieldsProps,
   CaseEntriesDate,
   CaseEntryColumn,
@@ -265,9 +259,7 @@ const DecisionTableStep = ({
     setCaseEntries(updatedCaseEntries);
   };
 
-  const handleSubmitVariableValue = (
-    data: SelectedCellInRowData & FormFieldsProps
-  ) => {
+  const handleSubmitVariableValue = (data: SelectedCell & FormFieldsProps) => {
     const expression =
       data.operator === OPERATORS.Between
         ? `${data.lowerBound} ${data.upperBound}`
@@ -441,28 +433,31 @@ const DecisionTableStep = ({
           title={`${isPreview ? 'View' : 'Edit'} Step: ${step.data.name}`}
           details={STEP_DETAILS}
         />
-        <Paper>
-          <TableContainer sx={{ bgcolor: theme.palette.background.default }}>
-            <Table
-              defaultStepId={defaultStepId}
-              stepIds={stepIds}
-              columns={columnsToShow}
-              rows={rowsToShow}
-              variables={filteredVariables}
-              searchableSelectOptions={searchableSelectOptions}
-              selectedColumn={selectedColumn}
-              handleChangeStep={handleChangeStep}
-              handleSelectionColumn={setSelectedColumn}
-              handleDeleteRow={handleDeleteLayer}
-              handleInsertColumn={handleInsertColumn}
-              handleDeleteCategoryColumn={handleDeleteCategoryColumn}
-              handleChangeColumnVariable={handleChangeColumnVariable}
-              handleSubmitVariableValue={handleSubmitVariableValue}
-              hasUserPermission={!isPreview}
-            />
-          </TableContainer>
+        <Paper
+          elevation={0}
+          sx={{
+            bgcolor: theme.palette.background.default,
+            overflow: 'auto'
+          }}
+        >
+          <Table
+            defaultStepId={defaultStepId}
+            stepIds={stepIds}
+            columns={columnsToShow}
+            rows={rowsToShow}
+            variables={filteredVariables}
+            searchableSelectOptions={searchableSelectOptions}
+            selectedColumn={selectedColumn}
+            handleChangeStep={handleChangeStep}
+            handleSelectionColumn={setSelectedColumn}
+            handleDeleteRow={handleDeleteLayer}
+            handleInsertColumn={handleInsertColumn}
+            handleDeleteCategoryColumn={handleDeleteCategoryColumn}
+            handleChangeColumnVariable={handleChangeColumnVariable}
+            handleSubmitVariableValue={handleSubmitVariableValue}
+            hasUserPermission={!isPreview}
+          />
         </Paper>
-
         {!isPreview && (
           <Button
             sx={{ width: 'fit-content', mt: 1 }}
