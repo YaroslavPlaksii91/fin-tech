@@ -52,6 +52,7 @@ import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { selectUserInfo } from '@store/auth/auth';
 import { getFullUserName } from '@utils/helpers';
 import { deleteNodes } from '@store/flow/flow';
+import { useIsDirty } from '@contexts/IsDirtyContext';
 
 type FlowChartEditorProps = {
   flow: IFlow;
@@ -84,7 +85,8 @@ const withFlowChartEditor =
     const user = useAppSelector(selectUserInfo);
     const dispatch = useAppDispatch();
 
-    const [isDirty, setIsDirty] = useState<boolean>(false);
+    const { isDirty, setIsDirty } = useIsDirty();
+
     const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
     const [startDrag, setStartDrag] = useState<boolean>(false);
     const { flowNode, nodeElement, onPaneClick, onNodeContextMenu } =
@@ -472,7 +474,7 @@ const withFlowChartEditor =
           isEditMode={!isViewMode}
           setActiveStep={setActiveStep}
         />
-        <LeavePageConfirmationDialog isDirty={isDirty} />
+        {!isViewMode && <LeavePageConfirmationDialog isDirty={isDirty} />}
       </>
     );
   };

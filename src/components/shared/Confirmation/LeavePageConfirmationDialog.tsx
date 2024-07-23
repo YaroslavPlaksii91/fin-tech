@@ -30,6 +30,7 @@ const LeavePageConfirmationDialog: React.FC<
 
   const isFlowInFlowList = flowList.some((item) => item.id === flow.id);
   const isShowDialog = isDirty && isFlowInFlowList;
+
   const blocker = useBlocker(isShowDialog);
 
   const handleClose = useCallback(() => {

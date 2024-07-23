@@ -12,6 +12,7 @@ import Logger from '@utils/logger';
 import MainFlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEditor/MainFlowChartEditor';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
+import { IsDirtyProvider } from '@contexts/IsDirtyContext';
 
 export default function FlowList() {
   const { id } = useParams();
@@ -45,13 +46,15 @@ export default function FlowList() {
 
   return (
     <DataDictionaryContext.Provider value={{ variables }}>
-      {flow && (
-        <MainFlowChartEditor
-          isViewMode={true}
-          flow={flow}
-          setCopyFlow={() => undefined}
-        />
-      )}
+      <IsDirtyProvider>
+        {flow && (
+          <MainFlowChartEditor
+            isViewMode={true}
+            flow={flow}
+            setCopyFlow={() => undefined}
+          />
+        )}
+      </IsDirtyProvider>
     </DataDictionaryContext.Provider>
   );
 }

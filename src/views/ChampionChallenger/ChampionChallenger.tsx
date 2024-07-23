@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Button,
   Stack,
@@ -40,7 +40,6 @@ import {
   SnackbarErrorMessage,
   SnackbarMessage
 } from '@components/shared/Snackbar/SnackbarMessage';
-import Dialog from '@components/shared/Modals/Dialog';
 import { flowService } from '@services/flow-service';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
 import { theme } from '@theme';
@@ -51,6 +50,7 @@ import { permissionsMap } from '@constants/permissions';
 import { useAppSelector } from '@store/hooks';
 import { selectUserInfo } from '@store/auth/auth';
 import { getFullUserName } from '@utils/helpers';
+import { useIsDirty } from '@contexts/IsDirtyContext';
 
 const DEFAULT_PERCENTAGE_SPLIT = 10;
 
@@ -84,7 +84,8 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
-  const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
+
+  const { setIsDirty } = useIsDirty();
 
   const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
   const isPreview = isViewMode || !canUpdateFlow;
@@ -99,11 +100,13 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     control,
     clearErrors,
     getValues,
-    formState: { errors, isSubmitting },
-    setValue
+    formState: { errors, isSubmitting, dirtyFields },
+    setValue,
+    watch
   } = useForm<FieldValues, unknown, FieldValues>({
     mode: 'onChange',
-    defaultValues: { splits: [], note: '' },
+    // default values note
+    defaultValues: { splits: step.data.splits, note: step.data.note ?? '' },
     // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
     resolver: yupResolver(validationSchema)
   });
@@ -112,6 +115,15 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     name: 'splits',
     control
   });
+
+  const watchNote = watch('note');
+
+  const isEdited = useMemo(
+    () =>
+      Object.keys(dirtyFields).length !== 0 ||
+      watchNote !== (step.data.note ?? ''),
+    [dirtyFields, watchNote, step.data.note]
+  );
 
   const handleOpenNoteModal = () => setOpenNoteModal(true);
 
@@ -124,8 +136,6 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     setValue('note', getValues('note'));
     setOpenNoteModal(false);
   };
-
-  const handleDiscardChanges = () => resetActiveStepId();
 
   const onSubmit = async (data: FieldValues) => {
     const existingSplitEdges =
@@ -226,6 +236,10 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   useEffect(() => {
     setInitialData();
   }, [step.data]);
+
+  useEffect(() => {
+    setIsDirty(isEdited);
+  }, [isEdited]);
 
   return (
     <>
@@ -351,25 +365,14 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       </StepContentWrapper>
       <StepDetailsControlBar
         disabled={!isEmpty(errors) || isSubmitting}
-        onDiscard={() => setOpenDiscardModal(true)}
+        resetActiveStepId={resetActiveStepId}
+        isEdited={isEdited}
         isSubmitting={isSubmitting}
         onApplyChangesClick={() => {
           void handleSubmit(onSubmit)();
         }}
         isShow={!isPreview}
       />
-      <Dialog
-        title="Discard changes"
-        open={openDiscardModal}
-        onConfirm={handleDiscardChanges}
-        onClose={() => setOpenDiscardModal(false)}
-        confirmText="Discard changes"
-      >
-        <Typography sx={{ maxWidth: '416px' }} variant="body2">
-          Discarding changes will delete all edits in this step, this action
-          cannot be canceled. Are you sure you want to cancel the changes?
-        </Typography>
-      </Dialog>
     </>
   );
 };
