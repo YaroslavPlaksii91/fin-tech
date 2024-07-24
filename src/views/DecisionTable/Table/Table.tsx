@@ -287,7 +287,7 @@ const Table = ({
                     ) : (
                       <SelectComponent
                         fullWidth
-                        placeholder="Select value"
+                        placeholder="Select Value"
                         value={row[name].expression || ''}
                         options={getFormatedOptions(
                           isBooleanDataType
