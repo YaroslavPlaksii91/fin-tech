@@ -8,6 +8,7 @@ import {
 
 export const TABS_LABELS: { [key: string]: string } = {
   laPMSVariables: 'LaPMS (Input)',
+  lmsInputVariables: 'LMS',
   userDefined: 'User Defined',
   outputVariables: 'Output',
   historicDataVariables: 'Underwriting History',
@@ -17,6 +18,8 @@ export const TABS_LABELS: { [key: string]: string } = {
 export const SOURCES_DESCRIPTIONS: { [key: string]: string } = {
   laPMSVariables:
     'This source contains all the variables from Lead Request sent to underwriting as input from the Lead and Provider Management System (LaPMS)',
+  lmsInputVariables:
+    'This source contains the data that we fetch from LMS - PLMInfinity.',
   userDefined:
     'This source contains all the variable that user defined on his own, this list include temporary, permanent variables as well as constants',
   historicDataVariables:
@@ -29,6 +32,7 @@ export const SOURCES_DESCRIPTIONS: { [key: string]: string } = {
 
 export enum VARIABLES_TABS {
   laPMSVariables = 'laPMSVariables',
+  lmsInputVariables = 'lmsInputVariables',
   userDefined = 'userDefined',
   outputVariables = 'outputVariables',
   historicDataVariables = 'historicDataVariables',
