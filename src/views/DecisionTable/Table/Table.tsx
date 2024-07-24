@@ -1,7 +1,6 @@
 import { Fragment, useState } from 'react';
 import {
   Button,
-  TableBody,
   TableHead,
   Typography,
   TableCell,
@@ -10,10 +9,15 @@ import {
 } from '@mui/material';
 import { lightBlue, lightGreen } from '@mui/material/colors';
 
-import { CATEGORIES, BOOLEAN_OPTIONS, CATEGORIES_TYPE } from '../constants';
+import {
+  CATEGORIES,
+  BOOLEAN_OPTIONS,
+  CATEGORIES_TYPE,
+  OBJECT_DATA_TYPES
+} from '../constants';
 import {
   VariableRowData,
-  SelectedCellInRowData,
+  SelectedCell,
   FormFieldsProps,
   VariableColumnDataUpdate
 } from '../types';
@@ -21,7 +25,7 @@ import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import VariableInput from '../VariableInput/VariableInput';
 import { getFormatedOptions, getHeaderCellBgColor } from '../utils';
 
-import { StyledStack, Head } from './styled';
+import { Head, StyledTableBody } from './styled';
 
 import { theme } from '@theme';
 import TrashIcon from '@icons/trash.svg';
@@ -53,9 +57,7 @@ interface Table {
   handleChangeColumnVariable: (
     newVariable: Pick<DataDictionaryVariable, 'name'>
   ) => void;
-  handleSubmitVariableValue: (
-    data: SelectedCellInRowData & FormFieldsProps
-  ) => void;
+  handleSubmitVariableValue: (data: SelectedCell & FormFieldsProps) => void;
   hasUserPermission: boolean;
 }
 
@@ -78,9 +80,8 @@ const Table = ({
 }: Table) => {
   const [anchorVariableMenu, setAnchorVariableMenu] =
     useState<HTMLElement | null>(null);
-  const [isDialogOpen, setIsDiaglogOpen] = useState(false);
-  const [selectedRowCell, setSelectedRowCell] =
-    useState<SelectedCellInRowData | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
 
   const handleClickOnMenu =
     (column: VariableColumnDataUpdate) =>
@@ -93,10 +94,10 @@ const Table = ({
     columns.filter((column) => column.category === category).length;
 
   const handleCloseMenu = () => setAnchorVariableMenu(null);
-  const handleCloseDialog = () => setIsDiaglogOpen(false);
+  const handleCloseDialog = () => setIsDialogOpen(false);
 
   const handleAddVariable = () => {
-    setIsDiaglogOpen(true);
+    setIsDialogOpen(true);
     handleCloseMenu();
   };
 
@@ -110,47 +111,45 @@ const Table = ({
     handleCloseMenu();
   };
 
-  const handleSubmitSelectedRowCellData = (
-    data: SelectedCellInRowData & FormFieldsProps
+  const handleSubmitSelectedCellData = (
+    data: SelectedCell & FormFieldsProps
   ) => {
     handleSubmitVariableValue(data);
-    setSelectedRowCell(null);
+    setSelectedCell(null);
   };
 
   return (
     <>
-      <MuiTable>
+      <MuiTable sx={{ borderCollapse: 'separate' }}>
+        {/* @TODO: Find a way to take it out of the table part and calculate the width,
+      thereby removing the extra styles for the table body use Paper with borders */}
         <TableHead>
-          <StyledTableRow>
-            <TableCell
-              sx={{ padding: 0 }}
-              colSpan={getColSpanLength('conditions')}
-            >
+          <StyledTableRow sx={{ th: { borderBottom: 'none', padding: 0 } }}>
+            <TableCell colSpan={getColSpanLength('conditions')}>
               <Head
                 sx={{
                   bgcolor: lightBlue[50],
                   borderRight: 'none',
-                  borderRadius: '4px 0 0 4px'
+                  borderRadius: '8px 0 0 8px'
                 }}
               >
                 <Typography variant="subtitle2">Input</Typography>
               </Head>
             </TableCell>
-            <TableCell
-              sx={{ padding: 0 }}
-              colSpan={getColSpanLength('actions') + 1}
-            >
+            <TableCell colSpan={getColSpanLength('actions') + 1}>
               <Head
                 sx={{
                   bgcolor: lightGreen[50],
                   borderLeft: 'none',
-                  borderRadius: '0 4px 4px 0'
+                  borderRadius: '0 8px 8px 0'
                 }}
               >
                 <Typography variant="subtitle2">Output</Typography>
               </Head>
             </TableCell>
           </StyledTableRow>
+        </TableHead>
+        <StyledTableBody>
           <StyledTableRow>
             {columns.map((column, columnIndex) => {
               const isLastConditionColumn =
@@ -181,7 +180,7 @@ const Table = ({
                     }}
                     size="small"
                     open={isCurrentMenuOpen}
-                    variableActionTitle={`Add ${selectedColumn?.category === CATEGORIES.Conditions ? 'Input' : 'Output'} Variable`}
+                    variableActionTitle={`Add ${column?.category === CATEGORIES.Conditions ? 'Input' : 'Output'} Variable`}
                     value={column.name}
                     anchorEl={anchorVariableMenu}
                     handleAddVariable={handleAddVariable}
@@ -200,8 +199,6 @@ const Table = ({
             })}
             <TableCell sx={{ bgcolor: lightGreen[50], width: 0 }} />
           </StyledTableRow>
-        </TableHead>
-        <TableBody>
           {rows.map((row, rowIndex) => (
             <StyledTableRow
               key={rowIndex}
@@ -261,51 +258,53 @@ const Table = ({
                   dataType === (DATA_TYPE_WITHOUT_ENUM.Boolean as string);
 
                 const isDataTypeWithoutEnum =
-                  Object.values<string>(DATA_TYPE_WITHOUT_ENUM).includes(
-                    dataType
-                  ) && !isBooleanDataType;
-
-                const enumTypeSelectOptions =
-                  !isBooleanDataType && allowedValues
-                    ? allowedValues
-                    : BOOLEAN_OPTIONS;
+                  [
+                    ...Object.values(DATA_TYPE_WITHOUT_ENUM),
+                    ...OBJECT_DATA_TYPES
+                  ].includes(dataType) && !isBooleanDataType;
 
                 return (
-                  <StyledTableCell key={columnIndex}>
+                  <StyledTableCell
+                    sx={{ cursor: 'pointer' }}
+                    key={columnIndex}
+                    onClick={() => {
+                      hasUserPermission &&
+                        isDataTypeWithoutEnum &&
+                        setSelectedCell({
+                          rowIndex,
+                          category,
+                          dataType,
+                          ...row[name]
+                        });
+                    }}
+                  >
                     {isDataTypeWithoutEnum ? (
-                      <StyledStack
-                        onClick={() => {
-                          hasUserPermission &&
-                            setSelectedRowCell({
-                              rowIndex,
-                              category,
-                              dataType,
-                              ...row[name]
-                            });
-                        }}
-                        disabled={!dataType.length}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="body2">
-                          {hasValue
-                            ? `${row[name].operator} ${row[name].expression}`
-                            : 'Enter Condition '}
-                        </Typography>
-                      </StyledStack>
+                      <Typography variant="body2">
+                        {hasValue
+                          ? `${row[name].operator} ${row[name].expression}`
+                          : `Enter ${column.category === CATEGORIES.Conditions ? 'Condition' : 'Value'}`}
+                      </Typography>
                     ) : (
                       <SelectComponent
                         fullWidth
                         placeholder="Select Value"
                         value={row[name].expression || ''}
-                        options={getFormatedOptions(enumTypeSelectOptions)}
+                        options={getFormatedOptions(
+                          isBooleanDataType
+                            ? BOOLEAN_OPTIONS
+                            : allowedValues || []
+                        )}
                         disabled={!hasUserPermission}
                         handleChange={(value) =>
-                          handleSubmitSelectedRowCellData({
+                          handleSubmitSelectedCellData({
                             value,
                             category,
                             rowIndex,
                             dataType,
-                            ...row[name]
+                            ...row[name],
+                            operator: isBooleanDataType
+                              ? '='
+                              : row[name].operator
                           })
                         }
                       />
@@ -317,7 +316,7 @@ const Table = ({
           ))}
           {!rows.length ? (
             <StyledTableRow sx={{ bgcolor: theme.palette.common.white }}>
-              <TableCell sx={{ borderBottom: 0 }} colSpan={columns.length + 1}>
+              <TableCell colSpan={columns.length + 1}>
                 <Box py={2}>
                   <Typography variant="body2" textAlign="center">
                     No Expressions Yet.
@@ -326,15 +325,15 @@ const Table = ({
               </TableCell>
             </StyledTableRow>
           ) : null}
-        </TableBody>
+        </StyledTableBody>
       </MuiTable>
-      {selectedRowCell && (
+      {selectedCell && (
         <SelectVariableValueDialog
-          modalOpen={!!selectedRowCell}
-          handleClose={() => setSelectedRowCell(null)}
-          selectedRowCell={selectedRowCell}
-          category={selectedRowCell.category}
-          handleSubmitSelectedRowCellData={handleSubmitSelectedRowCellData}
+          modalOpen={!!selectedCell}
+          handleClose={() => setSelectedCell(null)}
+          selectedRowCell={selectedCell}
+          category={selectedCell.category}
+          handleSubmitForm={handleSubmitSelectedCellData}
         />
       )}
       <DataDictionaryDialog

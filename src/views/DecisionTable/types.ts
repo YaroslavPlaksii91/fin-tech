@@ -29,7 +29,7 @@ export type VariableRowData = {
   };
 };
 
-export interface SelectedCellInRowData extends CaseEntry {
+export interface SelectedCell extends CaseEntry {
   category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
   rowIndex: number;
   dataType: DATA_TYPE | string;

@@ -3,9 +3,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 
-import { palette } from '@theme';
-
-export const StyledDialog = styled(Dialog)(() => ({
+export const StyledDialog = styled(Dialog)(({ theme: { palette } }) => ({
   '& .MuiDialogContent-root': {
     paddingTop: '5px'
   },

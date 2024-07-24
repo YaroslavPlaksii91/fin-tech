@@ -15,7 +15,8 @@ import {
   CATEGORIES_TYPE,
   CATEGORIES_WITHOUT_ELSE_ACTIONS,
   INITIAL_ENTRY,
-  INITIAL_CASE_ENTRIES
+  INITIAL_CASE_ENTRIES,
+  OBJECT_DATA_TYPES
 } from './constants';
 import { CaseEntriesDate, CaseEntry } from './types';
 
@@ -31,7 +32,11 @@ import {
 
 export const getOperatorOptions = (dataType: DATA_TYPE_WITHOUT_ENUM) => {
   const { Integer, Decimal, String } = DATA_TYPE_WITHOUT_ENUM;
+
   let operators: Record<string, string>[] = [];
+
+  if (OBJECT_DATA_TYPES.includes(dataType))
+    return [EQUAL_OPERATOR, NOT_EQUAL_OPERATOR];
 
   switch (dataType) {
     case String:
@@ -55,7 +60,6 @@ export const getOperatorOptions = (dataType: DATA_TYPE_WITHOUT_ENUM) => {
         ANY_OPERATOR
       ];
       break;
-
     default:
       operators = [EQUAL_OPERATOR, NOT_EQUAL_OPERATOR, ANY_OPERATOR];
   }

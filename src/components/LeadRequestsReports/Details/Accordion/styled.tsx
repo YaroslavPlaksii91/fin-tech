@@ -1,22 +1,32 @@
 import { Accordion, AccordionSummary, styled } from '@mui/material';
 
-import { theme } from '@theme';
+export const StyledAccordion = styled(Accordion)(
+  ({
+    theme: {
+      palette: { divider }
+    }
+  }) => ({
+    overflow: 'hidden',
+    border: `1px solid ${divider}`,
 
-export const StyledAccordion = styled(Accordion)(() => ({
-  overflow: 'hidden',
-  border: `1px solid ${theme.palette.divider}`,
+    '&::before': {
+      display: 'none'
+    }
+  })
+);
 
-  '&::before': {
-    display: 'none'
-  }
-}));
-
-export const StyledAccordionSummary = styled(AccordionSummary)(() => ({
-  minHeight: '40px',
-  '&.Mui-expanded': {
-    margin: 0,
+export const StyledAccordionSummary = styled(AccordionSummary)(
+  ({
+    theme: {
+      palette: { background }
+    }
+  }) => ({
     minHeight: '40px',
-    background: `${theme.palette.background.default}`
-  },
-  '.MuiAccordionSummary-content': { margin: 0 }
-}));
+    '&.Mui-expanded': {
+      margin: 0,
+      minHeight: '40px',
+      background: `${background.default}`
+    },
+    '.MuiAccordionSummary-content': { margin: 0 }
+  })
+);

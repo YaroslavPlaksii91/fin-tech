@@ -3,8 +3,13 @@ import { Button, Stack, InputAdornment, MenuItem } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { OPERATORS, CATEGORIES, CATEGORIES_TYPE } from '../constants';
-import { SelectedCellInRowData, FormFieldsProps } from '../types';
+import {
+  OPERATORS,
+  CATEGORIES,
+  CATEGORIES_TYPE,
+  OBJECT_DATA_TYPES
+} from '../constants';
+import { SelectedCell, FormFieldsProps } from '../types';
 import { getOperatorOptions } from '../utils';
 
 import validationSchema from './validationSchema';
@@ -19,11 +24,9 @@ import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
   handleClose: () => void;
-  selectedRowCell: SelectedCellInRowData;
+  selectedRowCell: SelectedCell;
   category: CATEGORIES_TYPE;
-  handleSubmitSelectedRowCellData: (
-    data: SelectedCellInRowData & FormFieldsProps
-  ) => void;
+  handleSubmitForm: (data: SelectedCell & FormFieldsProps) => void;
 };
 
 const SelectVariableValueDialog = ({
@@ -31,7 +34,7 @@ const SelectVariableValueDialog = ({
   handleClose,
   selectedRowCell,
   category,
-  handleSubmitSelectedRowCellData
+  handleSubmitForm
 }: SelectVariableValueDialogProps) => {
   const bounds =
     selectedRowCell.operator === OPERATORS.Between
@@ -49,11 +52,13 @@ const SelectVariableValueDialog = ({
     defaultValues: {
       name: selectedRowCell.name,
       operator: selectedRowCell.operator,
-      value: selectedRowCell?.expression || '',
+      value: selectedRowCell.expression,
       lowerBound: bounds.length > 0 ? +bounds[0] : undefined,
       upperBound: bounds.length > 0 ? +bounds[1] : undefined
     }
   });
+
+  const isObjectDataType = OBJECT_DATA_TYPES.includes(selectedRowCell.dataType);
 
   const operatorOptions = getOperatorOptions(
     (selectedRowCell.dataType as DATA_TYPE_WITHOUT_ENUM) ?? ''
@@ -63,10 +68,11 @@ const SelectVariableValueDialog = ({
 
   useEffect(() => {
     if (category !== CATEGORIES.Conditions) setValue('operator', '=');
+    if (isObjectDataType) setValue('value', 'null');
   }, []);
 
   const onSubmit = (data: FormFieldsProps) => {
-    handleSubmitSelectedRowCellData({
+    handleSubmitForm({
       ...selectedRowCell,
       ...data
     });
@@ -156,7 +162,9 @@ const SelectVariableValueDialog = ({
               name="value"
               control={control}
               placeholder="Value*"
-              InputProps={{ disabled: watchOperator === OPERATORS.Any }}
+              InputProps={{
+                disabled: watchOperator === OPERATORS.Any || isObjectDataType
+              }}
             />
           )}
         </Stack>
