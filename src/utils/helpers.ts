@@ -106,3 +106,6 @@ export {
   hasPermission,
   getFullUserName
 };
+
+export const removeSingleQuotesODataParams = (odataParams: string) =>
+  odataParams.replace(/'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z)'/g, '$1');

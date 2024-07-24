@@ -10,7 +10,7 @@ import {
   OdataQueries,
   RowData
 } from './types';
-import { getFormattedRows, removeSingleQuotesODataParams } from './utils';
+import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import { DEFAULT_SORT } from './constants';
 
@@ -26,6 +26,7 @@ import useFilters from '@hooks/useFilters';
 import { TABLE } from '@constants/themeConstants';
 import TuneIcon from '@icons/tune.svg';
 import ExportCSVButton from '@components/shared/ExportCSVButton';
+import { removeSingleQuotesODataParams } from '@utils/helpers';
 
 export default function LeadRequestsReportsPage() {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -71,41 +72,38 @@ export default function LeadRequestsReportsPage() {
   const handleRowSelection = (data: GridRowParams<RowData>) =>
     setSelectedRow(data.row);
 
-  const buildOdataParams = useCallback(
-    ({
-      page,
-      sort,
-      filters: { startDate, endDate },
-      includePagination = true
-    }: {
-      page: number;
-      sort: string;
-      filters: FiltersParams;
-      includePagination?: boolean;
-    }): string => {
-      const queries: OdataQueries = {
-        orderBy: sort,
-        filter: {
-          processingMetadata: {
-            processingDateTimeUtc: {
-              ge: startDate ? startDate.toISOString() : undefined,
-              le: endDate ? endDate.toISOString() : undefined
-            }
+  const buildOdataParams = ({
+    page,
+    sort,
+    filters: { startDate, endDate },
+    includePagination = true
+  }: {
+    page: number;
+    sort: string;
+    filters: FiltersParams;
+    includePagination?: boolean;
+  }): string => {
+    const queries: OdataQueries = {
+      orderBy: sort,
+      filter: {
+        processingMetadata: {
+          processingDateTimeUtc: {
+            ge: startDate ? startDate.toISOString() : undefined,
+            le: endDate ? endDate.toISOString() : undefined
           }
         }
-      };
-
-      if (includePagination) {
-        queries.top = rowsPerPage;
-        queries.skip = rowsPerPage * page;
-        queries.count = true;
       }
+    };
 
-      const params = buildQuery(queries);
-      return removeSingleQuotesODataParams(params);
-    },
-    [sort, page, dateFrom, dateTo, rowsPerPage]
-  );
+    if (includePagination) {
+      queries.top = rowsPerPage;
+      queries.skip = rowsPerPage * page;
+      queries.count = true;
+    }
+
+    const params = buildQuery(queries);
+    return removeSingleQuotesODataParams(params);
+  };
 
   const fetchList = async ({ page, sort, filters }: FetchList) => {
     setLoading(true);
@@ -173,7 +171,7 @@ export default function LeadRequestsReportsPage() {
           spacing={1}
         >
           <ExportCSVButton
-            fileName="request-reports"
+            fileName="lead-request-reports"
             exportFile={handleExportLeadRequestReports}
           />
           <Button

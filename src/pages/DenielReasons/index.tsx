@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import buildQuery from 'odata-query';
 import {
   GRID_AGGREGATION_FUNCTIONS,
@@ -23,6 +23,8 @@ import { reportingService } from '@services/reports';
 import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
 import TuneIcon from '@icons/tune.svg';
+import ExportCSVButton from '@components/shared/ExportCSVButton';
+import { removeSingleQuotesODataParams } from '@utils/helpers';
 
 const DenielReasons = () => {
   const [loading, setLoading] = useState(false);
@@ -46,21 +48,19 @@ const DenielReasons = () => {
     setSort(sortParams);
   };
 
-  const fetchList = async ({
+  const buildOdataParams = ({
     sort,
-    filter: { startDate, endDate, deniedBy, rejectionReason } = {}
-  }: FetchList) => {
-    setLoading(true);
-
+    filters: { startDate, endDate, deniedBy, rejectionReason }
+  }: FetchList): string => {
     const queries = {
       orderBy: sort,
       count: true,
       filter: {
-        deniedBy,
-        rejectionReason,
+        deniedBy: deniedBy || undefined,
+        rejectionReason: rejectionReason || undefined,
         date: {
-          ge: startDate,
-          le: endDate
+          ge: startDate ? startDate.toISOString() : undefined,
+          le: endDate ? endDate.toISOString() : undefined
         }
       }
     };
@@ -69,13 +69,13 @@ const DenielReasons = () => {
     // Because this is expected on backend for this Report
     const params = buildQuery(queries).replace('$filter', 'entityFilter');
 
-    const removeSingleQuotes = (odataParams: string) =>
-      odataParams.replace(
-        /'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z)'/g,
-        '$1'
-      );
+    return removeSingleQuotesODataParams(params);
+  };
 
-    const correctedParams = removeSingleQuotes(params);
+  const fetchList = async ({ sort, filters }: FetchList) => {
+    setLoading(true);
+
+    const correctedParams = buildOdataParams({ sort, filters });
 
     try {
       const data =
@@ -93,11 +93,11 @@ const DenielReasons = () => {
   const fetch = () => {
     const params: FetchList = {
       sort,
-      filter: {
-        startDate: dateFrom ? dateFrom.toISOString() : undefined,
-        endDate: dateTo ? dateTo.toISOString() : undefined,
-        rejectionReason: inputFilters.denialReasons || undefined,
-        deniedBy: inputFilters.deniedBy || undefined
+      filters: {
+        startDate: dateFrom,
+        endDate: dateTo,
+        rejectionReason: inputFilters.denialReasons,
+        deniedBy: inputFilters.deniedBy
       }
     };
 
@@ -105,6 +105,20 @@ const DenielReasons = () => {
   };
 
   useEffect(() => fetch(), [sort, dateFrom, dateTo, inputFilters]);
+
+  const handleExportDenialReasonReports = useCallback(async () => {
+    const params: FetchList = {
+      sort,
+      filters: {
+        startDate: dateFrom,
+        endDate: dateTo,
+        rejectionReason: inputFilters.denialReasons,
+        deniedBy: inputFilters.deniedBy
+      }
+    };
+    const correctedParams = buildOdataParams(params);
+    return reportingService.getDenialReasonsReportExportCSV(correctedParams);
+  }, [sort, dateFrom, dateTo, inputFilters]);
 
   return (
     <Box sx={{ padding: '16px 24px' }}>
@@ -122,6 +136,10 @@ const DenielReasons = () => {
           alignItems="center"
           spacing={1}
         >
+          <ExportCSVButton
+            fileName="lead-request-denial-reasons-reports"
+            exportFile={handleExportDenialReasonReports}
+          />
           <Button
             size="small"
             color="inherit"

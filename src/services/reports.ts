@@ -28,6 +28,14 @@ class ReportingService {
     return data;
   }
 
+  async getDenialReasonsReportExportCSV(params: string) {
+    const res = await reportOdataApi.get<DenialReasonsReportOData>(
+      `/lead-request-denial-reasons/export${params}`,
+      { responseType: 'blob' }
+    );
+    return res;
+  }
+
   async getWaterfallReport({ params }: GetWaterfallReport) {
     const { data } = await reportApi.get<WaterfallReport>(`/waterfall-report`, {
       params
