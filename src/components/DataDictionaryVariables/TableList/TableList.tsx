@@ -144,7 +144,7 @@ const TableList = ({
   }, [tabName]);
 
   return (
-    <StyledPaper>
+    <StyledPaper sx={{ overflow: 'auto' }}>
       <Table stickyHeader size="small" aria-label="sticky table">
         <TableHead>
           <StyledTableRow>
