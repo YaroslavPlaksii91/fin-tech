@@ -4,6 +4,7 @@ import { AxiosResponse } from 'axios';
 
 import Logger from '@utils/logger';
 import ExportCSV from '@icons/exportCSV.svg';
+import { downloadFile } from '@utils/helpers';
 
 interface ExportCSVButtonProps {
   defaultFileName: string;
@@ -22,8 +23,6 @@ const ExportCSVButton: React.FC<ExportCSVButtonProps> = ({
 
       const res = await exportFile();
 
-      const href = URL.createObjectURL(new Blob([res.data]));
-
       let filename = `${defaultFileName}.csv`;
 
       const contentDisposition = res.headers['content-disposition'] as string;
@@ -39,14 +38,7 @@ const ExportCSVButton: React.FC<ExportCSVButtonProps> = ({
         }
       }
 
-      const link = document.createElement('a');
-      link.href = href;
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-
-      document.body.removeChild(link);
-      URL.revokeObjectURL(href);
+      downloadFile(res.data as BlobPart, filename);
     } catch (error) {
       Logger.error(error);
     } finally {
