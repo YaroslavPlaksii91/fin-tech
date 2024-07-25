@@ -1,11 +1,16 @@
 export interface ChangeHistoryDifference {
+  id: string;
+  changeType: number;
+  path: { id: string; name: string }[];
+  // not required for steps
   name: string;
   stepType: string;
   after: string | null;
   before: string | null;
-  id: string;
-  changeType: number;
-  path: { id: string; name: string }[];
+
+  // not required for edges
+  sourceName: string;
+  targetName: string;
 }
 
 export interface ChangeHistoryRecord {
@@ -19,8 +24,8 @@ export interface ChangeHistoryRecord {
 }
 
 export const ChangeTypeEnum: Record<string | number, string> = {
-  0: 'Created',
-  1: 'Deleted',
-  2: 'Edited',
-  3: 'Renamed'
+  0: 'Add',
+  1: 'Remove',
+  2: 'Edit',
+  3: 'Rename'
 };
