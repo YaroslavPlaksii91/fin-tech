@@ -106,3 +106,18 @@ export {
   hasPermission,
   getFullUserName
 };
+
+export const removeSingleQuotesODataParams = (odataParams: string) =>
+  odataParams.replace(/'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z)'/g, '$1');
+
+export const downloadFile = (data: BlobPart, filename: string) => {
+  const href = URL.createObjectURL(new Blob([data]));
+  const link = document.createElement('a');
+
+  link.href = href;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(href);
+};

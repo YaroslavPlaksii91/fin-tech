@@ -15,3 +15,5 @@ export const INPUT_GROUPS_TO_SHOW = [
     placeholder: 'Denied by'
   }
 ];
+
+export const DEFAULT_EXPORT_FILE_NAME = 'lead-request-denial-reasons-reports';

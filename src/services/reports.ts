@@ -12,6 +12,14 @@ class ReportingService {
     return data;
   }
 
+  async getLeadRequestsReportsExportCSV(params: string) {
+    const res = await reportOdataApi.get(
+      `/lead-request-processing-history/export${params}`,
+      { responseType: 'blob' }
+    );
+    return res;
+  }
+
   async getDenialReasonsReport(params: string) {
     const { data } = await reportOdataApi.get<DenialReasonsReportOData>(
       `/lead-request-denial-reasons${params}`,
@@ -20,11 +28,30 @@ class ReportingService {
     return data;
   }
 
+  async getDenialReasonsReportExportCSV(params: string) {
+    const res = await reportOdataApi.get<DenialReasonsReportOData>(
+      `/lead-request-denial-reasons/export${params}`,
+      { responseType: 'blob' }
+    );
+    return res;
+  }
+
   async getWaterfallReport({ params }: GetWaterfallReport) {
     const { data } = await reportApi.get<WaterfallReport>(`/waterfall-report`, {
       params
     });
     return data;
+  }
+
+  async getWaterfallReportExportCSV({ params }: GetWaterfallReport) {
+    const res = await reportApi.get<WaterfallReport>(
+      `/waterfall-report/export`,
+      {
+        params,
+        responseType: 'blob'
+      }
+    );
+    return res;
   }
 }
 

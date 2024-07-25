@@ -1,3 +1,5 @@
+import { Dayjs } from 'dayjs';
+
 import { getFormattedRows } from './utils';
 
 import { ExtractArrayElementType } from '@utils/types';
@@ -32,16 +34,21 @@ export type RowData = ExtractArrayElementType<
   ReturnType<typeof getFormattedRows>
 >;
 
+export type FiltersParams = {
+  startDate: Dayjs | null;
+  endDate: Dayjs | null;
+};
+
 export type FetchList = {
   page: number;
   sort: string;
-  filter: { startDate?: string; endDate?: string };
+  filters: FiltersParams;
 };
 
 export type OdataQueries = {
-  top: number;
-  skip: number;
+  top?: number;
+  skip?: number;
   orderBy: string;
-  count: boolean;
+  count?: boolean;
   filter?: Record<string, object>;
 };

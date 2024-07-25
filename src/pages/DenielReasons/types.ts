@@ -1,3 +1,5 @@
+import { Dayjs } from 'dayjs';
+
 import { getFormattedRows } from './utils';
 
 import { ExtractArrayElementType } from '@utils/types';
@@ -15,9 +17,9 @@ export type RowData = ExtractArrayElementType<
 
 export type FetchList = {
   sort: string;
-  filter: {
-    startDate?: string;
-    endDate?: string;
+  filters: {
+    startDate: Dayjs | null;
+    endDate: Dayjs | null;
     rejectionReason?: string;
     deniedBy?: string;
   };

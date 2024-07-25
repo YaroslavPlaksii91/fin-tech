@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridSortModel } from '@mui/x-data-grid-premium';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
+import { Dayjs } from 'dayjs';
 
 import { FetchList } from './types';
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
   AGGREGATION_ROW_STACK_NAME,
+  DEFAULT_EXPORT_FILE_NAME,
   DEFAULT_SORT,
   INITIAL_INPUT_FILTERS,
   INPUT_GROUPS_TO_SHOW
@@ -21,6 +23,8 @@ import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
 import TuneIcon from '@icons/tune.svg';
 import { WaterfallReport } from '@domain/waterfallReport';
+import ExportCSVButton from '@components/shared/ExportCSVButton';
+import { InputFiltersType } from '@components/Filters/types';
 
 const Waterfall = () => {
   const [loading, setLoading] = useState(false);
@@ -68,20 +72,46 @@ const Waterfall = () => {
     }
   }, []);
 
-  const fetch = useCallback(() => {
-    const params: FetchList = {
-      sortBy: sort,
-      pageSize: 10000, // temporary desion to retrive all records
-      stack: inputFilters.stack || undefined,
-      campaign: inputFilters.campaignId || undefined,
-      startTime: dateFrom ? dateFrom.toISOString() : undefined,
-      endTime: dateTo ? dateTo.toISOString() : undefined
-    };
+  const buildWaterfallParams = ({
+    sort,
+    inputFilters,
+    dateFrom,
+    dateTo
+  }: {
+    sort: string;
+    inputFilters: InputFiltersType;
+    dateFrom: Dayjs | null;
+    dateTo: Dayjs | null;
+  }) => ({
+    sortBy: sort,
+    pageSize: 10000, // temporary desion to retrive all records
+    stack: inputFilters.stack || undefined,
+    campaign: inputFilters.campaignId || undefined,
+    startTime: dateFrom ? dateFrom.toISOString() : undefined,
+    endTime: dateTo ? dateTo.toISOString() : undefined
+  });
 
+  const fetch = useCallback(() => {
+    const params = buildWaterfallParams({
+      sort,
+      inputFilters,
+      dateFrom,
+      dateTo
+    });
     void fetchList(params);
   }, [sort, inputFilters, dateFrom, dateTo]);
 
   useEffect(() => fetch(), [fetch]);
+
+  const handleExportWaterfallReports = useCallback(async () => {
+    const params = buildWaterfallParams({
+      sort,
+      inputFilters,
+      dateFrom,
+      dateTo
+    });
+    return reportingService.getWaterfallReportExportCSV({ params });
+  }, [sort, inputFilters, dateFrom, dateTo]);
 
   return (
     <Box sx={{ padding: '16px 24px' }}>
@@ -99,6 +129,10 @@ const Waterfall = () => {
           alignItems="center"
           spacing={1}
         >
+          <ExportCSVButton
+            defaultFileName={DEFAULT_EXPORT_FILE_NAME}
+            exportFile={handleExportWaterfallReports}
+          />
           <Button
             size="small"
             color="inherit"

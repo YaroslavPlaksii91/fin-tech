@@ -3,10 +3,16 @@ import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
 import buildQuery from 'odata-query';
 import { Box, Button, Drawer, Paper, Stack, Typography } from '@mui/material';
 
-import { COLUMN_IDS, FetchList, OdataQueries, RowData } from './types';
+import {
+  COLUMN_IDS,
+  FetchList,
+  FiltersParams,
+  OdataQueries,
+  RowData
+} from './types';
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
-import { DEFAULT_SORT } from './constants';
+import { DEFAULT_EXPORT_FILE_NAME, DEFAULT_SORT } from './constants';
 
 import { reportingService } from '@services/reports';
 import TablePagination from '@components/shared/TablePagination';
@@ -19,6 +25,8 @@ import Logger from '@utils/logger';
 import useFilters from '@hooks/useFilters';
 import { TABLE } from '@constants/themeConstants';
 import TuneIcon from '@icons/tune.svg';
+import ExportCSVButton from '@components/shared/ExportCSVButton';
+import { removeSingleQuotesODataParams } from '@utils/helpers';
 
 export default function LeadRequestsReportsPage() {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -64,38 +72,43 @@ export default function LeadRequestsReportsPage() {
   const handleRowSelection = (data: GridRowParams<RowData>) =>
     setSelectedRow(data.row);
 
-  const fetchList = async ({
+  const buildOdataParams = ({
     page,
     sort,
-    filter: { startDate, endDate }
-  }: FetchList) => {
-    setLoading(true);
-
+    filters: { startDate, endDate },
+    includePagination = true
+  }: {
+    page: number;
+    sort: string;
+    filters: FiltersParams;
+    includePagination?: boolean;
+  }): string => {
     const queries: OdataQueries = {
-      top: rowsPerPage,
-      skip: rowsPerPage * page,
       orderBy: sort,
-      count: true,
       filter: {
         processingMetadata: {
           processingDateTimeUtc: {
-            ge: startDate,
-            le: endDate
+            ge: startDate ? startDate.toISOString() : undefined,
+            le: endDate ? endDate.toISOString() : undefined
           }
         }
       }
     };
 
+    if (includePagination) {
+      queries.top = rowsPerPage;
+      queries.skip = rowsPerPage * page;
+      queries.count = true;
+    }
+
     const params = buildQuery(queries);
+    return removeSingleQuotesODataParams(params);
+  };
 
-    const removeSingleQuotes = (odataParams: string) =>
-      odataParams.replace(
-        /'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z)'/g,
-        '$1'
-      );
+  const fetchList = async ({ page, sort, filters }: FetchList) => {
+    setLoading(true);
 
-    const correctedParams = removeSingleQuotes(params);
-
+    const correctedParams = buildOdataParams({ page, sort, filters });
     try {
       const data =
         await reportingService.getLeadRequestsReports(correctedParams);
@@ -114,9 +127,9 @@ export default function LeadRequestsReportsPage() {
     const params: FetchList = {
       page,
       sort,
-      filter: {
-        startDate: dateFrom ? dateFrom.toISOString() : undefined,
-        endDate: dateTo ? dateTo.toISOString() : undefined
+      filters: {
+        startDate: dateFrom,
+        endDate: dateTo
       }
     };
 
@@ -124,6 +137,22 @@ export default function LeadRequestsReportsPage() {
   };
 
   useEffect(() => fetch(), [page, rowsPerPage, sort, dateFrom, dateTo]);
+
+  const handleExportLeadRequestReports = useCallback(async () => {
+    const filters = {
+      startDate: dateFrom,
+      endDate: dateTo
+    };
+
+    const correctedParams = buildOdataParams({
+      page,
+      sort,
+      filters,
+      includePagination: false
+    });
+
+    return reportingService.getLeadRequestsReportsExportCSV(correctedParams);
+  }, [dateFrom, dateTo, sort, page]);
 
   return (
     <Box sx={{ padding: '16px 24px' }}>
@@ -141,6 +170,10 @@ export default function LeadRequestsReportsPage() {
           alignItems="center"
           spacing={1}
         >
+          <ExportCSVButton
+            defaultFileName={DEFAULT_EXPORT_FILE_NAME}
+            exportFile={handleExportLeadRequestReports}
+          />
           <Button
             size="small"
             color="inherit"

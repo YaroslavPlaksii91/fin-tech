@@ -29,3 +29,5 @@ export const EXTERNAL_SYSTEM_KEYS: (keyof ExternalSystemsData)[] = [
   'savings',
   'timeouts'
 ];
+
+export const DEFAULT_EXPORT_FILE_NAME = 'waterfall-reports';
