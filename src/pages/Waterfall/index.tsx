@@ -8,6 +8,7 @@ import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
   AGGREGATION_ROW_STACK_NAME,
+  DEFAULT_EXPORT_FILE_NAME,
   DEFAULT_SORT,
   INITIAL_INPUT_FILTERS,
   INPUT_GROUPS_TO_SHOW
@@ -129,7 +130,7 @@ const Waterfall = () => {
           spacing={1}
         >
           <ExportCSVButton
-            fileName="waterfall-reports"
+            defaultFileName={DEFAULT_EXPORT_FILE_NAME}
             exportFile={handleExportWaterfallReports}
           />
           <Button

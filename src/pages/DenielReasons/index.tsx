@@ -10,6 +10,7 @@ import { COLUMN_IDS, FetchList, RowData } from './types';
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
+  DEFAULT_EXPORT_FILE_NAME,
   DEFAULT_SORT,
   INITIAL_INPUT_FILTERS,
   INPUT_GROUPS_TO_SHOW
@@ -137,7 +138,7 @@ const DenielReasons = () => {
           spacing={1}
         >
           <ExportCSVButton
-            fileName="lead-request-denial-reasons-reports"
+            defaultFileName={DEFAULT_EXPORT_FILE_NAME}
             exportFile={handleExportDenialReasonReports}
           />
           <Button

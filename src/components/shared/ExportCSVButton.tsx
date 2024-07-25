@@ -6,15 +6,13 @@ import Logger from '@utils/logger';
 import ExportCSV from '@icons/exportCSV.svg';
 
 interface ExportCSVButtonProps {
-  fileName: string;
+  defaultFileName: string;
   exportFile: () => Promise<AxiosResponse>;
-  exportFormat?: string;
 }
 
 const ExportCSVButton: React.FC<ExportCSVButtonProps> = ({
-  fileName,
-  exportFile,
-  exportFormat = 'csv'
+  defaultFileName,
+  exportFile
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -26,15 +24,24 @@ const ExportCSVButton: React.FC<ExportCSVButtonProps> = ({
 
       const href = URL.createObjectURL(new Blob([res.data]));
 
-      //TODO get filename form res header when BE will be ready
-      // const contentDisposition = res.headers['content-disposition'];
-      // const filename = contentDisposition.match(
-      //   /filename=(?<filename>[^,;]+);/
-      // )[0];
+      let filename = `${defaultFileName}.csv`;
+
+      const contentDisposition = res.headers['content-disposition'] as string;
+
+      if (
+        contentDisposition &&
+        contentDisposition.indexOf('attachment') !== -1
+      ) {
+        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        const matches = filenameRegex.exec(contentDisposition);
+        if (matches != null && matches[1]) {
+          filename = matches[1].replace(/['"]/g, '');
+        }
+      }
 
       const link = document.createElement('a');
       link.href = href;
-      link.setAttribute('download', `${fileName}.${exportFormat}`);
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
 

@@ -12,7 +12,7 @@ import {
 } from './types';
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
-import { DEFAULT_SORT } from './constants';
+import { DEFAULT_EXPORT_FILE_NAME, DEFAULT_SORT } from './constants';
 
 import { reportingService } from '@services/reports';
 import TablePagination from '@components/shared/TablePagination';
@@ -171,7 +171,7 @@ export default function LeadRequestsReportsPage() {
           spacing={1}
         >
           <ExportCSVButton
-            fileName="lead-request-reports"
+            defaultFileName={DEFAULT_EXPORT_FILE_NAME}
             exportFile={handleExportLeadRequestReports}
           />
           <Button
