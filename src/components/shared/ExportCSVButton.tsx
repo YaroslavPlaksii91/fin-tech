@@ -63,6 +63,7 @@ const ExportCSVButton: React.FC<ExportCSVButtonProps> = ({
       startIcon={<ExportCSV />}
       endIcon={loading && <CircularProgress size={16} />}
       onClick={handleExport}
+      disabled={loading}
     >
       Export CSV
     </Button>
