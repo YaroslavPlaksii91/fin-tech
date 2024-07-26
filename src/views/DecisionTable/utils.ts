@@ -2,23 +2,13 @@ import { lightGreen, lightBlue } from '@mui/material/colors';
 import { mapValues, filter, flatMap } from 'lodash';
 
 import {
-  EQUAL_OPERATOR,
-  BETWEEN_OPERATOR,
-  GREATER_AND_EQUAL_OPERATOR,
-  ANY_OPERATOR,
-  LESS_AND_EQUAL_OPERATOR,
-  IN_OPERATOR,
-  NOT_EQUAL_OPERATOR,
-  LESS_OPERATOR,
-  GREATER_OPERATOR,
   CATEGORIES,
-  CATEGORIES_TYPE,
-  CATEGORIES_WITHOUT_ELSE_ACTIONS,
+  CATEGORY,
+  CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
   INITIAL_ENTRY,
-  INITIAL_CASE_ENTRIES,
-  OBJECT_DATA_TYPES
+  INITIAL_CASE_ENTRIES
 } from './constants';
-import { CaseEntriesDate, CaseEntry } from './types';
+import { CaseEntries, CaseEntry, Operator, OPERATORS } from './types';
 
 import {
   DATA_TYPE,
@@ -30,49 +20,47 @@ import {
   Variable
 } from '@domain/dataDictionary';
 
-export const getOperatorOptions = (dataType: DATA_TYPE_WITHOUT_ENUM) => {
+export const getOperatorOptions = (dataType: DATA_TYPE | null) => {
   const { Integer, Decimal, String } = DATA_TYPE_WITHOUT_ENUM;
-
-  let operators: Record<string, string>[] = [];
-
-  if (OBJECT_DATA_TYPES.includes(dataType))
-    return [EQUAL_OPERATOR, NOT_EQUAL_OPERATOR];
+  let operators: Operator[] = [];
 
   switch (dataType) {
     case String:
-      operators = [
-        IN_OPERATOR,
-        EQUAL_OPERATOR,
-        NOT_EQUAL_OPERATOR,
-        ANY_OPERATOR
-      ];
+      operators = [OPERATORS.IN, OPERATORS.EQUAL, OPERATORS.NOT_EQUAL];
       break;
     case Integer:
     case Decimal:
       operators = [
-        EQUAL_OPERATOR,
-        NOT_EQUAL_OPERATOR,
-        GREATER_OPERATOR,
-        LESS_OPERATOR,
-        GREATER_AND_EQUAL_OPERATOR,
-        LESS_AND_EQUAL_OPERATOR,
-        BETWEEN_OPERATOR,
-        ANY_OPERATOR
+        OPERATORS.EQUAL,
+        OPERATORS.NOT_EQUAL,
+        OPERATORS.GREATER,
+        OPERATORS.LESS,
+        OPERATORS.GREATER_AND_EQUAL,
+        OPERATORS.LESS_AND_EQUAL,
+        OPERATORS.BETWEEN
       ];
       break;
     default:
-      operators = [EQUAL_OPERATOR, NOT_EQUAL_OPERATOR, ANY_OPERATOR];
+      operators = [OPERATORS.EQUAL, OPERATORS.NOT_EQUAL];
   }
 
-  return operators;
+  return [...operators, OPERATORS.ANY].map((operator) => ({
+    key: operator,
+    value: operator
+  }));
 };
 
 export const getColumns = (
-  caseEntry: CaseEntriesDate,
+  caseEntry: CaseEntries,
   variables: Record<string, Variable[]>,
-  category: CATEGORIES_WITHOUT_ELSE_ACTIONS
+  category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS
 ) => {
-  const INITIAL_COLUMN = { ...INITIAL_ENTRY, index: 0, category, dataType: '' };
+  const INITIAL_COLUMN = {
+    ...INITIAL_ENTRY,
+    index: 0,
+    category,
+    dataType: null
+  };
 
   if (!caseEntry?.[category]?.length)
     return category === CATEGORIES.Conditions ? [INITIAL_COLUMN] : [];
@@ -140,8 +128,8 @@ export const updateCaseEntry = ({
   insertEntry,
   initialEntries = [] // We need to provide initial entries for rows in case when we don`t have any already created Entries
 }: {
-  caseEntries: CaseEntriesDate[];
-  category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
+  caseEntries: CaseEntries[];
+  category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS;
   start: number;
   deleteCount: number;
   insertEntry?: CaseEntry;
@@ -165,7 +153,7 @@ export const updateCaseEntry = ({
     };
   });
 
-export const getHeaderCellBgColor = (category: CATEGORIES_TYPE | null) => {
+export const getHeaderCellBgColor = (category: CATEGORY | null) => {
   switch (category) {
     case CATEGORIES.Actions:
       return lightGreen[50];
@@ -195,7 +183,7 @@ export const getFormatedOptions = (
 
 export const filterVariablesByUsageMode = (
   variables: Record<string, Variable[]>,
-  category?: CATEGORIES_TYPE
+  category?: CATEGORY
 ) => {
   let usageMode: VARIABLE_USAGE_MODE;
 

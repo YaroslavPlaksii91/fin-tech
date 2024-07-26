@@ -11,15 +11,16 @@ import { lightBlue, lightGreen } from '@mui/material/colors';
 
 import {
   CATEGORIES,
-  BOOLEAN_OPTIONS,
-  CATEGORIES_TYPE,
-  OBJECT_DATA_TYPES
+  CATEGORY,
+  OBJECT_DATA_TYPES,
+  BOOLEAN_OPTIONS
 } from '../constants';
 import {
   VariableRowData,
   SelectedCell,
   FormFieldsProps,
-  VariableColumnDataUpdate
+  VariableColumnDataUpdate,
+  OPERATORS
 } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import VariableInput from '../VariableInput/VariableInput';
@@ -90,7 +91,7 @@ const Table = ({
       setAnchorVariableMenu(event.currentTarget);
     };
 
-  const getColSpanLength = (category: CATEGORIES_TYPE) =>
+  const getColSpanLength = (category: CATEGORY) =>
     columns.filter((column) => column.category === category).length;
 
   const handleCloseMenu = () => setAnchorVariableMenu(null);
@@ -125,7 +126,7 @@ const Table = ({
       thereby removing the extra styles for the table body use Paper with borders */}
         <TableHead>
           <StyledTableRow sx={{ th: { borderBottom: 'none', padding: 0 } }}>
-            <TableCell colSpan={getColSpanLength('conditions')}>
+            <TableCell colSpan={getColSpanLength(CATEGORIES.Conditions)}>
               <Head
                 sx={{
                   bgcolor: lightBlue[50],
@@ -136,7 +137,7 @@ const Table = ({
                 <Typography variant="subtitle2">Input</Typography>
               </Head>
             </TableCell>
-            <TableCell colSpan={getColSpanLength('actions') + 1}>
+            <TableCell colSpan={getColSpanLength(CATEGORIES.Actions) + 1}>
               <Head
                 sx={{
                   bgcolor: lightGreen[50],
@@ -255,13 +256,13 @@ const Table = ({
                 const hasValue = row[name].expression || row[name].operator;
 
                 const isBooleanDataType =
-                  dataType === (DATA_TYPE_WITHOUT_ENUM.Boolean as string);
+                  dataType === DATA_TYPE_WITHOUT_ENUM.Boolean;
 
                 const isDataTypeWithoutEnum =
                   [
                     ...Object.values(DATA_TYPE_WITHOUT_ENUM),
                     ...OBJECT_DATA_TYPES
-                  ].includes(dataType) && !isBooleanDataType;
+                  ].includes(dataType || '') && !isBooleanDataType;
 
                 return (
                   <StyledTableCell
@@ -281,14 +282,14 @@ const Table = ({
                     {isDataTypeWithoutEnum ? (
                       <Typography variant="body2">
                         {hasValue
-                          ? `${row[name].operator} ${row[name].expression}`
+                          ? `${column.category === CATEGORIES.Actions ? OPERATORS.EQUAL : row[name].operator} ${row[name].expression}`
                           : `Enter ${column.category === CATEGORIES.Conditions ? 'Condition' : 'Value'}`}
                       </Typography>
                     ) : (
                       <SelectComponent
                         fullWidth
                         placeholder="Select Value"
-                        value={row[name].expression || ''}
+                        value={row[name].expression}
                         options={getFormatedOptions(
                           isBooleanDataType
                             ? BOOLEAN_OPTIONS
@@ -303,7 +304,7 @@ const Table = ({
                             dataType,
                             ...row[name],
                             operator: isBooleanDataType
-                              ? '='
+                              ? OPERATORS.EQUAL
                               : row[name].operator
                           })
                         }

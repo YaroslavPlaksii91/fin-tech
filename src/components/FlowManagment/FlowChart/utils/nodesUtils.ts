@@ -3,15 +3,14 @@ import { ReactFlowInstance } from 'reactflow';
 import { StepType, StepListData } from '../types';
 
 import { FlowNode } from '@domain/flow';
-import { OPERATORS } from '@views/DecisionTable/constants';
-import { CaseEntry } from '@views/DecisionTable/types';
+import { CaseEntry, OPERATORS } from '@views/DecisionTable/types';
 
 const getTooltipText = (caseEntry: CaseEntry[]) =>
   caseEntry.reduce((acc, { name, operator, expression }, index) => {
     const textPieces = [];
     const hasDividingWord = index !== caseEntry.length - 1;
     const hasWordsToCompare = name && expression;
-    const isAnyOperator = operator === OPERATORS.Any;
+    const isAnyOperator = operator === OPERATORS.ANY;
     const anyOperatorText = isAnyOperator && name ? operator : '';
     const defaultOperatorText =
       !isAnyOperator && hasWordsToCompare ? operator || '=' : '';

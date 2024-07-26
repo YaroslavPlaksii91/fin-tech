@@ -3,13 +3,8 @@ import { Button, Stack, InputAdornment, MenuItem } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import {
-  OPERATORS,
-  CATEGORIES,
-  CATEGORIES_TYPE,
-  OBJECT_DATA_TYPES
-} from '../constants';
-import { SelectedCell, FormFieldsProps } from '../types';
+import { CATEGORIES, CATEGORY, OBJECT_DATA_TYPES } from '../constants';
+import { SelectedCell, FormFieldsProps, OPERATORS, Operator } from '../types';
 import { getOperatorOptions } from '../utils';
 
 import validationSchema from './validationSchema';
@@ -25,7 +20,7 @@ type SelectVariableValueDialogProps = {
   modalOpen: boolean;
   handleClose: () => void;
   selectedRowCell: SelectedCell;
-  category: CATEGORIES_TYPE;
+  category: CATEGORY;
   handleSubmitForm: (data: SelectedCell & FormFieldsProps) => void;
 };
 
@@ -37,8 +32,8 @@ const SelectVariableValueDialog = ({
   handleSubmitForm
 }: SelectVariableValueDialogProps) => {
   const bounds =
-    selectedRowCell.operator === OPERATORS.Between
-      ? selectedRowCell.expression.split(' ')
+    selectedRowCell.operator === OPERATORS.BETWEEN
+      ? selectedRowCell.expression.split('and')
       : [];
 
   const {
@@ -50,33 +45,48 @@ const SelectVariableValueDialog = ({
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
+      dataType: selectedRowCell.dataType as DATA_TYPE_WITHOUT_ENUM,
       name: selectedRowCell.name,
-      operator: selectedRowCell.operator,
+      operator: selectedRowCell.operator as Operator,
       value: selectedRowCell.expression,
       lowerBound: bounds.length > 0 ? +bounds[0] : undefined,
       upperBound: bounds.length > 0 ? +bounds[1] : undefined
     }
   });
 
-  const isObjectDataType = OBJECT_DATA_TYPES.includes(selectedRowCell.dataType);
-
-  const operatorOptions = getOperatorOptions(
-    (selectedRowCell.dataType as DATA_TYPE_WITHOUT_ENUM) ?? ''
+  const isObjectDataType = OBJECT_DATA_TYPES.includes(
+    selectedRowCell.dataType || ''
   );
 
+  const operatorOptions = getOperatorOptions(selectedRowCell.dataType);
+
   const watchOperator = watch('operator');
+
+  const onSubmit = (data: FormFieldsProps) => {
+    let value;
+
+    switch (data.operator) {
+      case OPERATORS.BETWEEN:
+        value = `${data.lowerBound} and ${data.upperBound}`;
+        break;
+      case OPERATORS.ANY:
+        value = '';
+        break;
+      default:
+        value = data.value;
+    }
+
+    handleSubmitForm({
+      ...selectedRowCell,
+      ...data,
+      value
+    });
+  };
 
   useEffect(() => {
     if (category !== CATEGORIES.Conditions) setValue('operator', '=');
     if (isObjectDataType) setValue('value', 'null');
   }, []);
-
-  const onSubmit = (data: FormFieldsProps) => {
-    handleSubmitForm({
-      ...selectedRowCell,
-      ...data
-    });
-  };
 
   return (
     <Dialog
@@ -135,13 +145,13 @@ const SelectVariableValueDialog = ({
               }
             }}
           >
-            {operatorOptions.map((option: Record<string, string>) => (
+            {operatorOptions.map((option) => (
               <MenuItem key={option.key} value={option.value}>
                 {option.value}
               </MenuItem>
             ))}
           </SingleSelect>
-          {watchOperator === OPERATORS.Between ? (
+          {watchOperator === OPERATORS.BETWEEN ? (
             <>
               <InputText
                 fullWidth
@@ -163,7 +173,7 @@ const SelectVariableValueDialog = ({
               control={control}
               placeholder="Value*"
               InputProps={{
-                disabled: watchOperator === OPERATORS.Any || isObjectDataType
+                disabled: watchOperator === OPERATORS.ANY || isObjectDataType
               }}
             />
           )}

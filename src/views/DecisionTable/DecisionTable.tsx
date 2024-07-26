@@ -6,19 +6,19 @@ import { v4 as uuidv4 } from 'uuid';
 
 import {
   CATEGORIES,
-  CATEGORIES_TYPE,
-  CATEGORIES_WITHOUT_ELSE_ACTIONS,
+  CATEGORY,
+  CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
   INITIAL_ENTRY,
-  OPERATORS,
   STEP_DETAILS
 } from './constants';
 import {
   VariableColumnDataUpdate,
   SelectedCell,
   FormFieldsProps,
-  CaseEntriesDate,
+  CaseEntries,
   CaseEntryColumn,
-  CaseEntry
+  CaseEntry,
+  OPERATORS
 } from './types';
 import {
   filterVariablesByUsageMode,
@@ -89,7 +89,7 @@ const DecisionTableStep = ({
   const [selectedColumn, setSelectedColumn] =
     useState<VariableColumnDataUpdate | null>(null);
   const [openNoteModal, setOpenNoteModal] = useState(false);
-  const [caseEntries, setCaseEntries] = useState<CaseEntriesDate[]>([]);
+  const [caseEntries, setCaseEntries] = useState<CaseEntries[]>([]);
 
   const [defaultActions, setDefaultActions] = useState<CaseEntry[]>([]);
 
@@ -136,8 +136,8 @@ const DecisionTableStep = ({
 
   const stepColumn = {
     name: 'Step',
-    dataType: '',
-    category: CATEGORIES.Actions as CATEGORIES_WITHOUT_ELSE_ACTIONS,
+    dataType: null,
+    category: CATEGORIES.Actions as CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
     index: actionsColumns.length
   };
 
@@ -164,7 +164,7 @@ const DecisionTableStep = ({
   const handleAddNewLayer = () => {
     const addNewLayerColumns = (
       existedColumns: CaseEntryColumn[],
-      category: CATEGORIES_TYPE
+      category: CATEGORY
     ) =>
       existedColumns
         .filter((column) => column.category === category)
@@ -261,8 +261,8 @@ const DecisionTableStep = ({
 
   const handleSubmitVariableValue = (data: SelectedCell & FormFieldsProps) => {
     const expression =
-      data.operator === OPERATORS.Between
-        ? `${data.lowerBound} ${data.upperBound}`
+      data.operator === OPERATORS.BETWEEN
+        ? `${data.lowerBound} and ${data.upperBound}`
         : data.value;
 
     setCaseEntries((prev) =>
@@ -387,39 +387,21 @@ const DecisionTableStep = ({
   const initialData = useMemo(() => {
     const { data } = step;
 
-    if (!data.caseEntries) return;
-
     const savedDefaultStepId =
       getEdge(data.defaultEdgeId || '')?.target || null;
 
-    const savedStepIds = data.caseEntries.map((entry) => {
+    const savedStepIds = data.caseEntries?.map((entry) => {
       const connectedEdge = getEdge(entry.edgeId || '');
 
       return connectedEdge?.target || null;
     });
 
-    // if some defaultActions were saved already into the flow
-    const savedDefaultActions =
-      data.defaultActions?.map((column) => ({
-        ...column,
-        operator: column.expression ? '=' : ''
-      })) || [];
-
-    // if some CaseEntries were saved already into the flow
-    const savedCaseEntries = data.caseEntries.map((row) => ({
-      ...row,
-      actions: row.actions.map((column) => ({
-        ...column,
-        operator: column.expression ? '=' : ''
-      }))
-    }));
-
     return {
       savedDefaultStepId,
-      savedStepIds,
-      savedDefaultActions,
-      savedCaseEntries,
-      savedNote: data.note
+      savedStepIds: savedStepIds || [],
+      savedDefaultActions: data.defaultActions || [],
+      savedCaseEntries: data.caseEntries || [],
+      savedNote: data.note || ''
     };
   }, [step]);
 
@@ -429,14 +411,14 @@ const DecisionTableStep = ({
       setCaseEntries(initialData.savedCaseEntries);
       setDefaultActions(initialData.savedDefaultActions);
       setDefaultStepId(initialData.savedDefaultStepId);
-      setNoteValue(initialData.savedNote ?? '');
+      setNoteValue(initialData.savedNote);
     }
   }, [initialData]);
 
   useEffect(() => setInitialData(), [step.data]);
 
   const checkIsDirty = (
-    caseEntries: CaseEntriesDate[],
+    caseEntries: CaseEntries[],
     defaultActions: CaseEntry[],
     defaultStepId: string | null,
     noteValue: string,
