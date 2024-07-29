@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext, useMemo, useCallback } from 'react';
 import { Button, Paper, TextField } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
-import { debounce, keyBy } from 'lodash';
+import { debounce, flatMap, keyBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -9,25 +9,19 @@ import {
   CATEGORY,
   CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
   INITIAL_ENTRY,
-  STEP_DETAILS
+  STEP_DETAILS,
+  STEP
 } from './constants';
 import {
-  VariableColumnDataUpdate,
+  VariableColumnData,
   SelectedCell,
   FormFieldsProps,
   CaseEntries,
   CaseEntryColumn,
-  CaseEntry,
-  OPERATORS
+  CaseEntry
 } from './types';
-import {
-  filterVariablesByUsageMode,
-  getColumns,
-  setVariableSources,
-  updateCaseEntry
-} from './utils';
+import { getColumns, getVariableSources, updateCaseEntry } from './utils';
 import Table from './Table/Table';
-import StepNoteSection from './StepNoteSection/StepNoteSection';
 
 import {
   ADD_BUTTON_ON_EDGE,
@@ -44,12 +38,16 @@ import { theme } from '@theme';
 import PlusSquareIcon from '@icons/plusSquare.svg';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
+import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import {
   SnackbarErrorMessage,
   SnackbarMessage
 } from '@components/shared/Snackbar/SnackbarMessage';
 import { SNACK_TYPE } from '@constants/common';
-import { DataDictionaryVariable } from '@domain/dataDictionary';
+import {
+  DATA_TYPE_WITHOUT_ENUM,
+  DataDictionaryVariable
+} from '@domain/dataDictionary';
 import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
@@ -87,7 +85,7 @@ const DecisionTableStep = ({
 
   const [noteValue, setNoteValue] = useState('');
   const [selectedColumn, setSelectedColumn] =
-    useState<VariableColumnDataUpdate | null>(null);
+    useState<VariableColumnData | null>(null);
   const [openNoteModal, setOpenNoteModal] = useState(false);
   const [caseEntries, setCaseEntries] = useState<CaseEntries[]>([]);
 
@@ -104,16 +102,11 @@ const DecisionTableStep = ({
   const username = getFullUserName(user);
 
   const variables = dataDictionary?.variables || {};
+  const flatVariables = flatMap(variables);
   const nodes: FlowNode[] = getNodes();
   const edges = getEdges();
 
-  // temporary combine variables for autocomplete
-  const filteredVariables = filterVariablesByUsageMode(
-    variables,
-    selectedColumn?.category
-  );
-
-  const searchableSelectOptions = useMemo(
+  const stepsOptions = useMemo(
     () =>
       getConnectableNodes(nodes, step.id).map((node) => ({
         value: node.id,
@@ -124,19 +117,19 @@ const DecisionTableStep = ({
 
   const conditionsColumns = getColumns(
     caseEntries[0],
-    variables,
+    flatVariables,
     CATEGORIES.Conditions
   );
 
   const actionsColumns = getColumns(
     caseEntries[0],
-    variables,
+    flatVariables,
     CATEGORIES.Actions
   );
 
   const stepColumn = {
-    name: 'Step',
-    dataType: null,
+    name: STEP,
+    dataType: DATA_TYPE_WITHOUT_ENUM.String,
     category: CATEGORIES.Actions as CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
     index: actionsColumns.length
   };
@@ -176,8 +169,8 @@ const DecisionTableStep = ({
     setCaseEntries((prev) => [
       ...prev,
       {
-        conditions: addNewLayerColumns(columns, 'conditions'),
-        actions: addNewLayerColumns(columns, 'actions'),
+        conditions: addNewLayerColumns(columns, CATEGORIES.Conditions),
+        actions: addNewLayerColumns(columns, CATEGORIES.Actions),
         edgeId: null
       }
     ]);
@@ -260,29 +253,23 @@ const DecisionTableStep = ({
   };
 
   const handleSubmitVariableValue = (data: SelectedCell & FormFieldsProps) => {
-    const expression =
-      data.operator === OPERATORS.BETWEEN
-        ? `${data.lowerBound} and ${data.upperBound}`
-        : data.value;
-
     setCaseEntries((prev) =>
-      prev.map((row, index) => {
-        if (index === data.rowIndex)
-          return {
-            ...row,
-            [data.category]: row[data.category].map((column) =>
-              column.name !== data.name
-                ? column
-                : {
-                    ...column,
-                    expression,
-                    operator: data.operator
-                  }
-            )
-          };
-
-        return row;
-      })
+      prev.map((row, index) =>
+        index === data.rowIndex
+          ? {
+              ...row,
+              [data.category]: row[data.category].map((column) =>
+                column.name !== data.name
+                  ? column
+                  : {
+                      ...column,
+                      expression: data.value,
+                      operator: data.operator
+                    }
+              )
+            }
+          : row
+      )
     );
   };
 
@@ -333,12 +320,12 @@ const DecisionTableStep = ({
           destinationType: 'TemporaryVariable'
         }));
 
-        const updatedVariableSources = setVariableSources(
+        const updatedVariableSources = getVariableSources(
           [
             ...(caseEntries[0]?.actions || []),
             ...(caseEntries[0]?.conditions || [])
           ],
-          variables
+          flatVariables
         );
 
         node.data = {
@@ -470,8 +457,6 @@ const DecisionTableStep = ({
     setIsDirty(isEdited);
   }, [isEdited]);
 
-  if (!variables) return null;
-
   return (
     <>
       <StepContentWrapper>
@@ -488,12 +473,13 @@ const DecisionTableStep = ({
           }}
         >
           <Table
+            hasUserPermission={!isPreview}
             defaultStepId={defaultStepId}
             stepIds={stepIds}
             columns={columnsToShow}
             rows={rowsToShow}
-            variables={filteredVariables}
-            searchableSelectOptions={searchableSelectOptions}
+            variables={variables}
+            stepsOptions={stepsOptions}
             selectedColumn={selectedColumn}
             handleChangeStep={handleChangeStep}
             handleSelectionColumn={setSelectedColumn}
@@ -502,7 +488,6 @@ const DecisionTableStep = ({
             handleDeleteCategoryColumn={handleDeleteCategoryColumn}
             handleChangeColumnVariable={handleChangeColumnVariable}
             handleSubmitVariableValue={handleSubmitVariableValue}
-            hasUserPermission={!isPreview}
           />
         </Paper>
         {!isPreview && (
@@ -515,14 +500,13 @@ const DecisionTableStep = ({
             Add new business layer
           </Button>
         )}
-
         {!isPreview && (
-          <StepNoteSection
+          <NoteSection
             modalOpen={openNoteModal}
-            handleCloseModal={handleCloseNoteModal}
-            handleOpenModal={handleOpenNoteModal}
-            noteValue={noteValue}
-            handleSubmitNote={handleSubmitNote}
+            value={noteValue}
+            handleClose={handleCloseNoteModal}
+            handleOpen={handleOpenNoteModal}
+            handleSubmit={handleSubmitNote}
             renderInput={() => (
               <TextField
                 fullWidth

@@ -1,13 +1,5 @@
 import { CaseEntry } from './types';
 
-import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
-
-export const OBJECT_DATA_TYPES = [
-  'Object', // @TODO need to clarify if we need this
-  DATA_TYPE_WITHOUT_ENUM['Object:CraClarity'],
-  DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']
-];
-
 export enum CATEGORIES {
   Conditions = 'conditions',
   Actions = 'actions',
@@ -28,7 +20,7 @@ export const STEP_DETAILS =
 
 export const INITIAL_ENTRY: CaseEntry = {
   name: '',
-  operator: '',
+  operator: null,
   expression: ''
 };
 
@@ -39,3 +31,5 @@ export const INITIAL_CASE_ENTRIES = [
     edgeId: null
   }
 ];
+
+export const STEP = 'Step';

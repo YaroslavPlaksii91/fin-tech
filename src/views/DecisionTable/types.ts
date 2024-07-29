@@ -4,7 +4,7 @@ import { DATA_TYPE } from '@domain/dataDictionary';
 
 export type CaseEntry = {
   name: string;
-  operator: Operator | '';
+  operator: Operator | null;
   expression: string;
   destinationType?: string;
 };
@@ -19,38 +19,23 @@ export type CaseEntries = {
   edgeId?: string | null;
 };
 
-export type VariableRowData = {
-  [key: string]: {
-    name: string;
-    operator: Operator | '';
-    expression: string;
-    edgeId?: string | null;
-  };
-};
-
 export interface SelectedCell extends CaseEntry {
   category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS;
   rowIndex: number;
-  dataType: DATA_TYPE | null;
+  dataType: DATA_TYPE;
 }
 
 export type VariableColumnData = {
-  name: string;
-  dataType: DATA_TYPE | null;
-  allowedValues?: string | string[];
-};
-
-export type VariableColumnDataUpdate = {
   category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS;
   name: string;
-  dataType: DATA_TYPE | null;
+  dataType: DATA_TYPE;
   allowedValues?: string | string[];
   index: number;
 };
 
 export type FormFieldsProps = {
   name: string;
-  operator: Operator | '';
+  operator: Operator | null;
   value?: string;
   lowerBound?: number | null;
   upperBound?: number | null;

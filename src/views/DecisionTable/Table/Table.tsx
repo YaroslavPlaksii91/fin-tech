@@ -9,48 +9,47 @@ import {
 } from '@mui/material';
 import { lightBlue, lightGreen } from '@mui/material/colors';
 
+import { CATEGORIES, CATEGORY, BOOLEAN_OPTIONS, STEP } from '../constants';
 import {
-  CATEGORIES,
-  CATEGORY,
-  OBJECT_DATA_TYPES,
-  BOOLEAN_OPTIONS
-} from '../constants';
-import {
-  VariableRowData,
   SelectedCell,
   FormFieldsProps,
-  VariableColumnDataUpdate,
-  OPERATORS
+  VariableColumnData,
+  OPERATORS,
+  CaseEntry
 } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
-import VariableInput from '../VariableInput/VariableInput';
-import { getFormatedOptions, getHeaderCellBgColor } from '../utils';
+import {
+  checkDataType,
+  filterVariablesByUsageMode,
+  getFormatedOptions,
+  getHeaderCellBgColor,
+  parseStringFormat
+} from '../utils';
+import Select from '../Select';
+import VariableInput from '../VariableInput';
 
 import { Head, StyledTableBody } from './styled';
 
 import { theme } from '@theme';
 import TrashIcon from '@icons/trash.svg';
+import AddIcon from '@icons/plusSquare.svg';
+import GridSquarePlusIcon from '@icons/gridSquarePlus.svg';
 import {
   StyledTableCell,
   StyledTableRow
 } from '@components/shared/Table/styled';
-import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog.tsx';
-import SelectComponent from '@views/DecisionTable/SelectComponent/SelectComponent';
-import {
-  DataDictionaryVariable,
-  DATA_TYPE_WITHOUT_ENUM,
-  Variable
-} from '@domain/dataDictionary';
+import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog';
+import { DataDictionaryVariable, Variable } from '@domain/dataDictionary';
 
 interface Table {
   stepIds: (string | null)[];
   defaultStepId: string | null;
-  columns: VariableColumnDataUpdate[];
-  rows: VariableRowData[];
+  columns: VariableColumnData[];
+  rows: Record<string, CaseEntry>[];
   variables: Record<string, Variable[]>;
-  searchableSelectOptions?: { value: string; label: string }[];
-  selectedColumn: VariableColumnDataUpdate | null;
-  handleSelectionColumn: (column: VariableColumnDataUpdate) => void;
+  stepsOptions: { value: string; label: string }[];
+  selectedColumn: VariableColumnData | null;
+  handleSelectionColumn: (column: VariableColumnData) => void;
   handleDeleteRow: (index: number) => void;
   handleInsertColumn: () => void;
   handleDeleteCategoryColumn: () => void;
@@ -68,7 +67,7 @@ const Table = ({
   columns,
   rows,
   variables,
-  searchableSelectOptions,
+  stepsOptions,
   selectedColumn,
   handleSelectionColumn,
   handleDeleteRow,
@@ -84,9 +83,8 @@ const Table = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
 
-  const handleClickOnMenu =
-    (column: VariableColumnDataUpdate) =>
-    (event: React.MouseEvent<HTMLElement>) => {
+  const onMenuClick =
+    (column: VariableColumnData) => (event: React.MouseEvent<HTMLElement>) => {
       handleSelectionColumn(column);
       setAnchorVariableMenu(event.currentTarget);
     };
@@ -163,6 +161,30 @@ const Table = ({
                 column.index === selectedColumn?.index &&
                 column.category === selectedColumn?.category;
 
+              const menuItems = [
+                {
+                  key: 'add-variable-action',
+                  disabled: column.name === STEP,
+                  onClick: handleAddVariable,
+                  icon: <AddIcon height={24} width={24} />,
+                  text: `Add ${column?.category === CATEGORIES.Conditions ? 'Input' : 'Output'} Variable`
+                },
+                {
+                  key: 'add-column-action',
+                  disabled: false,
+                  onClick: handleAddNewColumn,
+                  icon: <GridSquarePlusIcon />,
+                  text: 'Add Column'
+                },
+                {
+                  key: 'delete-column-action',
+                  disabled: isLastConditionColumn || column.name === STEP,
+                  onClick: handleDeleteColumn,
+                  icon: <TrashIcon />,
+                  text: 'Delete Column'
+                }
+              ];
+
               return (
                 <TableCell
                   width={340}
@@ -181,18 +203,11 @@ const Table = ({
                     }}
                     size="small"
                     open={isCurrentMenuOpen}
-                    variableActionTitle={`Add ${column?.category === CATEGORIES.Conditions ? 'Input' : 'Output'} Variable`}
                     value={column.name}
+                    menuItems={menuItems}
                     anchorEl={anchorVariableMenu}
-                    handleAddVariable={handleAddVariable}
-                    handleAddNewColumn={handleAddNewColumn}
-                    handleDeleteColumn={handleDeleteColumn}
-                    handleClickOnMenu={handleClickOnMenu(column)}
+                    onClick={onMenuClick(column)}
                     handleCloseMenu={handleCloseMenu}
-                    isAddVariableDisabled={column.name === 'Step'}
-                    isDeleteDisabled={
-                      isLastConditionColumn || column.name === 'Step'
-                    }
                     showActionButton={hasUserPermission}
                   />
                 </TableCell>
@@ -206,9 +221,10 @@ const Table = ({
               parity={(rowIndex + 1) % 2 === 0 ? 'even' : 'odd'}
             >
               {columns.map((column, columnIndex) => {
-                const { dataType, name, allowedValues, category } = column;
+                const { name, allowedValues } = column;
+                const dataType = checkDataType(column.dataType);
 
-                if (name === 'Step') {
+                if (name === STEP) {
                   const value =
                     rowIndex >= stepIds.length
                       ? defaultStepId
@@ -217,29 +233,27 @@ const Table = ({
                   return (
                     <Fragment key={columnIndex}>
                       <StyledTableCell>
-                        <SelectComponent
+                        <Select
                           fullWidth
                           placeholder="Select next step"
                           value={value || ''}
-                          options={searchableSelectOptions || []}
+                          options={stepsOptions}
                           handleChange={(stepId) =>
                             handleChangeStep(rowIndex, stepId)
                           }
                           disabled={!hasUserPermission}
                         />
                       </StyledTableCell>
-                      {hasUserPermission && (
-                        <StyledTableCell sx={{ padding: 0 }}>
-                          {rows.length !== rowIndex + 1 ? (
-                            <Button
-                              sx={{ color: theme.palette.error.main }}
-                              onClick={() => handleDeleteRow(rowIndex)}
-                            >
-                              <TrashIcon />
-                            </Button>
-                          ) : null}
-                        </StyledTableCell>
-                      )}
+                      <StyledTableCell sx={{ padding: 0 }}>
+                        {rows.length !== rowIndex + 1 && hasUserPermission ? (
+                          <Button
+                            sx={{ color: theme.palette.error.main }}
+                            onClick={() => handleDeleteRow(rowIndex)}
+                          >
+                            <TrashIcon />
+                          </Button>
+                        ) : null}
+                      </StyledTableCell>
                     </Fragment>
                   );
                 }
@@ -254,58 +268,52 @@ const Table = ({
                   );
 
                 const hasValue = row[name].expression || row[name].operator;
-
-                const isBooleanDataType =
-                  dataType === DATA_TYPE_WITHOUT_ENUM.Boolean;
-
-                const isDataTypeWithoutEnum =
-                  [
-                    ...Object.values(DATA_TYPE_WITHOUT_ENUM),
-                    ...OBJECT_DATA_TYPES
-                  ].includes(dataType || '') && !isBooleanDataType;
+                const expression = dataType.isString
+                  ? parseStringFormat(row[name].expression)
+                  : row[name].expression;
 
                 return (
                   <StyledTableCell
-                    sx={{ cursor: 'pointer' }}
+                    sx={{ cursor: hasUserPermission ? 'pointer' : 'default' }}
                     key={columnIndex}
                     onClick={() => {
                       hasUserPermission &&
-                        isDataTypeWithoutEnum &&
+                        dataType.isWithoutEnum &&
+                        !dataType.isBoolean &&
                         setSelectedCell({
+                          ...row[name],
                           rowIndex,
-                          category,
-                          dataType,
-                          ...row[name]
+                          expression,
+                          category: column.category,
+                          dataType: column.dataType
                         });
                     }}
                   >
-                    {isDataTypeWithoutEnum ? (
+                    {dataType.isWithoutEnum && !dataType.isBoolean ? (
                       <Typography variant="body2">
                         {hasValue
-                          ? `${column.category === CATEGORIES.Actions ? OPERATORS.EQUAL : row[name].operator} ${row[name].expression}`
+                          ? `${column.category === CATEGORIES.Actions ? OPERATORS.EQUAL : row[name].operator} ${expression}`
                           : `Enter ${column.category === CATEGORIES.Conditions ? 'Condition' : 'Value'}`}
                       </Typography>
                     ) : (
-                      <SelectComponent
+                      <Select
                         fullWidth
                         placeholder="Select Value"
                         value={row[name].expression}
                         options={getFormatedOptions(
-                          isBooleanDataType
+                          dataType.isBoolean
                             ? BOOLEAN_OPTIONS
                             : allowedValues || []
                         )}
                         disabled={!hasUserPermission}
                         handleChange={(value) =>
                           handleSubmitSelectedCellData({
-                            value,
-                            category,
-                            rowIndex,
-                            dataType,
                             ...row[name],
-                            operator: isBooleanDataType
-                              ? OPERATORS.EQUAL
-                              : row[name].operator
+                            value,
+                            rowIndex,
+                            category: column.category,
+                            dataType: column.dataType,
+                            operator: OPERATORS.EQUAL
                           })
                         }
                       />
@@ -332,13 +340,12 @@ const Table = ({
         <SelectVariableValueDialog
           modalOpen={!!selectedCell}
           handleClose={() => setSelectedCell(null)}
-          selectedRowCell={selectedCell}
-          category={selectedCell.category}
+          selectedCell={selectedCell}
           handleSubmitForm={handleSubmitSelectedCellData}
         />
       )}
       <DataDictionaryDialog
-        data={variables}
+        data={filterVariablesByUsageMode(variables, selectedColumn?.category)}
         title="Add Variable"
         isOpen={isDialogOpen}
         onClose={handleCloseDialog}

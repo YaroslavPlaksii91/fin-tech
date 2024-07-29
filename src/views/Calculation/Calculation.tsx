@@ -29,7 +29,7 @@ import { ExpressionForm } from '@components/ExpressionForm/ExpressionForm.tsx';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import { InputText } from '@components/shared/Forms/InputText';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar.tsx';
-import StepNoteSection from '@views/DecisionTable/StepNoteSection/StepNoteSection';
+import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
@@ -275,12 +275,12 @@ const Calculation: React.FC<CalculationProps> = ({
               </Stack>
             </form>
             {!isPreview && (
-              <StepNoteSection
+              <NoteSection
                 modalOpen={openNoteModal}
-                handleCloseModal={handleCloseNoteModal}
-                handleOpenModal={handleOpenNoteModal}
-                noteValue={getValues('note') ?? ''}
-                handleSubmitNote={handleSubmitNote}
+                value={getValues('note') ?? ''}
+                handleClose={handleCloseNoteModal}
+                handleOpen={handleOpenNoteModal}
+                handleSubmit={handleSubmitNote}
                 renderInput={() => (
                   <InputText
                     fullWidth

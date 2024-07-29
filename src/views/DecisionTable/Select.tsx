@@ -2,11 +2,11 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Select,
+  Select as MuiSelect,
   SelectChangeEvent
 } from '@mui/material';
 
-interface SelectComponentProps {
+interface SelectProps {
   placeholder: string;
   value: string;
   options: { label: string; value: string }[];
@@ -16,7 +16,7 @@ interface SelectComponentProps {
   disabled?: boolean;
 }
 
-const SelectComponent = ({
+const Select = ({
   placeholder,
   value,
   options,
@@ -24,7 +24,7 @@ const SelectComponent = ({
   fullWidth = false,
   handleChange,
   disabled
-}: SelectComponentProps) => {
+}: SelectProps) => {
   const handleOnSelectChange = (event: SelectChangeEvent<string>) => {
     handleChange(event.target.value);
   };
@@ -41,7 +41,7 @@ const SelectComponent = ({
           {placeholder}
         </InputLabel>
       ) : null}
-      <Select
+      <MuiSelect
         fullWidth={fullWidth}
         sx={{
           '& .MuiSelect-select': {
@@ -62,9 +62,9 @@ const SelectComponent = ({
             {option.label}
           </MenuItem>
         ))}
-      </Select>
+      </MuiSelect>
     </FormControl>
   );
 };
 
-export default SelectComponent;
+export default Select;

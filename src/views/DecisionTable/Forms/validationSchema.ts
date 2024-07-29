@@ -2,29 +2,34 @@ import * as yup from 'yup';
 
 import { Operator, OPERATORS } from '../types';
 
-import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
+import { DATA_TYPE, DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
+import { isDecimal, isInteger } from '@utils/validation';
 
 export const validationSchema = yup.object().shape({
   name: yup.string().required(),
   dataType: yup
-    .mixed<DATA_TYPE_WITHOUT_ENUM>()
-    .oneOf([...Object.values(DATA_TYPE_WITHOUT_ENUM)])
+    .mixed<DATA_TYPE>()
+    .oneOf(Object.values(DATA_TYPE_WITHOUT_ENUM))
     .notRequired()
     .nullable(),
-  operator: yup.mixed<Operator>().oneOf(Object.values(OPERATORS)).required(),
+  operator: yup
+    .mixed<Operator>()
+    .oneOf(Object.values(OPERATORS), 'Operator is required')
+    .required(),
   value: yup
     .string()
     .when(['dataType', 'operator'], ([dataType, operator], schema) => {
       if (operator === OPERATORS.ANY || operator === OPERATORS.BETWEEN)
         return schema.notRequired().nullable();
 
-      if (
-        dataType === DATA_TYPE_WITHOUT_ENUM.Integer ||
-        dataType === DATA_TYPE_WITHOUT_ENUM.Decimal
-      )
-        return yup.number().required();
-
-      return yup.string().required();
+      return schema
+        .required('Value is required')
+        .test('is-decimal', 'Value must be a valid decimal', (value) =>
+          dataType === DATA_TYPE_WITHOUT_ENUM.Decimal ? isDecimal(value) : true
+        )
+        .test('is-integer', 'Value must be a valid integer', (value) =>
+          dataType === DATA_TYPE_WITHOUT_ENUM.Integer ? isInteger(value) : true
+        );
     }),
   lowerBound: yup
     .number()

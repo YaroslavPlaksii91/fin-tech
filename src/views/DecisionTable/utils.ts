@@ -1,5 +1,5 @@
 import { lightGreen, lightBlue } from '@mui/material/colors';
-import { mapValues, filter, flatMap } from 'lodash';
+import { mapValues, filter } from 'lodash';
 
 import {
   CATEGORIES,
@@ -20,7 +20,7 @@ import {
   Variable
 } from '@domain/dataDictionary';
 
-export const getOperatorOptions = (dataType: DATA_TYPE | null) => {
+export const getOperatorOptions = (dataType: DATA_TYPE) => {
   const { Integer, Decimal, String } = DATA_TYPE_WITHOUT_ENUM;
   let operators: Operator[] = [];
 
@@ -52,25 +52,21 @@ export const getOperatorOptions = (dataType: DATA_TYPE | null) => {
 
 export const getColumns = (
   caseEntry: CaseEntries,
-  variables: Record<string, Variable[]>,
+  variables: Variable[],
   category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS
 ) => {
   const INITIAL_COLUMN = {
     ...INITIAL_ENTRY,
     index: 0,
     category,
-    dataType: null
+    dataType: DATA_TYPE_WITHOUT_ENUM.String
   };
 
   if (!caseEntry?.[category]?.length)
     return category === CATEGORIES.Conditions ? [INITIAL_COLUMN] : [];
 
-  const combinedVariables = flatMap(variables);
-
   return caseEntry[category].map((el, index) => {
-    const variablesDataTypes = combinedVariables.reduce<
-      Record<string, DATA_TYPE>
-    >(
+    const variablesDataTypes = variables.reduce<Record<string, DATA_TYPE>>(
       (acc, current) => ({
         ...acc,
         [current.name]: current.dataType
@@ -84,8 +80,7 @@ export const getColumns = (
 
     // if variable enum type we have additional prop with allowedValues
     const allowedValues = isDataTypeWithEnum
-      ? combinedVariables.find((variable) => variable.name === el.name)
-          ?.allowedValues
+      ? variables.find((variable) => variable.name === el.name)?.allowedValues
       : undefined;
 
     return {
@@ -99,12 +94,11 @@ export const getColumns = (
   });
 };
 
-export const setVariableSources = (
+export const getVariableSources = (
   caseEntries: CaseEntry[],
-  variables: Record<string, Variable[]>
+  variables: Variable[]
 ) => {
-  const combinedVariables = flatMap(variables);
-  const variablesSourceTypes = combinedVariables.reduce<
+  const variablesSourceTypes = variables.reduce<
     Record<string, VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE>
   >(
     (acc, current) => ({
@@ -153,12 +147,11 @@ export const updateCaseEntry = ({
     };
   });
 
-export const getHeaderCellBgColor = (category: CATEGORY | null) => {
+export const getHeaderCellBgColor = (category: CATEGORY) => {
   switch (category) {
-    case CATEGORIES.Actions:
-      return lightGreen[50];
     case CATEGORIES.Conditions:
       return lightBlue[50];
+    case CATEGORIES.Actions:
     default:
       return lightGreen[50];
   }
@@ -200,4 +193,27 @@ export const filterVariablesByUsageMode = (
   return mapValues(variables, (arr) =>
     filter(arr, (item) => item.usageMode !== usageMode)
   );
+};
+
+export const checkDataType = (dataType: DATA_TYPE) => ({
+  isWithoutEnum: Object.values(DATA_TYPE_WITHOUT_ENUM).includes(
+    dataType as DATA_TYPE_WITHOUT_ENUM
+  ),
+  isBoolean: dataType === DATA_TYPE_WITHOUT_ENUM.Boolean,
+  isString: dataType === DATA_TYPE_WITHOUT_ENUM.String,
+  isObject:
+    dataType === DATA_TYPE_WITHOUT_ENUM['Object:CraClarity'] ||
+    dataType === DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']
+});
+// We need to convert with string in "\"stringValue\"" format since the backend expects it
+export const convertToStringFormat = (string: string) =>
+  // eslint-disable-next-line no-useless-escape
+  string.length ? `\\\"${string}\\\"` : '';
+
+// Parse to basic string format
+export const parseStringFormat = (formattedString: string) => {
+  // eslint-disable-next-line no-useless-escape
+  const match = formattedString.match(/^\\\"(.*)\\\"$/);
+
+  return match ? match[1] : formattedString;
 };
