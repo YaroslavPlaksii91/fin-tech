@@ -2,18 +2,18 @@ import React from 'react';
 import {
   Box,
   IconButton,
-  Table,
-  TableHead,
-  TableBody,
+  // Table,
+  // TableHead,
+  // TableBody,
   TableRow,
-  Collapse,
+  // Collapse,
   Breadcrumbs,
   Typography
 } from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import TableCell from '@mui/material/TableCell';
-import ReactDiffViewer from 'react-diff-viewer';
+// import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+// import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+// import TableCell from '@mui/material/TableCell';
+// import ReactDiffViewer from 'react-diff-viewer';
 
 import LineChartDotsSquareIcon from '@icons/lineChartDotsSquare.svg';
 import BezierIcon from '@icons/bezier.svg';
@@ -24,6 +24,7 @@ import {
 } from '@domain/changeHistory.ts';
 // import routes from '@constants/routes.ts';
 import { theme } from '@theme';
+import EyeIcon from '@icons/eye.svg';
 
 // const getPathLink = (id: string, index: number) => {
 //   if (index === 0) {
@@ -60,9 +61,11 @@ const getName = (row: ChangeHistoryDifference) => {
   return name;
 };
 
-export function Row(props: { row: ChangeHistoryDifference }) {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
+export function Row(props: {
+  row: ChangeHistoryDifference;
+  handleRowClick: (rowId: string) => void;
+}) {
+  const { row, handleRowClick } = props;
 
   return (
     <React.Fragment>
@@ -114,15 +117,17 @@ export function Row(props: { row: ChangeHistoryDifference }) {
         </StyledTableCell>
         <StyledTableCell width={24}>
           <IconButton
-            aria-label="expand row"
+            aria-label="view row"
             size="small"
-            onClick={() => setOpen(!open)}
+            onClick={() => {
+              handleRowClick(row.id);
+            }}
           >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            <EyeIcon />
           </IconButton>
         </StyledTableCell>
       </TableRow>
-      <TableRow>
+      {/* <TableRow>
         <StyledTableCell
           style={{ paddingBottom: 0, paddingTop: 0 }}
           colSpan={6}
@@ -157,7 +162,7 @@ export function Row(props: { row: ChangeHistoryDifference }) {
             </Box>
           </Collapse>
         </StyledTableCell>
-      </TableRow>
+      </TableRow> */}
     </React.Fragment>
   );
 }

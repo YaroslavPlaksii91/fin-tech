@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Box,
   Typography,
@@ -13,6 +13,8 @@ import {
 import dayjs from 'dayjs';
 import TripOriginIcon from '@mui/icons-material/TripOrigin';
 
+import ChangeHistoryDetailedView from './ChangeHistoryDetailedView';
+
 import { palette } from '@theme';
 import { ChangeHistoryRecord } from '@domain/changeHistory.ts';
 import { FULL_DATE_TIME_FORMAT } from '@constants/common.tsx';
@@ -25,6 +27,25 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({ data }) => {
     }
     return [];
   }, [data]);
+
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
+
+  const handleRowClick = (rowId: string) => {
+    const index = diffsList.findIndex((row) => row.id === rowId);
+    setSelectedRowIndex(index);
+  };
+
+  const handleNextRow = () => {
+    if (selectedRowIndex !== null && selectedRowIndex < diffsList.length - 1) {
+      setSelectedRowIndex(selectedRowIndex + 1);
+    }
+  };
+
+  const handlePrevRow = () => {
+    if (selectedRowIndex !== null && selectedRowIndex > 0) {
+      setSelectedRowIndex(selectedRowIndex - 1);
+    }
+  };
 
   return (
     <Box
@@ -65,10 +86,19 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({ data }) => {
               </TableHead>
               <TableBody sx={{ backgroundColor: palette.aliceBlue }}>
                 {diffsList.map((row) => (
-                  <Row key={row.id} row={row} />
+                  <Row handleRowClick={handleRowClick} key={row.id} row={row} />
                 ))}
               </TableBody>
             </Table>
+            {selectedRowIndex !== null && (
+              <ChangeHistoryDetailedView
+                data={data}
+                selectedRowIndex={selectedRowIndex}
+                setSelectedRowIndex={setSelectedRowIndex}
+                handleNextRow={handleNextRow}
+                handlePrevRow={handlePrevRow}
+              />
+            )}
           </TableContainer>
         </Box>
       </Box>
