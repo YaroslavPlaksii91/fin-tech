@@ -24,11 +24,11 @@ const getDataGridColumns = (): GridColDef[] => [
     headerName: 'Percentage of Total',
     type: 'number',
     minWidth: 200,
-    valueFormatter: (value) => {
-      if (!value) return null;
-      const factor = Math.pow(10, 2);
+    valueFormatter: (percentage?: number) => {
+      if (!percentage) return null;
+      const roundedToHundred = Math.round(percentage * 100) / 100;
 
-      return `${Math.round(value * factor) / factor}%`;
+      return roundedToHundred === 0 ? '< 0.01%' : `${roundedToHundred}%`;
     }
   }
 ];
