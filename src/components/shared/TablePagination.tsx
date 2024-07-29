@@ -5,7 +5,7 @@ import {
   TablePagination as MuiTablePagination,
   Stack
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { theme } from '@theme';
 import { isInteger } from '@utils/validation';
@@ -36,7 +36,7 @@ const TablePagination = ({
   onRowsPerPageChange,
   onPageApply
 }: TablePaginationProps) => {
-  const [enteredPage, setEnteredPage] = useState(`${page}`);
+  const [enteredPage, setEnteredPage] = useState('');
 
   const handlePageByTextField = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -49,15 +49,19 @@ const TablePagination = ({
 
     if (
       !isInteger(enteredPage) ||
-      +enteredPage < 0 ||
-      +enteredPage > totalPages
+      +enteredPage < 1 ||
+      +enteredPage > totalPages + 1
     ) {
-      setEnteredPage(`${page}`);
+      setEnteredPage(`${page + 1}`);
       return;
     }
 
-    onPageApply(+enteredPage);
+    onPageApply(+enteredPage - 1);
   };
+
+  useEffect(() => {
+    setEnteredPage(`${page + 1}`);
+  }, [page]);
 
   return (
     <Box
@@ -90,7 +94,7 @@ const TablePagination = ({
           onKeyDown={handlePageApply}
         />
         <Typography variant="caption" color={theme.palette.text.secondary}>
-          of {totalPages} pages
+          of {totalPages + 1} pages
         </Typography>
       </Stack>
     </Box>
