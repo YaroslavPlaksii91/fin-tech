@@ -43,7 +43,7 @@ import {
 import { flowService } from '@services/flow-service';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
 import { theme } from '@theme';
-import StepNoteSection from '@views/DecisionTable/StepNoteSection/StepNoteSection';
+import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
@@ -344,12 +344,12 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
           </Stack>
         </form>
         {!isPreview && (
-          <StepNoteSection
+          <NoteSection
+            value={getValues('note') ?? ''}
             modalOpen={openNoteModal}
-            handleCloseModal={handleCloseNoteModal}
-            handleOpenModal={handleOpenNoteModal}
-            noteValue={getValues('note') ?? ''}
-            handleSubmitNote={handleSubmitNote}
+            handleClose={handleCloseNoteModal}
+            handleOpen={handleOpenNoteModal}
+            handleSubmit={handleSubmitNote}
             renderInput={() => (
               <InputText
                 fullWidth

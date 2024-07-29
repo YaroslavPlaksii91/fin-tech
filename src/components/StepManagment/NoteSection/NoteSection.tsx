@@ -1,22 +1,45 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography, Card, CardContent } from '@mui/material';
 
 import { StyledNestedArea, StyledOverlapArea } from './styled';
 
-interface NoteSectionProps {
-  children: React.ReactNode;
-  handleOpenNoteModal: () => void;
+import { NoteForm } from '@components/StepManagment/NoteForm/NoteForm';
+
+interface StepNoteSectionProps {
+  value: string;
+  modalOpen: boolean;
+  handleClose: () => void;
+  handleOpen: () => void;
+  handleSubmit: (data: string) => void;
+  renderInput: () => React.ReactNode;
 }
 
-const NoteSection = ({ handleOpenNoteModal, children }: NoteSectionProps) => (
-  <Stack sx={{ width: '50%', minWidth: '100px' }}>
-    <Typography variant="h6" pb={1}>
-      Note for this step
-    </Typography>
-    <Box sx={{ position: 'relative' }}>
-      <StyledOverlapArea onClick={handleOpenNoteModal} />
-      <StyledNestedArea>{children}</StyledNestedArea>
-    </Box>
-  </Stack>
+const NoteSection = ({
+  value,
+  modalOpen,
+  handleClose,
+  handleOpen,
+  handleSubmit,
+  renderInput
+}: StepNoteSectionProps) => (
+  <Card variant="outlined" sx={{ mt: 2 }}>
+    <CardContent>
+      <Stack sx={{ width: '50%', minWidth: '100px' }}>
+        <Typography variant="h6" pb={1}>
+          Note for this step
+        </Typography>
+        <Box sx={{ position: 'relative' }}>
+          <StyledOverlapArea onClick={handleOpen} />
+          <StyledNestedArea>{renderInput()}</StyledNestedArea>
+        </Box>
+      </Stack>
+      <NoteForm
+        modalOpen={modalOpen}
+        handleClose={handleClose}
+        handleSubmitNote={handleSubmit}
+        note={value}
+      />
+    </CardContent>
+  </Card>
 );
 
 export default NoteSection;

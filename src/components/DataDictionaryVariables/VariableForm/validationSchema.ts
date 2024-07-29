@@ -5,6 +5,7 @@ import {
   DATA_TYPE_WITHOUT_ENUM,
   DATA_TYPE
 } from '@domain/dataDictionary';
+import { isDecimal, isInteger } from '@utils/validation';
 
 export const validationSchema = yup.object().shape({
   name: yup
@@ -50,32 +51,21 @@ export const validationSchema = yup.object().shape({
         .test(
           'is-decimal',
           'Default value must be a valid decimal',
-          function (val) {
+          function (value) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            if (this.parent.dataType === DATA_TYPE_WITHOUT_ENUM.Decimal) {
-              return (
-                val !== undefined &&
-                !isNaN(+val) &&
-                parseFloat(val).toString() === val &&
-                !Number.isInteger(parseFloat(val))
-              );
-            }
-            return true;
+            return this.parent.dataType === DATA_TYPE_WITHOUT_ENUM.Decimal
+              ? isDecimal(value)
+              : true;
           }
         )
         .test(
           'is-integer',
           'Default value must be a valid integer',
-          function (val) {
+          function (value) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            if (this.parent.dataType === DATA_TYPE_WITHOUT_ENUM.Integer) {
-              return (
-                val !== undefined &&
-                !isNaN(+val) &&
-                Number.isInteger(parseFloat(val))
-              );
-            }
-            return true;
+            return this.parent.dataType === DATA_TYPE_WITHOUT_ENUM.Integer
+              ? isInteger(value)
+              : true;
           }
         )
   }),

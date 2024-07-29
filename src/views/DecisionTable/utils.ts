@@ -1,24 +1,14 @@
 import { lightGreen, lightBlue } from '@mui/material/colors';
-import { mapValues, filter, flatMap } from 'lodash';
+import { mapValues, filter } from 'lodash';
 
 import {
-  EQUAL_OPERATOR,
-  BETWEEN_OPERATOR,
-  GREATER_AND_EQUAL_OPERATOR,
-  ANY_OPERATOR,
-  LESS_AND_EQUAL_OPERATOR,
-  IN_OPERATOR,
-  NOT_EQUAL_OPERATOR,
-  LESS_OPERATOR,
-  GREATER_OPERATOR,
   CATEGORIES,
-  CATEGORIES_TYPE,
-  CATEGORIES_WITHOUT_ELSE_ACTIONS,
+  CATEGORY,
+  CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
   INITIAL_ENTRY,
-  INITIAL_CASE_ENTRIES,
-  OBJECT_DATA_TYPES
+  INITIAL_CASE_ENTRIES
 } from './constants';
-import { CaseEntriesDate, CaseEntry } from './types';
+import { CaseEntries, CaseEntry, Operator, OPERATORS } from './types';
 
 import {
   DATA_TYPE,
@@ -30,59 +20,53 @@ import {
   Variable
 } from '@domain/dataDictionary';
 
-export const getOperatorOptions = (dataType: DATA_TYPE_WITHOUT_ENUM) => {
+export const getOperatorOptions = (dataType: DATA_TYPE) => {
   const { Integer, Decimal, String } = DATA_TYPE_WITHOUT_ENUM;
-
-  let operators: Record<string, string>[] = [];
-
-  if (OBJECT_DATA_TYPES.includes(dataType))
-    return [EQUAL_OPERATOR, NOT_EQUAL_OPERATOR];
+  let operators: Operator[] = [];
 
   switch (dataType) {
     case String:
-      operators = [
-        IN_OPERATOR,
-        EQUAL_OPERATOR,
-        NOT_EQUAL_OPERATOR,
-        ANY_OPERATOR
-      ];
+      operators = [OPERATORS.IN, OPERATORS.EQUAL, OPERATORS.NOT_EQUAL];
       break;
     case Integer:
     case Decimal:
       operators = [
-        EQUAL_OPERATOR,
-        NOT_EQUAL_OPERATOR,
-        GREATER_OPERATOR,
-        LESS_OPERATOR,
-        GREATER_AND_EQUAL_OPERATOR,
-        LESS_AND_EQUAL_OPERATOR,
-        BETWEEN_OPERATOR,
-        ANY_OPERATOR
+        OPERATORS.EQUAL,
+        OPERATORS.NOT_EQUAL,
+        OPERATORS.GREATER,
+        OPERATORS.LESS,
+        OPERATORS.GREATER_AND_EQUAL,
+        OPERATORS.LESS_AND_EQUAL,
+        OPERATORS.BETWEEN
       ];
       break;
     default:
-      operators = [EQUAL_OPERATOR, NOT_EQUAL_OPERATOR, ANY_OPERATOR];
+      operators = [OPERATORS.EQUAL, OPERATORS.NOT_EQUAL];
   }
 
-  return operators;
+  return [...operators, OPERATORS.ANY].map((operator) => ({
+    key: operator,
+    value: operator
+  }));
 };
 
 export const getColumns = (
-  caseEntry: CaseEntriesDate,
-  variables: Record<string, Variable[]>,
-  category: CATEGORIES_WITHOUT_ELSE_ACTIONS
+  caseEntry: CaseEntries,
+  variables: Variable[],
+  category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS
 ) => {
-  const INITIAL_COLUMN = { ...INITIAL_ENTRY, index: 0, category, dataType: '' };
+  const INITIAL_COLUMN = {
+    ...INITIAL_ENTRY,
+    index: 0,
+    category,
+    dataType: DATA_TYPE_WITHOUT_ENUM.String
+  };
 
   if (!caseEntry?.[category]?.length)
     return category === CATEGORIES.Conditions ? [INITIAL_COLUMN] : [];
 
-  const combinedVariables = flatMap(variables);
-
   return caseEntry[category].map((el, index) => {
-    const variablesDataTypes = combinedVariables.reduce<
-      Record<string, DATA_TYPE>
-    >(
+    const variablesDataTypes = variables.reduce<Record<string, DATA_TYPE>>(
       (acc, current) => ({
         ...acc,
         [current.name]: current.dataType
@@ -96,8 +80,7 @@ export const getColumns = (
 
     // if variable enum type we have additional prop with allowedValues
     const allowedValues = isDataTypeWithEnum
-      ? combinedVariables.find((variable) => variable.name === el.name)
-          ?.allowedValues
+      ? variables.find((variable) => variable.name === el.name)?.allowedValues
       : undefined;
 
     return {
@@ -111,12 +94,11 @@ export const getColumns = (
   });
 };
 
-export const setVariableSources = (
+export const getVariableSources = (
   caseEntries: CaseEntry[],
-  variables: Record<string, Variable[]>
+  variables: Variable[]
 ) => {
-  const combinedVariables = flatMap(variables);
-  const variablesSourceTypes = combinedVariables.reduce<
+  const variablesSourceTypes = variables.reduce<
     Record<string, VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE>
   >(
     (acc, current) => ({
@@ -140,8 +122,8 @@ export const updateCaseEntry = ({
   insertEntry,
   initialEntries = [] // We need to provide initial entries for rows in case when we don`t have any already created Entries
 }: {
-  caseEntries: CaseEntriesDate[];
-  category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
+  caseEntries: CaseEntries[];
+  category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS;
   start: number;
   deleteCount: number;
   insertEntry?: CaseEntry;
@@ -165,12 +147,11 @@ export const updateCaseEntry = ({
     };
   });
 
-export const getHeaderCellBgColor = (category: CATEGORIES_TYPE | null) => {
+export const getHeaderCellBgColor = (category: CATEGORY) => {
   switch (category) {
-    case CATEGORIES.Actions:
-      return lightGreen[50];
     case CATEGORIES.Conditions:
       return lightBlue[50];
+    case CATEGORIES.Actions:
     default:
       return lightGreen[50];
   }
@@ -195,7 +176,7 @@ export const getFormatedOptions = (
 
 export const filterVariablesByUsageMode = (
   variables: Record<string, Variable[]>,
-  category?: CATEGORIES_TYPE
+  category?: CATEGORY
 ) => {
   let usageMode: VARIABLE_USAGE_MODE;
 
@@ -212,4 +193,27 @@ export const filterVariablesByUsageMode = (
   return mapValues(variables, (arr) =>
     filter(arr, (item) => item.usageMode !== usageMode)
   );
+};
+
+export const checkDataType = (dataType: DATA_TYPE) => ({
+  isWithoutEnum: Object.values(DATA_TYPE_WITHOUT_ENUM).includes(
+    dataType as DATA_TYPE_WITHOUT_ENUM
+  ),
+  isBoolean: dataType === DATA_TYPE_WITHOUT_ENUM.Boolean,
+  isString: dataType === DATA_TYPE_WITHOUT_ENUM.String,
+  isObject:
+    dataType === DATA_TYPE_WITHOUT_ENUM['Object:CraClarity'] ||
+    dataType === DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']
+});
+// We need to convert with string in "\"stringValue\"" format since the backend expects it
+export const convertToStringFormat = (string: string) =>
+  // eslint-disable-next-line no-useless-escape
+  string.length ? `\\\"${string}\\\"` : '';
+
+// Parse to basic string format
+export const parseStringFormat = (formattedString: string) => {
+  // eslint-disable-next-line no-useless-escape
+  const match = formattedString.match(/^\\\"(.*)\\\"$/);
+
+  return match ? match[1] : formattedString;
 };

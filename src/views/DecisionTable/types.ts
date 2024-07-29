@@ -1,58 +1,56 @@
-import { CATEGORIES_TYPE, CATEGORIES_WITHOUT_ELSE_ACTIONS } from './constants';
+import { CATEGORY, CATEGORIES_WITHOUT_DEFAULT_ACTIONS } from './constants';
 
 import { DATA_TYPE } from '@domain/dataDictionary';
 
 export type CaseEntry = {
   name: string;
-  operator: string;
+  operator: Operator | null;
   expression: string;
   destinationType?: string;
-  category?: CATEGORIES_TYPE;
 };
 
 export interface CaseEntryColumn extends CaseEntry {
-  category?: CATEGORIES_TYPE;
+  category?: CATEGORY;
 }
 
-export type CaseEntriesDate = {
+export type CaseEntries = {
   conditions: CaseEntry[];
   actions: CaseEntry[];
   edgeId?: string | null;
 };
 
-export type VariableRowData = {
-  [key: string]: {
-    name: string;
-    operator: string;
-    expression: string;
-    edgeId?: string | null;
-  };
-};
-
 export interface SelectedCell extends CaseEntry {
-  category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
+  category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS;
   rowIndex: number;
-  dataType: DATA_TYPE | string;
+  dataType: DATA_TYPE;
 }
 
 export type VariableColumnData = {
+  category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS;
   name: string;
-  dataType: DATA_TYPE | string;
-  allowedValues?: string | string[];
-};
-
-export type VariableColumnDataUpdate = {
-  category: CATEGORIES_WITHOUT_ELSE_ACTIONS;
-  name: string;
-  dataType: DATA_TYPE | string;
+  dataType: DATA_TYPE;
   allowedValues?: string | string[];
   index: number;
 };
 
 export type FormFieldsProps = {
   name: string;
-  operator?: string;
+  operator: Operator | null;
   value?: string;
   lowerBound?: number | null;
   upperBound?: number | null;
 };
+
+export enum OPERATORS {
+  EQUAL = '=',
+  NOT_EQUAL = '!=',
+  IN = 'in',
+  GREATER = '>',
+  LESS = '<',
+  GREATER_AND_EQUAL = '>=',
+  LESS_AND_EQUAL = '<=',
+  BETWEEN = 'between',
+  ANY = 'any'
+}
+
+export type Operator = `${OPERATORS}`;
