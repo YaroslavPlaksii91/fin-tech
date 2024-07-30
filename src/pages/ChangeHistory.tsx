@@ -47,7 +47,7 @@ const ChangeHistoryPage: React.FC<ChangeHistoryPageProps> = () => {
           <Grid container spacing={2}>
             {list.map((item, index) => (
               <Grid key={item.id + index} item xs={12}>
-                <ChangeHistoryItem data={item} />
+                <ChangeHistoryItem data={item} index={index} />
               </Grid>
             ))}
           </Grid>

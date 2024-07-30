@@ -7,20 +7,28 @@ import {
   Paper,
   TableHead,
   TableBody,
-  TableRow,
-  TableCell
+  Chip,
+  alpha
 } from '@mui/material';
 import dayjs from 'dayjs';
-import TripOriginIcon from '@mui/icons-material/TripOrigin';
 
 import ChangeHistoryDetailedView from './ChangeHistoryDetailedView';
 
-import { palette } from '@theme';
+import CheckCircleDoneIcon from '@icons/checkCircleDone.svg';
+import CheckDuotoneIcon from '@icons/checkDuotone.svg';
+import { palette, theme } from '@theme';
 import { ChangeHistoryRecord } from '@domain/changeHistory.ts';
 import { FULL_DATE_TIME_FORMAT } from '@constants/common.tsx';
 import { Row } from '@components/ChangeHistory/ChangeHistory.utils.tsx';
+import {
+  StyledTableCell,
+  StyledTableRow
+} from '@components/shared/Table/styled';
 
-const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({ data }) => {
+const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
+  data,
+  index
+}) => {
   const diffsList = useMemo(() => {
     if (data.diffs) {
       return data.diffs;
@@ -29,6 +37,8 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({ data }) => {
   }, [data]);
 
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
+
+  const isFirstRecord = index === 0;
 
   const handleRowClick = (rowId: string) => {
     const index = diffsList.findIndex((row) => row.id === rowId);
@@ -48,45 +58,91 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({ data }) => {
   };
 
   return (
-    <Box
-      display="flex"
-      alignItems="flex-start"
-      justifyContent="flex-start"
-      gap={3}
-    >
-      <TripOriginIcon sx={{ fontSize: 28, flexShrink: 0 }} />
+    <Box display="flex" gap={2}>
+      <Box display="flex" flexDirection="column" alignItems="center">
+        <Box flexBasis="28px">
+          {isFirstRecord ? (
+            <CheckDuotoneIcon color={theme.palette.primary.main} />
+          ) : (
+            <CheckCircleDoneIcon />
+          )}
+        </Box>
+        <Box
+          height="100%"
+          sx={{
+            marginTop: '16px',
+            borderRight: `1px solid rgba(0, 0, 0, 0.3)`
+          }}
+        />
+      </Box>
+
       <Box flexGrow={1}>
-        <Typography variant="body1" color="gray">
-          <Typography component="span" fontWeight={600} color={palette.dark}>
-            {data.name}
-          </Typography>{' '}
-          was updated on{' '}
-          <Typography component="span" fontWeight={600} color={palette.dark}>
-            {dayjs(data.pushedOn).format(FULL_DATE_TIME_FORMAT)}
-          </Typography>{' '}
-          by {data.pushedBy}
-        </Typography>
-        {data.note && (
-          <Typography variant="body1" color="gray">
-            {data.note}
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="flex-start"
+        >
+          <Typography variant="body1" color={theme.palette.text.secondary}>
+            <Typography
+              component="span"
+              variant="body1"
+              color={theme.palette.text.primary}
+            >
+              {data.name}
+            </Typography>{' '}
+            was updated on{' '}
+            <Typography
+              component="span"
+              variant="body1"
+              color={theme.palette.text.primary}
+            >
+              {dayjs(data.pushedOn).format(FULL_DATE_TIME_FORMAT)}
+            </Typography>{' '}
+            by{' '}
+            <Typography
+              component="span"
+              variant="body1"
+              color={theme.palette.text.primary}
+            >
+              {data.pushedBy}
+            </Typography>
           </Typography>
-        )}
+          {data.note && (
+            <Typography variant="body1" color={theme.palette.text.secondary}>
+              {data.note}
+            </Typography>
+          )}
+          {isFirstRecord && (
+            <Chip
+              label="Active"
+              color="success"
+              size="small"
+              variant="outlined"
+              sx={{ background: alpha(palette.green, 0.5) }}
+            />
+          )}
+        </Box>
         <Box mt={1}>
           <TableContainer component={Paper}>
             <Table size="small">
               <TableHead>
-                <TableRow>
-                  <TableCell width="40%">Action type</TableCell>
-                  <TableCell align="left">Name</TableCell>
-                  <TableCell width="40%" align="left">
+                <StyledTableRow>
+                  <StyledTableCell width="40%">Action type</StyledTableCell>
+                  <StyledTableCell align="left">Name</StyledTableCell>
+                  <StyledTableCell width="40%" align="left">
                     Path
-                  </TableCell>
-                  <TableCell />
-                </TableRow>
+                  </StyledTableCell>
+                  <StyledTableCell />
+                </StyledTableRow>
               </TableHead>
               <TableBody sx={{ backgroundColor: palette.aliceBlue }}>
-                {diffsList.map((row) => (
-                  <Row handleRowClick={handleRowClick} key={row.id} row={row} />
+                {diffsList.map((row, index) => (
+                  <Row
+                    index={index}
+                    handleRowClick={handleRowClick}
+                    key={row.id}
+                    row={row}
+                  />
                 ))}
               </TableBody>
             </Table>
@@ -108,6 +164,7 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({ data }) => {
 
 interface ChangeHistoryItemProps {
   data: ChangeHistoryRecord;
+  index: number;
 }
 
 export default ChangeHistoryItem;

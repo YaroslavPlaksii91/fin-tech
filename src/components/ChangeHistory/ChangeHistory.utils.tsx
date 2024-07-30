@@ -5,7 +5,7 @@ import {
   // Table,
   // TableHead,
   // TableBody,
-  TableRow,
+  // TableRow,
   // Collapse,
   Breadcrumbs,
   Typography
@@ -17,7 +17,7 @@ import {
 
 import LineChartDotsSquareIcon from '@icons/lineChartDotsSquare.svg';
 import BezierIcon from '@icons/bezier.svg';
-import { StyledTableCell } from '@components/ChangeHistory/styled.ts';
+// import { StyledTableCell } from '@components/ChangeHistory/styled.ts';
 import {
   ChangeHistoryDifference,
   ChangeTypeEnum
@@ -25,6 +25,10 @@ import {
 // import routes from '@constants/routes.ts';
 import { theme } from '@theme';
 import EyeIcon from '@icons/eye.svg';
+import {
+  StyledTableRow,
+  StyledTableCell
+} from '@components/shared/Table/styled';
 
 // const getPathLink = (id: string, index: number) => {
 //   if (index === 0) {
@@ -64,23 +68,29 @@ const getName = (row: ChangeHistoryDifference) => {
 export function Row(props: {
   row: ChangeHistoryDifference;
   handleRowClick: (rowId: string) => void;
+  index: number;
 }) {
-  const { row, handleRowClick } = props;
+  const { row, handleRowClick, index } = props;
+
+  const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
 
   return (
     <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <StyledTableCell width="20%" component="th" scope="row">
+      <StyledTableRow
+        // sx={{ '& > *': { borderBottom: 'unset', height: '28px' } }}
+        parity={rowParity}
+      >
+        <StyledTableCell width="20%">
           {/* {ChangeTypeEnum[row.changeType]} */}
           {getActionType(row)}
         </StyledTableCell>
-        <StyledTableCell width="30%" component="th" scope="row">
+        <StyledTableCell width="30%">
           {
             // row.name || '-'
             getName(row)
           }
         </StyledTableCell>
-        <StyledTableCell width="60%" component="th" scope="row">
+        <StyledTableCell width="60%">
           <Breadcrumbs>
             {row.path.map((part, index) => (
               // <React.Fragment key={part.id + index}>
@@ -117,6 +127,7 @@ export function Row(props: {
         </StyledTableCell>
         <StyledTableCell width={24}>
           <IconButton
+            sx={{ padding: 0 }}
             aria-label="view row"
             size="small"
             onClick={() => {
@@ -126,7 +137,7 @@ export function Row(props: {
             <EyeIcon />
           </IconButton>
         </StyledTableCell>
-      </TableRow>
+      </StyledTableRow>
       {/* <TableRow>
         <StyledTableCell
           style={{ paddingBottom: 0, paddingTop: 0 }}
