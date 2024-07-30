@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const useTablePagination = ({
   totalCount,
@@ -13,30 +13,30 @@ const useTablePagination = ({
   const [rowsPerPage, setRowsPerPage] = useState(initalRowsPerPage);
 
   const totalPages = useMemo(
-    () => Math.ceil(totalCount / rowsPerPage),
+    () => (totalCount ? Math.ceil(totalCount / rowsPerPage) - 1 : 0),
     [totalCount, rowsPerPage]
   );
 
   const handlePageChange = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
+    _: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => {
-    event && setPage(newPage);
+    setPage(newPage);
   };
 
   const handleRowsPerPageChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setRowsPerPage(+event.target.value);
   };
 
-  const handlePageByInputChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const newPage = Number(event.target.value) - 1;
-
-    if (newPage >= 0 && newPage < totalCount) setPage(newPage);
+  const handlePageApply = (newPage: number) => {
+    setPage(newPage);
   };
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
 
   return {
     page,
@@ -46,7 +46,7 @@ const useTablePagination = ({
     setRowsPerPage,
     handlePageChange,
     handleRowsPerPageChange,
-    handlePageByInputChange
+    handlePageApply
   };
 };
 

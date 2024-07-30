@@ -73,7 +73,7 @@ const TableList = ({
     page,
     totalPages,
     handlePageChange,
-    handlePageByInputChange,
+    handlePageApply,
     handleRowsPerPageChange
   } = useTablePagination({ totalCount: tableData.length });
 
@@ -213,7 +213,7 @@ const TableList = ({
           rowsPerPage={rowsPerPage}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleRowsPerPageChange}
-          onPageByInputChange={handlePageByInputChange}
+          onPageApply={handlePageApply}
         />
       )}
       {isVariableModalOpen && (

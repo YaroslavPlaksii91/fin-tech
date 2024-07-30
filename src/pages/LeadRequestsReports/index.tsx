@@ -41,7 +41,7 @@ export default function LeadRequestsReportsPage() {
     page,
     totalPages,
     handlePageChange,
-    handlePageByInputChange,
+    handlePageApply,
     handleRowsPerPageChange
   } = useTablePagination({ totalCount });
 
@@ -222,7 +222,7 @@ export default function LeadRequestsReportsPage() {
                 rowsPerPage={rowsPerPage}
                 onPageChange={handlePageChange}
                 onRowsPerPageChange={handleRowsPerPageChange}
-                onPageByInputChange={handlePageByInputChange}
+                onPageApply={handlePageApply}
               />
             )
           }}
