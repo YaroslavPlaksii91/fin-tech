@@ -76,21 +76,18 @@ export function Row(props: {
 
   return (
     <React.Fragment>
-      <StyledTableRow
-        // sx={{ '& > *': { borderBottom: 'unset', height: '28px' } }}
-        parity={rowParity}
-      >
-        <StyledTableCell width="20%">
+      <StyledTableRow parity={rowParity}>
+        <StyledTableCell>
           {/* {ChangeTypeEnum[row.changeType]} */}
           {getActionType(row)}
         </StyledTableCell>
-        <StyledTableCell width="30%">
+        <StyledTableCell>
           {
             // row.name || '-'
             getName(row)
           }
         </StyledTableCell>
-        <StyledTableCell width="60%">
+        <StyledTableCell>
           <Breadcrumbs>
             {row.path.map((part, index) => (
               // <React.Fragment key={part.id + index}>
@@ -125,7 +122,7 @@ export function Row(props: {
             ))}
           </Breadcrumbs>
         </StyledTableCell>
-        <StyledTableCell width={24}>
+        <StyledTableCell width="40px">
           <IconButton
             sx={{ padding: 0 }}
             aria-label="view row"

@@ -1,4 +1,4 @@
-import { Container } from '@mui/material';
+import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import TableCell from '@mui/material/TableCell';
 
@@ -7,13 +7,13 @@ export const StyledTableCell = styled(TableCell)(() => ({
   whiteSpace: 'pre-line'
 }));
 
-export const DetailedViewContainer = styled(Container)(({ theme }) => ({
+export const DetailedViewContainer = styled(Box)(({ theme }) => ({
   position: 'absolute',
-  paddingTop: '16px',
+  padding: '16px 24px 0 24px',
   top: 0,
   left: 0,
-  width: '100%',
-  height: '100%',
+  right: 0,
+  bottom: 0,
   zIndex: 1,
   background: theme.palette.background.default
 }));

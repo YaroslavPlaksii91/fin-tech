@@ -41,6 +41,8 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
 
   const newStyles = {
     diffContainer: {
+      fontFamily: theme.typography.fontFamily,
+      // ...theme.typography.body1,
       pre: {
         'white-space': 'pre'
       }
@@ -68,7 +70,7 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
   };
 
   return (
-    <DetailedViewContainer maxWidth="xl">
+    <DetailedViewContainer>
       <Breadcrumbs separator="/">
         <Typography
           sx={{ cursor: 'pointer' }}
@@ -126,7 +128,7 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
             <ChangeHistoryDiffCard label="New version">
               <ReactDiffViewer
                 styles={newStyles}
-                oldValue={selectedRow.before || ''}
+                oldValue={selectedRow.after || ''}
                 newValue={selectedRow.after || ''}
                 splitView={false}
                 hideLineNumbers={true}
@@ -140,13 +142,14 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
                 <ReactDiffViewer
                   styles={newStyles}
                   oldValue={selectedRow.before}
+                  newValue={selectedRow.before}
                   splitView={false}
                   hideLineNumbers={true}
                   showDiffOnly={true}
                 />
               </ChangeHistoryDiffCard>
               <ChangeHistoryDiffCard label="New version">
-                <Typography variant="body1"> Step was deleted</Typography>
+                <Typography variant="body1">Step was deleted</Typography>
               </ChangeHistoryDiffCard>
             </>
           )}

@@ -25,6 +25,11 @@ import {
   StyledTableRow
 } from '@components/shared/Table/styled';
 
+interface ChangeHistoryItemProps {
+  data: ChangeHistoryRecord;
+  index: number;
+}
+
 const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
   data,
   index
@@ -161,10 +166,5 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
     </Box>
   );
 };
-
-interface ChangeHistoryItemProps {
-  data: ChangeHistoryRecord;
-  index: number;
-}
 
 export default ChangeHistoryItem;

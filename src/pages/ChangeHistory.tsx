@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Stack, Typography, Container } from '@mui/material';
+import { Grid, Stack, Typography, Box } from '@mui/material';
 
 import { changeHistoryService } from '@services/change-history';
 import Logger from '@utils/logger.ts';
@@ -38,7 +38,13 @@ const ChangeHistoryPage: React.FC<ChangeHistoryPageProps> = () => {
   }, [page]);
 
   return (
-    <Container maxWidth="xl" sx={{ overflow: 'auto', height: '100%' }}>
+    <Box
+      sx={{
+        overflow: 'auto',
+        padding: '0 24px',
+        height: '100%'
+      }}
+    >
       <Stack sx={{ width: '100%' }}>
         <Stack paddingBottom={4}>
           <Typography variant="h4" pb={2} pt={2}>
@@ -66,7 +72,7 @@ const ChangeHistoryPage: React.FC<ChangeHistoryPageProps> = () => {
           )}
         </Stack>
       </Stack>
-    </Container>
+    </Box>
   );
 };
 
