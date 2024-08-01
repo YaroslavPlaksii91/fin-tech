@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext, useMemo, useCallback } from 'react';
-import { Button, Paper, TextField } from '@mui/material';
+import { Button, Paper } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { debounce, flatMap, keyBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -38,7 +38,7 @@ import { theme } from '@theme';
 import PlusSquareIcon from '@icons/plusSquare.svg';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
-import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
+// import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import {
   SnackbarErrorMessage,
   SnackbarMessage
@@ -86,7 +86,6 @@ const DecisionTableStep = ({
   const [noteValue, setNoteValue] = useState('');
   const [selectedColumn, setSelectedColumn] =
     useState<VariableColumnData | null>(null);
-  const [openNoteModal, setOpenNoteModal] = useState(false);
   const [caseEntries, setCaseEntries] = useState<CaseEntries[]>([]);
 
   const [defaultActions, setDefaultActions] = useState<CaseEntry[]>([]);
@@ -145,14 +144,6 @@ const DecisionTableStep = ({
   const rowsToShow = rows.length
     ? [...rows, ...[keyBy(defaultActions, 'name')]]
     : [];
-
-  const handleOpenNoteModal = () => setOpenNoteModal(true);
-  const handleCloseNoteModal = () => setOpenNoteModal(false);
-
-  const handleSubmitNote = (note: string) => {
-    setNoteValue(note);
-    setOpenNoteModal(false);
-  };
 
   const handleAddNewLayer = () => {
     const addNewLayerColumns = (
@@ -500,7 +491,7 @@ const DecisionTableStep = ({
             Add new business layer
           </Button>
         )}
-        {!isPreview && (
+        {/* {!isPreview && (
           <NoteSection
             modalOpen={openNoteModal}
             value={noteValue}
@@ -519,7 +510,7 @@ const DecisionTableStep = ({
               />
             )}
           />
-        )}
+        )} */}
       </StepContentWrapper>
       <StepDetailsControlBar
         isEdited={isEdited}
