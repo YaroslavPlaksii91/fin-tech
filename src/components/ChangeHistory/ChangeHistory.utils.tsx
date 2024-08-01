@@ -1,34 +1,21 @@
 import React from 'react';
-import {
-  Box,
-  IconButton,
-  // Table,
-  // TableHead,
-  // TableBody,
-  // TableRow,
-  // Collapse,
-  Breadcrumbs,
-  Typography
-} from '@mui/material';
-// import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-// import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-// import TableCell from '@mui/material/TableCell';
-// import ReactDiffViewer from 'react-diff-viewer';
+import { Box, IconButton, Breadcrumbs, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 import LineChartDotsSquareIcon from '@icons/lineChartDotsSquare.svg';
 import BezierIcon from '@icons/bezier.svg';
-// import { StyledTableCell } from '@components/ChangeHistory/styled.ts';
 import {
   ChangeHistoryDifference,
   ChangeTypeEnum
 } from '@domain/changeHistory.ts';
-// import routes from '@constants/routes.ts';
 import { theme } from '@theme';
 import EyeIcon from '@icons/eye.svg';
 import {
   StyledTableRow,
   StyledTableCell
 } from '@components/shared/Table/styled';
+import routes from '@constants/routes';
+import { PRODUCTION_FLOW_ID } from '@constants/common';
 
 // const getPathLink = (id: string, index: number) => {
 //   if (index === 0) {
@@ -71,29 +58,28 @@ export function Row(props: {
   index: number;
 }) {
   const { row, handleRowClick, index } = props;
+  const navigate = useNavigate();
 
   const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
+
+  const handleClick = (id: string, index: number) => {
+    if (index == 0) {
+      navigate(routes.underwriting.flow.list(PRODUCTION_FLOW_ID));
+    } else {
+      navigate(routes.underwriting.flow.list(PRODUCTION_FLOW_ID), {
+        state: { subFlowId: id, stepId: null }
+      });
+    }
+  };
 
   return (
     <React.Fragment>
       <StyledTableRow parity={rowParity}>
-        <StyledTableCell>
-          {/* {ChangeTypeEnum[row.changeType]} */}
-          {getActionType(row)}
-        </StyledTableCell>
-        <StyledTableCell>
-          {
-            // row.name || '-'
-            getName(row)
-          }
-        </StyledTableCell>
+        <StyledTableCell>{getActionType(row)}</StyledTableCell>
+        <StyledTableCell>{getName(row)}</StyledTableCell>
         <StyledTableCell>
           <Breadcrumbs>
             {row.path.map((part, index) => (
-              // <React.Fragment key={part.id + index}>
-              //   <Link path={getPathLink(part.id, index)} label={part.name} />
-              //   {index !== row.path.length - 1 && <span>&gt;</span>}
-              // </React.Fragment>
               <Box
                 key={part.id + index}
                 sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
@@ -115,6 +101,7 @@ export function Row(props: {
                   sx={{ textDecoration: 'underline', cursor: 'pointer' }}
                   variant="body2"
                   color={theme.palette.info.main}
+                  onClick={() => handleClick(part.id, index)}
                 >
                   {part.name}
                 </Typography>
@@ -135,42 +122,6 @@ export function Row(props: {
           </IconButton>
         </StyledTableCell>
       </StyledTableRow>
-      {/* <TableRow>
-        <StyledTableCell
-          style={{ paddingBottom: 0, paddingTop: 0 }}
-          colSpan={6}
-        >
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Before</TableCell>
-                    <TableCell>After</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <StyledTableCell
-                      colSpan={2}
-                      width="50%"
-                      component="th"
-                      scope="row"
-                    >
-                      <ReactDiffViewer
-                        hideLineNumbers
-                        oldValue={row.before || ''}
-                        newValue={row.after || ''}
-                        splitView={true}
-                      />
-                    </StyledTableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </StyledTableCell>
-      </TableRow> */}
     </React.Fragment>
   );
 }

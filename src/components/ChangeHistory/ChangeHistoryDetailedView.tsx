@@ -7,7 +7,9 @@ import {
   IconButton,
   Paper
 } from '@mui/material';
-import ReactDiffViewer from 'react-diff-viewer';
+import ReactDiffViewer, {
+  ReactDiffViewerStylesOverride
+} from 'react-diff-viewer';
 import dayjs from 'dayjs';
 
 import { DetailedViewContainer } from './styled';
@@ -39,15 +41,24 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
     [data.diffs, selectedRowIndex]
   );
 
-  const newStyles = {
+  const newStyles: ReactDiffViewerStylesOverride = {
+    variables: {
+      light: {
+        addedBackground: 'none',
+        removedBackground: 'none',
+        emptyLineBackground: 'none'
+      }
+    },
     diffContainer: {
-      fontFamily: theme.typography.fontFamily,
-      // ...theme.typography.body1,
       pre: {
         'white-space': 'pre'
       }
+    },
+    marker: {
+      display: 'none'
     }
   };
+
   const newStyles2 = {
     diffContainer: {
       pre: {
@@ -58,6 +69,7 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
       display: 'none'
     }
   };
+
   const newStyles3 = {
     diffContainer: {
       pre: {
@@ -128,7 +140,6 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
             <ChangeHistoryDiffCard label="New version">
               <ReactDiffViewer
                 styles={newStyles}
-                oldValue={selectedRow.after || ''}
                 newValue={selectedRow.after || ''}
                 splitView={false}
                 hideLineNumbers={true}
@@ -142,7 +153,6 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
                 <ReactDiffViewer
                   styles={newStyles}
                   oldValue={selectedRow.before}
-                  newValue={selectedRow.before}
                   splitView={false}
                   hideLineNumbers={true}
                   showDiffOnly={true}
@@ -179,55 +189,6 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
           )}
         </Paper>
       )}
-
-      {/* <Table size="small" aria-label="purchases">
-        <TableHead>
-          <TableRow>
-            <TableCell>Before</TableCell>
-            <TableCell>After</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <TableRow>
-            <StyledTableCell colSpan={2} width="50%" component="th" scope="row">
-              <ReactDiffViewer
-                hideLineNumbers
-                oldValue={selectedRow.before || ''}
-                newValue={selectedRow.after || ''}
-                splitView={true}
-                leftTitle="old version"
-                rightTitle="new version"
-                // renderContent={() => <p>{selectedRow.after || ''}</p>}
-              />
-            </StyledTableCell>
-          </TableRow>
-        </TableBody>
-      </Table> */}
-      {/* <div className="new-version">
-        <h3>Old Version</h3>
-        <ReactDiffViewer
-          oldValue={selectedRow.before || ''}
-          // newValue={selectedRow.after || ''}
-          splitView={false}
-          hideLineNumbers={true}
-          showDiffOnly={true}
-        />
-      </div>
-      <div className="old-version">
-        <h3>New Version</h3>
-        <ReactDiffViewer
-          oldValue={selectedRow.before || ''}
-          newValue={selectedRow.after || ''}
-          splitView={false}
-          hideLineNumbers={true}
-          showDiffOnly={true}
-          compareMethod={DiffMethod.CHARS}
-          renderContent={(source) => {
-            console.log('source', source);
-            return <pre>{source}</pre>;
-          }}
-        />
-      </div> */}
     </DetailedViewContainer>
   );
 };

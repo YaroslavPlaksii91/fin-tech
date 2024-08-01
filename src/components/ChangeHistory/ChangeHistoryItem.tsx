@@ -145,7 +145,7 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
                   <Row
                     index={index}
                     handleRowClick={handleRowClick}
-                    key={row.id}
+                    key={row.id + index}
                     row={row}
                   />
                 ))}
