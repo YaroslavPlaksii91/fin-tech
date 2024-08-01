@@ -16,6 +16,7 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { enqueueSnackbar } from 'notistack';
 import TableCell from '@mui/material/TableCell';
 import { yupResolver } from '@hookform/resolvers/yup';
+import isEmpty from 'lodash/isEmpty';
 
 import { COLUMN_IDS, Expression, FieldValues, columns } from './types';
 import validationSchema from './validationSchema';
@@ -71,12 +72,14 @@ const Calculation: React.FC<CalculationProps> = ({
     control,
     setValue,
     watch,
-    formState: { isSubmitting, dirtyFields }
+    formState: { errors, isSubmitting, dirtyFields }
   } = useForm<FieldValues>({
+    mode: 'onChange',
     defaultValues: {
       expressions: step.data.expressions,
       note: step.data.note ?? ''
     },
+    // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
     resolver: yupResolver(validationSchema)
   });
   const watchNote = watch('note');
@@ -276,7 +279,7 @@ const Calculation: React.FC<CalculationProps> = ({
             </form>
           </StepContentWrapper>
           <StepDetailsControlBar
-            disabled={isSubmitting}
+            disabled={!isEmpty(errors) || isSubmitting}
             isEdited={isEdited}
             resetActiveStepId={resetActiveStepId}
             isSubmitting={isSubmitting}
