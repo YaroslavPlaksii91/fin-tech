@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Grid, Stack, Typography, Box } from '@mui/material';
 
 import { changeHistoryService } from '@services/change-history';
@@ -8,9 +8,9 @@ import { useLoading } from '@contexts/LoadingContext.tsx';
 import LoadingButton from '@components/shared/LoadingButton.tsx';
 import ChangeHistoryItem from '@components/ChangeHistory/ChangeHistoryItem.tsx';
 
-const pageSize = 10;
+const PAGE_SIZE = 10;
 
-const ChangeHistoryPage: React.FC<ChangeHistoryPageProps> = () => {
+const ChangeHistoryPage = () => {
   const { startLoading, stopLoading, loading } = useLoading();
   const [list, setList] = useState<ChangeHistoryRecord[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -21,8 +21,8 @@ const ChangeHistoryPage: React.FC<ChangeHistoryPageProps> = () => {
       if (page === 1) {
         startLoading();
       }
-      const res = await changeHistoryService.getList(page, pageSize);
-      if (res.length < pageSize) {
+      const res = await changeHistoryService.getList(page, PAGE_SIZE);
+      if (res.length < PAGE_SIZE) {
         setHasMore(false);
       }
       setList((prev) => [...prev, ...res]);
@@ -75,7 +75,5 @@ const ChangeHistoryPage: React.FC<ChangeHistoryPageProps> = () => {
     </Box>
   );
 };
-
-interface ChangeHistoryPageProps {}
 
 export default ChangeHistoryPage;

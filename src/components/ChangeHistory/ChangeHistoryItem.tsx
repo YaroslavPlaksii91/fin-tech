@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 
+import { ChangesHistoryRow } from './ChangesHistoryRow';
 import ChangeHistoryDetailedView from './ChangeHistoryDetailedView';
 
 import CheckCircleDoneIcon from '@icons/checkCircleDone.svg';
@@ -19,7 +20,6 @@ import CheckDuotoneIcon from '@icons/checkDuotone.svg';
 import { palette, theme } from '@theme';
 import { ChangeHistoryRecord } from '@domain/changeHistory.ts';
 import { FULL_DATE_TIME_FORMAT } from '@constants/common.tsx';
-import { Row } from '@components/ChangeHistory/ChangeHistory.utils.tsx';
 import {
   StyledTableCell,
   StyledTableRow
@@ -41,9 +41,9 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
     return [];
   }, [data]);
 
-  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
-
   const isFirstRecord = index === 0;
+
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
 
   const handleRowClick = (rowId: string) => {
     const index = diffsList.findIndex((row) => row.id === rowId);
@@ -80,7 +80,6 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
           }}
         />
       </Box>
-
       <Box flexGrow={1}>
         <Box
           display="flex"
@@ -132,17 +131,15 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
             <Table size="small">
               <TableHead>
                 <StyledTableRow>
-                  <StyledTableCell width="40%">Action type</StyledTableCell>
-                  <StyledTableCell align="left">Name</StyledTableCell>
-                  <StyledTableCell width="40%" align="left">
-                    Path
-                  </StyledTableCell>
+                  <StyledTableCell width="20%">Action type</StyledTableCell>
+                  <StyledTableCell width="40%">Name</StyledTableCell>
+                  <StyledTableCell width="40%">Path</StyledTableCell>
                   <StyledTableCell />
                 </StyledTableRow>
               </TableHead>
-              <TableBody sx={{ backgroundColor: palette.aliceBlue }}>
+              <TableBody>
                 {diffsList.map((row, index) => (
-                  <Row
+                  <ChangesHistoryRow
                     index={index}
                     handleRowClick={handleRowClick}
                     key={row.id + index}
