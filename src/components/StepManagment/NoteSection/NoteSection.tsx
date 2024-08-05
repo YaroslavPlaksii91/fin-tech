@@ -1,6 +1,6 @@
 import { Stack, Typography, Card } from '@mui/material';
 
-import { theme } from '@theme';
+import { customBoxShadows, theme } from '@theme';
 
 interface StepNoteSectionProps {
   children: React.ReactNode;
@@ -8,12 +8,12 @@ interface StepNoteSectionProps {
 
 const NoteSection = ({ children }: StepNoteSectionProps) => (
   <Card
-    elevation={1}
     sx={{
       mt: 2,
       border: `1px solid ${theme.palette.divider}`,
       borderRadius: '16px',
-      padding: '8px 16px'
+      padding: '8px 16px',
+      boxShadow: customBoxShadows.elevation1
     }}
   >
     <Stack sx={{ width: '50%', minWidth: '100px' }}>

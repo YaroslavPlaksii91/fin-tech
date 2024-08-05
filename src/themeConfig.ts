@@ -1,6 +1,5 @@
 import { createTheme } from '@mui/material/styles';
 
-const defaultTheme = createTheme();
 interface CustomPalette {
   gray: string;
   white: string;
@@ -18,6 +17,10 @@ interface CustomPalette {
   sidebarBackground: string;
   sidebarItemHover: string;
 }
+
+export const customBoxShadows = {
+  elevation1: '0px 8px 12px -2px rgba(0, 0, 0, 0.07)'
+};
 
 export const palette = {
   gray: '#5F6D7E',
@@ -88,11 +91,6 @@ export const theme = createTheme({
       black: 'rgba(0,0,0,0.87)'
     }
   },
-  shadows: [
-    'none',
-    '0px 8px 12px -2px rgba(0, 0, 0, 0.07)',
-    ...defaultTheme.shadows.slice(2)
-  ],
   components: {
     MuiAppBar: {
       styleOverrides: {
