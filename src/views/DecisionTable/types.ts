@@ -35,7 +35,6 @@ export type VariableColumnData = {
 };
 
 export type FormFieldsProps = {
-  isCondition: boolean;
   name: string;
   operator: Operator;
   value?: string;

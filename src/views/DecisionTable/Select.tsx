@@ -45,7 +45,8 @@ const Select = ({
         fullWidth={fullWidth}
         sx={{
           '& .MuiSelect-select': {
-            padding: 0
+            padding: 0,
+            fontSize: '14px'
           },
           '& .MuiOutlinedInput-notchedOutline': {
             border: 'none'

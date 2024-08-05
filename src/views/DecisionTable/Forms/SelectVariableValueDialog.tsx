@@ -24,6 +24,7 @@ import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';
 import { SingleSelect } from '@components/shared/Forms/SingleSelect';
+import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
@@ -58,8 +59,9 @@ const SelectVariableValueDialog = ({
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      isCondition,
-      dataType: selectedCell.dataType,
+      dataType: isCondition
+        ? selectedCell.dataType
+        : DATA_TYPE_WITHOUT_ENUM.String,
       name: selectedCell.name,
       operator: selectedCell.operator || OPERATORS.EQUAL,
       value: selectedCell.expression,
