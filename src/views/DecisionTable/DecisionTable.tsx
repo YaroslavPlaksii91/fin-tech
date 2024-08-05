@@ -419,7 +419,7 @@ const DecisionTableStep = ({
     caseEntries: CaseEntries[],
     defaultActions: CaseEntry[],
     defaultStepId: string | null,
-    noteValue: string,
+    noteValue: string | null,
     stepIds: (string | null)[]
   ) => {
     const hasChangesInCaseEntries =
@@ -452,7 +452,9 @@ const DecisionTableStep = ({
     }
   };
 
-  const debounceCheckIsDirty = useCallback(debounce(checkIsDirty, 300), []);
+  const debounceCheckIsDirty = useCallback(debounce(checkIsDirty, 300), [
+    step.data
+  ]);
 
   useEffect(() => {
     debounceCheckIsDirty(
