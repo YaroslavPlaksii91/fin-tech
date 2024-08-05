@@ -7,13 +7,13 @@ import {
   AccordionSummaryProps,
   Box,
   Button,
+  ButtonProps,
   List,
   ListItemButton,
   ListItemButtonProps,
   ListProps,
   Typography
 } from '@mui/material';
-import { ButtonProps } from '@mui/base';
 import { NavLink, NavLinkProps } from 'react-router-dom';
 
 import { HEADER_HEIGHT } from '@constants/themeConstants';
