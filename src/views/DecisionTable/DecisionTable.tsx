@@ -1,8 +1,10 @@
 import { useEffect, useState, useContext, useMemo, useCallback } from 'react';
-import { Button, Paper, TextField } from '@mui/material';
+import { Button, Paper } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
-import { debounce, flatMap, keyBy } from 'lodash';
+import { debounce, flatMap, isEmpty, keyBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import {
   CATEGORIES,
@@ -22,6 +24,7 @@ import {
 } from './types';
 import { getColumns, getVariableSources, updateCaseEntry } from './utils';
 import Table from './Table/Table';
+import validationSchema, { FieldValues } from './validationSchema';
 
 import {
   ADD_BUTTON_ON_EDGE,
@@ -38,7 +41,6 @@ import { theme } from '@theme';
 import PlusSquareIcon from '@icons/plusSquare.svg';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
-import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import {
   SnackbarErrorMessage,
   SnackbarMessage
@@ -55,6 +57,8 @@ import { selectUserInfo } from '@store/auth/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
 import { useIsDirty } from '@contexts/IsDirtyContext';
+import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
+import { InputText } from '@components/shared/Forms/InputText';
 
 type DecisionTableStepProps = {
   flow: IFlow;
@@ -83,10 +87,8 @@ const DecisionTableStep = ({
   const { setIsDirty } = useIsDirty();
   const [isEdited, setIsEdited] = useState(false);
 
-  const [noteValue, setNoteValue] = useState('');
   const [selectedColumn, setSelectedColumn] =
     useState<VariableColumnData | null>(null);
-  const [openNoteModal, setOpenNoteModal] = useState(false);
   const [caseEntries, setCaseEntries] = useState<CaseEntries[]>([]);
 
   const [defaultActions, setDefaultActions] = useState<CaseEntry[]>([]);
@@ -105,6 +107,23 @@ const DecisionTableStep = ({
   const flatVariables = flatMap(variables);
   const nodes: FlowNode[] = getNodes();
   const edges = getEdges();
+
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting }
+  } = useForm<FieldValues>({
+    mode: 'onChange',
+    defaultValues: {
+      note: step.data.note ?? ''
+    },
+    // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
+    resolver: yupResolver(validationSchema)
+  });
+
+  const watchNote = watch('note');
 
   const stepsOptions = useMemo(
     () =>
@@ -145,14 +164,6 @@ const DecisionTableStep = ({
   const rowsToShow = rows.length
     ? [...rows, ...[keyBy(defaultActions, 'name')]]
     : [];
-
-  const handleOpenNoteModal = () => setOpenNoteModal(true);
-  const handleCloseNoteModal = () => setOpenNoteModal(false);
-
-  const handleSubmitNote = (note: string) => {
-    setNoteValue(note);
-    setOpenNoteModal(false);
-  };
 
   const handleAddNewLayer = () => {
     const addNewLayerColumns = (
@@ -284,7 +295,7 @@ const DecisionTableStep = ({
     );
   };
 
-  const onApplyChangesClick = async () => {
+  const onApplyChangesClick = async ({ note }: FieldValues) => {
     const targetNodesIds = [...stepIds, defaultStepId];
 
     const splitEdges = targetNodesIds.map((targetNodeId, index) => ({
@@ -336,7 +347,7 @@ const DecisionTableStep = ({
           caseEntries: updatedCaseEntries,
           editedBy: username,
           editedOn: new Date().toISOString(),
-          note: noteValue,
+          note,
           defaultActions: updatedDefaultActions,
           variableSources: updatedVariableSources
         };
@@ -398,7 +409,7 @@ const DecisionTableStep = ({
       setCaseEntries(initialData.savedCaseEntries);
       setDefaultActions(initialData.savedDefaultActions);
       setDefaultStepId(initialData.savedDefaultStepId);
-      setNoteValue(initialData.savedNote);
+      setValue('note', initialData.savedNote);
     }
   }, [initialData]);
 
@@ -408,7 +419,7 @@ const DecisionTableStep = ({
     caseEntries: CaseEntries[],
     defaultActions: CaseEntry[],
     defaultStepId: string | null,
-    noteValue: string,
+    noteValue: string | null,
     stepIds: (string | null)[]
   ) => {
     const hasChangesInCaseEntries =
@@ -422,7 +433,7 @@ const DecisionTableStep = ({
     const hasChangesDefaultStepId =
       initialData?.savedDefaultStepId !== defaultStepId;
 
-    const hasChangesNoteValue = (initialData?.savedNote ?? '') !== noteValue;
+    const hasChangesNoteValue = (step.data.note ?? '') !== noteValue;
 
     const hasChangesStepIds =
       JSON.stringify(initialData?.savedStepIds) !== JSON.stringify(stepIds);
@@ -441,17 +452,19 @@ const DecisionTableStep = ({
     }
   };
 
-  const debounceCheckIsDirty = useCallback(debounce(checkIsDirty, 300), []);
+  const debounceCheckIsDirty = useCallback(debounce(checkIsDirty, 300), [
+    step.data
+  ]);
 
   useEffect(() => {
     debounceCheckIsDirty(
       caseEntries,
       defaultActions,
       defaultStepId,
-      noteValue,
+      watchNote,
       stepIds
     );
-  }, [caseEntries, defaultActions, defaultStepId, noteValue, stepIds]);
+  }, [caseEntries, defaultActions, defaultStepId, stepIds, watchNote]);
 
   useEffect(() => {
     setIsDirty(isEdited);
@@ -501,30 +514,26 @@ const DecisionTableStep = ({
           </Button>
         )}
         {!isPreview && (
-          <NoteSection
-            modalOpen={openNoteModal}
-            value={noteValue}
-            handleClose={handleCloseNoteModal}
-            handleOpen={handleOpenNoteModal}
-            handleSubmit={handleSubmitNote}
-            renderInput={() => (
-              <TextField
+          <form>
+            <NoteSection>
+              <InputText
                 fullWidth
                 name="note"
-                value={noteValue}
+                control={control}
                 label="Note"
-                size="small"
-                disabled
                 placeholder="Enter note here"
               />
-            )}
-          />
+            </NoteSection>
+          </form>
         )}
       </StepContentWrapper>
       <StepDetailsControlBar
+        disabled={!isEmpty(errors) || isSubmitting}
         isEdited={isEdited}
         resetActiveStepId={resetActiveStepId}
-        onApplyChangesClick={onApplyChangesClick}
+        onApplyChangesClick={() => {
+          void handleSubmit(onApplyChangesClick)();
+        }}
         isShow={!isPreview}
       />
     </>

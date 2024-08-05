@@ -3,6 +3,10 @@ import * as yup from 'yup';
 import { Split } from './types';
 
 const validationSchema = yup.object().shape({
+  note: yup
+    .string()
+    .trim()
+    .max(100, 'Note cannot have more than 100 characters'),
   splits: yup
     .array()
     .of(

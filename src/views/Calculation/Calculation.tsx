@@ -15,8 +15,11 @@ import {
 import { useFieldArray, useForm } from 'react-hook-form';
 import { enqueueSnackbar } from 'notistack';
 import TableCell from '@mui/material/TableCell';
+import { yupResolver } from '@hookform/resolvers/yup';
+import isEmpty from 'lodash/isEmpty';
 
 import { COLUMN_IDS, Expression, FieldValues, columns } from './types';
+import validationSchema from './validationSchema';
 
 import TrashIcon from '@icons/trash.svg';
 import EditIcon from '@icons/editPencil.svg';
@@ -53,7 +56,6 @@ const Calculation: React.FC<CalculationProps> = ({
   isViewMode
 }) => {
   const nodes: FlowNode[] = getNodes();
-  const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
   const [openExpEditorView, setOpenExpEditorView] = useState<boolean>(false);
   const [initialValue, setInitialValue] = useState<
     Expression & { id: string }
@@ -69,14 +71,16 @@ const Calculation: React.FC<CalculationProps> = ({
     handleSubmit,
     control,
     setValue,
-    getValues,
     watch,
-    formState: { isSubmitting, dirtyFields }
+    formState: { errors, isSubmitting, dirtyFields }
   } = useForm<FieldValues>({
+    mode: 'onChange',
     defaultValues: {
       expressions: step.data.expressions,
       note: step.data.note ?? ''
-    }
+    },
+    // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
+    resolver: yupResolver(validationSchema)
   });
   const watchNote = watch('note');
 
@@ -91,18 +95,6 @@ const Calculation: React.FC<CalculationProps> = ({
     name: 'expressions',
     control
   });
-
-  const handleOpenNoteModal = () => setOpenNoteModal(true);
-
-  const handleSubmitNote = (note: string) => {
-    setValue('note', note);
-    setOpenNoteModal(false);
-  };
-
-  const handleCloseNoteModal = () => {
-    setValue('note', getValues('note'));
-    setOpenNoteModal(false);
-  };
 
   const onSubmit = (data: FieldValues) => {
     const updatedNodes = nodes.map((node: FlowNode) => {
@@ -273,29 +265,21 @@ const Calculation: React.FC<CalculationProps> = ({
                   </Button>
                 )}
               </Stack>
-            </form>
-            {!isPreview && (
-              <NoteSection
-                modalOpen={openNoteModal}
-                value={getValues('note') ?? ''}
-                handleClose={handleCloseNoteModal}
-                handleOpen={handleOpenNoteModal}
-                handleSubmit={handleSubmitNote}
-                renderInput={() => (
+              {!isPreview && (
+                <NoteSection>
                   <InputText
                     fullWidth
                     name="note"
                     control={control}
                     label="Note"
-                    disabled
                     placeholder="Enter note here"
                   />
-                )}
-              />
-            )}
+                </NoteSection>
+              )}
+            </form>
           </StepContentWrapper>
           <StepDetailsControlBar
-            disabled={isSubmitting}
+            disabled={!isEmpty(errors) || isSubmitting}
             isEdited={isEdited}
             resetActiveStepId={resetActiveStepId}
             isSubmitting={isSubmitting}

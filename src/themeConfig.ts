@@ -18,6 +18,10 @@ interface CustomPalette {
   sidebarItemHover: string;
 }
 
+export const customBoxShadows = {
+  elevation1: '0px 8px 12px -2px rgba(0, 0, 0, 0.07)'
+};
+
 export const palette = {
   gray: '#5F6D7E',
   grayBorder: '#D1D9E2',
