@@ -1,19 +1,25 @@
 import { useEffect } from 'react';
-import { Button, Stack, InputAdornment, MenuItem } from '@mui/material';
+import {
+  Button,
+  Stack,
+  InputAdornment,
+  MenuItem,
+  Typography
+} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { CATEGORIES } from '../constants';
-import { SelectedCell, FormFieldsProps, OPERATORS, Operator } from '../types';
+import { BOOLEAN_OPTIONS } from '../constants';
+import { SelectedCell, FormFieldsProps, OPERATORS } from '../types';
 import {
   checkDataType,
   convertToStringFormat,
-  getOperatorOptions
+  getOperatorOptions,
+  getFormatedOptions
 } from '../utils';
 
 import validationSchema from './validationSchema';
 
-import { palette } from '@theme';
 import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';
@@ -21,13 +27,15 @@ import { SingleSelect } from '@components/shared/Forms/SingleSelect';
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
+  isCondition: boolean;
   handleClose: () => void;
   selectedCell: SelectedCell;
-  handleSubmitForm: (data: SelectedCell & FormFieldsProps) => void;
+  handleSubmitForm: (data: FormFieldsProps) => void;
 };
 
 const SelectVariableValueDialog = ({
   modalOpen,
+  isCondition,
   handleClose,
   selectedCell,
   handleSubmitForm
@@ -37,6 +45,9 @@ const SelectVariableValueDialog = ({
       ? selectedCell.expression.split('and')
       : [];
 
+  const dataType = checkDataType(selectedCell.dataType);
+  const operatorOptions = getOperatorOptions(selectedCell.dataType);
+
   const {
     handleSubmit,
     control,
@@ -45,25 +56,17 @@ const SelectVariableValueDialog = ({
     setValue,
     clearErrors
   } = useForm({
-    resolver:
-      selectedCell.category === CATEGORIES.Conditions
-        ? yupResolver(validationSchema)
-        : undefined,
+    resolver: yupResolver(validationSchema),
     defaultValues: {
+      isCondition,
       dataType: selectedCell.dataType,
       name: selectedCell.name,
-      operator:
-        selectedCell.category !== CATEGORIES.Conditions
-          ? OPERATORS.EQUAL
-          : (selectedCell.operator as Operator),
+      operator: selectedCell.operator || OPERATORS.EQUAL,
       value: selectedCell.expression,
       lowerBound: bounds.length > 0 ? +bounds[0] : undefined,
       upperBound: bounds.length > 0 ? +bounds[1] : undefined
     }
   });
-
-  const dataType = checkDataType(selectedCell.dataType);
-  const operatorOptions = getOperatorOptions(selectedCell.dataType);
 
   const watchOperator = watch('operator');
 
@@ -83,11 +86,7 @@ const SelectVariableValueDialog = ({
 
     if (dataType.isString) value = convertToStringFormat(data.value || '');
 
-    handleSubmitForm({
-      ...selectedCell,
-      ...data,
-      value
-    });
+    handleSubmitForm({ ...data, value });
   };
 
   useEffect(() => {
@@ -95,21 +94,18 @@ const SelectVariableValueDialog = ({
   }, [watchOperator]);
 
   useEffect(() => {
+    if (!isCondition) return;
     if (watchOperator === OPERATORS.ANY) {
       setValue('value', '');
       return;
     }
 
     if (dataType.isObject) setValue('value', 'null');
-  }, [dataType.isObject, watchOperator]);
+  }, [watchOperator, isCondition, dataType.isObject]);
 
   return (
     <Dialog
-      title={
-        selectedCell.category !== CATEGORIES.Conditions
-          ? 'Enter output'
-          : 'Enter condition'
-      }
+      title={isCondition ? 'Enter condition' : 'Enter output'}
       open={modalOpen}
       displayConfirmBtn={false}
       displayedCancelBtn={false}
@@ -118,50 +114,34 @@ const SelectVariableValueDialog = ({
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack
-          mt={3}
           direction={{ xs: 'column', sm: 'row' }}
           spacing={{ xs: 1, sm: 2, md: 2 }}
         >
           <InputText
             fullWidth
+            disabled
+            label="Variable*"
             name="name"
             control={control}
             InputProps={{
-              startAdornment: selectedCell.category ===
-                CATEGORIES.Conditions && (
-                <InputAdornment
-                  position="start"
-                  sx={{
-                    justifyContent: 'center',
-                    backgroundColor: palette.secondary,
-                    color: palette.gray,
-                    height: '100%',
-                    maxHeight: '100%',
-                    width: '40px',
-                    borderRadius: '10px 0 0 10px'
-                  }}
-                >
-                  If
+              startAdornment: isCondition && (
+                <InputAdornment position="start">
+                  <Typography variant="body1" sx={{ padding: '0 8x 0 0' }}>
+                    IF
+                  </Typography>
                 </InputAdornment>
-              ),
-              disabled: true
+              )
             }}
-            sx={{ '& .MuiOutlinedInput-root': { paddingLeft: '0' } }}
           />
           <SingleSelect
-            variant="outlined"
             name="operator"
             control={control}
-            displayEmpty
-            fullWidth
-            disabled={selectedCell.category !== CATEGORIES.Conditions}
+            disabled={!isCondition}
             sx={{
               width: '280px',
-              minWidth: '110px',
-              '& .MuiInputBase-root ': {
-                height: '40px'
-              }
+              minWidth: '140px'
             }}
+            label="Operator*"
           >
             {operatorOptions.map((option) => (
               <MenuItem key={option.key} value={option.value}>
@@ -169,19 +149,37 @@ const SelectVariableValueDialog = ({
               </MenuItem>
             ))}
           </SingleSelect>
-          {watchOperator === OPERATORS.BETWEEN ? (
+          {(!dataType.isWithoutEnum || dataType.isBoolean) && isCondition ? (
+            <SingleSelect
+              name="value"
+              control={control}
+              fullWidth
+              label="Value*"
+              disabled={watchOperator === OPERATORS.ANY}
+            >
+              {getFormatedOptions(
+                dataType.isBoolean
+                  ? BOOLEAN_OPTIONS
+                  : selectedCell.allowedValues || []
+              ).map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </SingleSelect>
+          ) : watchOperator === OPERATORS.BETWEEN ? (
             <>
               <InputText
                 fullWidth
                 name="lowerBound"
                 control={control}
-                placeholder="Lowest Value*"
+                label="Lowest Value*"
               />
               <InputText
                 fullWidth
                 name="upperBound"
                 control={control}
-                placeholder="Highest Value*"
+                label="Highest Value*"
               />
             </>
           ) : (
@@ -189,14 +187,14 @@ const SelectVariableValueDialog = ({
               fullWidth
               name="value"
               control={control}
-              placeholder="Value*"
-              InputProps={{
-                disabled: watchOperator === OPERATORS.ANY || dataType.isObject
-              }}
+              label="Value*"
+              disabled={
+                watchOperator === OPERATORS.ANY ||
+                (dataType.isObject && isCondition)
+              }
             />
           )}
         </Stack>
-
         <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
           <LoadingButton
             loading={isSubmitting}

@@ -1,6 +1,6 @@
 export const REGEX = {
   INTEGER: /^-?\d+$/,
-  DECIMAL: /^-?\d*\.\d+$/
+  DECIMAL: /^-?\d+\.\d+$/
 };
 
 export const isInteger = (value?: string | number | null) => {

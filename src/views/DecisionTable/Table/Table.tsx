@@ -9,19 +9,23 @@ import {
 } from '@mui/material';
 import { lightBlue, lightGreen } from '@mui/material/colors';
 
-import { CATEGORIES, CATEGORY, BOOLEAN_OPTIONS, STEP } from '../constants';
+import {
+  CATEGORIES,
+  CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
+  CATEGORY,
+  STEP
+} from '../constants';
 import {
   SelectedCell,
   FormFieldsProps,
   VariableColumnData,
-  OPERATORS,
-  CaseEntry
+  CaseEntry,
+  OPERATORS
 } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import {
   checkDataType,
   filterVariablesByUsageMode,
-  getFormatedOptions,
   getHeaderCellBgColor,
   parseStringFormat
 } from '../utils';
@@ -57,7 +61,11 @@ interface Table {
   handleChangeColumnVariable: (
     newVariable: Pick<DataDictionaryVariable, 'name'>
   ) => void;
-  handleSubmitVariableValue: (data: SelectedCell & FormFieldsProps) => void;
+  handleSubmitVariableValue: (
+    data: FormFieldsProps,
+    category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
+    index: number
+  ) => void;
   hasUserPermission: boolean;
 }
 
@@ -83,14 +91,14 @@ const Table = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
 
-  const onMenuClick =
+  const getColSpanLength = (category: CATEGORY) =>
+    columns.filter((column) => column.category === category).length;
+
+  const handleMenuClick =
     (column: VariableColumnData) => (event: React.MouseEvent<HTMLElement>) => {
       handleSelectionColumn(column);
       setAnchorVariableMenu(event.currentTarget);
     };
-
-  const getColSpanLength = (category: CATEGORY) =>
-    columns.filter((column) => column.category === category).length;
 
   const handleCloseMenu = () => setAnchorVariableMenu(null);
   const handleCloseDialog = () => setIsDialogOpen(false);
@@ -110,10 +118,14 @@ const Table = ({
     handleCloseMenu();
   };
 
-  const handleSubmitSelectedCellData = (
-    data: SelectedCell & FormFieldsProps
-  ) => {
-    handleSubmitVariableValue(data);
+  const handleSubmitSelectedCellData = (data: FormFieldsProps) => {
+    if (!selectedCell) return;
+
+    handleSubmitVariableValue(
+      data,
+      selectedCell.category,
+      selectedCell.rowIndex
+    );
     setSelectedCell(null);
   };
 
@@ -206,7 +218,7 @@ const Table = ({
                     value={column.name}
                     menuItems={menuItems}
                     anchorEl={anchorVariableMenu}
-                    onClick={onMenuClick(column)}
+                    onClick={handleMenuClick(column)}
                     handleCloseMenu={handleCloseMenu}
                     showActionButton={hasUserPermission}
                   />
@@ -221,7 +233,7 @@ const Table = ({
               parity={(rowIndex + 1) % 2 === 0 ? 'even' : 'odd'}
             >
               {columns.map((column, columnIndex) => {
-                const { name, allowedValues } = column;
+                const { name } = column;
                 const dataType = checkDataType(column.dataType);
 
                 if (name === STEP) {
@@ -267,7 +279,8 @@ const Table = ({
                     </StyledTableCell>
                   );
 
-                const hasValue = row[name].expression || row[name].operator;
+                const hasValue =
+                  Boolean(row[name].expression) || Boolean(row[name].operator);
                 const expression = dataType.isString
                   ? parseStringFormat(row[name].expression)
                   : row[name].expression;
@@ -278,46 +291,21 @@ const Table = ({
                     key={columnIndex}
                     onClick={() => {
                       hasUserPermission &&
-                        dataType.isWithoutEnum &&
-                        !dataType.isBoolean &&
                         setSelectedCell({
                           ...row[name],
                           rowIndex,
                           expression,
                           category: column.category,
-                          dataType: column.dataType
+                          dataType: column.dataType,
+                          allowedValues: column.allowedValues
                         });
                     }}
                   >
-                    {dataType.isWithoutEnum && !dataType.isBoolean ? (
-                      <Typography variant="body2">
-                        {hasValue
-                          ? `${column.category === CATEGORIES.Actions ? OPERATORS.EQUAL : row[name].operator} ${expression}`
-                          : `Enter ${column.category === CATEGORIES.Conditions ? 'Condition' : 'Value'}`}
-                      </Typography>
-                    ) : (
-                      <Select
-                        fullWidth
-                        placeholder="Select Value"
-                        value={row[name].expression}
-                        options={getFormatedOptions(
-                          dataType.isBoolean
-                            ? BOOLEAN_OPTIONS
-                            : allowedValues || []
-                        )}
-                        disabled={!hasUserPermission}
-                        handleChange={(value) =>
-                          handleSubmitSelectedCellData({
-                            ...row[name],
-                            value,
-                            rowIndex,
-                            category: column.category,
-                            dataType: column.dataType,
-                            operator: OPERATORS.EQUAL
-                          })
-                        }
-                      />
-                    )}
+                    <Typography variant="body2">
+                      {hasValue
+                        ? `${column.category === CATEGORIES.Actions ? OPERATORS.EQUAL : row[name].operator} ${expression}`
+                        : `Enter ${column.category === CATEGORIES.Conditions ? 'Condition' : 'Value'}`}
+                    </Typography>
                   </StyledTableCell>
                 );
               })}
@@ -338,6 +326,7 @@ const Table = ({
       </MuiTable>
       {selectedCell && (
         <SelectVariableValueDialog
+          isCondition={selectedCell.category === CATEGORIES.Conditions}
           modalOpen={!!selectedCell}
           handleClose={() => setSelectedCell(null)}
           selectedCell={selectedCell}

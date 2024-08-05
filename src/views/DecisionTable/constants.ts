@@ -20,7 +20,7 @@ export const STEP_DETAILS =
 
 export const INITIAL_ENTRY: CaseEntry = {
   name: '',
-  operator: null,
+  operator: '',
   expression: ''
 };
 

@@ -14,7 +14,6 @@ import {
 } from './constants';
 import {
   VariableColumnData,
-  SelectedCell,
   FormFieldsProps,
   CaseEntries,
   CaseEntryColumn,
@@ -252,13 +251,17 @@ const DecisionTableStep = ({
     setCaseEntries(updatedCaseEntries);
   };
 
-  const handleSubmitVariableValue = (data: SelectedCell & FormFieldsProps) => {
+  const handleSubmitVariableValue = (
+    data: FormFieldsProps,
+    category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
+    rowIndex: number
+  ) => {
     setCaseEntries((prev) =>
       prev.map((row, index) =>
-        index === data.rowIndex
+        index === rowIndex
           ? {
               ...row,
-              [data.category]: row[data.category].map((column) =>
+              [category]: row[category].map((column) =>
                 column.name !== data.name
                   ? column
                   : {
