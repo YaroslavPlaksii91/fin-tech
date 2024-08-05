@@ -205,15 +205,14 @@ export const checkDataType = (dataType: DATA_TYPE) => ({
     dataType === DATA_TYPE_WITHOUT_ENUM['Object:CraClarity'] ||
     dataType === DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']
 });
+
 // We need to convert with string in "\"stringValue\"" format since the backend expects it
 export const convertToStringFormat = (string: string) =>
-  // eslint-disable-next-line no-useless-escape
-  string.length ? `\\\"${string}\\\"` : '';
+  string.length ? `"${string}"` : '';
 
 // Parse to basic string format
-export const parseStringFormat = (formattedString: string) => {
-  // eslint-disable-next-line no-useless-escape
-  const match = formattedString.match(/^\\\"(.*)\\\"$/);
+export const parseStringFormat = (string: string) => {
+  const match = string.match(/^"([^"]*)"$/);
 
-  return match ? match[1] : formattedString;
+  return match ? match[1] : string;
 };

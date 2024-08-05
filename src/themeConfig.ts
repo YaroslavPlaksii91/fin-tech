@@ -169,13 +169,6 @@ export const theme = createTheme({
         }
       }
     },
-    MuiSelect: {
-      styleOverrides: {
-        root: {
-          fontSize: '14px'
-        }
-      }
-    },
     MuiTablePagination: {
       styleOverrides: {
         spacer: { flex: 0 },

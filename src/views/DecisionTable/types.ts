@@ -4,7 +4,7 @@ import { DATA_TYPE } from '@domain/dataDictionary';
 
 export type CaseEntry = {
   name: string;
-  operator: Operator | null;
+  operator: Operator;
   expression: string;
   destinationType?: string;
 };
@@ -23,6 +23,7 @@ export interface SelectedCell extends CaseEntry {
   category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS;
   rowIndex: number;
   dataType: DATA_TYPE;
+  allowedValues?: string | string[];
 }
 
 export type VariableColumnData = {
@@ -35,13 +36,14 @@ export type VariableColumnData = {
 
 export type FormFieldsProps = {
   name: string;
-  operator: Operator | null;
+  operator: Operator;
   value?: string;
   lowerBound?: number | null;
   upperBound?: number | null;
 };
 
 export enum OPERATORS {
+  Empty = '',
   EQUAL = '=',
   NOT_EQUAL = '!=',
   IN = 'in',
