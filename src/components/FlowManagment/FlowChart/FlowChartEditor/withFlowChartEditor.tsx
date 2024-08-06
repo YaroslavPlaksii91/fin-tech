@@ -426,6 +426,7 @@ const withFlowChartEditor =
           onNodesChange={isViewMode ? undefined : onNodesChange}
           onEdgesChange={isViewMode ? undefined : onEdgesChange}
           onConnect={isViewMode ? undefined : onConnect}
+          nodesConnectable={!isViewMode}
           onPaneClick={onPaneClick}
           onNodeContextMenu={onNodeContextMenu}
           onNodeDragStop={onNodeDragStop}
