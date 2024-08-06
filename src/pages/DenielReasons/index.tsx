@@ -26,6 +26,7 @@ import { TABLE } from '@constants/themeConstants';
 import TuneIcon from '@icons/tune.svg';
 import ExportCSVButton from '@components/shared/ExportCSVButton';
 import { removeSingleQuotesODataParams } from '@utils/helpers';
+import { getDateInUTC } from '@utils/date';
 
 const DenielReasons = () => {
   const [loading, setLoading] = useState(false);
@@ -60,8 +61,8 @@ const DenielReasons = () => {
         deniedBy: deniedBy || undefined,
         rejectionReason: rejectionReason || undefined,
         date: {
-          ge: startDate ? startDate.toISOString() : undefined,
-          le: endDate ? endDate.toISOString() : undefined
+          ge: startDate ? getDateInUTC(startDate).toISOString() : undefined,
+          le: endDate ? getDateInUTC(endDate).toISOString() : undefined
         }
       }
     };
