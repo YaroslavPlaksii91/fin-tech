@@ -425,6 +425,7 @@ const withFlowChartEditor =
           onNodesDelete={isViewMode ? undefined : onNodesDelete}
           onNodesChange={isViewMode ? undefined : onNodesChange}
           onEdgesChange={isViewMode ? undefined : onEdgesChange}
+          onConnect={isViewMode ? undefined : onConnect}
           onPaneClick={onPaneClick}
           onNodeContextMenu={onNodeContextMenu}
           onNodeDragStop={onNodeDragStop}
@@ -436,7 +437,6 @@ const withFlowChartEditor =
               onAddNodeBetweenEdges
             });
           }}
-          onConnect={onConnect}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           attributionPosition="bottom-left"

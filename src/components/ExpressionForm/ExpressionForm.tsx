@@ -52,6 +52,7 @@ import { DataDictionaryContext } from '@contexts/DataDictionaryContext.tsx';
 import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog.tsx';
 import { DATA_DICTIONARY_GROUP } from '@constants/common.tsx';
 import { StepContentWrapper } from '@views/styled';
+import { customBoxShadows } from '@theme';
 
 const operatorsList = [
   ...Object.values(groupBy(operatorsConfig, 'category')),
@@ -217,9 +218,21 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
       <StepContentWrapper>
         {renderTitle && renderTitle()}
         <Box>
-          <Card variant="outlined" sx={{ overflow: 'unset' }}>
-            <CardHeader title="Expression Builder" />
-            <CardContent sx={{ paddingTop: 0 }}>
+          <Card
+            variant="outlined"
+            sx={{ overflow: 'unset', boxShadow: customBoxShadows.elevation1 }}
+          >
+            <CardHeader
+              sx={{ padding: '8px 16px' }}
+              title="Expression Builder"
+              titleTypographyProps={{ variant: 'h6' }}
+            />
+            <CardContent
+              sx={{
+                paddingTop: 0,
+                ':last-child': { paddingBottom: '8px' }
+              }}
+            >
               <Box mb={1}>
                 <Controller
                   control={control}

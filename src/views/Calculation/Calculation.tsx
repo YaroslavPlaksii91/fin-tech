@@ -39,8 +39,9 @@ import { permissionsMap } from '@constants/permissions';
 import { selectUserInfo } from '@store/auth/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
-import { theme } from '@theme';
+import { customBoxShadows, theme } from '@theme';
 import { useIsDirty } from '@contexts/IsDirtyContext';
+import { StyledTableRow } from '@components/shared/Table/styled';
 
 interface CalculationProps {
   step: FlowNode;
@@ -158,7 +159,10 @@ const Calculation: React.FC<CalculationProps> = ({
               />
               <Stack>
                 <Box mb={1}>
-                  <Card variant="outlined">
+                  <Card
+                    variant="outlined"
+                    sx={{ boxShadow: customBoxShadows.elevation1 }}
+                  >
                     <CardContent
                       sx={{ padding: '0px !important', overflow: 'hidden' }}
                     >
@@ -192,7 +196,10 @@ const Calculation: React.FC<CalculationProps> = ({
                         </TableHead>
                         <TableBody>
                           {fields.map((expression, index) => (
-                            <TableRow key={index}>
+                            <StyledTableRow
+                              key={index}
+                              parity={(index + 1) % 2 === 0 ? 'even' : 'odd'}
+                            >
                               <TableCell>{expression.outputName}</TableCell>
                               <TableCell>
                                 {expression.expressionString}
@@ -206,6 +213,7 @@ const Calculation: React.FC<CalculationProps> = ({
                                 {!isPreview && (
                                   <Stack direction="row">
                                     <IconButton
+                                      sx={{ padding: '0 8px' }}
                                       onClick={() => {
                                         setInitialValue({
                                           ...expression,
@@ -217,6 +225,7 @@ const Calculation: React.FC<CalculationProps> = ({
                                       <EditIcon />
                                     </IconButton>
                                     <IconButton
+                                      sx={{ padding: '0 8px' }}
                                       onClick={() => {
                                         remove(index);
                                       }}
@@ -228,7 +237,7 @@ const Calculation: React.FC<CalculationProps> = ({
                                   </Stack>
                                 )}
                               </TableCell>
-                            </TableRow>
+                            </StyledTableRow>
                           ))}
                           {!fields.length && (
                             <TableRow>
