@@ -11,9 +11,10 @@ function useFlowChartContextMenu() {
   const [flowNode, setFlowNode] = useState<FlowNode | null>(null);
 
   const onPaneClick = useCallback(() => {
+    nodeElement && nodeElement.classList.remove('menu-open');
     setFlowNode(null);
     setNodeElement(null);
-  }, [setFlowNode, setNodeElement]);
+  }, [setFlowNode, setNodeElement, nodeElement]);
 
   const onNodeContextMenu = useCallback(
     (event: React.MouseEvent) => {
@@ -26,6 +27,7 @@ function useFlowChartContextMenu() {
         const node = getNode(nodeId);
         if (node?.type === StepType.START || node?.type === StepType.END)
           return;
+        targetElement.classList.add('menu-open');
         setNodeElement(targetElement);
         setFlowNode(getNode(nodeId) as FlowNode);
       }
