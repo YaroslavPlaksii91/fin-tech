@@ -134,61 +134,59 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
         </Stack>
       </Stack>
       <p>{selectedRow.id}</p>
-      {selectedRow?.name && (
-        <Paper sx={{ padding: '4px 16px' }} elevation={1}>
-          {selectedRow.before === null && selectedRow.after && (
-            <ChangeHistoryDiffCard label="New version">
+      <Paper sx={{ padding: '4px 16px' }} elevation={1}>
+        {selectedRow.before === null && selectedRow.after && (
+          <ChangeHistoryDiffCard label="New version">
+            <ReactDiffViewer
+              styles={newStyles}
+              newValue={selectedRow.after || ''}
+              splitView={false}
+              hideLineNumbers={true}
+              showDiffOnly={true}
+            />
+          </ChangeHistoryDiffCard>
+        )}
+        {selectedRow.before && selectedRow.after === null && (
+          <>
+            <ChangeHistoryDiffCard label="Old version">
               <ReactDiffViewer
                 styles={newStyles}
-                newValue={selectedRow.after || ''}
+                oldValue={selectedRow.before}
                 splitView={false}
                 hideLineNumbers={true}
                 showDiffOnly={true}
               />
             </ChangeHistoryDiffCard>
-          )}
-          {selectedRow.before && selectedRow.after === null && (
-            <>
-              <ChangeHistoryDiffCard label="Old version">
-                <ReactDiffViewer
-                  styles={newStyles}
-                  oldValue={selectedRow.before}
-                  splitView={false}
-                  hideLineNumbers={true}
-                  showDiffOnly={true}
-                />
-              </ChangeHistoryDiffCard>
-              <ChangeHistoryDiffCard label="New version">
-                <Typography variant="body1">Step was deleted</Typography>
-              </ChangeHistoryDiffCard>
-            </>
-          )}
-          {selectedRow.before && selectedRow.after && (
-            <>
-              <ChangeHistoryDiffCard label="Old version">
-                <ReactDiffViewer
-                  styles={newStyles3}
-                  newValue={selectedRow.after}
-                  oldValue={selectedRow.before}
-                  splitView={false}
-                  hideLineNumbers={true}
-                  showDiffOnly={true}
-                />
-              </ChangeHistoryDiffCard>
-              <ChangeHistoryDiffCard label="New version">
-                <ReactDiffViewer
-                  styles={newStyles2}
-                  oldValue={selectedRow.before}
-                  newValue={selectedRow.after}
-                  splitView={false}
-                  hideLineNumbers={true}
-                  showDiffOnly={true}
-                />
-              </ChangeHistoryDiffCard>
-            </>
-          )}
-        </Paper>
-      )}
+            <ChangeHistoryDiffCard label="New version">
+              <Typography variant="body1">Step was deleted</Typography>
+            </ChangeHistoryDiffCard>
+          </>
+        )}
+        {selectedRow.before && selectedRow.after && (
+          <>
+            <ChangeHistoryDiffCard label="Old version">
+              <ReactDiffViewer
+                styles={newStyles3}
+                newValue={selectedRow.after}
+                oldValue={selectedRow.before}
+                splitView={false}
+                hideLineNumbers={true}
+                showDiffOnly={true}
+              />
+            </ChangeHistoryDiffCard>
+            <ChangeHistoryDiffCard label="New version">
+              <ReactDiffViewer
+                styles={newStyles2}
+                oldValue={selectedRow.before}
+                newValue={selectedRow.after}
+                splitView={false}
+                hideLineNumbers={true}
+                showDiffOnly={true}
+              />
+            </ChangeHistoryDiffCard>
+          </>
+        )}
+      </Paper>
     </DetailedViewContainer>
   );
 };

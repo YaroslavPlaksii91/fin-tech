@@ -1,10 +1,12 @@
+import { StepType } from '@components/FlowManagment/FlowChart/types';
+
 export interface ChangeHistoryDifference {
   id: string;
   changeType: number;
   path: { id: string; name: string }[];
   // not required for steps
   name: string;
-  stepType: string;
+  stepType: StepType;
   after: string | null;
   before: string | null;
 

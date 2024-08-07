@@ -26,6 +26,10 @@ export const getName = (row: ChangeHistoryDifference) => {
     return row.name;
   }
 
+  if (row.stepType) {
+    return row.after;
+  }
+
   if (row.path) {
     return row.path[0].name;
   }
