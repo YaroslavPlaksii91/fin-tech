@@ -198,6 +198,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
               name="defaultValue"
               label="Default Value"
               control={control}
+              inputMode="numeric"
             />
           )}
           {watchDataType === DATA_TYPE_WITHOUT_ENUM.String && (
