@@ -4,7 +4,6 @@ import { mapValues, filter } from 'lodash';
 import {
   CATEGORIES,
   CATEGORY,
-  CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
   INITIAL_ENTRY,
   INITIAL_CASE_ENTRIES
 } from './constants';
@@ -53,7 +52,7 @@ export const getOperatorOptions = (dataType: DATA_TYPE) => {
 export const getColumns = (
   caseEntry: CaseEntries,
   variables: Variable[],
-  category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS
+  category: CATEGORY
 ) => {
   const INITIAL_COLUMN = {
     ...INITIAL_ENTRY,
@@ -123,7 +122,7 @@ export const updateCaseEntry = ({
   initialEntries = [] // We need to provide initial entries for rows in case when we don`t have any already created Entries
 }: {
   caseEntries: CaseEntries[];
-  category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS;
+  category: CATEGORY;
   start: number;
   deleteCount: number;
   insertEntry?: CaseEntry;
@@ -184,7 +183,6 @@ export const filterVariablesByUsageMode = (
     case CATEGORIES.Conditions:
       usageMode = VARIABLE_USAGE_MODE.WriteOnly;
       break;
-    case CATEGORIES.DefaultActions:
     case CATEGORIES.Actions:
       usageMode = VARIABLE_USAGE_MODE.ReadOnly;
       break;

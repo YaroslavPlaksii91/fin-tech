@@ -1,5 +1,5 @@
 import ChampionChallenger from '@views/ChampionChallenger/ChampionChallenger';
-import DecisionTableStep from '@views/DecisionTable/DecisionTable';
+import DecisionTable from '@views/DecisionTable/DecisionTable';
 import { IFlow } from '@domain/flow';
 import {
   CustomReactFlowInstance,
@@ -41,7 +41,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
         />
       )}
       {step?.type === StepType.DECISION_TABLE && (
-        <DecisionTableStep
+        <DecisionTable
           flow={flow}
           mainFlow={mainFlow}
           step={step}

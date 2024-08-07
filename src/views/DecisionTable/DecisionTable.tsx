@@ -9,7 +9,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import {
   CATEGORIES,
   CATEGORY,
-  CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
   INITIAL_ENTRY,
   STEP_DETAILS,
   STEP
@@ -18,7 +17,6 @@ import {
   VariableColumnData,
   FormFieldsProps,
   CaseEntries,
-  CaseEntryColumn,
   CaseEntry
 } from './types';
 import { getColumns, getVariableSources, updateCaseEntry } from './utils';
@@ -68,7 +66,7 @@ type DecisionTableStepProps = {
   isViewMode: boolean;
 };
 
-const DecisionTableStep = ({
+const DecisionTable = ({
   step,
   flow,
   mainFlow,
@@ -93,7 +91,6 @@ const DecisionTableStep = ({
   const [defaultActions, setDefaultActions] = useState<CaseEntry[]>([]);
 
   const [stepIds, setStepIds] = useState<(string | null)[]>([]);
-  const [defaultStepId, setDefaultStepId] = useState<string | null>(null);
 
   const dataDictionary = useContext(DataDictionaryContext);
 
@@ -124,7 +121,7 @@ const DecisionTableStep = ({
 
   const watchNote = watch('note');
 
-  const stepsOptions = useMemo(
+  const stepOptions = useMemo(
     () =>
       getConnectableNodes(nodes, step.id).map((node) => ({
         value: node.id,
@@ -148,7 +145,7 @@ const DecisionTableStep = ({
   const stepColumn = {
     name: STEP,
     dataType: DATA_TYPE_WITHOUT_ENUM.String,
-    category: CATEGORIES.Actions as CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
+    category: CATEGORIES.Actions,
     index: actionsColumns.length
   };
 
@@ -165,11 +162,8 @@ const DecisionTableStep = ({
     : [];
 
   const handleAddNewLayer = () => {
-    const addNewLayerColumns = (
-      existedColumns: CaseEntryColumn[],
-      category: CATEGORY
-    ) =>
-      existedColumns
+    const addNewLayerColumns = (category: CATEGORY) =>
+      columns
         .filter((column) => column.category === category)
         .map((column) => ({
           ...INITIAL_ENTRY,
@@ -179,13 +173,18 @@ const DecisionTableStep = ({
     setCaseEntries((prev) => [
       ...prev,
       {
-        conditions: addNewLayerColumns(columns, CATEGORIES.Conditions),
-        actions: addNewLayerColumns(columns, CATEGORIES.Actions),
+        conditions: addNewLayerColumns(CATEGORIES.Conditions),
+        actions: addNewLayerColumns(CATEGORIES.Actions),
         edgeId: null
       }
     ]);
 
-    setStepIds((prev) => [...prev, null]);
+    setStepIds((prev) => {
+      const steps = [...prev];
+      steps.splice(prev.length - 1, 0, null);
+
+      return steps;
+    });
   };
 
   const handleDeleteLayer = (index: number) => {
@@ -194,7 +193,10 @@ const DecisionTableStep = ({
 
     setCaseEntries(newCaseEntries);
 
-    if (stepIds.length <= 1) setDefaultStepId(null);
+    if (rows.length === 1) {
+      setStepIds([null]);
+      return;
+    }
 
     setStepIds((prev) => prev.filter((_, stepIndex) => stepIndex !== index));
   };
@@ -216,7 +218,6 @@ const DecisionTableStep = ({
 
     if (!caseEntries.length) {
       setStepIds([null]);
-      setDefaultStepId(null);
     }
 
     setCaseEntries(updatedCaseEntries);
@@ -254,17 +255,12 @@ const DecisionTableStep = ({
       initialEntries: [insertEntry]
     });
 
-    if (!caseEntries.length) {
-      setStepIds([null]);
-      setDefaultStepId(null);
-    }
-
     setCaseEntries(updatedCaseEntries);
   };
 
   const handleSubmitVariableValue = (
     data: FormFieldsProps,
-    category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
+    category: CATEGORY,
     rowIndex: number
   ) => {
     setCaseEntries((prev) =>
@@ -288,20 +284,13 @@ const DecisionTableStep = ({
   };
 
   const handleChangeStep = (rowIndex: number, stepId: string) => {
-    if (rowIndex >= stepIds.length) {
-      setDefaultStepId(stepId);
-      return;
-    }
-
     setStepIds((prev) =>
       prev.map((oldStepId, index) => (rowIndex === index ? stepId : oldStepId))
     );
   };
 
   const onApplyChangesClick = async ({ note }: FieldValues) => {
-    const targetNodesIds = [...stepIds, defaultStepId];
-
-    const splitEdges = targetNodesIds.map((targetNodeId, index) => ({
+    const splitEdges = stepIds.map((targetNodeId, index) => ({
       id: uuidv4(),
       sourceHandle: index.toString(),
       source: step.id,
@@ -344,9 +333,7 @@ const DecisionTableStep = ({
 
         node.data = {
           ...node.data,
-          defaultEdgeId: defaultStepId
-            ? splitEdges[splitEdges.length - 1].id
-            : null,
+          defaultEdgeId: splitEdges[splitEdges.length - 1].id || null,
           caseEntries: updatedCaseEntries,
           editedBy: username,
           editedOn: new Date().toISOString(),
@@ -408,10 +395,9 @@ const DecisionTableStep = ({
 
   const setInitialData = useCallback(() => {
     if (initialData) {
-      setStepIds(initialData.savedStepIds);
+      setStepIds([...initialData.savedStepIds, initialData.savedDefaultStepId]);
       setCaseEntries(initialData.savedCaseEntries);
       setDefaultActions(initialData.savedDefaultActions);
-      setDefaultStepId(initialData.savedDefaultStepId);
       setValue('note', initialData.savedNote);
     }
   }, [initialData]);
@@ -421,7 +407,6 @@ const DecisionTableStep = ({
   const checkIsDirty = (
     caseEntries: CaseEntries[],
     defaultActions: CaseEntry[],
-    defaultStepId: string | null,
     noteValue: string | null,
     stepIds: (string | null)[]
   ) => {
@@ -434,7 +419,7 @@ const DecisionTableStep = ({
       JSON.stringify(defaultActions);
 
     const hasChangesDefaultStepId =
-      initialData?.savedDefaultStepId !== defaultStepId;
+      initialData?.savedDefaultStepId !== stepIds[stepIds.length - 1];
 
     const hasChangesNoteValue = (step.data.note ?? '') !== noteValue;
 
@@ -460,14 +445,8 @@ const DecisionTableStep = ({
   ]);
 
   useEffect(() => {
-    debounceCheckIsDirty(
-      caseEntries,
-      defaultActions,
-      defaultStepId,
-      watchNote,
-      stepIds
-    );
-  }, [caseEntries, defaultActions, defaultStepId, stepIds, watchNote]);
+    debounceCheckIsDirty(caseEntries, defaultActions, watchNote, stepIds);
+  }, [caseEntries, defaultActions, stepIds, watchNote]);
 
   useEffect(() => {
     setIsDirty(isEdited);
@@ -490,12 +469,11 @@ const DecisionTableStep = ({
         >
           <Table
             hasUserPermission={!isPreview}
-            defaultStepId={defaultStepId}
             stepIds={stepIds}
             columns={columnsToShow}
             rows={rowsToShow}
             variables={variables}
-            stepsOptions={stepsOptions}
+            stepOptions={stepOptions}
             selectedColumn={selectedColumn}
             handleChangeStep={handleChangeStep}
             handleSelectionColumn={setSelectedColumn}
@@ -543,4 +521,4 @@ const DecisionTableStep = ({
   );
 };
 
-export default DecisionTableStep;
+export default DecisionTable;

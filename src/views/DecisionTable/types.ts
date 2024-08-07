@@ -1,4 +1,4 @@
-import { CATEGORY, CATEGORIES_WITHOUT_DEFAULT_ACTIONS } from './constants';
+import { CATEGORY } from './constants';
 
 import { DATA_TYPE } from '@domain/dataDictionary';
 
@@ -9,25 +9,21 @@ export type CaseEntry = {
   destinationType?: string;
 };
 
-export interface CaseEntryColumn extends CaseEntry {
-  category?: CATEGORY;
-}
-
 export type CaseEntries = {
   conditions: CaseEntry[];
   actions: CaseEntry[];
-  edgeId?: string | null;
+  edgeId: string | null;
 };
 
 export interface SelectedCell extends CaseEntry {
-  category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS;
+  category: CATEGORY;
   rowIndex: number;
   dataType: DATA_TYPE;
   allowedValues?: string | string[];
 }
 
 export type VariableColumnData = {
-  category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS;
+  category: CATEGORY;
   name: string;
   dataType: DATA_TYPE;
   allowedValues?: string | string[];
