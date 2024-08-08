@@ -139,6 +139,10 @@
   border-color: transparent #616161e5 transparent transparent;
 }
 
+/* .react-flow__node:hover .node-container, .react-flow__node:hover .node-label  {
+  background: #dedfe2;
+  color: rgba(27, 94, 32, 1);
+} */
 
 /* Styles for node if menu is opened */
 .react-flow__node.node-menu-open .node-container, .react-flow__node.node-menu-open .node-list-container {
@@ -173,6 +177,7 @@
 }
 
 .edge-animation {
+  padding: 20px 40px;
   background: linear-gradient(90deg, rgba(0, 0, 0, 0.5) 50%, transparent 50%),
               linear-gradient(90deg, rgba(0, 0, 0, 0.5) 50%, transparent 50%),
               linear-gradient(0deg, rgba(0, 0, 0, 0.5) 50%, transparent 50%),
