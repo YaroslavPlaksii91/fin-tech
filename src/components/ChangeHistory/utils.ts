@@ -54,3 +54,43 @@ export const getInfoForSubflow = (row: ChangeHistoryDifference) => {
     return `Subflow "${row.name}" was deleted with all the steps it contained.`;
   }
 };
+
+export const generalDiffStyles = {
+  variables: {
+    light: {
+      addedBackground: 'none',
+      removedBackground: 'none',
+      emptyLineBackground: 'none'
+    }
+  },
+  diffContainer: {
+    pre: {
+      'white-space': 'pre'
+    }
+  },
+  marker: {
+    display: 'none'
+  }
+};
+
+export const oldVersionDiffStyles = {
+  diffContainer: {
+    pre: {
+      'white-space': 'pre'
+    }
+  },
+  diffAdded: {
+    display: 'none'
+  }
+};
+
+export const newVersionDiffStyles = {
+  diffContainer: {
+    pre: {
+      'white-space': 'pre'
+    }
+  },
+  diffRemoved: {
+    display: 'none'
+  }
+};

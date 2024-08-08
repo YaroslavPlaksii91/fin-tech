@@ -7,14 +7,18 @@ import {
   IconButton,
   Card
 } from '@mui/material';
-import ReactDiffViewer, {
-  ReactDiffViewerStylesOverride
-} from 'react-diff-viewer';
+import ReactDiffViewer from 'react-diff-viewer';
 import dayjs from 'dayjs';
 
 import { DetailedViewContainer } from './styled';
 import ChangeHistoryDiffCard from './ChangeHistoryDiffCard';
-import { getInfoForConnections, getInfoForSubflow } from './utils';
+import {
+  generalDiffStyles,
+  getInfoForConnections,
+  getInfoForSubflow,
+  newVersionDiffStyles,
+  oldVersionDiffStyles
+} from './utils';
 
 import { ChangeHistoryRecord, ChangeTypeEnum } from '@domain/changeHistory.ts';
 import { customBoxShadows, theme } from '@theme';
@@ -42,46 +46,6 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
     () => data.diffs[selectedRowIndex],
     [data.diffs, selectedRowIndex]
   );
-
-  const newStyles: ReactDiffViewerStylesOverride = {
-    variables: {
-      light: {
-        addedBackground: 'none',
-        removedBackground: 'none',
-        emptyLineBackground: 'none'
-      }
-    },
-    diffContainer: {
-      pre: {
-        'white-space': 'pre'
-      }
-    },
-    marker: {
-      display: 'none'
-    }
-  };
-
-  const newStyles2 = {
-    diffContainer: {
-      pre: {
-        'white-space': 'pre'
-      }
-    },
-    diffRemoved: {
-      display: 'none'
-    }
-  };
-
-  const newStyles3 = {
-    diffContainer: {
-      pre: {
-        'white-space': 'pre'
-      }
-    },
-    diffAdded: {
-      display: 'none'
-    }
-  };
 
   return (
     <DetailedViewContainer>
@@ -170,7 +134,7 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
         {selectedRow.before === null && selectedRow.after && (
           <ChangeHistoryDiffCard label="New version">
             <ReactDiffViewer
-              styles={newStyles}
+              styles={generalDiffStyles}
               newValue={selectedRow.after || ''}
               splitView={false}
               hideLineNumbers={true}
@@ -182,7 +146,7 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
           <>
             <ChangeHistoryDiffCard label="Old version">
               <ReactDiffViewer
-                styles={newStyles}
+                styles={generalDiffStyles}
                 oldValue={selectedRow.before}
                 splitView={false}
                 hideLineNumbers={true}
@@ -200,7 +164,7 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
             <>
               <ChangeHistoryDiffCard label="Old version">
                 <ReactDiffViewer
-                  styles={newStyles3}
+                  styles={oldVersionDiffStyles}
                   newValue={selectedRow.after}
                   oldValue={selectedRow.before}
                   splitView={false}
@@ -210,7 +174,7 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
               </ChangeHistoryDiffCard>
               <ChangeHistoryDiffCard label="New version">
                 <ReactDiffViewer
-                  styles={newStyles2}
+                  styles={newVersionDiffStyles}
                   oldValue={selectedRow.before}
                   newValue={selectedRow.after}
                   splitView={false}

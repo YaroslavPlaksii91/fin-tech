@@ -4,15 +4,12 @@ export interface ChangeHistoryDifference {
   id: string;
   changeType: number;
   path: { id: string; name: string }[];
-  // not required for steps
-  name: string;
-  stepType: StepType;
-  after: string | null;
-  before: string | null;
-
-  // not required for edges
-  sourceName: string;
-  targetName: string;
+  name?: string;
+  stepType?: StepType;
+  after?: string | null;
+  before?: string | null;
+  sourceName?: string;
+  targetName?: string;
 }
 
 export interface ChangeHistoryRecord {
