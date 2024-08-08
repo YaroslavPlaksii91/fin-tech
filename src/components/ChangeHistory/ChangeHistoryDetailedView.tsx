@@ -5,7 +5,7 @@ import {
   Stack,
   Chip,
   IconButton,
-  Paper
+  Card
 } from '@mui/material';
 import ReactDiffViewer, {
   ReactDiffViewerStylesOverride
@@ -105,7 +105,12 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
       <Typography variant="h4" pt={1} pb={2} color={theme.palette.text.primary}>
         {data.name}
       </Typography>
-      <Stack flexDirection="row" justifyContent="space-between">
+      <Stack
+        flexDirection="row"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
         <Chip
           sx={{ maxWidth: 'fit-content' }}
           size="small"
@@ -135,11 +140,15 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
           </IconButton>
         </Stack>
       </Stack>
-      <Paper
+      <Card
+        variant="outlined"
         sx={{
-          padding: '4px 16px',
+          padding: '8px 16px',
           boxShadow: customBoxShadows.elevation1,
-          borderRadius: '16px'
+          borderRadius: '16px',
+          '&:not(:last-child)': {
+            marginBottom: '8px'
+          }
         }}
       >
         {ChangeTypeEnum[selectedRow.changeType] === ChangeTypeEnum[3] && (
@@ -227,7 +236,7 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
               </Typography>
             </ChangeHistoryDiffCard>
           )}
-      </Paper>
+      </Card>
     </DetailedViewContainer>
   );
 };

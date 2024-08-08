@@ -1,8 +1,6 @@
 import React from 'react';
 import { Typography, Box, Divider } from '@mui/material';
-// import ReactDiffViewer from 'react-diff-viewer';
 
-// import { ChangeHistoryDifference } from '@domain/changeHistory.ts';
 import { theme } from '@theme';
 
 interface ChangeHistoryDiffCardProps {
@@ -18,7 +16,9 @@ const ChangeHistoryDiffCard: React.FC<ChangeHistoryDiffCardProps> = ({
     sx={{
       border: `1px solid ${theme.palette.divider}`,
       borderRadius: '8px',
-      margin: '4px 0'
+      '&:not(:last-child)': {
+        mb: 1
+      }
     }}
   >
     <Typography
