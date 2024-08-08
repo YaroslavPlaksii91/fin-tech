@@ -14,12 +14,14 @@ import dayjs from 'dayjs';
 
 import { DetailedViewContainer } from './styled';
 import ChangeHistoryDiffCard from './ChangeHistoryDiffCard';
+import { getInfoForConnections, getInfoForSubflow } from './utils';
 
-import { ChangeHistoryRecord } from '@domain/changeHistory.ts';
-import { theme } from '@theme';
+import { ChangeHistoryRecord, ChangeTypeEnum } from '@domain/changeHistory.ts';
+import { customBoxShadows, theme } from '@theme';
 import { FULL_DATE_TIME_FORMAT } from '@constants/common';
 import AngelLeft from '@icons/angleLeft.svg';
 import AngelRight from '@icons/angleRight.svg';
+import { StepType } from '@components/FlowManagment/FlowChart/types';
 
 interface ChangeHistoryDetailedViewProps {
   data: ChangeHistoryRecord;
@@ -133,8 +135,29 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
           </IconButton>
         </Stack>
       </Stack>
-      <p>{selectedRow.id}</p>
-      <Paper sx={{ padding: '4px 16px' }} elevation={1}>
+      <Paper
+        sx={{
+          padding: '4px 16px',
+          boxShadow: customBoxShadows.elevation1,
+          borderRadius: '16px'
+        }}
+      >
+        {ChangeTypeEnum[selectedRow.changeType] === ChangeTypeEnum[3] && (
+          <>
+            <ChangeHistoryDiffCard label="Old version">
+              <Typography variant="body2" color={theme.palette.text.secondary}>
+                Previous Name:
+              </Typography>
+              <Typography variant="body1">{selectedRow.before}</Typography>
+            </ChangeHistoryDiffCard>
+            <ChangeHistoryDiffCard label="New version">
+              <Typography variant="body2" color={theme.palette.text.secondary}>
+                Updated Name:
+              </Typography>
+              <Typography variant="body1">{selectedRow.after}</Typography>
+            </ChangeHistoryDiffCard>
+          </>
+        )}
         {selectedRow.before === null && selectedRow.after && (
           <ChangeHistoryDiffCard label="New version">
             <ReactDiffViewer
@@ -162,30 +185,48 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
             </ChangeHistoryDiffCard>
           </>
         )}
-        {selectedRow.before && selectedRow.after && (
-          <>
-            <ChangeHistoryDiffCard label="Old version">
-              <ReactDiffViewer
-                styles={newStyles3}
-                newValue={selectedRow.after}
-                oldValue={selectedRow.before}
-                splitView={false}
-                hideLineNumbers={true}
-                showDiffOnly={true}
-              />
-            </ChangeHistoryDiffCard>
-            <ChangeHistoryDiffCard label="New version">
-              <ReactDiffViewer
-                styles={newStyles2}
-                oldValue={selectedRow.before}
-                newValue={selectedRow.after}
-                splitView={false}
-                hideLineNumbers={true}
-                showDiffOnly={true}
-              />
-            </ChangeHistoryDiffCard>
-          </>
+        {selectedRow.before &&
+          selectedRow.after &&
+          ChangeTypeEnum[selectedRow.changeType] !== ChangeTypeEnum[3] && (
+            <>
+              <ChangeHistoryDiffCard label="Old version">
+                <ReactDiffViewer
+                  styles={newStyles3}
+                  newValue={selectedRow.after}
+                  oldValue={selectedRow.before}
+                  splitView={false}
+                  hideLineNumbers={true}
+                  showDiffOnly={true}
+                />
+              </ChangeHistoryDiffCard>
+              <ChangeHistoryDiffCard label="New version">
+                <ReactDiffViewer
+                  styles={newStyles2}
+                  oldValue={selectedRow.before}
+                  newValue={selectedRow.after}
+                  splitView={false}
+                  hideLineNumbers={true}
+                  showDiffOnly={true}
+                />
+              </ChangeHistoryDiffCard>
+            </>
+          )}
+        {selectedRow.sourceName && selectedRow.targetName && (
+          <ChangeHistoryDiffCard label="New version">
+            <Typography variant="body1">
+              {getInfoForConnections(selectedRow)}
+            </Typography>
+          </ChangeHistoryDiffCard>
         )}
+        {selectedRow.before === null &&
+          selectedRow.after === null &&
+          selectedRow.stepType === StepType.SUBFLOW && (
+            <ChangeHistoryDiffCard label="New version">
+              <Typography variant="body1">
+                {getInfoForSubflow(selectedRow)}
+              </Typography>
+            </ChangeHistoryDiffCard>
+          )}
       </Paper>
     </DetailedViewContainer>
   );

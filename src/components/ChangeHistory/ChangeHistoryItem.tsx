@@ -41,7 +41,7 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
     return [];
   }, [data]);
 
-  const isFirstRecord = index === 0;
+  const isFirstChangeHistoryItem = index === 0;
 
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
 
@@ -66,7 +66,7 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
     <Box display="flex" gap={2}>
       <Box display="flex" flexDirection="column" alignItems="center">
         <Box flexBasis="28px">
-          {isFirstRecord ? (
+          {isFirstChangeHistoryItem ? (
             <CheckDuotoneIcon color={theme.palette.primary.main} />
           ) : (
             <CheckCircleDoneIcon />
@@ -116,7 +116,7 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
               {data.note}
             </Typography>
           )}
-          {isFirstRecord && (
+          {isFirstChangeHistoryItem && (
             <Chip
               label="Active"
               color="success"
@@ -140,6 +140,7 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
               <TableBody>
                 {diffsList.map((row, index) => (
                   <ChangesHistoryRow
+                    isFirstChangeHistoryItem={isFirstChangeHistoryItem}
                     index={index}
                     handleRowClick={handleRowClick}
                     key={row.id + index}

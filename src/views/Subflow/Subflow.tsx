@@ -34,9 +34,9 @@ const SubFlow: React.FC<SubFlowProps> = ({
 }) => {
   const user = useAppSelector(selectUserInfo);
   const username = getFullUserName(user);
+  const mainFlowNodes: FlowNode[] = getNodes();
 
   const subFlow = useMemo(() => {
-    const mainFlowNodes: FlowNode[] = getNodes();
     const subFlowNode = cloneDeep(findSubFlow(activeStepId, mainFlowNodes));
     if (subFlowNode) {
       return {
@@ -57,7 +57,7 @@ const SubFlow: React.FC<SubFlowProps> = ({
       };
     }
     return undefined;
-  }, [activeStepId]);
+  }, [activeStepId, mainFlowNodes.length]);
 
   const saveSubflow = useCallback((subFlow: IFlow) => {
     const mainFlowNodes: FlowNode[] = getNodes();

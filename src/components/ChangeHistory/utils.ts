@@ -36,3 +36,21 @@ export const getName = (row: ChangeHistoryDifference) => {
 
   return name;
 };
+
+export const getInfoForConnections = (row: ChangeHistoryDifference) => {
+  if (ChangeTypeEnum[row.changeType] === ChangeTypeEnum[0]) {
+    return `Add Link from "${row.sourceName}" to "${row.targetName}"`;
+  }
+  if (ChangeTypeEnum[row.changeType] === ChangeTypeEnum[1]) {
+    return `Remove Link from "${row.sourceName}" to "${row.targetName}"`;
+  }
+};
+
+export const getInfoForSubflow = (row: ChangeHistoryDifference) => {
+  if (ChangeTypeEnum[row.changeType] === ChangeTypeEnum[0]) {
+    return `Subflow "${row.name}" was added.`;
+  }
+  if (ChangeTypeEnum[row.changeType] === ChangeTypeEnum[1]) {
+    return `Subflow "${row.name}" was deleted with all the steps it contained.`;
+  }
+};

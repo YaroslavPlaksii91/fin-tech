@@ -1,24 +1,26 @@
-import { Box, Breadcrumbs, IconButton, Typography } from '@mui/material';
+import { Box, Breadcrumbs, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import { getActionType, getName } from './utils';
 import { StyledTableCell } from './styled';
+import {
+  BreadcrumbItem,
+  FirstBreadcrumbItem
+} from './ChangeHistoryBreadCrumbItems';
 
 import { StyledTableRow } from '@components/shared/Table/styled';
 import { ChangeHistoryDifference } from '@domain/changeHistory';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
 import routes from '@constants/routes';
-import { theme } from '@theme';
-import BezierIcon from '@icons/bezier.svg';
-import LineChartDotsSquareIcon from '@icons/lineChartDotsSquare.svg';
 import EyeIcon from '@icons/eye.svg';
 
 export function ChangesHistoryRow(props: {
   row: ChangeHistoryDifference;
+  isFirstChangeHistoryItem: boolean;
   handleRowClick: (rowId: string) => void;
   index: number;
 }) {
-  const { row, handleRowClick, index } = props;
+  const { row, handleRowClick, index, isFirstChangeHistoryItem } = props;
   const navigate = useNavigate();
 
   const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
@@ -44,27 +46,15 @@ export function ChangesHistoryRow(props: {
               key={part.id + index}
               sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
             >
-              {index === 0 ? (
-                <BezierIcon
-                  width="18px"
-                  height="18px"
-                  color={theme.palette.primary.main}
+              {isFirstChangeHistoryItem ? (
+                <FirstBreadcrumbItem
+                  part={part}
+                  index={index}
+                  handleClick={handleClick}
                 />
               ) : (
-                <LineChartDotsSquareIcon
-                  width="18px"
-                  height="18px"
-                  color={theme.palette.primary.main}
-                />
+                <BreadcrumbItem part={part} index={index} />
               )}
-              <Typography
-                sx={{ textDecoration: 'underline', cursor: 'pointer' }}
-                variant="body2"
-                color={theme.palette.info.main}
-                onClick={() => handleClick(part.id, index)}
-              >
-                {part.name}
-              </Typography>
             </Box>
           ))}
         </Breadcrumbs>
