@@ -204,7 +204,9 @@ const DecisionTable = ({
       start: selectedColumn.index + 1,
       deleteCount: 0,
       insertEntry: INITIAL_ENTRY,
-      initialEntries: isActionsCategory ? [INITIAL_ENTRY] : [INITIAL_ENTRY]
+      initialEntries: isActionsCategory
+        ? [INITIAL_ENTRY]
+        : [INITIAL_ENTRY, INITIAL_ENTRY]
     });
 
     if (!caseEntries.length) setStepIds([null]);
