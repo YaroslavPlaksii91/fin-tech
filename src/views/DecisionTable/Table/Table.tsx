@@ -9,13 +9,15 @@ import {
 } from '@mui/material';
 import { lightBlue, lightGreen } from '@mui/material/colors';
 
-import { CATEGORIES, CATEGORY, STEP } from '../constants';
+import { STEP } from '../constants';
 import {
   SelectedCell,
   FormFieldsProps,
   VariableColumnData,
   CaseEntry,
-  OPERATORS
+  OPERATORS,
+  CATEGORIES,
+  CATEGORY
 } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import {
@@ -49,12 +51,10 @@ interface Table {
   selectedColumn: VariableColumnData | null;
   handleSelectionColumn: (column: VariableColumnData) => void;
   handleDeleteRow: (index: number) => void;
-  handleInsertColumn: () => void;
-  handleDeleteCategoryColumn: () => void;
+  handleAddColumn: () => void;
+  handleDeleteColumn: () => void;
   handleChangeStep: (rowIndex: number, stepId: string) => void;
-  handleChangeColumnVariable: (
-    newVariable: Pick<DataDictionaryVariable, 'name'>
-  ) => void;
+  handleChangeColumnVariable: (newVariable: DataDictionaryVariable) => void;
   handleSubmitVariableValue: (
     data: FormFieldsProps,
     category: CATEGORY,
@@ -72,8 +72,8 @@ const Table = ({
   selectedColumn,
   handleSelectionColumn,
   handleDeleteRow,
-  handleInsertColumn,
-  handleDeleteCategoryColumn,
+  handleAddColumn,
+  handleDeleteColumn,
   handleChangeColumnVariable,
   handleChangeStep,
   handleSubmitVariableValue,
@@ -102,12 +102,12 @@ const Table = ({
   };
 
   const handleAddNewColumn = () => {
-    handleInsertColumn();
+    handleAddColumn();
     handleCloseMenu();
   };
 
-  const handleDeleteColumn = () => {
-    handleDeleteCategoryColumn();
+  const handleDelete = () => {
+    handleDeleteColumn();
     handleCloseMenu();
   };
 
@@ -184,7 +184,7 @@ const Table = ({
                 {
                   key: 'delete-column-action',
                   disabled: isLastConditionColumn || column.name === STEP,
-                  onClick: handleDeleteColumn,
+                  onClick: handleDelete,
                   icon: <TrashIcon />,
                   text: 'Delete Column'
                 }
@@ -258,15 +258,18 @@ const Table = ({
                   );
                 }
 
-                if (rows.length - 1 === rowIndex)
+                if (!caseEntry?.name)
                   return (
                     <StyledTableCell key={columnIndex}>
-                      {columnIndex === 0 ? 'Else' : ''}
+                      {rows.length - 1 === rowIndex && columnIndex === 0
+                        ? 'Else'
+                        : ''}
                     </StyledTableCell>
                   );
 
                 const hasValue =
                   Boolean(caseEntry.expression) || Boolean(caseEntry.operator);
+
                 const expression = dataType.isString
                   ? parseStringFormat(caseEntry.expression)
                   : caseEntry.expression;

@@ -1,12 +1,5 @@
 import { CaseEntry } from './types';
 
-export enum CATEGORIES {
-  Conditions = 'conditions',
-  Actions = 'actions'
-}
-
-export type CATEGORY = `${CATEGORIES}`;
-
 export const BOOLEAN_OPTIONS = ['true', 'false'];
 
 export const STEP_DETAILS =

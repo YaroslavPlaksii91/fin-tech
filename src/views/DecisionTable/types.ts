@@ -1,5 +1,3 @@
-import { CATEGORY } from './constants';
-
 import { DATA_TYPE } from '@domain/dataDictionary';
 
 export type CaseEntry = {
@@ -10,9 +8,9 @@ export type CaseEntry = {
 };
 
 export type CaseEntries = {
-  conditions: CaseEntry[];
-  actions: CaseEntry[];
-  edgeId: string | null;
+  conditions?: CaseEntry[];
+  actions?: CaseEntry[];
+  edgeId?: string | null;
 };
 
 export interface SelectedCell extends CaseEntry {
@@ -51,4 +49,10 @@ export enum OPERATORS {
   ANY = 'any'
 }
 
+export enum CATEGORIES {
+  Conditions = 'conditions',
+  Actions = 'actions'
+}
+
+export type CATEGORY = `${CATEGORIES}`;
 export type Operator = `${OPERATORS}`;

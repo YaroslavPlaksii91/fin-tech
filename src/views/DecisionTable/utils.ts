@@ -1,13 +1,15 @@
 import { lightGreen, lightBlue } from '@mui/material/colors';
 import { mapValues, filter } from 'lodash';
 
+import { INITIAL_ENTRY, INITIAL_CASE_ENTRIES } from './constants';
 import {
+  CaseEntries,
+  CaseEntry,
+  Operator,
+  OPERATORS,
   CATEGORIES,
-  CATEGORY,
-  INITIAL_ENTRY,
-  INITIAL_CASE_ENTRIES
-} from './constants';
-import { CaseEntries, CaseEntry, Operator, OPERATORS } from './types';
+  CATEGORY
+} from './types';
 
 import {
   DATA_TYPE,
@@ -107,10 +109,12 @@ export const getVariableSources = (
     {}
   );
 
-  return caseEntries.map(({ name }) => ({
-    name,
-    sourceType: variablesSourceTypes[name]
-  }));
+  return caseEntries
+    .map(({ name }) => ({
+      name,
+      sourceType: variablesSourceTypes[name]
+    }))
+    .filter(({ name }) => name);
 };
 
 export const updateCaseEntry = ({
@@ -129,7 +133,7 @@ export const updateCaseEntry = ({
   initialEntries?: CaseEntry[];
 }) =>
   (caseEntries.length ? caseEntries : INITIAL_CASE_ENTRIES).map((row) => {
-    if (!row[category].length)
+    if (!row[category]?.length)
       return {
         ...row,
         [category]: initialEntries
