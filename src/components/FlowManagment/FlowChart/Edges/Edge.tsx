@@ -8,8 +8,6 @@ import {
 import { StepSelectionMenu } from '../../../StepManagment/StepSelectionMenu/StepSelectionMenu';
 import { ADD_BUTTON_ON_EDGE, EdgeData } from '../types';
 
-import styles from './style.module.scss';
-
 export function CustomEdge({
   id,
   sourceX,
@@ -47,9 +45,9 @@ export function CustomEdge({
             position: 'absolute',
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
             pointerEvents: 'all',
-            padding: '20px 40px'
+            zIndex: 1
           }}
-          className={data?.animated ? styles['edge-animation'] : ''}
+          className={data?.animated ? 'edge-animation' : ''}
         >
           {data && <StepSelectionMenu id={id} data={data} />}
         </div>

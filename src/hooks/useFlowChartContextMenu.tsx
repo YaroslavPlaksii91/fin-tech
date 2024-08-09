@@ -4,6 +4,8 @@ import { useReactFlow } from 'reactflow';
 import { FlowNode } from '@domain/flow.ts';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 
+const NODE_MENU_OPEN_CLASS = 'node-menu-open';
+
 function useFlowChartContextMenu() {
   const { getNode } = useReactFlow();
 
@@ -11,9 +13,10 @@ function useFlowChartContextMenu() {
   const [flowNode, setFlowNode] = useState<FlowNode | null>(null);
 
   const onPaneClick = useCallback(() => {
+    nodeElement && nodeElement.classList.remove(NODE_MENU_OPEN_CLASS);
     setFlowNode(null);
     setNodeElement(null);
-  }, [setFlowNode, setNodeElement]);
+  }, [setFlowNode, setNodeElement, nodeElement]);
 
   const onNodeContextMenu = useCallback(
     (event: React.MouseEvent) => {
@@ -26,6 +29,7 @@ function useFlowChartContextMenu() {
         const node = getNode(nodeId);
         if (node?.type === StepType.START || node?.type === StepType.END)
           return;
+        targetElement.classList.add(NODE_MENU_OPEN_CLASS);
         setNodeElement(targetElement);
         setFlowNode(getNode(nodeId) as FlowNode);
       }

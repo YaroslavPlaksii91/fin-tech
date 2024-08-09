@@ -1,6 +1,6 @@
 {
   "extends": ["stylelint-config-standard", "stylelint-prettier/recommended"],
-  "plugins": ["stylelint-prettier", "stylelint-scss", "stylelint-order"],
+  "plugins": ["stylelint-prettier", "stylelint-order"],
   "ignoreAtRules": ["function", "if", "else", "mixin", "include"],
   "rules": {
     "prettier/prettier": true,
