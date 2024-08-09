@@ -64,9 +64,10 @@ export const StyledListItemButton = styled(ListItemButton, {
     padding: 0
   },
 
-  ...(isSelected && { '--color-opacity': '48%', borderRadius: '6px' }),
+  ...(isSelected && { '--color-opacity': '16%', borderRadius: '6px' }),
   img: {
-    width: '32px'
+    maxWidth: '40px',
+    maxHeight: '40px'
   }
 }));
 
