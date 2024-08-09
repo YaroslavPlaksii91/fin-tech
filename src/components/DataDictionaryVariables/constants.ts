@@ -77,7 +77,8 @@ export const INITIAL_INPUT_FILTERS = {
 export const INPUT_GROUPS = [
   {
     field: 'search',
-    placeholder: 'Search By Keyword'
+    placeholder: 'Search By Keyword',
+    label: 'Search By Keyword'
   }
 ];
 export interface TableHeader {
