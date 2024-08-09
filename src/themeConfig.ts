@@ -40,7 +40,8 @@ export const palette = {
   aliceBlue: '#F8F9FB',
   amber: '#FFF8E1',
   sidebarBackground: '#E7E8EB',
-  sidebarItemHover: '#dedfe2'
+  sidebarItemHover: '#dedfe2',
+  green: '#e8f5e9ff'
 };
 
 declare module '@mui/material/styles' {
