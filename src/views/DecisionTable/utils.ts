@@ -66,7 +66,7 @@ export const getColumns = (
   if (!caseEntry?.[category]?.length)
     return category === CATEGORIES.Conditions ? [INITIAL_COLUMN] : [];
 
-  return caseEntry[category].map((el, index) => {
+  return (caseEntry[category] || []).map((el, index) => {
     const variablesDataTypes = variables.reduce<Record<string, DATA_TYPE>>(
       (acc, current) => ({
         ...acc,
@@ -139,7 +139,7 @@ export const updateCaseEntry = ({
         [category]: initialEntries
       };
 
-    const newColumns = [...row[category]];
+    const newColumns = [...(row[category] || [])];
 
     if (insertEntry) newColumns.splice(start, deleteCount, insertEntry);
     else newColumns.splice(start, deleteCount);

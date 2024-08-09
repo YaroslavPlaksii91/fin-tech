@@ -40,13 +40,13 @@ export type ChampionChallengerData = {
 };
 
 export type DecisionTableData = {
-  caseEntries: CaseEntries[];
-  defaultActions: CaseEntry[];
-  variableSources: {
+  caseEntries?: CaseEntries[];
+  defaultActions?: CaseEntry[];
+  variableSources?: {
     name: string;
     sourceType: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
   }[];
-  defaultEdgeId: string | null;
+  defaultEdgeId?: string | null;
 };
 
 export type ExpressionVariableSources = {

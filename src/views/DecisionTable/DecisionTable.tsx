@@ -414,8 +414,8 @@ const DecisionTable = ({
 
     // To make possible setup default Actions for already existed table
     const savedDefaultActions =
-      data.defaultActions.length === 0
-        ? (data.caseEntries[0]?.actions || []).map((entry) => ({
+      data.defaultActions?.length === 0
+        ? (data.caseEntries?.[0]?.actions || []).map((entry) => ({
             ...INITIAL_ENTRY,
             name: entry.name
           }))
@@ -432,9 +432,12 @@ const DecisionTable = ({
 
   const setInitialData = useCallback(() => {
     if (initialData) {
-      setStepIds([...initialData.savedStepIds, initialData.savedDefaultStepId]);
-      setCaseEntries(initialData.savedCaseEntries);
-      setDefaultActions(initialData.savedDefaultActions);
+      setStepIds([
+        ...(initialData?.savedStepIds || []),
+        initialData.savedDefaultStepId
+      ]);
+      setCaseEntries(initialData.savedCaseEntries || []);
+      setDefaultActions(initialData.savedDefaultActions || []);
       setValue('note', initialData.savedNote);
     }
   }, [initialData]);
