@@ -215,7 +215,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
         isOpen={isFiltersOpen}
         filters={filters}
         inputFilters={inputFilters}
-        inputGroupsToshow={INPUT_GROUPS}
+        inputGroupsToShow={INPUT_GROUPS}
         filterGroupsToShow={filterGroupsToShow}
         handleReset={handleFiltersReset}
         handleApply={handleFiltersApply}

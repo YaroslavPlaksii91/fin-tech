@@ -7,11 +7,13 @@ export const INITIAL_INPUT_FILTERS = { stack: '', campaignId: '' };
 export const INPUT_GROUPS_TO_SHOW = [
   {
     field: 'stack',
-    placeholder: 'Stack'
+    placeholder: 'Stack',
+    label: 'Stack'
   },
   {
     field: 'campaignId',
-    placeholder: 'Campaign ID'
+    placeholder: 'Campaign ID',
+    label: 'Campaign ID'
   }
 ];
 

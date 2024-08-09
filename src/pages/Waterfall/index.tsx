@@ -180,7 +180,7 @@ const Waterfall = () => {
         hasTimePicker={false}
         dateFilters={{ dateFrom, dateTo }}
         inputFilters={inputFilters}
-        inputGroupsToshow={INPUT_GROUPS_TO_SHOW}
+        inputGroupsToShow={INPUT_GROUPS_TO_SHOW}
         handleReset={handleFiltersReset}
         handleApply={handleFiltersApply}
         handleClose={handleFiltersClose}

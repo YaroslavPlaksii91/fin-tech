@@ -8,11 +8,13 @@ export const INITIAL_INPUT_FILTERS = {
 export const INPUT_GROUPS_TO_SHOW = [
   {
     field: 'denialReasons',
-    placeholder: 'Denial Reasons'
+    placeholder: 'Denial Reasons',
+    label: 'Denial Reasons'
   },
   {
     field: 'deniedBy',
-    placeholder: 'Denied by'
+    placeholder: 'Denied by',
+    label: 'Denied by'
   }
 ];
 
