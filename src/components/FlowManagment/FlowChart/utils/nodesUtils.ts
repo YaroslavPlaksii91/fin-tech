@@ -50,7 +50,7 @@ const getListNodesData = (
       const caseEntriesData = data.caseEntries.map((entry, i) => {
         const stepId = rfInstance.getEdge(entry.edgeId || '')?.target;
         const node = rfInstance.getNode(stepId || '') as FlowNode;
-        const prepairedTooltipText = getTooltipText(entry.conditions);
+        const prepairedTooltipText = getTooltipText(entry?.conditions || []);
 
         return {
           id: entry.edgeId,

@@ -1,18 +1,5 @@
 import { CaseEntry } from './types';
 
-export enum CATEGORIES {
-  Conditions = 'conditions',
-  Actions = 'actions',
-  DefaultActions = 'defaultActions'
-}
-
-export type CATEGORY = `${CATEGORIES}`;
-
-export type CATEGORIES_WITHOUT_DEFAULT_ACTIONS = Exclude<
-  CATEGORIES,
-  CATEGORIES.DefaultActions
->;
-
 export const BOOLEAN_OPTIONS = ['true', 'false'];
 
 export const STEP_DETAILS =

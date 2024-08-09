@@ -9,18 +9,15 @@ import {
 } from '@mui/material';
 import { lightBlue, lightGreen } from '@mui/material/colors';
 
-import {
-  CATEGORIES,
-  CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
-  CATEGORY,
-  STEP
-} from '../constants';
+import { STEP } from '../constants';
 import {
   SelectedCell,
   FormFieldsProps,
   VariableColumnData,
   CaseEntry,
-  OPERATORS
+  OPERATORS,
+  CATEGORIES,
+  CATEGORY
 } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import {
@@ -47,23 +44,20 @@ import { DataDictionaryVariable, Variable } from '@domain/dataDictionary';
 
 interface Table {
   stepIds: (string | null)[];
-  defaultStepId: string | null;
   columns: VariableColumnData[];
   rows: Record<string, CaseEntry>[];
   variables: Record<string, Variable[]>;
-  stepsOptions: { value: string; label: string }[];
+  stepOptions: { value: string; label: string }[];
   selectedColumn: VariableColumnData | null;
   handleSelectionColumn: (column: VariableColumnData) => void;
   handleDeleteRow: (index: number) => void;
-  handleInsertColumn: () => void;
-  handleDeleteCategoryColumn: () => void;
+  handleAddColumn: () => void;
+  handleDeleteColumn: () => void;
   handleChangeStep: (rowIndex: number, stepId: string) => void;
-  handleChangeColumnVariable: (
-    newVariable: Pick<DataDictionaryVariable, 'name'>
-  ) => void;
+  handleChangeColumnVariable: (newVariable: DataDictionaryVariable) => void;
   handleSubmitVariableValue: (
     data: FormFieldsProps,
-    category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
+    category: CATEGORY,
     index: number
   ) => void;
   hasUserPermission: boolean;
@@ -71,16 +65,15 @@ interface Table {
 
 const Table = ({
   stepIds,
-  defaultStepId,
   columns,
   rows,
   variables,
-  stepsOptions,
+  stepOptions,
   selectedColumn,
   handleSelectionColumn,
   handleDeleteRow,
-  handleInsertColumn,
-  handleDeleteCategoryColumn,
+  handleAddColumn,
+  handleDeleteColumn,
   handleChangeColumnVariable,
   handleChangeStep,
   handleSubmitVariableValue,
@@ -109,12 +102,12 @@ const Table = ({
   };
 
   const handleAddNewColumn = () => {
-    handleInsertColumn();
+    handleAddColumn();
     handleCloseMenu();
   };
 
-  const handleDeleteColumn = () => {
-    handleDeleteCategoryColumn();
+  const handleDelete = () => {
+    handleDeleteColumn();
     handleCloseMenu();
   };
 
@@ -191,7 +184,7 @@ const Table = ({
                 {
                   key: 'delete-column-action',
                   disabled: isLastConditionColumn || column.name === STEP,
-                  onClick: handleDeleteColumn,
+                  onClick: handleDelete,
                   icon: <TrashIcon />,
                   text: 'Delete Column'
                 }
@@ -233,23 +226,18 @@ const Table = ({
               parity={(rowIndex + 1) % 2 === 0 ? 'even' : 'odd'}
             >
               {columns.map((column, columnIndex) => {
-                const { name } = column;
                 const dataType = checkDataType(column.dataType);
+                const caseEntry = row[column.name];
 
-                if (name === STEP) {
-                  const value =
-                    rowIndex >= stepIds.length
-                      ? defaultStepId
-                      : stepIds.find((_, stepIndex) => stepIndex === rowIndex);
-
+                if (column.name === STEP) {
                   return (
                     <Fragment key={columnIndex}>
                       <StyledTableCell>
                         <Select
                           fullWidth
                           placeholder="Select next step"
-                          value={value || ''}
-                          options={stepsOptions}
+                          value={stepIds[rowIndex] || ''}
+                          options={stepOptions}
                           handleChange={(stepId) =>
                             handleChangeStep(rowIndex, stepId)
                           }
@@ -270,20 +258,21 @@ const Table = ({
                   );
                 }
 
-                if (!name.length || !row[name])
+                if (!caseEntry?.name)
                   return (
                     <StyledTableCell key={columnIndex}>
-                      {columnIndex === 0 && rows.length - 1 === rowIndex
+                      {rows.length - 1 === rowIndex && columnIndex === 0
                         ? 'Else'
                         : ''}
                     </StyledTableCell>
                   );
 
                 const hasValue =
-                  Boolean(row[name].expression) || Boolean(row[name].operator);
+                  Boolean(caseEntry.expression) || Boolean(caseEntry.operator);
+
                 const expression = dataType.isString
-                  ? parseStringFormat(row[name].expression)
-                  : row[name].expression;
+                  ? parseStringFormat(caseEntry.expression)
+                  : caseEntry.expression;
 
                 return (
                   <StyledTableCell
@@ -292,7 +281,7 @@ const Table = ({
                     onClick={() => {
                       hasUserPermission &&
                         setSelectedCell({
-                          ...row[name],
+                          ...caseEntry,
                           rowIndex,
                           expression,
                           category: column.category,
@@ -303,7 +292,7 @@ const Table = ({
                   >
                     <Typography variant="body2">
                       {hasValue
-                        ? `${column.category === CATEGORIES.Actions ? OPERATORS.EQUAL : row[name].operator} ${expression}`
+                        ? `${column.category === CATEGORIES.Conditions ? caseEntry.operator : OPERATORS.EQUAL} ${expression}`
                         : `Enter ${column.category === CATEGORIES.Conditions ? 'Condition' : 'Value'}`}
                     </Typography>
                   </StyledTableCell>
