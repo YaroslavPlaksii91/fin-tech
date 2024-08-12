@@ -16,7 +16,6 @@ import { authService } from '@services/auth.ts';
 import { palette } from '@theme';
 import routes from '@constants/routes';
 import Dialog from '@components/shared/Modals/Dialog';
-import { getFullUserName } from '@utils/helpers';
 import { fetchUserInfo, selectUserInfo } from '@store/auth/auth.ts';
 import { useAppDispatch, useAppSelector } from '@store/hooks.ts';
 
@@ -53,7 +52,7 @@ function Navigation() {
               sx={{ cursor: 'auto' }}
               disabled
             >
-              {userInfo && getFullUserName(userInfo)}
+              {userInfo?.userName}
             </StyledHeaderButton>
             <StyledHeaderIconButton onClick={() => setOpenModal(true)}>
               <LogoutIcon color={palette.white} />
