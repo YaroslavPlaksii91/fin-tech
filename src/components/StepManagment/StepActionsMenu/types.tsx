@@ -3,7 +3,7 @@ import EditIcon from '@icons/edit.svg';
 import RenameIcon from '@icons/rename.svg';
 import CopyIcon from '@icons/copy.svg';
 import EyeIcon from '@icons/eye.svg';
-import TrashIcon from '@icons/trash.svg';
+import DeleteIcon from '@icons/delete.svg';
 import { OptionsFlowParams } from '@components/FlowManagment/ActionsMenu/options';
 
 export enum ActionTypes {
@@ -40,7 +40,7 @@ export const editStepOption = {
 export const deleteStepOption = {
   label: 'Delete step',
   dataKey: ActionTypes.DELETE_STEP,
-  icon: <TrashIcon color={theme.palette.error.main} />, // TODO: change icon
+  icon: <DeleteIcon />,
   textColor: theme.palette.error.main
 };
 
