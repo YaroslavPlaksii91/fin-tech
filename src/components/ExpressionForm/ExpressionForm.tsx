@@ -27,6 +27,7 @@ import { groupBy } from 'lodash';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AxiosError } from 'axios';
 import pick from 'lodash/pick';
+import omit from 'lodash/omit';
 
 import validationSchema from './validationSchema';
 import { FieldValues } from './types';
@@ -84,7 +85,11 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   renderTitle
 }) => {
   const dataDictionary = useContext(DataDictionaryContext);
-  const variables = dataDictionary?.variables || {};
+  // Discussed with Yaryna, and decided to hide craReportVariables here
+  const variables = useMemo(
+    () => omit(dataDictionary?.variables, ['craReportVariables']) || {},
+    [dataDictionary?.variables]
+  );
   const [dataDictMode, setDataDictMode] = useState<DataDictMode | null>(null);
 
   const expressionEditorRef: MutableRefObject<ExpressionEditorAPI | null> =
@@ -117,6 +122,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
 
     const { params, variableSources } =
       mapVariablesToParamsAndSources(usageVariables);
+
     try {
       await dataDictionaryService.validateExpression({
         expression: data.expressionString,
@@ -297,8 +303,9 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         data={
           dataDictMode === DataDictMode.Variable
             ? variableFieldDataDict
-            : dataDictionary?.variables
+            : variables
         }
+        integrationData={dataDictionary?.integrationVariables}
         title={
           dataDictMode === DataDictMode.Variable
             ? 'Add Output Variable'

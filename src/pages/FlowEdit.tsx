@@ -15,7 +15,7 @@ import { IsDirtyProvider } from '@contexts/IsDirtyContext';
 function FlowEdit() {
   const { flow } = useAppSelector(selectFlow);
   const [copyFlow, setCopyFlow] = useState<IFlow>();
-  const { variables } = useDataDictionaryVariables(flow);
+  const { variables, integrationVariables } = useDataDictionaryVariables(flow);
   const [craClarityControlFiles, setCRAClarityControlFiles] = useState<
     string[]
   >([]);
@@ -39,7 +39,7 @@ function FlowEdit() {
   }, []);
 
   return (
-    <DataDictionaryContext.Provider value={{ variables }}>
+    <DataDictionaryContext.Provider value={{ variables, integrationVariables }}>
       <CRAClarityControlFilesContext.Provider value={craClarityControlFiles}>
         <IsDirtyProvider>
           {copyFlow && (
