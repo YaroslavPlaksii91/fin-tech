@@ -64,7 +64,10 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
   );
 
   return (
-    <StyledAccordion key={step.id}>
+    <StyledAccordion
+      key={step.id}
+      slotProps={{ transition: { unmountOnExit: true } }}
+    >
       <StyledListItem
         sx={{ paddingLeft: `${level * 40}px` }}
         className={activeStep.subFlowId === step.id ? 'active' : undefined}

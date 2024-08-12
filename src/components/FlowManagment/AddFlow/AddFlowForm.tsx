@@ -92,35 +92,37 @@ export const AddFlow: React.FC = () => {
           </StyledButton>
         </StyledDiv>
       )}
-      <Dialog
-        title="Create New Flow"
-        open={modalOpen}
-        displayConfirmBtn={false}
-        displayedCancelBtn={false}
-      >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <InputText
-            fullWidth
-            name="name"
-            control={control}
-            label="Flow name*"
-            placeholder="Flow Name*"
-          />
-          <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
-            <LoadingButton
-              loading={isSubmitting}
-              disabled={isSubmitting}
-              variant="text"
-              type="submit"
-            >
-              Create
-            </LoadingButton>
-            <Button variant="text" onClick={handleCloseModal}>
-              Cancel
-            </Button>
-          </Stack>
-        </form>
-      </Dialog>
+      {modalOpen && (
+        <Dialog
+          title="Create New Flow"
+          open={modalOpen}
+          displayConfirmBtn={false}
+          displayedCancelBtn={false}
+        >
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <InputText
+              fullWidth
+              name="name"
+              control={control}
+              label="Flow name*"
+              placeholder="Flow Name*"
+            />
+            <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
+              <LoadingButton
+                loading={isSubmitting}
+                disabled={isSubmitting}
+                variant="text"
+                type="submit"
+              >
+                Create
+              </LoadingButton>
+              <Button variant="text" onClick={handleCloseModal}>
+                Cancel
+              </Button>
+            </Stack>
+          </form>
+        </Dialog>
+      )}
     </>
   );
 };

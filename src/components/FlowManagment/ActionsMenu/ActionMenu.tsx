@@ -110,21 +110,27 @@ const ActionsMenu: React.FC<{
         options={options}
         footer={<Details flow={flow} />}
       />
-      <RenameFlow
-        flow={flow}
-        modalOpen={modalRenameOpen}
-        setModalOpen={setModalRenameOpen}
-      />
-      <DeleteFlow
-        flowId={flow.id}
-        modalOpen={modalDeleteOpen}
-        setModalOpen={setModalDeleteOpen}
-      />
-      <DuplicateFlow
-        flow={flow}
-        modalOpen={modalDuplicateOpen}
-        setModalOpen={setModalDuplicateOpen}
-      />
+      {modalRenameOpen && (
+        <RenameFlow
+          flow={flow}
+          modalOpen={modalRenameOpen}
+          setModalOpen={setModalRenameOpen}
+        />
+      )}
+      {modalDeleteOpen && (
+        <DeleteFlow
+          flowId={flow.id}
+          modalOpen={modalDeleteOpen}
+          setModalOpen={setModalDeleteOpen}
+        />
+      )}
+      {modalDuplicateOpen && (
+        <DuplicateFlow
+          flow={flow}
+          modalOpen={modalDuplicateOpen}
+          setModalOpen={setModalDuplicateOpen}
+        />
+      )}
     </>
   );
 };

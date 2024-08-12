@@ -249,12 +249,13 @@ const Sidebar = () => {
             <StyledAccordion
               expanded={expandedFlowList}
               onChange={() => setExpandedFlowList(!expandedFlowList)}
+              slotProps={{ transition: { unmountOnExit: true } }}
             >
               <StyledMainAccordionSummary
                 expandIcon={<ExpandMoreIcon color="primary" />}
                 aria-controls="flowList-content"
                 id="flowList-header"
-                expanded={expanded}
+                expanded={expanded ? 1 : 0}
               >
                 <NavLink
                   onClick={(e) => e.stopPropagation()}
@@ -277,6 +278,7 @@ const Sidebar = () => {
                     expandedFlow === PRODUCTION_FLOW_ID && expandedFlow === id
                   }
                   onChange={handleChangeFlow(PRODUCTION_FLOW_ID)}
+                  slotProps={{ transition: { unmountOnExit: true } }}
                 >
                   <Box
                     sx={{
@@ -314,6 +316,7 @@ const Sidebar = () => {
                     expanded={
                       expandedFlow === flowItem.id && expandedFlow === id
                     }
+                    slotProps={{ transition: { unmountOnExit: true } }}
                     onChange={handleChangeFlow(flowItem.id)}
                   >
                     <Box sx={{ position: 'relative' }}>
@@ -368,7 +371,7 @@ const Sidebar = () => {
                 key={index}
                 component={NavLink}
                 to={item.to}
-                expanded={expanded}
+                expanded={expanded ? 1 : 0}
               >
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 {expanded && (
@@ -385,12 +388,13 @@ const Sidebar = () => {
               disableGutters
               expanded={expandedReports}
               onChange={handleReportsToggle}
+              slotProps={{ transition: { unmountOnExit: true } }}
             >
               <StyledMainAccordionSummary
                 expandIcon={<ExpandMoreIcon color="primary" />}
                 aria-controls="flowList-content"
                 id="flowList-header"
-                expanded={expanded}
+                expanded={expanded ? 1 : 0}
               >
                 <ListItemIcon>
                   <DocumentPaperIcon {...itemIconProps} />
