@@ -334,6 +334,13 @@ const Table = ({
         isOpen={isDialogOpen}
         onClose={handleCloseDialog}
         onConfirm={handleChangeColumnVariable}
+        setSelectedObjectPropertyFunction={(object, property) => ({
+          ...property,
+          // Technically is not correct source type, but for calculations this is backend requirement -
+          // for now this row brake the decision table flow with -> user vars
+          sourceName: object.name,
+          sourceType: object.sourceType
+        })}
       />
     </>
   );

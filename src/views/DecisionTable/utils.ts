@@ -112,9 +112,9 @@ export const getVariableSources = (
   );
 
   return caseEntries
-    .map(({ name }) => ({
-      name,
-      sourceType: variablesSourceTypes[name]
+    .map(({ name, sourceName, sourceType }) => ({
+      name: sourceName || name,
+      sourceType: sourceType || variablesSourceTypes[name]
     }))
     .filter(({ name }) => name);
 };

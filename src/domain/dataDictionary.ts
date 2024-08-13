@@ -75,6 +75,7 @@ export interface DataDictionaryVariable {
   usageMode?: string;
   allowedValues?: string | string[];
   description?: string;
+  sourceName?: string;
 }
 
 export interface DataDictionaryIntegrationVariable

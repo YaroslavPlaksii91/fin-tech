@@ -246,7 +246,9 @@ const DecisionTable = ({
     const insertEntry = {
       ...INITIAL_ENTRY,
       name: newVariable.name,
-      dataType: newVariable.dataType
+      dataType: newVariable.dataType,
+      sourceName: newVariable.sourceName,
+      sourceType: newVariable.sourceType
     };
 
     const updatedCaseEntries = updateCaseEntry({
@@ -388,6 +390,7 @@ const DecisionTable = ({
         updatedNodes,
         newEdges
       );
+
       await flowService.validateFlow(data);
 
       setNodes(updatedNodes);
