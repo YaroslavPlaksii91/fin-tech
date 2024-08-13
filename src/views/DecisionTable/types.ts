@@ -1,10 +1,17 @@
-import { DATA_TYPE } from '@domain/dataDictionary';
+import {
+  DATA_TYPE,
+  INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
+  VARIABLE_SOURCE_TYPE
+} from '@domain/dataDictionary';
 
 export type CaseEntry = {
   name: string;
   operator: Operator;
   expression: string;
   destinationType?: string;
+  dataType?: DATA_TYPE;
+  sourceType?: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
+  sourceName?: string;
 };
 
 export type CaseEntries = {

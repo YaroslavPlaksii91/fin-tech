@@ -5,6 +5,7 @@ import { debounce, flatMap, isEmpty, keyBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import omit from 'lodash/omit';
 
 import {
   INITIAL_ENTRY,
@@ -96,7 +97,12 @@ const DecisionTable = ({
 
   const isPreview = isViewMode || !canUpdateFlow;
   const username = getFullUserName(user);
-  const variables = dataDictionary?.variables || {};
+  // Discussed with Yaryna, and decided to hide craReportVariables here
+  const variables = useMemo(
+    () => omit(dataDictionary?.variables, ['craReportVariables']) || {},
+    [dataDictionary?.variables]
+  );
+  const integrationVariables = dataDictionary?.integrationVariables || {};
   const flatVariables = flatMap(variables);
   const nodes: FlowNode[] = getNodes();
   const edges = getEdges();
@@ -244,7 +250,10 @@ const DecisionTable = ({
 
     const insertEntry = {
       ...INITIAL_ENTRY,
-      name: newVariable.name
+      name: newVariable.name,
+      dataType: newVariable.dataType,
+      sourceName: newVariable.sourceName,
+      sourceType: newVariable.sourceType
     };
 
     const updatedCaseEntries = updateCaseEntry({
@@ -388,6 +397,7 @@ const DecisionTable = ({
         updatedNodes,
         newEdges
       );
+
       await flowService.validateFlow(data);
 
       setNodes(updatedNodes);
@@ -517,6 +527,7 @@ const DecisionTable = ({
             columns={columnsWithStep}
             rows={rowsWithElseCondition}
             variables={variables}
+            integrationData={integrationVariables}
             stepOptions={stepOptions}
             selectedColumn={selectedColumn}
             handleChangeStep={handleChangeStep}

@@ -47,6 +47,7 @@ interface Table {
   columns: VariableColumnData[];
   rows: Record<string, CaseEntry>[];
   variables: Record<string, Variable[]>;
+  integrationData: Record<string, Variable[]>;
   stepOptions: { value: string; label: string }[];
   selectedColumn: VariableColumnData | null;
   handleSelectionColumn: (column: VariableColumnData) => void;
@@ -68,6 +69,7 @@ const Table = ({
   columns,
   rows,
   variables,
+  integrationData,
   stepOptions,
   selectedColumn,
   handleSelectionColumn,
@@ -324,10 +326,21 @@ const Table = ({
       )}
       <DataDictionaryDialog
         data={filterVariablesByUsageMode(variables, selectedColumn?.category)}
+        integrationData={filterVariablesByUsageMode(
+          integrationData,
+          selectedColumn?.category
+        )}
         title="Add Variable"
         isOpen={isDialogOpen}
         onClose={handleCloseDialog}
         onConfirm={handleChangeColumnVariable}
+        setSelectedObjectPropertyFunction={(object, property) => ({
+          ...property,
+          // Technically is not correct source type, but for calculations this is backend requirement -
+          // for now this row brake the decision table flow with -> user vars
+          sourceName: object.name,
+          sourceType: object.sourceType
+        })}
       />
     </>
   );

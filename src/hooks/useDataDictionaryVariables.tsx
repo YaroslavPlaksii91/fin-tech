@@ -21,6 +21,11 @@ const isFulfilled = function <T>(
 
 const useDataDictionaryVariables = (flow?: IFlow) => {
   const [variables, setVariables] = useState<DataDictionaryVariableRecord>();
+  const [integrationVariables, setIntegrationVariables] =
+    useState<DataDictionaryVariableRecord>({
+      craClarityReportVariables: [],
+      craFactorTrustReportVariables: []
+    });
   const [isLoadingData, setIsLoadingData] = useState(false);
 
   const getVariables = useCallback(async () => {
@@ -29,7 +34,10 @@ const useDataDictionaryVariables = (flow?: IFlow) => {
     // TODO: extends with new endpoints for getting data dictionary variables
     const results = await Promise.allSettled([
       dataDictionaryService.getDataDictionaryVariables(),
-      dataDictionaryService.getIntegrationVariables()
+      dataDictionaryService.getIntegrationVariables().then((data) => {
+        setIntegrationVariables(data);
+        return data;
+      })
     ]);
 
     const temporaryVariables =
@@ -80,7 +88,9 @@ const useDataDictionaryVariables = (flow?: IFlow) => {
       ...permanentVariables
     ];
 
-    if (fulfilledValues.length) setVariables(extendedVariables);
+    if (fulfilledValues.length) {
+      setVariables(extendedVariables);
+    }
 
     setIsLoadingData(false);
   }, [flow]);
@@ -89,7 +99,7 @@ const useDataDictionaryVariables = (flow?: IFlow) => {
     void getVariables();
   }, [getVariables]);
 
-  return { isLoadingData, variables };
+  return { isLoadingData, variables, integrationVariables };
 };
 
 export default useDataDictionaryVariables;
