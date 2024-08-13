@@ -13,7 +13,8 @@ const routes = {
     changeHistory: '/change-history',
     leadRequest: '/lead-request',
     denialReasons: '/denial-reasons',
-    waterfall: '/waterfall'
+    waterfall: '/waterfall',
+    billingReport: '/billing-report'
   },
   permissionDenied: '/permission-denied'
 };

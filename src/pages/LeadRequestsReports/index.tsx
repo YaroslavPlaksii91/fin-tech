@@ -28,7 +28,7 @@ import TuneIcon from '@icons/tune.svg';
 import ExportCSVButton from '@components/shared/ExportCSVButton';
 import { removeSingleQuotesODataParams } from '@utils/helpers';
 
-export default function LeadRequestsReportsPage() {
+const LeadRequestsReports = () => {
   const [rows, setRows] = useState<RowData[]>([]);
   const [selectedRow, setSelectedRow] = useState<RowData | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -161,7 +161,7 @@ export default function LeadRequestsReportsPage() {
         justifyContent="space-between"
         alignItems="center"
         spacing={2}
-        py={2}
+        pb={2}
       >
         <Typography variant="h4">Applications</Typography>
         <Stack
@@ -242,4 +242,6 @@ export default function LeadRequestsReportsPage() {
       </Drawer>
     </Box>
   );
-}
+};
+
+export default LeadRequestsReports;

@@ -72,6 +72,8 @@ const getDataGridColumns = ({
     pinnable: true,
     sortable: false,
     resizable: false,
+    width: 75,
+    align: 'center',
     renderCell: () => (
       <Button size="small" variant="text" onClick={handleDetails}>
         Details

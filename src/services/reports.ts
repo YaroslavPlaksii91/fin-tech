@@ -1,3 +1,4 @@
+import { BilingReport, GetBilingReport } from '@domain/billingReport';
 import { DenialReasonsReportOData } from '@domain/denielReasonsReports';
 import { LeadRequestsReportsOData } from '@domain/leadRequestsReports';
 import { GetWaterfallReport, WaterfallReport } from '@domain/waterfallReport';
@@ -52,6 +53,13 @@ class ReportingService {
       }
     );
     return res;
+  }
+
+  async getBillingReport({ params }: GetBilingReport) {
+    const { data } = await reportApi.get<BilingReport>(`/billing-report`, {
+      params
+    });
+    return data;
   }
 }
 

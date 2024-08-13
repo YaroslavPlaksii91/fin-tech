@@ -12,7 +12,7 @@ import { integrationsService } from '@services/integrations';
 import { CRAClarityControlFilesContext } from '@contexts/CRAClarityControlFilesContext';
 import { IsDirtyProvider } from '@contexts/IsDirtyContext';
 
-function FlowEdit() {
+const FlowEdit = () => {
   const { flow } = useAppSelector(selectFlow);
   const [copyFlow, setCopyFlow] = useState<IFlow>();
   const { variables } = useDataDictionaryVariables(flow);
@@ -53,6 +53,6 @@ function FlowEdit() {
       </CRAClarityControlFilesContext.Provider>
     </DataDictionaryContext.Provider>
   );
-}
+};
 
 export default FlowEdit;
