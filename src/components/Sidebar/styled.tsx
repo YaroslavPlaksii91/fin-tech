@@ -103,7 +103,7 @@ export const StyledSubAccordionSummary = styled(AccordionSummary)(() => ({
 }));
 
 export const StyledMainAccordionSummary = styled(AccordionSummary)<
-  AccordionSummaryProps & { expanded: boolean }
+  AccordionSummaryProps & { expanded: number }
 >(({ expanded, theme: { palette } }) => ({
   minHeight: '32px',
   backgroundColor: palette.sidebarBackground,
@@ -159,7 +159,8 @@ export const StyledPaper = styled(Paper)(({ theme: { palette } }) => ({
   flexGrow: 0,
   flexShrink: 0,
   backgroundColor: palette.sidebarBackground,
-  boxSizing: 'border-box'
+  boxSizing: 'border-box',
+  maxWidth: '30%'
 }));
 
 export const Resizer = styled('div')(({ theme: { palette } }) => ({
@@ -168,7 +169,7 @@ export const Resizer = styled('div')(({ theme: { palette } }) => ({
   bottom: 0,
   right: 0,
   width: 8,
-  cursor: "url('/resize-drag.svg') 12 4, col-resize",
+  cursor: 'col-resize',
   userSelect: 'none',
 
   '&:hover': {
@@ -177,7 +178,7 @@ export const Resizer = styled('div')(({ theme: { palette } }) => ({
 }));
 
 export const StyledListItemButton = styled(ListItemButton)<
-  ListItemButtonProps & Partial<NavLinkProps> & { expanded?: boolean }
+  ListItemButtonProps & Partial<NavLinkProps> & { expanded?: number }
 >(({ expanded, theme: { palette } }) => ({
   paddingLeft: expanded ? 16 : 4,
   paddingRight: expanded ? 16 : 4,
@@ -205,6 +206,5 @@ export const StyledList = styled(List)<ListProps>(() => ({
 
 export const StyledWrapper = styled(Box)(() => ({
   height: `calc(100vh - ${HEADER_HEIGHT}px - ${SIDEBAR_TOGGLE_BUTTON_HEIGHT}px)`,
-  overflowX: 'hidden',
-  overflowY: 'auto'
+  overflow: 'auto'
 }));
