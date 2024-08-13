@@ -83,8 +83,6 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   );
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
-  const [openNoteModal, setOpenNoteModal] = useState<boolean>(false);
-
   const { setIsDirty } = useIsDirty();
 
   const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
@@ -99,13 +97,11 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     handleSubmit,
     control,
     clearErrors,
-    getValues,
     formState: { errors, isSubmitting, dirtyFields },
     setValue,
     watch
   } = useForm<FieldValues, unknown, FieldValues>({
     mode: 'onChange',
-    // default values note
     defaultValues: { splits: step.data.splits, note: step.data.note ?? '' },
     // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
     resolver: yupResolver(validationSchema)
@@ -124,18 +120,6 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       watchNote !== (step.data.note ?? ''),
     [dirtyFields, watchNote, step.data.note]
   );
-
-  const handleOpenNoteModal = () => setOpenNoteModal(true);
-
-  const handleSubmitNote = (note: string) => {
-    setValue('note', note);
-    setOpenNoteModal(false);
-  };
-
-  const handleCloseNoteModal = () => {
-    setValue('note', getValues('note'));
-    setOpenNoteModal(false);
-  };
 
   const onSubmit = async (data: FieldValues) => {
     const existingSplitEdges =
@@ -342,26 +326,18 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
               </Button>
             )}
           </Stack>
-        </form>
-        {!isPreview && (
-          <NoteSection
-            value={getValues('note') ?? ''}
-            modalOpen={openNoteModal}
-            handleClose={handleCloseNoteModal}
-            handleOpen={handleOpenNoteModal}
-            handleSubmit={handleSubmitNote}
-            renderInput={() => (
+          {!isPreview && (
+            <NoteSection>
               <InputText
                 fullWidth
                 name="note"
                 control={control}
                 label="Note"
-                disabled
                 placeholder="Enter note here"
               />
-            )}
-          />
-        )}
+            </NoteSection>
+          )}
+        </form>
       </StepContentWrapper>
       <StepDetailsControlBar
         disabled={!isEmpty(errors) || isSubmitting}

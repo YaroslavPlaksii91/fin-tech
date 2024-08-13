@@ -28,7 +28,7 @@ interface FiltersProps {
   filters?: FiltersType;
   dateFilters?: IDateFilters;
   inputFilters?: InputFiltersType;
-  inputGroupsToshow?: IInputGroup[];
+  inputGroupsToShow?: IInputGroup[];
   filterGroupsToShow?: IFilterGroup[];
   handleReset: () => void;
   handleApply: (data: IFormState) => void;
@@ -42,7 +42,7 @@ const Filters = ({
   dateFilters,
   inputFilters,
   filterGroupsToShow,
-  inputGroupsToshow,
+  inputGroupsToShow,
   handleReset,
   handleApply,
   handleClose
@@ -73,12 +73,7 @@ const Filters = ({
                   gap: '8px'
                 }}
               >
-                <Button
-                  size="small"
-                  color="success"
-                  variant="contained"
-                  type="submit"
-                >
+                <Button size="small" variant="contained" type="submit">
                   Apply
                 </Button>
                 <Button
@@ -95,7 +90,7 @@ const Filters = ({
               {inputFilters ? (
                 <InputFilters
                   control={control}
-                  inputGroupsToshow={inputGroupsToshow}
+                  inputGroupsToShow={inputGroupsToShow}
                 />
               ) : null}
               {filters ? (

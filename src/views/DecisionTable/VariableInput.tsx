@@ -26,10 +26,9 @@ const VariableInput = ({
   onClick,
   handleCloseMenu,
   showActionButton,
-  ...rest
+  ...props
 }: VariableInputProps & OutlinedInputProps) => (
   <OutlinedInput
-    {...rest}
     placeholder="Choose the variable"
     endAdornment={
       <>
@@ -65,6 +64,7 @@ const VariableInput = ({
         </Menu>
       </>
     }
+    {...props}
   />
 );
 

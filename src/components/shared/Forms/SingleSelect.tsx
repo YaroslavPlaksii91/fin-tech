@@ -21,7 +21,6 @@ interface SingleSelectProps<
   label?: string;
   placeholder?: string;
   children: React.ReactNode;
-  displayEmpty?: boolean;
 }
 
 export const SingleSelect = <
@@ -30,7 +29,6 @@ export const SingleSelect = <
 >({
   control,
   name,
-  displayEmpty = false,
   children,
   label,
   ...props
@@ -38,21 +36,9 @@ export const SingleSelect = <
   const { field, fieldState } = useController({ control, name });
 
   return (
-    <FormControl error={!!fieldState?.error} {...props}>
-      {/* TODO: styles make re-usable */}
-      {label && (
-        <InputLabel
-          sx={{
-            position: 'relative',
-            left: '-10px',
-            top: '8px',
-            color: 'rgba(0, 0, 0, 0.6)!important'
-          }}
-        >
-          {label}
-        </InputLabel>
-      )}
-      <Select {...field} displayEmpty={displayEmpty}>
+    <FormControl error={!!fieldState?.error} size="small" {...props}>
+      {label ? <InputLabel id="label">{label}</InputLabel> : null}
+      <Select labelId="label" label={label} {...field}>
         {children}
       </Select>
       {fieldState?.error && (

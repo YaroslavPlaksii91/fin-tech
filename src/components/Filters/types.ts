@@ -26,4 +26,5 @@ export interface IFilterGroup {
 export interface IInputGroup {
   placeholder: string;
   field: string;
+  label: string;
 }

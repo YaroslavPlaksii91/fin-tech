@@ -27,23 +27,28 @@ const STATIC_COLUMNS: GridColDef[] = [
   },
   {
     field: COLUMN_IDS.totalApprovalRate,
-    headerName: 'Total Approval Rate'
+    headerName: 'Total Approval Rate',
+    valueFormatter: (value: number) => `${value}%`
   },
   {
     field: COLUMN_IDS.totalCost,
-    headerName: 'Total Cost'
+    headerName: 'Total Cost',
+    valueFormatter: (value: number) => `$${value}`
   },
   {
     field: COLUMN_IDS.totalCpa,
-    headerName: 'Total CPA'
+    headerName: 'Total CPA',
+    valueFormatter: (value: number) => `$${value}`
   },
   {
     field: COLUMN_IDS.totalLeadCost,
-    headerName: 'Total Lead Cost'
+    headerName: 'Total Lead Cost',
+    valueFormatter: (value: number) => `$${value}`
   },
   {
     field: COLUMN_IDS.totalDataCost,
-    headerName: 'Total Data Cost'
+    headerName: 'Total Data Cost',
+    valueFormatter: (value: number) => `$${value}`
   },
   {
     field: COLUMN_IDS.totalTimeouts,

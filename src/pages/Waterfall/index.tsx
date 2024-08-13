@@ -25,6 +25,7 @@ import TuneIcon from '@icons/tune.svg';
 import { WaterfallReport } from '@domain/waterfallReport';
 import ExportCSVButton from '@components/shared/ExportCSVButton';
 import { InputFiltersType } from '@components/Filters/types';
+import { getDateInUTC } from '@utils/date';
 
 const Waterfall = () => {
   const [loading, setLoading] = useState(false);
@@ -87,8 +88,8 @@ const Waterfall = () => {
     pageSize: 10000, // temporary desion to retrive all records
     stack: inputFilters.stack || undefined,
     campaign: inputFilters.campaignId || undefined,
-    startTime: dateFrom ? dateFrom.toISOString() : undefined,
-    endTime: dateTo ? dateTo.toISOString() : undefined
+    startTime: dateFrom ? getDateInUTC(dateFrom).toISOString() : undefined,
+    endTime: dateTo ? getDateInUTC(dateTo).toISOString() : undefined
   });
 
   const fetch = useCallback(() => {
@@ -179,7 +180,7 @@ const Waterfall = () => {
         hasTimePicker={false}
         dateFilters={{ dateFrom, dateTo }}
         inputFilters={inputFilters}
-        inputGroupsToshow={INPUT_GROUPS_TO_SHOW}
+        inputGroupsToShow={INPUT_GROUPS_TO_SHOW}
         handleReset={handleFiltersReset}
         handleApply={handleFiltersApply}
         handleClose={handleFiltersClose}

@@ -9,6 +9,8 @@ export enum DATA_TYPE_WITH_ENUM_PREFIX {
   PayFrequency = 'Enum:PayFrequency',
   BankAccountType = 'Enum:BankAccountType',
   ReferenceRelationship = 'Enum:ReferenceRelationship',
+  LeadResponseResult = 'Enum:LeadResponseResult',
+  RequestType = 'Enum:RequestType',
   /*for mocked data*/
   Store = 'Enum:Store',
   LoyaltyTier = 'Enum:LoyaltyTier',
@@ -73,6 +75,7 @@ export interface DataDictionaryVariable {
   usageMode?: string;
   allowedValues?: string | string[];
   description?: string;
+  sourceName?: string;
 }
 
 export interface DataDictionaryIntegrationVariable

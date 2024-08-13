@@ -1,18 +1,5 @@
 import { CaseEntry } from './types';
 
-export enum CATEGORIES {
-  Conditions = 'conditions',
-  Actions = 'actions',
-  DefaultActions = 'defaultActions'
-}
-
-export type CATEGORY = `${CATEGORIES}`;
-
-export type CATEGORIES_WITHOUT_DEFAULT_ACTIONS = Exclude<
-  CATEGORIES,
-  CATEGORIES.DefaultActions
->;
-
 export const BOOLEAN_OPTIONS = ['true', 'false'];
 
 export const STEP_DETAILS =
@@ -20,7 +7,7 @@ export const STEP_DETAILS =
 
 export const INITIAL_ENTRY: CaseEntry = {
   name: '',
-  operator: null,
+  operator: '',
   expression: ''
 };
 
@@ -31,5 +18,7 @@ export const INITIAL_CASE_ENTRIES = [
     edgeId: null
   }
 ];
+
+export const INITIAL_STEP_IDS = [null, null];
 
 export const STEP = 'Step';

@@ -9,7 +9,7 @@ import {
 } from './dataDictionary';
 
 import { StepType } from '@components/FlowManagment/FlowChart/types';
-import { CaseEntry } from '@views/DecisionTable/types';
+import { CaseEntries, CaseEntry } from '@views/DecisionTable/types';
 
 export interface IFlowListItem extends IEntity {
   name: string;
@@ -39,14 +39,8 @@ export type ChampionChallengerData = {
   splits?: { edgeId: string | null; percentage: number }[];
 };
 
-export type CaseEntriesData = {
-  conditions: CaseEntry[];
-  actions: CaseEntry[];
-  edgeId?: string | null;
-};
-
 export type DecisionTableData = {
-  caseEntries?: CaseEntriesData[];
+  caseEntries?: CaseEntries[];
   defaultActions?: CaseEntry[];
   variableSources?: {
     name: string;

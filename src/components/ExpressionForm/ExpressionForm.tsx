@@ -27,6 +27,7 @@ import { groupBy } from 'lodash';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AxiosError } from 'axios';
 import pick from 'lodash/pick';
+import omit from 'lodash/omit';
 
 import validationSchema from './validationSchema';
 import { FieldValues } from './types';
@@ -52,6 +53,7 @@ import { DataDictionaryContext } from '@contexts/DataDictionaryContext.tsx';
 import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog.tsx';
 import { DATA_DICTIONARY_GROUP } from '@constants/common.tsx';
 import { StepContentWrapper } from '@views/styled';
+import { customBoxShadows } from '@theme';
 
 const operatorsList = [
   ...Object.values(groupBy(operatorsConfig, 'category')),
@@ -83,7 +85,11 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   renderTitle
 }) => {
   const dataDictionary = useContext(DataDictionaryContext);
-  const variables = dataDictionary?.variables || {};
+  // Discussed with Yaryna, and decided to hide craReportVariables here
+  const variables = useMemo(
+    () => omit(dataDictionary?.variables, ['craReportVariables']) || {},
+    [dataDictionary?.variables]
+  );
   const [dataDictMode, setDataDictMode] = useState<DataDictMode | null>(null);
 
   const expressionEditorRef: MutableRefObject<ExpressionEditorAPI | null> =
@@ -116,6 +122,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
 
     const { params, variableSources } =
       mapVariablesToParamsAndSources(usageVariables);
+
     try {
       await dataDictionaryService.validateExpression({
         expression: data.expressionString,
@@ -217,9 +224,21 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
       <StepContentWrapper>
         {renderTitle && renderTitle()}
         <Box>
-          <Card variant="outlined" sx={{ overflow: 'unset' }}>
-            <CardHeader title="Expression Builder" />
-            <CardContent sx={{ paddingTop: 0 }}>
+          <Card
+            variant="outlined"
+            sx={{ overflow: 'unset', boxShadow: customBoxShadows.elevation1 }}
+          >
+            <CardHeader
+              sx={{ padding: '8px 16px' }}
+              title="Expression Builder"
+              titleTypographyProps={{ variant: 'h6' }}
+            />
+            <CardContent
+              sx={{
+                paddingTop: 0,
+                ':last-child': { paddingBottom: '8px' }
+              }}
+            >
               <Box mb={1}>
                 <Controller
                   control={control}
@@ -284,8 +303,9 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         data={
           dataDictMode === DataDictMode.Variable
             ? variableFieldDataDict
-            : dataDictionary?.variables
+            : variables
         }
+        integrationData={dataDictionary?.integrationVariables}
         title={
           dataDictMode === DataDictMode.Variable
             ? 'Add Output Variable'
@@ -301,6 +321,12 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
             onVariableListClick(variable);
           }
         }}
+        setSelectedObjectPropertyFunction={(object, property) => ({
+          ...property,
+          // Technically is not correct data type, but for calculations this is backend requirement -
+          // for now this row brake the decision table flow with -> user vars
+          dataType: object.dataType
+        })}
       />
       <Paper elevation={1} sx={{ marginTop: '10px' }}>
         <Divider />

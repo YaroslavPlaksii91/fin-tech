@@ -1,14 +1,15 @@
 import { lightGreen, lightBlue } from '@mui/material/colors';
 import { mapValues, filter } from 'lodash';
 
+import { INITIAL_ENTRY, INITIAL_CASE_ENTRIES } from './constants';
 import {
+  CaseEntries,
+  CaseEntry,
+  Operator,
+  OPERATORS,
   CATEGORIES,
-  CATEGORY,
-  CATEGORIES_WITHOUT_DEFAULT_ACTIONS,
-  INITIAL_ENTRY,
-  INITIAL_CASE_ENTRIES
-} from './constants';
-import { CaseEntries, CaseEntry, Operator, OPERATORS } from './types';
+  CATEGORY
+} from './types';
 
 import {
   DATA_TYPE,
@@ -53,7 +54,7 @@ export const getOperatorOptions = (dataType: DATA_TYPE) => {
 export const getColumns = (
   caseEntry: CaseEntries,
   variables: Variable[],
-  category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS
+  category: CATEGORY
 ) => {
   const INITIAL_COLUMN = {
     ...INITIAL_ENTRY,
@@ -62,10 +63,11 @@ export const getColumns = (
     dataType: DATA_TYPE_WITHOUT_ENUM.String
   };
 
-  if (!caseEntry?.[category]?.length)
+  if (!caseEntry?.[category]?.length) {
     return category === CATEGORIES.Conditions ? [INITIAL_COLUMN] : [];
+  }
 
-  return caseEntry[category].map((el, index) => {
+  return (caseEntry[category] || []).map((el, index) => {
     const variablesDataTypes = variables.reduce<Record<string, DATA_TYPE>>(
       (acc, current) => ({
         ...acc,
@@ -89,7 +91,8 @@ export const getColumns = (
       category,
       allowedValues,
       name: el.name,
-      dataType: variablesDataTypes[el.name]
+      // pass data type directly to prevent issues with the object properties
+      dataType: el.dataType || variablesDataTypes[el.name]
     };
   });
 };
@@ -108,10 +111,12 @@ export const getVariableSources = (
     {}
   );
 
-  return caseEntries.map(({ name }) => ({
-    name,
-    sourceType: variablesSourceTypes[name]
-  }));
+  return caseEntries
+    .map(({ name, sourceName, sourceType }) => ({
+      name: sourceName || name,
+      sourceType: sourceType || variablesSourceTypes[name]
+    }))
+    .filter(({ name }) => name);
 };
 
 export const updateCaseEntry = ({
@@ -123,20 +128,20 @@ export const updateCaseEntry = ({
   initialEntries = [] // We need to provide initial entries for rows in case when we don`t have any already created Entries
 }: {
   caseEntries: CaseEntries[];
-  category: CATEGORIES_WITHOUT_DEFAULT_ACTIONS;
+  category: CATEGORY;
   start: number;
   deleteCount: number;
   insertEntry?: CaseEntry;
   initialEntries?: CaseEntry[];
 }) =>
   (caseEntries.length ? caseEntries : INITIAL_CASE_ENTRIES).map((row) => {
-    if (!row[category].length)
+    if (!row[category]?.length)
       return {
         ...row,
         [category]: initialEntries
       };
 
-    const newColumns = [...row[category]];
+    const newColumns = [...(row[category] || [])];
 
     if (insertEntry) newColumns.splice(start, deleteCount, insertEntry);
     else newColumns.splice(start, deleteCount);
@@ -184,7 +189,6 @@ export const filterVariablesByUsageMode = (
     case CATEGORIES.Conditions:
       usageMode = VARIABLE_USAGE_MODE.WriteOnly;
       break;
-    case CATEGORIES.DefaultActions:
     case CATEGORIES.Actions:
       usageMode = VARIABLE_USAGE_MODE.ReadOnly;
       break;
@@ -205,15 +209,14 @@ export const checkDataType = (dataType: DATA_TYPE) => ({
     dataType === DATA_TYPE_WITHOUT_ENUM['Object:CraClarity'] ||
     dataType === DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']
 });
+
 // We need to convert with string in "\"stringValue\"" format since the backend expects it
 export const convertToStringFormat = (string: string) =>
-  // eslint-disable-next-line no-useless-escape
-  string.length ? `\\\"${string}\\\"` : '';
+  string.length ? `"${string}"` : '';
 
 // Parse to basic string format
-export const parseStringFormat = (formattedString: string) => {
-  // eslint-disable-next-line no-useless-escape
-  const match = formattedString.match(/^\\\"(.*)\\\"$/);
+export const parseStringFormat = (string: string) => {
+  const match = string.match(/^"([^"]*)"$/);
 
-  return match ? match[1] : formattedString;
+  return match ? match[1] : string;
 };

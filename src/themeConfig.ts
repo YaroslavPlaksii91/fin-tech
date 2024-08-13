@@ -18,6 +18,10 @@ interface CustomPalette {
   sidebarItemHover: string;
 }
 
+export const customBoxShadows = {
+  elevation1: '0px 8px 12px -2px rgba(0, 0, 0, 0.07)'
+};
+
 export const palette = {
   gray: '#5F6D7E',
   grayBorder: '#D1D9E2',
@@ -36,7 +40,8 @@ export const palette = {
   aliceBlue: '#F8F9FB',
   amber: '#FFF8E1',
   sidebarBackground: '#E7E8EB',
-  sidebarItemHover: '#dedfe2'
+  sidebarItemHover: '#dedfe2',
+  green: '#e8f5e9ff'
 };
 
 declare module '@mui/material/styles' {
@@ -162,13 +167,6 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           boxShadow: 'none'
-        }
-      }
-    },
-    MuiSelect: {
-      styleOverrides: {
-        root: {
-          fontSize: '14px'
         }
       }
     },

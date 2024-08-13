@@ -4,15 +4,15 @@ import { TextField } from '@mui/material';
 import { IFormState, IInputGroup } from './types';
 
 interface InputFiltersProps {
-  inputGroupsToshow?: IInputGroup[];
+  inputGroupsToShow?: IInputGroup[];
   control: Control<IFormState>;
 }
 
 export const InputFilters = ({
-  inputGroupsToshow,
+  inputGroupsToShow,
   control
 }: InputFiltersProps) =>
-  (inputGroupsToshow || []).map(({ field, placeholder }) => (
+  (inputGroupsToShow || []).map(({ field, placeholder, label }) => (
     <Controller
       control={control}
       name={`inputFilters.${field}`}
@@ -20,6 +20,7 @@ export const InputFilters = ({
       render={({ field: { value, onChange } }) => (
         <TextField
           fullWidth
+          label={label}
           placeholder={placeholder}
           type="text"
           size="small"

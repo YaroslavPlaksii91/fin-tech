@@ -2,6 +2,8 @@ stages:
   - build_development
   - deploy_development
   - deploy_staging
+  - build_production
+  - deploy_production
 
 .common:
   tags:
@@ -82,3 +84,38 @@ deploy_staging:
     - if: '$CI_COMMIT_BRANCH == "staging"'
       when: on_success
 
+###PRODUCTION###
+build_production:
+  extends:
+    - .common
+    - .build
+  needs: []
+  stage: build_production
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    name: "$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHORT_SHA"
+    expire_in: 1 hour
+    paths:
+      - dist/
+    public: false
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: manual
+
+deploy_production:
+  extends:
+    - .common
+    - .deploy
+  needs: [build_production]
+  stage: deploy_production
+  script:
+    - export AWS_ACCESS_KEY_ID=$(eval echo \$aws_access_key_production)
+    - export AWS_SECRET_ACCESS_KEY=$(eval echo \$aws_secret_access_key_production)
+    - aws s3 sync dist/ s3://$(eval echo \$bucket_$CI_COMMIT_REF_SLUG) --delete
+    - aws cloudfront create-invalidation --distribution-id $(eval echo \$cloudfront_$CI_COMMIT_REF_SLUG) --paths \/\*
+    - curl -X POST -H "Content-type:application/json" --data "{\"text\":\"<$(eval echo \$public_url_$CI_COMMIT_REF_SLUG)|$domain> has been updated by *$GITLAB_USER_LOGIN*\", \"channel\":\"$(eval echo \$channel_name)\"}" https://hooks.slack.com/services/$slack_webhook_url
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: manual

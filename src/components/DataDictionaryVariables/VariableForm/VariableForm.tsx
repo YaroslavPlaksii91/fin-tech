@@ -167,14 +167,8 @@ export const VariableForm: React.FC<VariableFormProps> = ({
             name="sourceType"
             label="Source Type"
             control={control}
-            displayEmpty
             fullWidth
             disabled={Boolean(formData)}
-            sx={{
-              '& .MuiInputBase-root ': {
-                height: '40px'
-              }
-            }}
           >
             {VARIABLE_SOURCE_TYPE_OPTIONS.map((sourceType) => (
               <MenuItem key={sourceType.key} value={sourceType.value}>
@@ -188,13 +182,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
             label="Data Type"
             control={control}
             disabled={formData && formData.variableIsUsed}
-            displayEmpty
             fullWidth
-            sx={{
-              '& .MuiInputBase-root ': {
-                height: '40px'
-              }
-            }}
           >
             {dataTypeOptions.map((dataType, index) => (
               <MenuItem key={index} value={dataType}>
@@ -210,6 +198,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
               name="defaultValue"
               label="Default Value"
               control={control}
+              inputMode="numeric"
             />
           )}
           {watchDataType === DATA_TYPE_WITHOUT_ENUM.String && (
@@ -224,14 +213,8 @@ export const VariableForm: React.FC<VariableFormProps> = ({
             <SingleSelect
               variant="outlined"
               name="defaultValue"
-              displayEmpty
               control={control}
               fullWidth
-              sx={{
-                '& .MuiInputBase-root ': {
-                  height: '40px'
-                }
-              }}
             >
               <MenuItem selected value="false">
                 false

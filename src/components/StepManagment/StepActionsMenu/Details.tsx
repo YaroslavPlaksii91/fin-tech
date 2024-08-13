@@ -16,13 +16,17 @@ const Details: React.FC<{ data: NodeData }> = ({
     <Typography pb={1} variant="body2">
       {dayjs(editedOn).format(FULL_DATE_TIME_FORMAT)}
     </Typography>
-    <Divider />
-    <Typography pt={1} variant="caption">
-      Note
-    </Typography>
-    <Typography sx={{ width: '156px' }} variant="body2">
-      {note}
-    </Typography>
+    {note && (
+      <>
+        <Divider />
+        <Typography pt={1} variant="caption">
+          Note
+        </Typography>
+        <Typography sx={{ width: '156px' }} variant="body2">
+          {note}
+        </Typography>
+      </>
+    )}
   </Stack>
 );
 

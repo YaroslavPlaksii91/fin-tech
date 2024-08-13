@@ -20,7 +20,7 @@ const FlowList = () => {
   const dispatch = useAppDispatch();
   const { resetActive } = useActiveStep();
   const { startLoading, stopLoading } = useLoading();
-  const { variables } = useDataDictionaryVariables(flow);
+  const { variables, integrationVariables } = useDataDictionaryVariables(flow);
 
   useEffect(() => {
     const fetchFlow = async (flowId: string) => {
@@ -45,7 +45,7 @@ const FlowList = () => {
   }, []);
 
   return (
-    <DataDictionaryContext.Provider value={{ variables }}>
+    <DataDictionaryContext.Provider value={{ variables, integrationVariables }}>
       <IsDirtyProvider>
         {flow && (
           <MainFlowChartEditor
