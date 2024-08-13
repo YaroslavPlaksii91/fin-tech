@@ -6,7 +6,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { INITIAL_ENTRY, STEP_DETAILS, STEP } from './constants';
+import {
+  INITIAL_ENTRY,
+  STEP_DETAILS,
+  STEP,
+  INITIAL_STEP_IDS
+} from './constants';
 import {
   VariableColumnData,
   FormFieldsProps,
@@ -87,7 +92,7 @@ const DecisionTable = ({
     useState<VariableColumnData | null>(null);
   const [caseEntries, setCaseEntries] = useState<CaseEntries[]>([]);
   const [defaultActions, setDefaultActions] = useState<CaseEntry[]>([]);
-  const [stepIds, setStepIds] = useState<(string | null)[]>([]);
+  const [stepIds, setStepIds] = useState<(string | null)[]>(INITIAL_STEP_IDS);
 
   const isPreview = isViewMode || !canUpdateFlow;
   const username = getFullUserName(user);
@@ -185,9 +190,9 @@ const DecisionTable = ({
 
     setCaseEntries(newCaseEntries);
 
-    if (rows.length === 1) {
+    if (!caseEntries.length) {
       setDefaultActions([]);
-      setStepIds([null]);
+      setStepIds(INITIAL_STEP_IDS);
       return;
     }
 
@@ -209,7 +214,7 @@ const DecisionTable = ({
         : [INITIAL_ENTRY, INITIAL_ENTRY]
     });
 
-    if (!caseEntries.length) setStepIds([null]);
+    if (!caseEntries.length) setStepIds(INITIAL_STEP_IDS);
     if (isActionsCategory)
       setDefaultActions((prev) => [...prev, INITIAL_ENTRY]);
 
@@ -257,6 +262,8 @@ const DecisionTable = ({
           index === selectedColumn.index ? insertEntry : prevEntry
         )
       );
+
+    if (!caseEntries.length) setStepIds(INITIAL_STEP_IDS);
     setCaseEntries(updatedCaseEntries);
   };
 
@@ -410,7 +417,7 @@ const DecisionTable = ({
       const connectedEdge = getEdge(entry.edgeId || '');
 
       return connectedEdge?.target || null;
-    });
+    }) || [null];
 
     // To make possible setup default Actions for already existed table
     const savedDefaultActions =
@@ -432,10 +439,7 @@ const DecisionTable = ({
 
   const setInitialData = useCallback(() => {
     if (initialData) {
-      setStepIds([
-        ...(initialData?.savedStepIds || []),
-        initialData.savedDefaultStepId
-      ]);
+      setStepIds([...initialData.savedStepIds, initialData.savedDefaultStepId]);
       setCaseEntries(initialData.savedCaseEntries || []);
       setDefaultActions(initialData.savedDefaultActions || []);
       setValue('note', initialData.savedNote);
