@@ -2,7 +2,7 @@ import { theme } from '@theme';
 import EditIcon from '@icons/edit.svg';
 import RenameIcon from '@icons/rename.svg';
 import CopyIcon from '@icons/copy.svg';
-import EyeIcon from '@icons/eye.svg';
+import VisibleIcon from '@icons/visible.svg';
 import DeleteIcon from '@icons/delete.svg';
 import { OptionsFlowParams } from '@components/FlowManagment/ActionsMenu/options';
 
@@ -17,7 +17,7 @@ export enum ActionTypes {
 export const viewStepOption = {
   label: 'View Step',
   dataKey: ActionTypes.STEP_TEXT_VIEW,
-  icon: <EyeIcon /> // TODO: change icon
+  icon: <VisibleIcon />
 };
 
 export const renameStepOption = {
