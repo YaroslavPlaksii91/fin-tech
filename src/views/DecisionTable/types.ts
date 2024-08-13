@@ -5,6 +5,7 @@ export type CaseEntry = {
   operator: Operator;
   expression: string;
   destinationType?: string;
+  dataType?: DATA_TYPE;
 };
 
 export type CaseEntries = {

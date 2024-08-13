@@ -45,7 +45,8 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   integrationData,
   isOpen,
   onClose,
-  onConfirm
+  onConfirm,
+  setSelectedObjectPropertyFunction
 }) => {
   const [query, setQuery] = React.useState<string>('');
   const [selectedDict, setSelectedDict] = React.useState<null | string>(null);
@@ -338,10 +339,19 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                         key={property.name}
                         dense
                         onClick={() => {
-                          setSelectedObjectProperty({
-                            ...property,
-                            dataType: selectedVar?.dataType as DATA_TYPE
-                          });
+                          if (
+                            setSelectedObjectPropertyFunction &&
+                            selectedVar
+                          ) {
+                            setSelectedObjectProperty(
+                              setSelectedObjectPropertyFunction(
+                                selectedVar,
+                                property
+                              )
+                            );
+                          } else {
+                            setSelectedObjectProperty(property);
+                          }
                         }}
                         title={title}
                       >
@@ -393,6 +403,10 @@ interface DataDictionaryDialogProps {
   onConfirm: (variable: Variable) => void;
   data?: DataDictionaryVariableRecord;
   integrationData?: DataDictionaryVariableRecord;
+  setSelectedObjectPropertyFunction?: (
+    object: Variable,
+    property: Variable
+  ) => Variable;
 }
 
 export default DataDictionaryDialog;

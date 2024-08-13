@@ -321,6 +321,12 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
             onVariableListClick(variable);
           }
         }}
+        setSelectedObjectPropertyFunction={(object, property) => ({
+          ...property,
+          // Technically is not correct data type, but for calculations this is backend requirement -
+          // for now this row brake the decision table flow with -> user vars
+          dataType: object.dataType
+        })}
       />
       <Paper elevation={1} sx={{ marginTop: '10px' }}>
         <Divider />

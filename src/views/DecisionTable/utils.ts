@@ -63,8 +63,9 @@ export const getColumns = (
     dataType: DATA_TYPE_WITHOUT_ENUM.String
   };
 
-  if (!caseEntry?.[category]?.length)
+  if (!caseEntry?.[category]?.length) {
     return category === CATEGORIES.Conditions ? [INITIAL_COLUMN] : [];
+  }
 
   return (caseEntry[category] || []).map((el, index) => {
     const variablesDataTypes = variables.reduce<Record<string, DATA_TYPE>>(
@@ -90,7 +91,8 @@ export const getColumns = (
       category,
       allowedValues,
       name: el.name,
-      dataType: variablesDataTypes[el.name]
+      // pass data type directly to prevent issues with the object properties
+      dataType: el.dataType || variablesDataTypes[el.name]
     };
   });
 };
