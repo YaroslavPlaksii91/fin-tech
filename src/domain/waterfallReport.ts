@@ -17,11 +17,11 @@ export interface WaterfallReport {
     campaignId: null | string;
     totalLooks: number;
     totalApproved: number;
-    totalApprovalRate: null | string;
-    totalCost: null | string;
-    totalCpa: null | string;
-    totalLeadCost: null | string;
-    totalDataCost: null | string;
+    totalApprovalRate: null | number;
+    totalCost: null | number;
+    totalCpa: null | number;
+    totalLeadCost: null | number;
+    totalDataCost: null | number;
     totalTimeouts: number;
     totalCostSavings: null | string;
     totalCachedLead: number;
