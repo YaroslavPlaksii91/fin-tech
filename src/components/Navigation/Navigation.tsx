@@ -48,10 +48,10 @@ function Navigation() {
           </Link>
           <Stack direction="row" alignItems="center" gap={1}>
             <StyledHeaderButton
-              startIcon={<UserIcon />}
+              startIcon={<UserIcon width={18} height={18} />}
               variant="outlined"
               sx={{ cursor: 'auto' }}
-              disableRipple
+              disabled
             >
               {userInfo && getFullUserName(userInfo)}
             </StyledHeaderButton>

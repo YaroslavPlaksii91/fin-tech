@@ -2,11 +2,11 @@ import dayjs from 'dayjs';
 
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { theme } from '@theme';
-import ArrowLeftAndRightSquareIcon from '@icons/arrowLeftAndRightSquare.svg';
-import CalculatorIcon from '@icons/calculator.svg';
-import BlocksIcon from '@icons/blocks.svg';
-import LineChartDotsSquareIcon from '@icons/lineChartDotsSquare.svg';
 import FlagTriangleIcon from '@icons/flagTriangle.svg';
+import CalculationIcon from '@icons/calculation.svg';
+import ChampionChallengerIcon from '@icons/champion-challenger.svg';
+import DecisionTableIcon from '@icons/decision-table.svg';
+import SubflowIcon from '@icons/subflow.svg';
 
 export const TODAY = dayjs();
 
@@ -72,12 +72,8 @@ export const tooltipText = {
 export const STEP_ICONS = {
   [StepType.START]: <FlagTriangleIcon color={theme.palette.primary.main} />,
   [StepType.END]: <FlagTriangleIcon color={theme.palette.error.main} />,
-  [StepType.CHAMPION_CHALLENGER]: (
-    <ArrowLeftAndRightSquareIcon color={theme.palette.primary.main} />
-  ),
-  [StepType.CALCULATION]: <CalculatorIcon color={theme.palette.primary.main} />,
-  [StepType.DECISION_TABLE]: <BlocksIcon color={theme.palette.primary.main} />,
-  [StepType.SUBFLOW]: (
-    <LineChartDotsSquareIcon color={theme.palette.primary.main} />
-  )
+  [StepType.CHAMPION_CHALLENGER]: <ChampionChallengerIcon />,
+  [StepType.CALCULATION]: <CalculationIcon />,
+  [StepType.DECISION_TABLE]: <DecisionTableIcon />,
+  [StepType.SUBFLOW]: <SubflowIcon />
 };

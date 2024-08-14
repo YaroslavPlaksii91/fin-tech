@@ -33,15 +33,11 @@ import {
   DEFAULT_SIDEBAR_WIDTH,
   MIN_SIDEBAR_WIDTH,
   animationStyles,
-  itemIconProps,
   pages,
   reportPages
 } from './config';
 
-import LineChartDotsIcon from '@icons/lineChartDots.svg';
 import AngleLeftSquareIcon from '@icons/angleLeftSquare.svg';
-import DocumentPaperIcon from '@icons/documentPaper.svg';
-import BezierIcon from '@icons/bezier.svg';
 import { ExpandMoreIcon } from '@components/shared/Icons';
 import { fetchFlowList } from '@store/flowList/asyncThunk';
 import Logger from '@utils/logger';
@@ -62,6 +58,9 @@ import { hasPermission } from '@utils/helpers';
 import { selectUserInfo } from '@store/auth/auth';
 import { useThrottle } from '@hooks/useThrottle';
 import { CROSS_PLATFORM_DRAWER_WIDTH } from '@constants/themeConstants';
+import FlowListIcon from '@icons/flow-list.svg';
+import FlowIcon from '@icons/flow.svg';
+import ReportsIcon from '@icons/reports.svg';
 
 const Sidebar = () => {
   const { id } = useParams();
@@ -266,7 +265,7 @@ const Sidebar = () => {
                   to={defaultFlowListLink}
                 >
                   <ListItemIcon>
-                    <LineChartDotsIcon {...itemIconProps} />
+                    <FlowListIcon />
                   </ListItemIcon>
                 </NavLink>
                 <Typography sx={animationStyles(expanded)}>
@@ -296,7 +295,7 @@ const Sidebar = () => {
                         id="panel1a-header"
                       >
                         <ListItemIcon>
-                          <BezierIcon />
+                          <FlowIcon />
                         </ListItemIcon>
                         <Typography variant="body2">
                           {flowProduction?.name}
@@ -341,7 +340,7 @@ const Sidebar = () => {
                           id={flowItem.name}
                         >
                           <ListItemIcon>
-                            <BezierIcon />
+                            <FlowIcon />
                           </ListItemIcon>
                           <Typography variant="body2">
                             {flowItem.name}
@@ -363,7 +362,7 @@ const Sidebar = () => {
           ) : (
             <StyledListItemButton component={NavLink} to={defaultFlowListLink}>
               <ListItemIcon>
-                <LineChartDotsIcon {...itemIconProps} />
+                <FlowListIcon />
               </ListItemIcon>
             </StyledListItemButton>
           )}
@@ -400,7 +399,7 @@ const Sidebar = () => {
                   expanded={expanded ? 1 : 0}
                 >
                   <ListItemIcon>
-                    <DocumentPaperIcon {...itemIconProps} />
+                    <ReportsIcon />
                   </ListItemIcon>
                   <Typography sx={animationStyles(expanded)}>
                     Reports
@@ -441,7 +440,7 @@ const Sidebar = () => {
             ) : (
               <StyledListItemButton>
                 <ListItemIcon>
-                  <DocumentPaperIcon {...itemIconProps} />
+                  <ReportsIcon />
                 </ListItemIcon>
               </StyledListItemButton>
             ))}

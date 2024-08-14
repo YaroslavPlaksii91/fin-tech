@@ -7,7 +7,6 @@ import {
   CROSS_PLATFORM_DRAWER_WIDTH,
   HEADER_HEIGHT
 } from '@constants/themeConstants';
-import { palette } from '@theme';
 
 const getGradient = (r1 = 0, g1 = 0, b1 = 0, r2 = 0, g2 = 0, b2 = 0) => ({
   background: `linear-gradient(
@@ -47,7 +46,7 @@ export const StyledListItemButton = styled(ListItemButton, {
   transition: '--color-opacity 0.3s, all 0.3s',
 
   '&:hover': {
-    '--color-opacity': '48%',
+    '--color-opacity': '16%',
     borderRadius: '6px'
   },
 
@@ -59,14 +58,7 @@ export const StyledListItemButton = styled(ListItemButton, {
   '&.leads': getGradient(177, 239, 0, 64, 184, 35),
   '&.payments': getGradient(255, 235, 56, 205, 114, 0),
   '&.reports': getGradient(73, 158, 255, 78, 68, 210),
-  '&.launcher': {
-    opacity: 0.56,
-    '&:hover': {
-      backgroundColor: palette.white,
-      color: palette.primary,
-      opacity: 1
-    }
-  },
+  '&.launcher': getGradient(171, 235, 255, 87, 163, 252),
 
   '&.MuiListItemButton-root': {
     padding: 0

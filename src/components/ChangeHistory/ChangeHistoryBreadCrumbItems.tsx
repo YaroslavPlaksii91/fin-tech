@@ -2,14 +2,14 @@ import { Typography } from '@mui/material';
 import { Box } from '@mui/system';
 
 import { theme } from '@theme';
-import BezierIcon from '@icons/bezier.svg';
-import LineChartDotsSquareIcon from '@icons/lineChartDotsSquare.svg';
+import SubflowIcon from '@icons/subflow.svg';
+import FlowIcon from '@icons/flow.svg';
 
-const getPathIcon = (index: number, color: string) =>
+const getPathIcon = (index: number) =>
   index === 0 ? (
-    <BezierIcon width="18px" height="18px" color={color} />
+    <FlowIcon width={18} height={18} />
   ) : (
-    <LineChartDotsSquareIcon width="18px" height="18px" color={color} />
+    <SubflowIcon width={18} height={18} />
   );
 
 type BreadcrumbItemProps = {
@@ -25,7 +25,7 @@ export const FirstBreadcrumbItem = ({
   handleClick: (id: string, index: number) => void;
 }) => (
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-    {getPathIcon(index, theme.palette.primary.main)}
+    {getPathIcon(index)}
     <Typography
       sx={{
         textDecoration: 'underline',
@@ -42,7 +42,7 @@ export const FirstBreadcrumbItem = ({
 
 export const BreadcrumbItem = ({ part, index }: BreadcrumbItemProps) => (
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-    {getPathIcon(index, '')}
+    {getPathIcon(index)}
     <Typography
       sx={{
         textDecoration: 'underline'

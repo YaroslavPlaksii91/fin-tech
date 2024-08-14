@@ -1,8 +1,8 @@
 import TrashIcon from '@icons/trash.svg';
-import EditIcon from '@icons/editPencil.svg';
-import BooksIcon from '@icons/books.svg';
-import FileEditIcon from '@icons/fileEdit.svg';
-import DuplicateSquareIcon from '@icons/duplicateSquare.svg';
+import EditIcon from '@icons/edit.svg';
+import DataDictionaryIcon from '@icons/data-dictionary.svg';
+import RenameIcon from '@icons/rename.svg';
+import CopyIcon from '@icons/copy.svg';
 import { theme } from '@theme';
 
 export enum ActionTypes {
@@ -16,13 +16,13 @@ export enum ActionTypes {
 const viewDataDictionaryOption = {
   label: 'View Data Dictionary',
   dataKey: ActionTypes.VIEW_DATA_DICTIONARY,
-  icon: <BooksIcon />
+  icon: <DataDictionaryIcon />
 };
 
 const duplicateOption = {
   label: 'Duplicate',
   dataKey: ActionTypes.DUPLICATE_FLOW,
-  icon: <DuplicateSquareIcon />
+  icon: <CopyIcon />
 };
 
 const editOption = {
@@ -34,13 +34,13 @@ const editOption = {
 const renameOption = {
   label: 'Rename',
   dataKey: ActionTypes.RENAME_FLOW,
-  icon: <FileEditIcon />
+  icon: <RenameIcon />
 };
 
 const deleteOption = {
   label: 'Delete',
   dataKey: ActionTypes.DELETE_FLOW,
-  icon: <TrashIcon color={theme.palette.error.main} />,
+  icon: <TrashIcon color={theme.palette.error.main} />, // TODO: change icon
   textColor: theme.palette.error.main
 };
 

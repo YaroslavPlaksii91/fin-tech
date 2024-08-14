@@ -6,8 +6,8 @@ import { ApplicationModel } from '@eloanwarehouse/frontend-core';
 import { StyledDrawer, StyledList, StyledListItemButton } from './styled';
 import { applications } from './config';
 
+import launcherImg from '@images/platforms/launcher.png';
 import { LAUNCHER_URL } from '@constants/common';
-import HomeIcon from '@icons/home.svg';
 import { authService } from '@services/auth';
 
 const CrossPlatformDrawer: React.FC = () => {
@@ -40,7 +40,7 @@ const CrossPlatformDrawer: React.FC = () => {
               onClick={() => handleRedirect(LAUNCHER_URL)}
               className="launcher"
             >
-              <HomeIcon />
+              <img src={launcherImg} />
             </StyledListItemButton>
           </Tooltip>
         </ListItem>

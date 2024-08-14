@@ -66,7 +66,6 @@ export const StyledNavLink = styled(NavLink)(({ theme: { palette } }) => ({
     '.MuiListItemIcon-root': {
       svg: {
         path: {
-          fill: palette.primary.dark,
           fillOpacity: 'unset'
         }
       }
@@ -147,6 +146,10 @@ export const StyledAccordion = styled(Accordion)(({ theme: { palette } }) => ({
     display: 'inline-flex',
     minWidth: '100%',
     width: 'auto'
+  },
+
+  '& .MuiPaper-root': {
+    marginTop: 0
   }
 }));
 
