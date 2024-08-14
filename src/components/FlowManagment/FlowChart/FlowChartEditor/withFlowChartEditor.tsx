@@ -408,6 +408,27 @@ const withFlowChartEditor =
       [flow.id]
     );
 
+    const onNodeDoubleClick = useCallback(
+      (_e: React.MouseEvent, node: FlowNode) => {
+        let subFlowId = null;
+        let stepId = null;
+        if (
+          node.data.stepType === StepType.START ||
+          node.data.stepType === StepType.END
+        ) {
+          return;
+        }
+        if (node.data.stepType === StepType.SUBFLOW) {
+          subFlowId = node.id;
+        } else {
+          subFlowId = mainFlow ? flow.id : null;
+          stepId = node.id;
+        }
+        setActiveStep({ subFlowId, stepId });
+      },
+      [flow.id, mainFlow]
+    );
+
     return (
       <>
         <NodePositioning
@@ -432,6 +453,7 @@ const withFlowChartEditor =
           onNodeDragStop={onNodeDragStop}
           onEdgesDelete={onEdgesDelete}
           onNodeDragStart={onNodeDragStart}
+          onNodeDoubleClick={onNodeDoubleClick}
           onInit={(instance) => {
             setRfInstance({
               ...instance,
