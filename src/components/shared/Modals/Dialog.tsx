@@ -2,7 +2,7 @@ import React from 'react';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
-import { DialogContentText, IconButton } from '@mui/material';
+import { IconButton } from '@mui/material';
 import { Breakpoint } from '@mui/system';
 
 import LoadingButton from '../LoadingButton';
@@ -64,11 +64,7 @@ const Dialog: React.FC<DialogProps> = ({
         <CloseIcon />
       </IconButton>
     )}
-    <DialogContent>
-      <DialogContentText sx={{ wordWrap: 'break-word' }}>
-        {children}
-      </DialogContentText>
-    </DialogContent>
+    <DialogContent sx={{ wordWrap: 'break-word' }}>{children}</DialogContent>
     {(displayedCancelBtn || displayConfirmBtn) && (
       <DialogActions>
         <>
