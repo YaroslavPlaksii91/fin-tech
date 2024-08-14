@@ -1,4 +1,4 @@
-import TrashIcon from '@icons/trash.svg';
+import DeleteIcon from '@icons/delete.svg';
 import EditIcon from '@icons/edit.svg';
 import DataDictionaryIcon from '@icons/data-dictionary.svg';
 import RenameIcon from '@icons/rename.svg';
@@ -40,7 +40,7 @@ const renameOption = {
 const deleteOption = {
   label: 'Delete',
   dataKey: ActionTypes.DELETE_FLOW,
-  icon: <TrashIcon color={theme.palette.error.main} />, // TODO: change icon
+  icon: <DeleteIcon />,
   textColor: theme.palette.error.main
 };
 
