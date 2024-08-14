@@ -14,7 +14,7 @@ import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { IsDirtyProvider } from '@contexts/IsDirtyContext';
 
-export default function FlowList() {
+const FlowList = () => {
   const { id } = useParams();
   const { flow } = useAppSelector(selectFlow);
   const dispatch = useAppDispatch();
@@ -57,4 +57,6 @@ export default function FlowList() {
       </IsDirtyProvider>
     </DataDictionaryContext.Provider>
   );
-}
+};
+
+export default FlowList;

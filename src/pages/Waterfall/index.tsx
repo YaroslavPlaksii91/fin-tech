@@ -7,11 +7,11 @@ import { FetchList } from './types';
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
-  AGGREGATION_ROW_STACK_NAME,
   DEFAULT_EXPORT_FILE_NAME,
   DEFAULT_SORT,
   INITIAL_INPUT_FILTERS,
-  INPUT_GROUPS_TO_SHOW
+  INPUT_GROUPS_TO_SHOW,
+  TOTAL_ROW_NAME
 } from './constants';
 import { StyledDataGridPremium } from './styled';
 
@@ -46,8 +46,8 @@ const Waterfall = () => {
 
   const rows = useMemo(() => getFormattedRows(data.item2), [data.item2]);
 
-  const aggregationTotalRow = useMemo(
-    () => rows.filter((row) => row.stack === AGGREGATION_ROW_STACK_NAME),
+  const totalRow = useMemo(
+    () => rows.filter((row) => row.stack === TOTAL_ROW_NAME),
     [rows]
   );
 
@@ -121,7 +121,7 @@ const Waterfall = () => {
         justifyContent="space-between"
         alignItems="center"
         spacing={2}
-        py={2}
+        pb={2}
       >
         <Typography variant="h4">Waterfall</Typography>
         <Stack
@@ -163,7 +163,7 @@ const Waterfall = () => {
           // We have border bottom 1px for each row, to include it in rowHeight calculation need also add spacing here
           getRowSpacing={() => ({ bottom: 1 })}
           rowSpacingType="border"
-          pinnedRows={{ bottom: aggregationTotalRow }}
+          pinnedRows={{ bottom: totalRow }}
           rows={rows}
           columns={columns}
           loading={loading}

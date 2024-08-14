@@ -28,7 +28,7 @@ import ExportCSVButton from '@components/shared/ExportCSVButton';
 import { removeSingleQuotesODataParams } from '@utils/helpers';
 import { getDateInUTC } from '@utils/date';
 
-const DenielReasons = () => {
+const DenialReasons = () => {
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [rows, setRows] = useState<RowData[]>([]);
@@ -129,7 +129,7 @@ const DenielReasons = () => {
         justifyContent="space-between"
         alignItems="center"
         spacing={2}
-        py={2}
+        pb={2}
       >
         <Typography variant="h4">Denial Reasons</Typography>
         <Stack
@@ -210,4 +210,4 @@ const DenielReasons = () => {
   );
 };
 
-export default DenielReasons;
+export default DenialReasons;

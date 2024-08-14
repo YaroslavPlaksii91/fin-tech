@@ -13,7 +13,7 @@ import { getFlow, getProductionFlow } from '@store/flow/asyncThunk';
 import { setInitialFlow } from '@store/flow/flow';
 import { selectFlow } from '@store/flow/selectors';
 
-export default function DataDictionary() {
+const DataDictionary = () => {
   const { id } = useParams();
   const { flow } = useAppSelector(selectFlow);
   const { startLoading, stopLoading } = useLoading();
@@ -74,4 +74,6 @@ export default function DataDictionary() {
       <DataDictionaryVariables flow={flow} />
     </Stack>
   );
-}
+};
+
+export default DataDictionary;

@@ -12,6 +12,14 @@ export const itemIconProps = {
   width: iconSize
 };
 
+const DotActiveIcon = (
+  <DotIcon
+    height={iconSize}
+    width={iconSize}
+    color={theme.palette.action.active}
+  />
+);
+
 export const animationStyles = (expanded: boolean) => ({
   opacity: expanded ? 1 : 0,
   overflow: 'hidden',
@@ -39,39 +47,27 @@ export const pages = [
 
 export const reportPages = [
   {
-    icon: (
-      <DotIcon
-        height={iconSize}
-        width={iconSize}
-        color={theme.palette.action.active}
-      />
-    ),
+    icon: DotActiveIcon,
     text: 'Applications',
     to: routes.underwriting.leadRequest,
     permission: permissionsMap.canViewLeadRequestReport
   },
   {
-    icon: (
-      <DotIcon
-        height={iconSize}
-        width={iconSize}
-        color={theme.palette.action.active}
-      />
-    ),
+    icon: DotActiveIcon,
     text: 'Denial Reasons',
     to: routes.underwriting.denialReasons,
     permission: permissionsMap.canViewDenialReasonReport
   },
   {
-    icon: (
-      <DotIcon
-        height={iconSize}
-        width={iconSize}
-        color={theme.palette.action.active}
-      />
-    ),
+    icon: DotActiveIcon,
     text: 'Waterfall',
     to: routes.underwriting.waterfall,
     permission: permissionsMap.canViewWaterfallReport
+  },
+  {
+    icon: DotActiveIcon,
+    text: 'Billing Report',
+    to: routes.underwriting.billingReport,
+    permission: permissionsMap.canViewBillingReport
   }
 ];

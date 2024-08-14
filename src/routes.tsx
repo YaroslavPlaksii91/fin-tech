@@ -1,21 +1,22 @@
 import { createBrowserRouter } from 'react-router-dom';
 
-import PrivateRoutes from '@components/Router/PrivateRoutes';
-import PrivateAuthRoute from '@components/Router/PrivateAuthRoute';
 import Login from '@pages/auth/Login.tsx';
-import Layout from '@components/Layouts/Layout';
-import routes from '@constants/routes';
 import Home from '@pages/Home';
 import FlowEdit from '@pages/FlowEdit';
 import DataDictionary from '@pages/DataDictionary';
 import ChangeHistoryPage from '@pages/ChangeHistory';
 import AccessVerificationPage from '@pages/auth/AccessVerification';
-import LeadRequestsReportsPage from '@pages/LeadRequestsReports';
-import DenielReasonsPage from '@pages/DenielReasons';
-import WaterfallPage from '@pages/Waterfall';
+import LeadRequestsReports from '@pages/LeadRequestsReports';
+import DenialReasons from '@pages/DenialReasons';
+import Waterfall from '@pages/Waterfall';
+import BillingReport from '@pages/BillingReport';
 import FlowList from '@pages/FlowList';
+import PermissionDenied from '@pages/PermissionDenied';
+import Layout from '@components/Layouts/Layout';
+import PrivateRoutes from '@components/Router/PrivateRoutes';
+import PrivateAuthRoute from '@components/Router/PrivateAuthRoute';
+import routes from '@constants/routes';
 import { permissionsMap } from '@constants/permissions';
-import PermissionDeniedPage from '@pages/PermissionDenied';
 
 export const router = createBrowserRouter([
   {
@@ -57,7 +58,7 @@ export const router = createBrowserRouter([
         path: routes.underwriting.leadRequest,
         element: (
           <PrivateRoutes permission={permissionsMap.canViewLeadRequestReport}>
-            <LeadRequestsReportsPage />
+            <LeadRequestsReports />
           </PrivateRoutes>
         )
       },
@@ -65,7 +66,7 @@ export const router = createBrowserRouter([
         path: routes.underwriting.denialReasons,
         element: (
           <PrivateRoutes>
-            <DenielReasonsPage />
+            <DenialReasons />
           </PrivateRoutes>
         )
       },
@@ -73,7 +74,15 @@ export const router = createBrowserRouter([
         path: routes.underwriting.waterfall,
         element: (
           <PrivateRoutes>
-            <WaterfallPage />
+            <Waterfall />
+          </PrivateRoutes>
+        )
+      },
+      {
+        path: routes.underwriting.billingReport,
+        element: (
+          <PrivateRoutes>
+            <BillingReport />
           </PrivateRoutes>
         )
       },
@@ -89,7 +98,7 @@ export const router = createBrowserRouter([
         path: routes.permissionDenied,
         element: (
           <PrivateRoutes>
-            <PermissionDeniedPage />
+            <PermissionDenied />
           </PrivateRoutes>
         )
       }

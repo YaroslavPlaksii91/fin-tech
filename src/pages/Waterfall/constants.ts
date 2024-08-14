@@ -1,7 +1,7 @@
 import { ExternalSystemsData } from '@domain/waterfallReport';
 
 export const DEFAULT_SORT = 'totalLooks';
-export const AGGREGATION_ROW_STACK_NAME = 'Total';
+export const TOTAL_ROW_NAME = 'Total';
 export const INITIAL_INPUT_FILTERS = { stack: '', campaignId: '' };
 
 export const INPUT_GROUPS_TO_SHOW = [
