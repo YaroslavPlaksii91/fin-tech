@@ -85,6 +85,10 @@ const Sidebar = () => {
   const scrollableRef = useRef<HTMLDivElement | null>(null);
   const throttle = useThrottle();
 
+  const hasVisibleReports = reportPages.some((item) =>
+    hasPermission(user?.policies, item.permission)
+  );
+
   const handleReportsToggle = () => setExpandedReports((prev) => !prev);
 
   const handleExpandIconClick = (
@@ -265,11 +269,9 @@ const Sidebar = () => {
                     <LineChartDotsIcon {...itemIconProps} />
                   </ListItemIcon>
                 </NavLink>
-                {expanded && (
-                  <Typography sx={animationStyles(expanded)}>
-                    Flow List
-                  </Typography>
-                )}
+                <Typography sx={animationStyles(expanded)}>
+                  Flow List
+                </Typography>
               </StyledMainAccordionSummary>
               <StyledAccordionDetails>
                 <Label variant="body2">Flow on Production</Label>
@@ -383,67 +385,66 @@ const Sidebar = () => {
               </StyledListItemButton>
             ) : null
           )}
-          {expanded ? (
-            <StyledAccordion
-              disableGutters
-              expanded={expandedReports}
-              onChange={handleReportsToggle}
-              slotProps={{ transition: { unmountOnExit: true } }}
-            >
-              <StyledMainAccordionSummary
-                expandIcon={<ExpandMoreIcon color="primary" />}
-                aria-controls="flowList-content"
-                id="flowList-header"
-                expanded={expanded ? 1 : 0}
+          {hasVisibleReports &&
+            (expanded ? (
+              <StyledAccordion
+                disableGutters
+                expanded={expandedReports}
+                onChange={handleReportsToggle}
+                slotProps={{ transition: { unmountOnExit: true } }}
               >
-                <ListItemIcon>
-                  <DocumentPaperIcon {...itemIconProps} />
-                </ListItemIcon>
-                {expanded && (
+                <StyledMainAccordionSummary
+                  expandIcon={<ExpandMoreIcon color="primary" />}
+                  aria-controls="reports-content"
+                  id="reports-header"
+                  expanded={expanded ? 1 : 0}
+                >
+                  <ListItemIcon>
+                    <DocumentPaperIcon {...itemIconProps} />
+                  </ListItemIcon>
                   <Typography sx={animationStyles(expanded)}>
                     Reports
                   </Typography>
-                )}
-              </StyledMainAccordionSummary>
-              <StyledAccordionDetails>
-                {reportPages.map((item, index) =>
-                  hasPermission(user?.policies, item) ? (
-                    <StyledListItemButton
-                      key={index}
-                      component={NavLink}
-                      to={item.to}
-                      sx={{
-                        '&:hover svg, &.active svg': {
-                          transform: 'scale(1.5)',
-                          color: theme.palette.primary.main
-                        }
-                      }}
-                    >
-                      <ListItemIcon
+                </StyledMainAccordionSummary>
+                <StyledAccordionDetails>
+                  {reportPages.map((item, index) =>
+                    hasPermission(user?.policies, item) ? (
+                      <StyledListItemButton
+                        key={index}
+                        component={NavLink}
+                        to={item.to}
                         sx={{
-                          paddingLeft: 2
+                          '&:hover svg, &.active svg': {
+                            transform: 'scale(1.5)',
+                            color: theme.palette.primary.main
+                          }
                         }}
                       >
-                        {item.icon}
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={
-                          <Typography variant="body2">{item.text}</Typography>
-                        }
-                        sx={animationStyles(expanded)}
-                      />
-                    </StyledListItemButton>
-                  ) : null
-                )}
-              </StyledAccordionDetails>
-            </StyledAccordion>
-          ) : (
-            <StyledListItemButton>
-              <ListItemIcon>
-                <DocumentPaperIcon {...itemIconProps} />
-              </ListItemIcon>
-            </StyledListItemButton>
-          )}
+                        <ListItemIcon
+                          sx={{
+                            paddingLeft: 2
+                          }}
+                        >
+                          {item.icon}
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={
+                            <Typography variant="body2">{item.text}</Typography>
+                          }
+                          sx={animationStyles(expanded)}
+                        />
+                      </StyledListItemButton>
+                    ) : null
+                  )}
+                </StyledAccordionDetails>
+              </StyledAccordion>
+            ) : (
+              <StyledListItemButton>
+                <ListItemIcon>
+                  <DocumentPaperIcon {...itemIconProps} />
+                </ListItemIcon>
+              </StyledListItemButton>
+            ))}
         </StyledList>
       </StyledWrapper>
     </StyledPaper>
