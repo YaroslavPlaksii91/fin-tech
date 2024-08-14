@@ -100,24 +100,34 @@ export const getColumns = (
 export const getVariableSources = (
   caseEntries: CaseEntry[],
   variables: Variable[]
-) => {
-  const variablesSourceTypes = variables.reduce<
-    Record<string, VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE>
-  >(
-    (acc, current) => ({
-      ...acc,
-      [current.name]: current.sourceType
-    }),
-    {}
-  );
+) =>
+  caseEntries.reduce(
+    (acc, { name, sourceName, sourceType }) => {
+      const isAdded = Boolean(
+        acc.find(
+          (variableSource) =>
+            variableSource.name === name || variableSource.name === sourceName
+        )
+      );
+      const variableSourceType = variables.find(
+        (variable) => variable.name === name || variable.name === sourceName
+      )?.sourceType;
 
-  return caseEntries
-    .map(({ name, sourceName, sourceType }) => ({
-      name: sourceName || name,
-      sourceType: sourceType || variablesSourceTypes[name]
-    }))
-    .filter(({ name }) => name);
-};
+      if (!name.length || isAdded || !variableSourceType) return acc;
+
+      return [
+        ...acc,
+        {
+          name: sourceName || name,
+          sourceType: sourceType || variableSourceType
+        }
+      ];
+    },
+    [] as {
+      name: string;
+      sourceType: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
+    }[]
+  );
 
 export const updateCaseEntry = ({
   caseEntries,
