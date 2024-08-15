@@ -151,7 +151,9 @@ const SelectVariableValueDialog = ({
               </MenuItem>
             ))}
           </SingleSelect>
-          {(!dataType.isWithoutEnum || dataType.isBoolean) && isCondition ? (
+          {((!dataType.isWithoutEnum && !dataType.isObject) ||
+            dataType.isBoolean) &&
+          isCondition ? (
             <SingleSelect
               name="value"
               control={control}

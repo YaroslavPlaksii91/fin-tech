@@ -22,3 +22,4 @@ export const INITIAL_CASE_ENTRIES = [
 export const INITIAL_STEP_IDS = [null, null];
 
 export const STEP = 'Step';
+export const OBJECT = 'Object';
