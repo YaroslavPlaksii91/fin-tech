@@ -13,13 +13,13 @@ export const Head = styled(Stack)(({ theme }) => ({
 export const StyledTableBody = styled(TableBody)(({ theme }) => ({
   tr: {
     td: {
-      ':first-child': { borderLeft: `1px solid ${theme.palette.divider}` },
+      ':first-of-type': { borderLeft: `1px solid ${theme.palette.divider}` },
       ':last-child': { borderRight: `1px solid ${theme.palette.divider}` }
     },
-    ':first-child': {
+    ':first-of-type': {
       td: {
         borderTop: `1px solid ${theme.palette.divider}`,
-        ':first-child': { borderTopLeftRadius: '8px' },
+        ':first-of-type': { borderTopLeftRadius: '8px' },
         ':last-child': { borderTopRightRadius: '8px' }
       }
     },
@@ -27,10 +27,12 @@ export const StyledTableBody = styled(TableBody)(({ theme }) => ({
       borderBottom: `1px solid ${theme.palette.divider}`,
       td: {
         borderBottom: `1px solid ${theme.palette.divider}`,
-        ':first-child': { borderBottomLeftRadius: '8px' },
+        ':first-of-type': { borderBottomLeftRadius: '8px' },
         ':last-child': { borderBottomRightRadius: '8px' }
       },
-      ':has(td:first-child:last-child)': { td: { borderRadius: '0 0 8px 8px' } }
+      ':has(td:first-of-type:last-child)': {
+        td: { borderRadius: '0 0 8px 8px' }
+      }
     }
   }
 }));
