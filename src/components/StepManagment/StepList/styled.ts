@@ -17,14 +17,6 @@ export const StyledListItem = styled(ListItem)(({ theme: { palette } }) => ({
     background: palette.background.default,
     '& .MuiTypography-body2': {
       color: palette.primary.main
-    },
-    '.MuiListItemIcon-root': {
-      svg: {
-        path: {
-          fill: palette.primary.dark,
-          fillOpacity: 'unset'
-        }
-      }
     }
   }
 }));

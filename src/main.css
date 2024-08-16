@@ -1,7 +1,7 @@
 @property --color-opacity {
   syntax: '<percentage>';
   inherits: true;
-  initial-value: 8%;
+  initial-value: 0%;
 }
 
 body {

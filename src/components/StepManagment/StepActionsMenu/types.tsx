@@ -1,9 +1,9 @@
 import { theme } from '@theme';
-import EditIcon from '@icons/editPencil.svg';
-import FileEditIcon from '@icons/fileEdit.svg';
-import DuplicateSquareIcon from '@icons/duplicateSquare.svg';
-import EyeIcon from '@icons/eye.svg';
-import TrashIcon from '@icons/trash.svg';
+import EditIcon from '@icons/edit.svg';
+import RenameIcon from '@icons/rename.svg';
+import CopyIcon from '@icons/copy.svg';
+import VisibleIcon from '@icons/visible.svg';
+import DeleteIcon from '@icons/delete.svg';
 import { OptionsFlowParams } from '@components/FlowManagment/ActionsMenu/options';
 
 export enum ActionTypes {
@@ -17,18 +17,18 @@ export enum ActionTypes {
 export const viewStepOption = {
   label: 'View Step',
   dataKey: ActionTypes.STEP_TEXT_VIEW,
-  icon: <EyeIcon />
+  icon: <VisibleIcon />
 };
 
 export const renameStepOption = {
   label: 'Rename step',
   dataKey: ActionTypes.RENAME_STEP,
-  icon: <FileEditIcon />
+  icon: <RenameIcon />
 };
 export const duplicateStepOption = {
   label: 'Duplicate step',
   dataKey: ActionTypes.DUPLICATE_STEP,
-  icon: <DuplicateSquareIcon />
+  icon: <CopyIcon />
 };
 
 export const editStepOption = {
@@ -40,7 +40,7 @@ export const editStepOption = {
 export const deleteStepOption = {
   label: 'Delete step',
   dataKey: ActionTypes.DELETE_STEP,
-  icon: <TrashIcon color={theme.palette.error.main} />,
+  icon: <DeleteIcon />,
   textColor: theme.palette.error.main
 };
 

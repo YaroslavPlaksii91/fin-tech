@@ -7,19 +7,22 @@ import { palette } from '@theme';
 
 const headerButtonStyles = {
   borderRadius: '6px',
-  color: palette.white,
+  color: `${palette.white} !important`,
+  backgroundColor: '#FFFFFF14',
   border: '1px solid rgba(225, 225, 225, 0.5) !important'
 };
 
 export const StyledAppBar = styled(AppBar)(() => ({
   backgroundColor: palette.primaryDark,
-  position: 'fixed',
   padding: '12px 24px 12px 16px',
-  boxShadow: 'none'
+  boxShadow: 'none',
+  zIndex: 1201
 }));
 
 export const StyledHeaderIconButton = styled(IconButton)(() => ({
   padding: '4px',
+  width: '30px',
+  height: '30px',
   ...headerButtonStyles,
 
   '&::after': {
@@ -30,6 +33,9 @@ export const StyledHeaderIconButton = styled(IconButton)(() => ({
 }));
 
 export const StyledHeaderButton = styled(Button)(() => ({
-  padding: '4px 8px',
+  padding: '4px 10px',
+  textTransform: 'capitalize',
+  fontSize: '13px',
+  lineHeight: '20px',
   ...headerButtonStyles
 }));
