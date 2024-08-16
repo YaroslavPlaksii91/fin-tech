@@ -18,7 +18,7 @@ export const StyledListItemButton = styled(ListItemButton)(
   ({ theme: { palette } }) => ({
     margin: '0 8px',
     borderRadius: 0,
-    ' &.Mui-selected': {
+    '&.Mui-selected': {
       backgroundColor: palette.amber,
       color: palette.primary.main
     }
