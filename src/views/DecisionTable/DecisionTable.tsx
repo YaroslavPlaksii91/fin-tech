@@ -83,12 +83,11 @@ const DecisionTable = ({
     onAddNodeBetweenEdges
   }
 }: DecisionTableStepProps) => {
-  const { setIsDirty } = useIsDirty();
+  const { isDirty, setIsDirty } = useIsDirty();
   const dataDictionary = useContext(DataDictionaryContext);
   const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
   const user = useAppSelector(selectUserInfo);
 
-  const [isEdited, setIsEdited] = useState(false);
   const [selectedColumn, setSelectedColumn] =
     useState<VariableColumnData | null>(null);
   const [caseEntries, setCaseEntries] = useState<CaseEntries[]>([]);
@@ -467,26 +466,25 @@ const DecisionTable = ({
       JSON.stringify(initialData?.savedDefaultActions) !==
       JSON.stringify(defaultActions);
 
-    const hasChangesDefaultStepId =
+    const isDefaultStepIdChanged =
       initialData?.savedDefaultStepId !== stepIds[stepIds.length - 1];
 
-    const hasChangesNoteValue = (step.data.note ?? '') !== noteValue;
+    const isNoteValueChanged = (step.data.note ?? '') !== noteValue;
 
-    const hasChangesStepIds =
-      JSON.stringify(initialData?.savedStepIds) !== JSON.stringify(stepIds);
+    const hasChangesInStepIds =
+      JSON.stringify([
+        ...initialData.savedStepIds,
+        initialData.savedDefaultStepId
+      ]) !== JSON.stringify(stepIds);
 
-    const isEdit =
+    const isEdited =
       hasChangesInCaseEntries ||
       hasChangesInDefaultActions ||
-      hasChangesDefaultStepId ||
-      hasChangesNoteValue ||
-      hasChangesStepIds;
+      isDefaultStepIdChanged ||
+      isNoteValueChanged ||
+      hasChangesInStepIds;
 
-    if (isEdit) {
-      setIsEdited(true);
-    } else {
-      setIsEdited(false);
-    }
+    setIsDirty(isEdited);
   };
 
   const debounceCheckIsDirty = useCallback(debounce(checkIsDirty, 300), [
@@ -496,10 +494,6 @@ const DecisionTable = ({
   useEffect(() => {
     debounceCheckIsDirty(caseEntries, defaultActions, watchNote, stepIds);
   }, [caseEntries, defaultActions, stepIds, watchNote]);
-
-  useEffect(() => {
-    setIsDirty(isEdited);
-  }, [isEdited]);
 
   return (
     <>
@@ -560,7 +554,7 @@ const DecisionTable = ({
       </StepContentWrapper>
       <StepDetailsControlBar
         disabled={!isEmpty(errors) || isSubmitting}
-        isEdited={isEdited}
+        isEdited={isDirty}
         resetActiveStepId={resetActiveStepId}
         onApplyChangesClick={() => {
           void handleSubmit(onApplyChangesClick)();
