@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 
 import { Operator, OPERATORS } from '../types';
+import { OBJECT } from '../constants';
 
 import {
   DATA_TYPE,
@@ -12,10 +13,11 @@ import { isDecimal, isInteger } from '@utils/validation';
 export const validationSchema = yup.object().shape({
   name: yup.string().required(),
   dataType: yup
-    .mixed<DATA_TYPE>()
+    .mixed<DATA_TYPE | typeof OBJECT>()
     .oneOf([
       ...Object.values(DATA_TYPE_WITHOUT_ENUM),
-      ...Object.values(DATA_TYPE_WITH_ENUM_PREFIX)
+      ...Object.values(DATA_TYPE_WITH_ENUM_PREFIX),
+      OBJECT
     ])
     .notRequired()
     .nullable(),

@@ -89,8 +89,6 @@ const DecisionTable = ({
   const user = useAppSelector(selectUserInfo);
 
   const [isEdited, setIsEdited] = useState(false);
-  const [selectedColumn, setSelectedColumn] =
-    useState<VariableColumnData | null>(null);
   const [caseEntries, setCaseEntries] = useState<CaseEntries[]>([]);
   const [defaultActions, setDefaultActions] = useState<CaseEntry[]>([]);
   const [stepIds, setStepIds] = useState<(string | null)[]>(INITIAL_STEP_IDS);
@@ -205,14 +203,13 @@ const DecisionTable = ({
     setStepIds((prev) => prev.filter((_, stepIndex) => stepIndex !== index));
   };
 
-  const handleAddColumn = () => {
-    if (!selectedColumn?.category) return;
-    const isActionsCategory = selectedColumn.category === CATEGORIES.Actions;
+  const handleAddColumn = ({ category, index }: VariableColumnData) => {
+    const isActionsCategory = category === CATEGORIES.Actions;
 
     const updatedCaseEntries = updateCaseEntry({
       caseEntries,
-      category: selectedColumn.category,
-      start: selectedColumn.index + 1,
+      category,
+      start: index + 1,
       deleteCount: 0,
       insertEntry: INITIAL_ENTRY,
       initialEntries: isActionsCategory
@@ -227,54 +224,52 @@ const DecisionTable = ({
     setCaseEntries(updatedCaseEntries);
   };
 
-  const handleDeleteColumn = () => {
-    if (!selectedColumn?.category) return;
-
+  const handleDeleteColumn = ({ category, index }: VariableColumnData) => {
     const updatedCaseEntries = updateCaseEntry({
       caseEntries,
-      category: selectedColumn.category,
-      start: selectedColumn.index,
+      category,
+      start: index,
       deleteCount: 1
     });
 
-    if (selectedColumn.category === CATEGORIES.Actions)
+    if (category === CATEGORIES.Actions)
       setDefaultActions((prev) =>
-        prev.filter((_, index) => index !== selectedColumn.index)
+        prev.filter((_, actionIndex) => actionIndex !== index)
       );
 
     setCaseEntries(updatedCaseEntries);
   };
 
-  const handleChangeColumnVariable = (newVariable: DataDictionaryVariable) => {
-    if (!selectedColumn?.category) return;
+  const handleChangeColumnVariable =
+    ({ category, index }: VariableColumnData) =>
+    (newVariable: DataDictionaryVariable) => {
+      const insertEntry = {
+        ...INITIAL_ENTRY,
+        name: newVariable.name,
+        dataType: newVariable.dataType,
+        sourceName: newVariable.sourceName,
+        sourceType: newVariable.sourceType
+      };
 
-    const insertEntry = {
-      ...INITIAL_ENTRY,
-      name: newVariable.name,
-      dataType: newVariable.dataType,
-      sourceName: newVariable.sourceName,
-      sourceType: newVariable.sourceType
+      const updatedCaseEntries = updateCaseEntry({
+        caseEntries,
+        category,
+        start: index,
+        deleteCount: 1,
+        insertEntry,
+        initialEntries: [insertEntry]
+      });
+
+      if (category === CATEGORIES.Actions)
+        setDefaultActions((prev) =>
+          prev.map((prevEntry, actionIndex) =>
+            actionIndex === index ? insertEntry : prevEntry
+          )
+        );
+
+      if (!caseEntries.length) setStepIds(INITIAL_STEP_IDS);
+      setCaseEntries(updatedCaseEntries);
     };
-
-    const updatedCaseEntries = updateCaseEntry({
-      caseEntries,
-      category: selectedColumn.category,
-      start: selectedColumn.index,
-      deleteCount: 1,
-      insertEntry,
-      initialEntries: [insertEntry]
-    });
-
-    if (selectedColumn.category === CATEGORIES.Actions)
-      setDefaultActions((prev) =>
-        prev.map((prevEntry, index) =>
-          index === selectedColumn.index ? insertEntry : prevEntry
-        )
-      );
-
-    if (!caseEntries.length) setStepIds(INITIAL_STEP_IDS);
-    setCaseEntries(updatedCaseEntries);
-  };
 
   const handleSubmitVariableValue = (
     data: FormFieldsProps,
@@ -529,9 +524,7 @@ const DecisionTable = ({
             variables={variables}
             integrationData={integrationVariables}
             stepOptions={stepOptions}
-            selectedColumn={selectedColumn}
             handleChangeStep={handleChangeStep}
-            handleSelectionColumn={setSelectedColumn}
             handleDeleteRow={handleDeleteLayer}
             handleAddColumn={handleAddColumn}
             handleDeleteColumn={handleDeleteColumn}

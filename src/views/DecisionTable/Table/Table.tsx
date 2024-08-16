@@ -20,26 +20,18 @@ import {
   CATEGORY
 } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
-import {
-  checkDataType,
-  filterVariablesByUsageMode,
-  getHeaderCellBgColor,
-  parseStringFormat
-} from '../utils';
+import { checkDataType, parseStringFormat } from '../utils';
 import Select from '../Select';
-import VariableInput from '../VariableInput';
 
 import { Head, StyledTableBody } from './styled';
+import VariablesRow from './VariablesRow';
 
 import { theme } from '@theme';
 import TrashIcon from '@icons/trash.svg';
-import AddIcon from '@icons/plusSquare.svg';
-import GridSquarePlusIcon from '@icons/gridSquarePlus.svg';
 import {
   StyledTableCell,
   StyledTableRow
 } from '@components/shared/Table/styled';
-import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog';
 import { DataDictionaryVariable, Variable } from '@domain/dataDictionary';
 
 interface Table {
@@ -49,13 +41,13 @@ interface Table {
   variables: Record<string, Variable[]>;
   integrationData: Record<string, Variable[]>;
   stepOptions: { value: string; label: string }[];
-  selectedColumn: VariableColumnData | null;
-  handleSelectionColumn: (column: VariableColumnData) => void;
   handleDeleteRow: (index: number) => void;
-  handleAddColumn: () => void;
-  handleDeleteColumn: () => void;
+  handleAddColumn: (column: VariableColumnData) => void;
+  handleDeleteColumn: (column: VariableColumnData) => void;
   handleChangeStep: (rowIndex: number, stepId: string) => void;
-  handleChangeColumnVariable: (newVariable: DataDictionaryVariable) => void;
+  handleChangeColumnVariable: (
+    column: VariableColumnData
+  ) => (newVariable: DataDictionaryVariable) => void;
   handleSubmitVariableValue: (
     data: FormFieldsProps,
     category: CATEGORY,
@@ -71,8 +63,6 @@ const Table = ({
   variables,
   integrationData,
   stepOptions,
-  selectedColumn,
-  handleSelectionColumn,
   handleDeleteRow,
   handleAddColumn,
   handleDeleteColumn,
@@ -81,37 +71,10 @@ const Table = ({
   handleSubmitVariableValue,
   hasUserPermission
 }: Table) => {
-  const [anchorVariableMenu, setAnchorVariableMenu] =
-    useState<HTMLElement | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
 
   const getColSpanLength = (category: CATEGORY) =>
     columns.filter((column) => column.category === category).length;
-
-  const handleMenuClick =
-    (column: VariableColumnData) => (event: React.MouseEvent<HTMLElement>) => {
-      handleSelectionColumn(column);
-      setAnchorVariableMenu(event.currentTarget);
-    };
-
-  const handleCloseMenu = () => setAnchorVariableMenu(null);
-  const handleCloseDialog = () => setIsDialogOpen(false);
-
-  const handleAddVariable = () => {
-    setIsDialogOpen(true);
-    handleCloseMenu();
-  };
-
-  const handleAddNewColumn = () => {
-    handleAddColumn();
-    handleCloseMenu();
-  };
-
-  const handleDelete = () => {
-    handleDeleteColumn();
-    handleCloseMenu();
-  };
 
   const handleSubmitSelectedCellData = (data: FormFieldsProps) => {
     if (!selectedCell) return;
@@ -156,72 +119,15 @@ const Table = ({
           </StyledTableRow>
         </TableHead>
         <StyledTableBody>
-          <StyledTableRow>
-            {columns.map((column, columnIndex) => {
-              const isLastConditionColumn =
-                columns.filter(
-                  ({ category }) => category === CATEGORIES.Conditions
-                ).length === 1 && column.category === CATEGORIES.Conditions;
-
-              const isCurrentMenuOpen =
-                Boolean(anchorVariableMenu) &&
-                column.index === selectedColumn?.index &&
-                column.category === selectedColumn?.category;
-
-              const menuItems = [
-                {
-                  key: 'add-variable-action',
-                  disabled: column.name === STEP,
-                  onClick: handleAddVariable,
-                  icon: <AddIcon height={24} width={24} />,
-                  text: `Add ${column?.category === CATEGORIES.Conditions ? 'Input' : 'Output'} Variable`
-                },
-                {
-                  key: 'add-column-action',
-                  disabled: false,
-                  onClick: handleAddNewColumn,
-                  icon: <GridSquarePlusIcon />,
-                  text: 'Add Column'
-                },
-                {
-                  key: 'delete-column-action',
-                  disabled: isLastConditionColumn || column.name === STEP,
-                  onClick: handleDelete,
-                  icon: <TrashIcon />,
-                  text: 'Delete Column'
-                }
-              ];
-
-              return (
-                <TableCell
-                  width={340}
-                  key={columnIndex}
-                  sx={{
-                    padding: 0,
-                    bgcolor: getHeaderCellBgColor(column.category)
-                  }}
-                >
-                  <VariableInput
-                    fullWidth
-                    readOnly
-                    sx={{
-                      minWidth: '300px',
-                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
-                    }}
-                    size="small"
-                    open={isCurrentMenuOpen}
-                    value={column.name}
-                    menuItems={menuItems}
-                    anchorEl={anchorVariableMenu}
-                    onClick={handleMenuClick(column)}
-                    handleCloseMenu={handleCloseMenu}
-                    showActionButton={hasUserPermission}
-                  />
-                </TableCell>
-              );
-            })}
-            <TableCell sx={{ bgcolor: lightGreen[50], width: 0 }} />
-          </StyledTableRow>
+          <VariablesRow
+            hasUserPermission={hasUserPermission}
+            columns={columns}
+            variables={variables}
+            integrationData={integrationData}
+            handleChangeColumnVariable={handleChangeColumnVariable}
+            handleAddColumn={handleAddColumn}
+            handleDeleteColumn={handleDeleteColumn}
+          />
           {rows.map((row, rowIndex) => (
             <StyledTableRow
               key={rowIndex}
@@ -324,24 +230,6 @@ const Table = ({
           handleSubmitForm={handleSubmitSelectedCellData}
         />
       )}
-      <DataDictionaryDialog
-        data={filterVariablesByUsageMode(variables, selectedColumn?.category)}
-        integrationData={filterVariablesByUsageMode(
-          integrationData,
-          selectedColumn?.category
-        )}
-        title="Add Variable"
-        isOpen={isDialogOpen}
-        onClose={handleCloseDialog}
-        onConfirm={handleChangeColumnVariable}
-        setSelectedObjectPropertyFunction={(object, property) => ({
-          ...property,
-          // Technically is not correct source type, but for calculations this is backend requirement -
-          // for now this row brake the decision table flow with -> user vars
-          sourceName: object.name,
-          sourceType: object.sourceType
-        })}
-      />
     </>
   );
 };
