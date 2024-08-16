@@ -152,10 +152,11 @@ const Table = ({
                           disabled={!hasUserPermission}
                         />
                       </StyledTableCell>
-                      <StyledTableCell sx={{ padding: 0 }}>
+                      <StyledTableCell>
                         {rows.length !== rowIndex + 1 && hasUserPermission ? (
                           <Button
-                            sx={{ color: theme.palette.error.main }}
+                            fullWidth
+                            sx={{ color: theme.palette.error.main, padding: 0 }}
                             onClick={() => handleDeleteRow(rowIndex)}
                           >
                             <TrashIcon />

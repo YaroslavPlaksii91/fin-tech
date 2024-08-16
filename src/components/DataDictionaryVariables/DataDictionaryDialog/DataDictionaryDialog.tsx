@@ -5,9 +5,7 @@ import {
   Divider,
   Grid,
   List,
-  ListItemButton,
   ListItemText,
-  ListSubheader,
   Stack,
   TextField,
   Typography
@@ -17,6 +15,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
+
+import { StyledListItemButton, StyledListSubheader } from './styled';
 
 import { palette } from '@theme';
 import { highlightText } from '@utils/text.ts';
@@ -153,21 +153,18 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
 
   return (
     <Dialog fullWidth maxWidth="md" open={isOpen} onClose={onClose}>
-      <DialogTitle sx={{ paddingBottom: 1 }}>{title}</DialogTitle>
+      <DialogTitle>{title}</DialogTitle>
       <DialogContent sx={{ paddingBottom: 0 }}>
-        <Box pt={1}>
-          <TextField
-            fullWidth
-            placeholder="Search by Keyword"
-            size="small"
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-            }}
-          />
-        </Box>
-        <Box mt={3} mx={-3}>
-          <Divider />
+        <TextField
+          fullWidth
+          placeholder="Search by Keyword"
+          size="small"
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+          }}
+        />
+        <Box mt={1} mx={-3}>
           <Grid container>
             <Grid item xs={selectVarIsObjectType ? 4 : 6}>
               <List
@@ -180,12 +177,9 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                   overflowY: 'auto'
                 }}
                 subheader={
-                  <Box>
-                    <ListSubheader sx={{ lineHeight: '40px' }}>
-                      Select Source
-                    </ListSubheader>
-                    <Divider />
-                  </Box>
+                  <StyledListSubheader>
+                    <Typography variant="body1">Select Source</Typography>
+                  </StyledListSubheader>
                 }
               >
                 {dictsEmptyState && (
@@ -205,14 +199,14 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                   </Stack>
                 )}
                 {Object.keys(filteredData).map((key) => (
-                  <ListItemButton
+                  <StyledListItemButton
                     selected={selectedDict === key}
                     key={key}
                     dense
                     onClick={() => setSelectedDict(key)}
                   >
-                    <ListItemText primary={startCase(key)} />
-                  </ListItemButton>
+                    <ListItemText sx={{ margin: 0 }} primary={startCase(key)} />
+                  </StyledListItemButton>
                 ))}
               </List>
             </Grid>
@@ -234,12 +228,9 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                   overflowY: 'auto'
                 }}
                 subheader={
-                  <Box>
-                    <ListSubheader sx={{ lineHeight: '40px' }}>
-                      Available Variables
-                    </ListSubheader>
-                    <Divider />
-                  </Box>
+                  <StyledListSubheader>
+                    <Typography variant="body1">Available Variables</Typography>
+                  </StyledListSubheader>
                 }
               >
                 {variablesEmptyState && (
@@ -261,7 +252,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                 )}
                 {selectedDict &&
                   filteredData[selectedDict]?.map((variable) => (
-                    <ListItemButton
+                    <StyledListItemButton
                       key={variable.name}
                       dense
                       selected={selectedVar?.name === variable.name}
@@ -270,6 +261,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                       }}
                     >
                       <ListItemText
+                        sx={{ margin: 0 }}
                         primary={
                           <span
                             dangerouslySetInnerHTML={{
@@ -278,7 +270,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                           />
                         }
                       />
-                    </ListItemButton>
+                    </StyledListItemButton>
                   ))}
               </List>
             </Grid>
@@ -304,12 +296,11 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                     overflowY: 'auto'
                   }}
                   subheader={
-                    <Box>
-                      <ListSubheader sx={{ lineHeight: '40px' }}>
+                    <StyledListSubheader>
+                      <Typography variant="body1">
                         Available Attributes
-                      </ListSubheader>
-                      <Divider />
-                    </Box>
+                      </Typography>
+                    </StyledListSubheader>
                   }
                 >
                   {filteredIntegrationDataList.length === 0 && (
@@ -332,7 +323,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                   {filteredIntegrationDataList.map((property) => {
                     const title = [property.source, property.name].join('.');
                     return (
-                      <ListItemButton
+                      <StyledListItemButton
                         selected={
                           selectedObjectProperty?.name === property.name
                         }
@@ -356,6 +347,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                         title={title}
                       >
                         <ListItemText
+                          sx={{ margin: 0 }}
                           primary={
                             <span
                               dangerouslySetInnerHTML={{
@@ -364,7 +356,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                             />
                           }
                         />
-                      </ListItemButton>
+                      </StyledListItemButton>
                     );
                   })}
                 </List>
@@ -376,7 +368,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
       <Box>
         <Divider />
       </Box>
-      <DialogActions sx={{ paddingBottom: '16px' }}>
+      <DialogActions sx={{ padding: '8px 16px' }}>
         <LoadingButton
           disabled={
             !selectedVar || (selectVarIsObjectType && !selectedObjectProperty)

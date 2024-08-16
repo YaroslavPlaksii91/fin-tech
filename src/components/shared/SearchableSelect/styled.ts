@@ -5,8 +5,9 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 export const StyledSelect = styled(Select)(() => ({
   paddingRight: '6px',
   width: '100%',
+  fontSize: '14px',
   '& .MuiSelect-select': {
-    padding: '10px 12px'
+    padding: 0
   },
   '& .MuiOutlinedInput-notchedOutline': {
     border: 'none'
@@ -16,8 +17,8 @@ export const StyledSelect = styled(Select)(() => ({
 export const StyledInputLabel = styled(InputLabel)(() => ({
   fontSize: '14px',
   transform: 'none',
-  left: '12px',
-  top: '10px'
+  left: 0,
+  top: 0
 }));
 
 export const DownIcon = styled(KeyboardArrowDownIcon)<

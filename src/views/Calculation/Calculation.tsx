@@ -204,16 +204,11 @@ const Calculation: React.FC<CalculationProps> = ({
                               <TableCell>
                                 {expression.expressionString}
                               </TableCell>
-                              <TableCell
-                                sx={{
-                                  padding: 0
-                                }}
-                                width={40}
-                              >
+                              <TableCell width={40}>
                                 {!isPreview && (
-                                  <Stack direction="row">
+                                  <Stack direction="row" gap={1}>
                                     <IconButton
-                                      sx={{ padding: '0 8px' }}
+                                      sx={{ padding: '0' }}
                                       onClick={() => {
                                         setInitialValue({
                                           ...expression,
@@ -225,7 +220,7 @@ const Calculation: React.FC<CalculationProps> = ({
                                       <EditIcon />
                                     </IconButton>
                                     <IconButton
-                                      sx={{ padding: '0 8px' }}
+                                      sx={{ padding: '0' }}
                                       onClick={() => {
                                         remove(index);
                                       }}

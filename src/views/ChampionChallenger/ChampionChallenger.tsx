@@ -257,7 +257,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                         key={field.id}
                         parity={(index + 1) % 2 === 0 ? 'even' : 'odd'}
                       >
-                        <StyledTableCell sx={{ p: '0 12px' }}>
+                        <StyledTableCell>
                           <NumberRangeInput
                             control={control}
                             name={`splits.${index}.percentage`}
@@ -265,7 +265,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                             disabled={isPreview}
                           />
                         </StyledTableCell>
-                        <StyledTableCell sx={{ p: 0 }}>
+                        <StyledTableCell>
                           <SearchableSelect
                             index={index}
                             control={control}
@@ -277,11 +277,11 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                             disabled={isPreview}
                           />
                         </StyledTableCell>
-                        <StyledTableCell sx={{ p: 0 }} width={40}>
+                        <StyledTableCell width={40}>
                           {!isPreview && (
                             <Button
                               fullWidth
-                              sx={{ p: '10px' }}
+                              sx={{ p: 0 }}
                               onClick={() => {
                                 clearErrors();
                                 const removedOption = fields[index].value;

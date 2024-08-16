@@ -26,7 +26,7 @@ const findOption = ({
   searchText: string;
 }) => label.toLowerCase().indexOf(searchText.toLowerCase()) > -1;
 
-interface SelectProps<
+interface SearchableSelectProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>
 > extends UseControllerProps<TFieldValues, TName> {
@@ -50,7 +50,7 @@ const SearchableSelect = <
   setSelectedOptions,
   onChangeCb,
   disabled
-}: SelectProps<TFieldValues, TName>) => {
+}: SearchableSelectProps<TFieldValues, TName>) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchText, setSearchText] = useState('');
 
@@ -73,7 +73,7 @@ const SearchableSelect = <
       name={name}
       control={control}
       render={({ field, field: { onChange, value } }) => (
-        <FormControl sx={{ width: '100%' }}>
+        <FormControl fullWidth>
           {!value && (
             <StyledInputLabel shrink id="search-select-label">
               Select next step

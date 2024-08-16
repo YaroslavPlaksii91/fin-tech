@@ -22,7 +22,10 @@ const Details: React.FC<{ data: NodeData }> = ({
         <Typography pt={1} variant="caption">
           Note
         </Typography>
-        <Typography sx={{ width: '156px' }} variant="body2">
+        <Typography
+          sx={{ width: '156px', wordBreak: 'break-word' }}
+          variant="body2"
+        >
           {note}
         </Typography>
       </>

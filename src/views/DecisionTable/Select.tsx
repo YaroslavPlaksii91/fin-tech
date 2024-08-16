@@ -5,6 +5,7 @@ import {
   Select as MuiSelect,
   SelectChangeEvent
 } from '@mui/material';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 interface SelectProps {
   placeholder: string;
@@ -57,6 +58,7 @@ const Select = ({
         onChange={handleOnSelectChange}
         multiple={isMultiSelect}
         disabled={disabled}
+        IconComponent={(props) => <KeyboardArrowDownIcon {...props} />}
       >
         {options.map((option) => (
           <MenuItem value={option.value} key={option.value}>

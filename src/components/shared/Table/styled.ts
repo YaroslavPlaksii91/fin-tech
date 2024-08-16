@@ -10,7 +10,6 @@ export const StyledTableCell = styled(TableCell)(
       palette: { divider, background }
     }
   }) => ({
-    // padding: '1.5px 12px',
     backgroundColor: 'rgba(248, 249, 251)',
     borderBottom: `1px solid ${divider}`,
     [`&.${tableCellClasses.head}`]: {

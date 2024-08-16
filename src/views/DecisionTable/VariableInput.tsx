@@ -38,7 +38,9 @@ const VariableInput = ({
 
   return (
     <OutlinedInput
+      sx={{ padding: 0 }}
       placeholder="Choose the variable"
+      inputProps={{ sx: { padding: 0, fontSize: '14px' } }}
       endAdornment={
         <>
           {showActionButton && (
@@ -50,6 +52,7 @@ const VariableInput = ({
               aria-haspopup="true"
               size="small"
               onClick={handleClick}
+              sx={{ padding: 0 }}
             >
               <MoreHorizontalIcon />
             </IconButton>

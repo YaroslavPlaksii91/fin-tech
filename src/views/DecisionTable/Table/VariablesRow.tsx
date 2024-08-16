@@ -97,7 +97,6 @@ const VariablesRow = ({
           width={340}
           key={columnIndex}
           sx={{
-            padding: 0,
             bgcolor: getHeaderCellBgColor(column.category)
           }}
         >
