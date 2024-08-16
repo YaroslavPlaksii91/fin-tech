@@ -220,13 +220,10 @@ export const checkDataType = (dataType: DATA_TYPE) => ({
     dataType === DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']
 });
 
-// We need to convert with string in "\"stringValue\"" format since the backend expects it
-export const convertToStringFormat = (string: string) =>
+// We should wrap the string with extra double quotes "\"string value\"" because the backend expects this
+export const addExtraDoubleQuotes = (string: string) =>
   string.length ? `"${string}"` : '';
 
-// Parse to basic string format
-export const parseStringFormat = (string: string) => {
-  const match = string.match(/^"([^"]*)"$/);
-
-  return match ? match[1] : string;
-};
+// Unwrap extra double quotes
+export const removeExtraDoubleQuotes = (string: string) =>
+  string.replace(/^"(.*)"$/, '$1');

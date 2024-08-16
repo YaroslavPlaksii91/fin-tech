@@ -13,7 +13,7 @@ import { BOOLEAN_OPTIONS } from '../constants';
 import { SelectedCell, FormFieldsProps, OPERATORS } from '../types';
 import {
   checkDataType,
-  convertToStringFormat,
+  addExtraDoubleQuotes,
   getOperatorOptions,
   getFormatedOptions
 } from '../utils';
@@ -86,7 +86,7 @@ const SelectVariableValueDialog = ({
         value = data.value;
     }
 
-    if (dataType.isString) value = convertToStringFormat(data.value || '');
+    if (dataType.isString) value = addExtraDoubleQuotes(data.value || '');
 
     handleSubmitForm({ ...data, value });
   };

@@ -24,7 +24,7 @@ import {
   checkDataType,
   filterVariablesByUsageMode,
   getHeaderCellBgColor,
-  parseStringFormat
+  removeExtraDoubleQuotes
 } from '../utils';
 import Select from '../Select';
 import VariableInput from '../VariableInput';
@@ -273,7 +273,7 @@ const Table = ({
                   Boolean(caseEntry.expression) || Boolean(caseEntry.operator);
 
                 const expression = dataType.isString
-                  ? parseStringFormat(caseEntry.expression)
+                  ? removeExtraDoubleQuotes(caseEntry.expression)
                   : caseEntry.expression;
 
                 return (
