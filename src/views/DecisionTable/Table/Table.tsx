@@ -14,10 +14,10 @@ import {
   SelectedCell,
   FormFieldsProps,
   VariableColumnData,
-  CaseEntry,
   OPERATORS,
   CATEGORIES,
-  CATEGORY
+  CATEGORY,
+  CaseEntries
 } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import {
@@ -45,7 +45,7 @@ import { DataDictionaryVariable, Variable } from '@domain/dataDictionary';
 interface Table {
   stepIds: (string | null)[];
   columns: VariableColumnData[];
-  rows: Record<string, CaseEntry>[];
+  rows: CaseEntries[];
   variables: Record<string, Variable[]>;
   integrationData: Record<string, Variable[]>;
   stepOptions: { value: string; label: string }[];
@@ -229,7 +229,9 @@ const Table = ({
             >
               {columns.map((column, columnIndex) => {
                 const dataType = checkDataType(column.dataType);
-                const caseEntry = row[column.name];
+                const caseEntry = row[column.category]?.find(
+                  (caseEntry) => caseEntry.name === column.name
+                );
 
                 if (column.name === STEP) {
                   return (

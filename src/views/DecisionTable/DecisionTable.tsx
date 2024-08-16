@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext, useMemo, useCallback } from 'react';
 import { Button, Paper } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
-import { debounce, flatMap, isEmpty, keyBy } from 'lodash';
+import { debounce, flatMap, isEmpty } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -155,14 +155,9 @@ const DecisionTable = ({
   const columns = [...conditionsColumns, ...actionsColumns];
   const columnsWithStep = [...columns, stepColumn];
 
-  const rows = caseEntries.map((row) => ({
-    ...keyBy(row.conditions, 'name'),
-    ...keyBy(row.actions, 'name')
-  }));
-
-  const elseConditionRow = keyBy(defaultActions, 'name');
-
-  const rowsWithElseCondition = rows.length ? [...rows, elseConditionRow] : [];
+  const caseEntriesWithDefaultActions = caseEntries.length
+    ? [...caseEntries, { conditions: [], actions: defaultActions }]
+    : [];
 
   const handleAddNewLayer = () => {
     const addNewLayerColumns = (category: CATEGORY) =>
@@ -283,7 +278,7 @@ const DecisionTable = ({
   ) => {
     if (
       category === CATEGORIES.Actions &&
-      rowIndex === rowsWithElseCondition.length - 1
+      rowIndex === caseEntriesWithDefaultActions.length - 1
     ) {
       setDefaultActions((prev) =>
         prev.map((prevEntry) =>
@@ -525,7 +520,7 @@ const DecisionTable = ({
             hasUserPermission={!isPreview}
             stepIds={stepIds}
             columns={columnsWithStep}
-            rows={rowsWithElseCondition}
+            rows={caseEntriesWithDefaultActions}
             variables={variables}
             integrationData={integrationVariables}
             stepOptions={stepOptions}
