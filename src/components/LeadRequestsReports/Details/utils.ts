@@ -24,8 +24,8 @@ export const getFormattedData = (data: LeadRequestsReport) => {
   const leadRequest = {
     id: data.id,
     api: 'Input',
-    time: data.processingMetadata?.processingTime
-      ? data.processingMetadata.processingTime / 1000
+    time: data.processingMetadata?.executionTimeSpan
+      ? data.processingMetadata.executionTimeSpan / 1000
       : null,
     result: data.output?.decision || null,
     scores: null,
