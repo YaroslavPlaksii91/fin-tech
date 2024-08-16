@@ -211,8 +211,8 @@ export const filterVariablesByUsageMode = (
 
 // OBJECT type separate from other because this type comes only from CRA variables
 export const checkDataType = (dataType: DATA_TYPE | typeof OBJECT) => ({
-  isWithoutEnum: Object.values(DATA_TYPE_WITHOUT_ENUM).includes(
-    dataType as DATA_TYPE_WITHOUT_ENUM
+  isWithEnum: Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
+    dataType as DATA_TYPE_WITH_ENUM_PREFIX
   ),
   isBoolean: dataType === DATA_TYPE_WITHOUT_ENUM.Boolean,
   isString: dataType === DATA_TYPE_WITHOUT_ENUM.String,
