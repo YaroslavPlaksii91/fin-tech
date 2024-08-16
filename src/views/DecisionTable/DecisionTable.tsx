@@ -36,7 +36,7 @@ import {
   getConnectableNodes
 } from '@views/ChampionChallenger/utils';
 import { flowService } from '@services/flow-service';
-import { theme } from '@theme';
+import { customBoxShadows, theme } from '@theme';
 import PlusSquareIcon from '@icons/plusSquare.svg';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
@@ -510,10 +510,10 @@ const DecisionTable = ({
           details={STEP_DETAILS}
         />
         <Paper
-          elevation={0}
           sx={{
             bgcolor: theme.palette.background.default,
-            overflow: 'auto'
+            overflow: 'auto',
+            boxShadow: customBoxShadows.elevation1
           }}
         >
           <Table
