@@ -13,6 +13,8 @@ export interface LeadRequestsReport {
   processingMetadata: null | ProcessingMetadata;
   executionHistory: null | ExecutionHistory;
   isPreProcessedForBillingReporting: null | boolean;
+  createdDateTimeUtc: string;
+  modifiedDateTimeUtc: string;
 }
 
 type ExecutionHistory = {
@@ -57,6 +59,7 @@ type LeadRequest = {
   requestId: null | string;
   leadProviderId: null | string;
   campaignId: null | string;
+  origin: null | string;
   affiliateId: null | string;
   affiliateSubId: null | string;
   leadPrice: number;
@@ -138,9 +141,10 @@ type Output = {
 
 type ProcessingMetadata = {
   apiVersion: null | string;
-  processingTime: null | number;
+  executionTimeSpan: null | number;
   cachedConnector: null | string;
-  processingDateTimeUtc: string;
+  executionStartDateTimeUtc: string;
+  executionEndDateTimeUtc: string;
 };
 
 type CustomFields = {

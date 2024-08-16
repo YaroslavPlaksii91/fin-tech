@@ -1,29 +1,29 @@
-import ArrowLeftAndRightSquareIcon from '@icons/arrowLeftAndRightSquare.svg';
-import LineChartDotsSquareIcon from '@icons/lineChartDotsSquare.svg';
-import Calculator from '@icons/calculator.svg';
-import BlocksIcon from '@icons/blocks.svg';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
+import CalculationIcon from '@icons/calculation.svg';
+import ChampionChallengerIcon from '@icons/champion-challenger.svg';
+import DecisionTableIcon from '@icons/decision-table.svg';
+import SubflowIcon from '@icons/subflow.svg';
 
 export const options = [
   {
     label: 'Calculation',
     dataKey: StepType.CALCULATION,
-    icon: <Calculator />
+    icon: <CalculationIcon />
   },
   {
     label: 'Champion Challenger',
     dataKey: StepType.CHAMPION_CHALLENGER,
-    icon: <ArrowLeftAndRightSquareIcon />
+    icon: <ChampionChallengerIcon />
   },
   {
     label: 'Decision table',
     dataKey: StepType.DECISION_TABLE,
-    icon: <BlocksIcon />
+    icon: <DecisionTableIcon />
   },
   {
     id: StepType.SUBFLOW,
     dataKey: StepType.SUBFLOW,
     label: 'Subflow',
-    icon: <LineChartDotsSquareIcon />
+    icon: <SubflowIcon />
   }
 ];

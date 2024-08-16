@@ -117,6 +117,7 @@
 .tooltip__content {
   display: flex;
   align-items: center;
+  word-break: break-all;
   position: absolute;
   left: 110%;
   z-index: 50;
@@ -150,25 +151,13 @@
   background: rgba(236, 239, 241, 1);
 }
 
-.react-flow__node:hover .node-list-container {
-  background: #f8f8fa;
-}
-
 /* Styles for node if menu is opened */
-.react-flow__node.node-menu-open .node-container,
-.react-flow__node.node-menu-open .node-list-container {
+.react-flow__node.node-menu-open .node-container {
   background-color: rgba(255, 248, 225, 1);
-  border-color: rgba(255, 213, 79, 1);
-}
-
-.react-flow__node.node-menu-open .node-list-container,
-.react-flow__node.node-menu-open .node-list-container__row:not(:last-child) {
-  border-color: rgba(255, 213, 79, 1);
 }
 
 .react-flow__node.node-menu-open .node-list-container__header {
   background-color: rgba(255, 248, 225, 1);
-  border-bottom-color: rgba(255, 213, 79, 1);
   color: rgba(27, 94, 32, 1);
 }
 

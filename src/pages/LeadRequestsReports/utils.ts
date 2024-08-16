@@ -14,6 +14,7 @@ export const getFormattedRows = (data: LeadRequestsReport[]) => {
     return {
       id,
       data: row,
+      [COLUMN_IDS.origin]: leadRequest.origin ?? '-',
       [COLUMN_IDS.requestId]: leadRequest.requestId ?? '-',
       [COLUMN_IDS.loanId]: leadResponse?.loanId ?? '-',
       [COLUMN_IDS.leadProvider]: leadRequest.leadProviderId ?? '-',
@@ -21,8 +22,8 @@ export const getFormattedRows = (data: LeadRequestsReport[]) => {
       [COLUMN_IDS.customerId]: leadResponse?.customerId ?? '-',
       [COLUMN_IDS.leadPrice]: leadResponse?.leadPrice ?? '-',
       [COLUMN_IDS.affiliate]: leadRequest.affiliateId ?? '-',
-      [COLUMN_IDS.requestDate]: processingMetadata?.processingDateTimeUtc
-        ? dayjs(processingMetadata.processingDateTimeUtc).format(
+      [COLUMN_IDS.requestDate]: processingMetadata?.executionEndDateTimeUtc
+        ? dayjs(processingMetadata.executionEndDateTimeUtc).format(
             FULL_DATE_TIME_FORMAT
           )
         : '-',
@@ -39,8 +40,8 @@ export const getFormattedRows = (data: LeadRequestsReport[]) => {
       [COLUMN_IDS.denialReason]: output?.denialReason ?? '-',
       [COLUMN_IDS.state]: leadRequest.state ?? '-',
       [COLUMN_IDS.apiVersion]: processingMetadata?.apiVersion ?? '-',
-      [COLUMN_IDS.totalTime]: processingMetadata?.processingTime
-        ? `${processingMetadata.processingTime / milliseconds}`
+      [COLUMN_IDS.totalTime]: processingMetadata?.executionTimeSpan
+        ? `${processingMetadata.executionTimeSpan / milliseconds}`
         : '-',
       [COLUMN_IDS.cachedConnector]: processingMetadata?.cachedConnector ?? '-'
     };

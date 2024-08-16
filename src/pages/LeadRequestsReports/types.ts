@@ -5,6 +5,7 @@ import { getFormattedRows } from './utils';
 import { ExtractArrayElementType } from '@utils/types';
 
 export enum COLUMN_IDS {
+  origin = 'leadRequest/origin',
   requestId = 'leadRequest/requestId',
   loanId = 'leadResponse/loanId',
   leadProvider = 'leadRequest/leadProviderId',
@@ -12,7 +13,7 @@ export enum COLUMN_IDS {
   customerId = 'leadResponse/customerId',
   leadPrice = 'leadRequest/leadPrice',
   affiliate = 'leadRequest/affiliateId',
-  requestDate = 'processingMetadata/processingDateTimeUtc',
+  requestDate = 'processingMetadata/executionEndDateTimeUtc',
   requestedAmount = 'leadRequest/requestedAmount',
   stackName = 'output/stack',
   loanType = 'leadRequest/customFields/requestType',
@@ -24,7 +25,7 @@ export enum COLUMN_IDS {
   denialReason = 'leadResponse/rejectionReason',
   state = 'leadRequest/state',
   apiVersion = 'processingMetadata/apiVersion',
-  totalTime = 'processingMetadata/processingTime',
+  totalTime = 'processingMetadata/executionTimeSpan',
   cachedConnector = 'processingMetadata/cachedConnector',
   details = 'details'
 }

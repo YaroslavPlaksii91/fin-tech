@@ -16,6 +16,10 @@ const getDataGridColumns = ({
     field: COLUMN_IDS.requestId,
     headerName: 'Request ID'
   },
+  {
+    field: COLUMN_IDS.origin,
+    headerName: 'Origin'
+  },
   { field: COLUMN_IDS.loanId, headerName: 'Loan ID' },
   {
     field: COLUMN_IDS.leadProvider,

@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import { IconButton, Menu, MenuItem, ListItemIcon } from '@mui/material';
 import OutlinedInput, { OutlinedInputProps } from '@mui/material/OutlinedInput';
 
@@ -6,7 +6,6 @@ import MoreHorizontalIcon from '@icons/moreHorizontal.svg';
 
 type VariableInputProps = {
   open: boolean;
-  anchorEl: HTMLElement | null;
   menuItems: {
     key: string;
     onClick: () => void;
@@ -14,58 +13,75 @@ type VariableInputProps = {
     icon: ReactElement;
     text: string;
   }[];
-  onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  handleCloseMenu: () => void;
+  onClick: () => void;
   showActionButton?: boolean;
 };
 
 const VariableInput = ({
-  open,
-  anchorEl,
   menuItems,
   onClick,
-  handleCloseMenu,
   showActionButton,
   ...props
-}: VariableInputProps & OutlinedInputProps) => (
-  <OutlinedInput
-    placeholder="Choose the variable"
-    endAdornment={
-      <>
-        {showActionButton && (
-          <IconButton
-            aria-label="more"
-            id="long-button"
-            aria-controls={open ? 'long-menu' : undefined}
-            aria-expanded={open ? 'true' : undefined}
-            aria-haspopup="true"
-            size="small"
-            onClick={onClick}
-          >
-            <MoreHorizontalIcon />
-          </IconButton>
-        )}
-        <Menu
-          id="long-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleCloseMenu}
-        >
-          {menuItems.map((item) => (
-            <MenuItem
-              key={item.key}
-              onClick={item.onClick}
-              disabled={item.disabled}
+}: VariableInputProps & OutlinedInputProps) => {
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+
+  const isMenuOpen = Boolean(anchor);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    onClick();
+    setAnchor(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchor(null);
+  };
+
+  return (
+    <OutlinedInput
+      sx={{ padding: 0 }}
+      placeholder="Choose the variable"
+      inputProps={{ sx: { padding: 0, fontSize: '14px' } }}
+      endAdornment={
+        <>
+          {showActionButton && (
+            <IconButton
+              aria-label="more"
+              id="long-button"
+              aria-controls={isMenuOpen ? 'long-menu' : undefined}
+              aria-expanded={isMenuOpen ? 'true' : undefined}
+              aria-haspopup="true"
+              size="small"
+              onClick={handleClick}
+              sx={{ padding: 0 }}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              {item.text}
-            </MenuItem>
-          ))}
-        </Menu>
-      </>
-    }
-    {...props}
-  />
-);
+              <MoreHorizontalIcon />
+            </IconButton>
+          )}
+          <Menu
+            id="long-menu"
+            anchorEl={anchor}
+            open={isMenuOpen}
+            onClose={handleCloseMenu}
+          >
+            {menuItems.map((item) => (
+              <MenuItem
+                key={item.key}
+                onClick={() => {
+                  item.onClick();
+                  handleCloseMenu();
+                }}
+                disabled={item.disabled}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                {item.text}
+              </MenuItem>
+            ))}
+          </Menu>
+        </>
+      }
+      {...props}
+    />
+  );
+};
 
 export default VariableInput;

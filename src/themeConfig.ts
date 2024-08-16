@@ -101,7 +101,13 @@ export const theme = createTheme({
         }
       }
     },
-
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          padding: '4px 16px'
+        }
+      }
+    },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {

@@ -10,7 +10,7 @@ const Details: React.FC<{ data: NodeData }> = ({
 }) => (
   <Stack pl={2} pr={2} pt={1}>
     <Divider />
-    <Typography pt={1} variant="caption">
+    <Typography pt={1} variant="caption" color="text.secondary">
       Last edited by {editedBy}
     </Typography>
     <Typography pb={1} variant="body2">
@@ -22,7 +22,10 @@ const Details: React.FC<{ data: NodeData }> = ({
         <Typography pt={1} variant="caption">
           Note
         </Typography>
-        <Typography sx={{ width: '156px' }} variant="body2">
+        <Typography
+          sx={{ width: '156px', wordBreak: 'break-word' }}
+          variant="body2"
+        >
           {note}
         </Typography>
       </>
