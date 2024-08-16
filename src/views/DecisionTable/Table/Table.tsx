@@ -20,7 +20,7 @@ import {
   CATEGORY
 } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
-import { checkDataType, parseStringFormat } from '../utils';
+import { checkDataType, removeExtraDoubleQuotes } from '../utils';
 import Select from '../Select';
 
 import { Head, StyledTableBody } from './styled';
@@ -180,7 +180,7 @@ const Table = ({
                   Boolean(caseEntry.expression) || Boolean(caseEntry.operator);
 
                 const expression = dataType.isString
-                  ? parseStringFormat(caseEntry.expression)
+                  ? removeExtraDoubleQuotes(caseEntry.expression)
                   : caseEntry.expression;
 
                 return (
