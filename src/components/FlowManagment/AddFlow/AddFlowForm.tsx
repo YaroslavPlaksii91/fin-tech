@@ -14,7 +14,6 @@ import { StyledButton, StyledDiv } from './styled';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
-import AddIcon from '@icons/plusSquare.svg';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
 import LoadingButton from '@components/shared/LoadingButton';
@@ -26,6 +25,7 @@ import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { selectUserInfo } from '@store/auth/auth';
 import { getFullUserName } from '@utils/helpers';
+import NewFlowIcon from '@icons/new-flow.svg';
 
 interface FormData {
   name: string;
@@ -86,7 +86,7 @@ export const AddFlow: React.FC = () => {
             onClick={handleOpenModal}
             sx={{ marginLeft: '14px' }}
             variant="text"
-            startIcon={<AddIcon />}
+            startIcon={<NewFlowIcon width={25} />}
           >
             Create New Flow
           </StyledButton>

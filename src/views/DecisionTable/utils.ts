@@ -1,7 +1,7 @@
 import { lightGreen, lightBlue } from '@mui/material/colors';
 import { mapValues, filter } from 'lodash';
 
-import { INITIAL_ENTRY, INITIAL_CASE_ENTRIES } from './constants';
+import { INITIAL_ENTRY, INITIAL_CASE_ENTRIES, OBJECT } from './constants';
 import {
   CaseEntries,
   CaseEntry,
@@ -191,7 +191,7 @@ export const getFormatedOptions = (
 
 export const filterVariablesByUsageMode = (
   variables: Record<string, Variable[]>,
-  category?: CATEGORY
+  category: CATEGORY
 ) => {
   let usageMode: VARIABLE_USAGE_MODE;
 
@@ -209,15 +209,14 @@ export const filterVariablesByUsageMode = (
   );
 };
 
-export const checkDataType = (dataType: DATA_TYPE) => ({
-  isWithoutEnum: Object.values(DATA_TYPE_WITHOUT_ENUM).includes(
-    dataType as DATA_TYPE_WITHOUT_ENUM
+// OBJECT type separate from other because this type comes only from CRA variables
+export const checkDataType = (dataType: DATA_TYPE | typeof OBJECT) => ({
+  isWithEnum: Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
+    dataType as DATA_TYPE_WITH_ENUM_PREFIX
   ),
   isBoolean: dataType === DATA_TYPE_WITHOUT_ENUM.Boolean,
   isString: dataType === DATA_TYPE_WITHOUT_ENUM.String,
-  isObject:
-    dataType === DATA_TYPE_WITHOUT_ENUM['Object:CraClarity'] ||
-    dataType === DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']
+  isObject: dataType === OBJECT
 });
 
 // We should wrap the string with extra double quotes "\"string value\"" because the backend expects this

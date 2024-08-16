@@ -16,7 +16,6 @@ import { authService } from '@services/auth.ts';
 import { palette } from '@theme';
 import routes from '@constants/routes';
 import Dialog from '@components/shared/Modals/Dialog';
-import { getFullUserName } from '@utils/helpers';
 import { fetchUserInfo, selectUserInfo } from '@store/auth/auth.ts';
 import { useAppDispatch, useAppSelector } from '@store/hooks.ts';
 
@@ -48,12 +47,12 @@ function Navigation() {
           </Link>
           <Stack direction="row" alignItems="center" gap={1}>
             <StyledHeaderButton
-              startIcon={<UserIcon />}
+              startIcon={<UserIcon width={18} height={18} />}
               variant="outlined"
               sx={{ cursor: 'auto' }}
-              disableRipple
+              disabled
             >
-              {userInfo && getFullUserName(userInfo)}
+              {userInfo?.userName}
             </StyledHeaderButton>
             <StyledHeaderIconButton onClick={() => setOpenModal(true)}>
               <LogoutIcon color={palette.white} />

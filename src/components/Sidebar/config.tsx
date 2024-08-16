@@ -1,8 +1,8 @@
 import DotIcon from '@icons/dot.svg';
-import TimePastIcon from '@icons/timePast.svg';
 import { permissionsMap } from '@constants/permissions';
 import { theme } from '@theme';
 import routes from '@constants/routes';
+import ChangesHistoryIcon from '@icons/changes-history.svg';
 
 const iconSize = 24;
 
@@ -38,7 +38,7 @@ export interface MenuItem {
 
 export const pages = [
   {
-    icon: <TimePastIcon {...itemIconProps} />,
+    icon: <ChangesHistoryIcon />,
     text: 'Changes History',
     to: routes.underwriting.changeHistory,
     permission: permissionsMap.canViewChangeHistory

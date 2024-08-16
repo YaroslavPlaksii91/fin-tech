@@ -88,7 +88,7 @@ const LeadRequestsReports = () => {
       orderBy: sort,
       filter: {
         processingMetadata: {
-          processingDateTimeUtc: {
+          executionEndDateTimeUtc: {
             ge: startDate ? getDateInUTC(startDate).toISOString() : undefined,
             le: endDate ? getDateInUTC(endDate).toISOString() : undefined
           }
