@@ -25,7 +25,7 @@ export enum COLUMN_IDS {
   denialReason = 'leadResponse/rejectionReason',
   state = 'leadRequest/state',
   apiVersion = 'processingMetadata/apiVersion',
-  totalTime = 'processingMetadata/processingTime',
+  totalTime = 'processingMetadata/executionTimeSpan',
   cachedConnector = 'processingMetadata/cachedConnector',
   details = 'details'
 }
