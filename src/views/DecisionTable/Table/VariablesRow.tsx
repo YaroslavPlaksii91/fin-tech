@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { TableCell } from '@mui/material';
 import { lightGreen } from '@mui/material/colors';
 
-import { CATEGORIES, VariableColumnData } from '../types';
+import { VariableColumnData } from '../types';
 import { getHeaderCellBgColor, filterVariablesByUsageMode } from '../utils';
 import VariableInput from '../VariableInput';
 import { STEP } from '../constants';
@@ -40,10 +40,6 @@ const VariablesRow = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const isLastConditionColumn =
-    columns.filter(({ category }) => category === CATEGORIES.Conditions)
-      .length === 1;
-
   const handleCloseDialog = () => setIsDialogOpen(false);
 
   const handleAddVariable = () => {
@@ -61,29 +57,35 @@ const VariablesRow = ({
     setIsMenuOpen(false);
   };
 
-  const getMenuItems = (column: VariableColumnData) => [
-    {
-      key: 'add-variable-action',
-      disabled: column.name === STEP,
-      onClick: handleAddVariable,
-      icon: <AddIcon height={24} width={24} />,
-      text: `Add ${column.category === CATEGORIES.Conditions ? 'Input' : 'Output'} Variable`
-    },
-    {
-      key: 'add-column-action',
-      disabled: false,
-      onClick: handleAddNewColumn,
-      icon: <GridSquarePlusIcon />,
-      text: 'Add Column'
-    },
-    {
-      key: 'delete-column-action',
-      disabled: isLastConditionColumn || column.name === STEP,
-      onClick: handleDelete,
-      icon: <TrashIcon />,
-      text: 'Delete Column'
-    }
-  ];
+  const getMenuItems = (column: VariableColumnData) => {
+    const columnsCount = columns.filter(
+      ({ category }) => category === column.category && column.name !== STEP
+    ).length;
+
+    return [
+      {
+        key: 'add-variable-action',
+        disabled: column.name === STEP,
+        onClick: handleAddVariable,
+        icon: <AddIcon height={24} width={24} />,
+        text: `Add ${column.category === 'conditions' ? 'Input' : 'Output'} Variable`
+      },
+      {
+        key: 'add-column-action',
+        disabled: false,
+        onClick: handleAddNewColumn,
+        icon: <GridSquarePlusIcon />,
+        text: 'Add Column'
+      },
+      {
+        key: 'delete-column-action',
+        disabled: columnsCount === 1 || column.name === STEP,
+        onClick: handleDelete,
+        icon: <TrashIcon />,
+        text: 'Delete Column'
+      }
+    ];
+  };
 
   const handleClick = (column: VariableColumnData) => () => {
     setIsMenuOpen(true);
