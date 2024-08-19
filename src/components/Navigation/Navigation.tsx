@@ -60,15 +60,17 @@ function Navigation() {
           </Stack>
         </Stack>
       </StyledAppBar>
-      <Dialog
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        onConfirm={() => void authService.logout()}
-        title="Sign out"
-        maxWidth="xs"
-      >
-        Do you want to sign out from your account?
-      </Dialog>
+      {openModal && (
+        <Dialog
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          onConfirm={() => void authService.logout()}
+          title="Sign out"
+          maxWidth="xs"
+        >
+          Do you want to sign out from your account?
+        </Dialog>
+      )}
     </>
   );
 }

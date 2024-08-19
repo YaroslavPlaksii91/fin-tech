@@ -126,7 +126,6 @@ const VariablesRow = ({
       {selectedColumn ? (
         <DataDictionaryDialog
           data={filterVariablesByUsageMode(variables, selectedColumn.category)}
-          //Move to useMemo
           integrationData={
             selectedColumn.category === CATEGORIES.Actions
               ? undefined
