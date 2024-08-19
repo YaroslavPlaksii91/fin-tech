@@ -72,7 +72,7 @@ export interface DataDictionaryVariable {
   dataType: DATA_TYPE;
   defaultValue?: string;
   isRequired?: boolean;
-  usageMode?: string;
+  usageMode: VARIABLE_USAGE_MODE;
   allowedValues?: string | string[];
   description?: string;
   sourceName?: string;
@@ -90,7 +90,7 @@ export type UserDefinedVariable = {
   source: VARIABLE_SOURCE_TYPE;
   sourceType: VARIABLE_SOURCE_TYPE;
   allowedValues?: string | string[];
-  usageMode?: string;
+  usageMode: VARIABLE_USAGE_MODE;
   isRequired?: boolean;
 };
 
