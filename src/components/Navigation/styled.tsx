@@ -15,8 +15,7 @@ const headerButtonStyles = {
 export const StyledAppBar = styled(AppBar)(() => ({
   backgroundColor: palette.primaryDark,
   padding: '12px 24px 12px 16px',
-  boxShadow: 'none',
-  zIndex: 1201
+  boxShadow: 'none'
 }));
 
 export const StyledHeaderIconButton = styled(IconButton)(() => ({

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { TableCell } from '@mui/material';
 import { lightGreen } from '@mui/material/colors';
 
-import { VariableColumnData } from '../types';
+import { CATEGORIES, VariableColumnData } from '../types';
 import { getHeaderCellBgColor, filterVariablesByUsageMode } from '../utils';
 import VariableInput from '../VariableInput';
 import { STEP } from '../constants';
@@ -126,10 +126,11 @@ const VariablesRow = ({
       {selectedColumn ? (
         <DataDictionaryDialog
           data={filterVariablesByUsageMode(variables, selectedColumn.category)}
-          integrationData={filterVariablesByUsageMode(
-            integrationData,
-            selectedColumn.category
-          )}
+          integrationData={
+            selectedColumn.category === CATEGORIES.Actions
+              ? undefined
+              : integrationData
+          }
           title="Add Variable"
           isOpen={isDialogOpen}
           onClose={handleCloseDialog}

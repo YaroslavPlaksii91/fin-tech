@@ -1,5 +1,5 @@
 import { lightGreen, lightBlue } from '@mui/material/colors';
-import { mapValues, filter } from 'lodash';
+import { mapValues, filter, cloneDeep } from 'lodash';
 
 import { INITIAL_ENTRY, INITIAL_CASE_ENTRIES, OBJECT } from './constants';
 import {
@@ -193,19 +193,35 @@ export const filterVariablesByUsageMode = (
   variables: Record<string, Variable[]>,
   category: CATEGORY
 ) => {
-  let usageMode: VARIABLE_USAGE_MODE;
+  let usageModes: VARIABLE_USAGE_MODE[];
+  const copyVariables = cloneDeep(variables);
 
   switch (category) {
     case CATEGORIES.Conditions:
-      usageMode = VARIABLE_USAGE_MODE.WriteOnly;
+      usageModes = [
+        VARIABLE_USAGE_MODE.WriteOnly,
+        VARIABLE_USAGE_MODE.ReadWrite,
+        VARIABLE_USAGE_MODE.ReadOnly
+      ];
+
       break;
-    case CATEGORIES.Actions:
-      usageMode = VARIABLE_USAGE_MODE.ReadOnly;
+    case CATEGORIES.Actions: {
+      // User-defined variables with the data types Object:CraFactorTrust and Object:CraFactorTrust should be excluded from Action.
+      const filteredUserDefinedVariables = copyVariables['userDefined'].filter(
+        (variable) =>
+          variable.dataType !==
+            DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust'] &&
+          variable.dataType !== DATA_TYPE_WITHOUT_ENUM['Object:CraClarity']
+      );
+
+      usageModes = [VARIABLE_USAGE_MODE.ReadWrite];
+      copyVariables['userDefined'] = filteredUserDefinedVariables;
       break;
+    }
   }
 
-  return mapValues(variables, (arr) =>
-    filter(arr, (item) => item.usageMode !== usageMode)
+  return mapValues(copyVariables, (arr) =>
+    filter(arr, (item) => usageModes.includes(item.usageMode))
   );
 };
 
