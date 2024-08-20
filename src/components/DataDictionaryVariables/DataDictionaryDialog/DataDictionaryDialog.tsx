@@ -41,6 +41,7 @@ const objectVariablesDataSourceMap: Record<string, string> = {
 
 const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   title = 'Add Input Variable',
+  showAttributes = true,
   data,
   integrationData,
   isOpen,
@@ -136,9 +137,10 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   const dictsEmptyState = Object.keys(filteredData).length === 0;
   const variablesEmptyState = !selectedDict || !filteredData[selectedDict];
 
-  const selectVarIsObjectType = objectVariableTypes.includes(
-    selectedVar?.dataType as DATA_TYPE
-  );
+  // Need to set user-defined variables with data types Object:CraClarity and Object:CraFactorTrust without attributes for saving the result of the GET REPORT function
+  const selectVarIsObjectType =
+    showAttributes &&
+    objectVariableTypes.includes(selectedVar?.dataType as DATA_TYPE);
 
   const handleConfirmClick = () => {
     const value = selectVarIsObjectType
@@ -391,6 +393,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
 interface DataDictionaryDialogProps {
   title?: string;
   isOpen: boolean;
+  showAttributes?: boolean;
   onClose: () => void;
   onConfirm: (variable: Variable) => void;
   data?: DataDictionaryVariableRecord;

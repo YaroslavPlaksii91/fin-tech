@@ -115,10 +115,9 @@ const VariablesRow = ({
       {selectedColumn ? (
         <DataDictionaryDialog
           data={filterVariablesByUsageMode(variables, selectedColumn.category)}
-          integrationData={filterVariablesByUsageMode(
-            integrationData,
-            selectedColumn.category
-          )}
+          integrationData={
+            selectedColumn.category === 'actions' ? undefined : integrationData
+          }
           title="Add Variable"
           isOpen={isDialogOpen}
           onClose={handleCloseDialog}

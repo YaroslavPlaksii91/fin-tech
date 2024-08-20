@@ -300,12 +300,17 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         </Box>
       </StepContentWrapper>
       <DataDictionaryDialog
+        showAttributes={dataDictMode !== DataDictMode.Variable}
         data={
           dataDictMode === DataDictMode.Variable
             ? variableFieldDataDict
             : variables
         }
-        integrationData={dataDictionary?.integrationVariables}
+        integrationData={
+          dataDictMode === DataDictMode.Variable
+            ? undefined
+            : dataDictionary?.integrationVariables
+        }
         title={
           dataDictMode === DataDictMode.Variable
             ? 'Add Output Variable'
