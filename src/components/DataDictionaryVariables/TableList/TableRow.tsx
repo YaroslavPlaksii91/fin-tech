@@ -55,7 +55,7 @@ export const TableRow = ({
   const isProductionFlow = checkIsProductionFlow();
   const isViewMode = isProductionFlow || !hasUserPermission;
 
-  const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
+  const rowParity = index % 2 === 0 ? 'even' : 'odd';
 
   const getVariableUsage = async (variableName: string) => {
     const stepIds: string[] = [];

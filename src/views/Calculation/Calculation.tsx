@@ -196,7 +196,7 @@ const Calculation: React.FC<CalculationProps> = ({
                           {fields.map((expression, index) => (
                             <StyledTableRow
                               key={index}
-                              parity={(index + 1) % 2 === 0 ? 'even' : 'odd'}
+                              parity={index % 2 === 0 ? 'even' : 'odd'}
                             >
                               <TableCell>{expression.outputName}</TableCell>
                               <TableCell>
@@ -285,7 +285,7 @@ const Calculation: React.FC<CalculationProps> = ({
             isEdited={isDirty}
             resetActiveStepId={resetActiveStepId}
             isSubmitting={isSubmitting}
-            onApplyChangesClick={() => {
+            handleConfirm={() => {
               void handleSubmit(onSubmit)();
             }}
             isShow={!isPreview}

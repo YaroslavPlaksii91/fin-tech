@@ -1,15 +1,8 @@
 import { lightGreen, lightBlue } from '@mui/material/colors';
 import { mapValues, filter } from 'lodash';
 
-import { INITIAL_ENTRY, INITIAL_CASE_ENTRIES, OBJECT } from './constants';
-import {
-  CaseEntries,
-  CaseEntry,
-  Operator,
-  OPERATORS,
-  CATEGORIES,
-  CATEGORY
-} from './types';
+import { OBJECT } from './constants';
+import { CaseEntry, Entry, Operator, OPERATORS, CATEGORY } from './types';
 
 import {
   DATA_TYPE,
@@ -51,57 +44,45 @@ export const getOperatorOptions = (dataType: DATA_TYPE) => {
   }));
 };
 
+// OBJECT type separate from other because this type comes only from CRA variables
+export const checkDataType = (dataType: DATA_TYPE | typeof OBJECT) => ({
+  isWithEnum: Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
+    dataType as DATA_TYPE_WITH_ENUM_PREFIX
+  ),
+  isBoolean: dataType === DATA_TYPE_WITHOUT_ENUM.Boolean,
+  isString: dataType === DATA_TYPE_WITHOUT_ENUM.String,
+  isObject: dataType === OBJECT
+});
+
 export const getColumns = (
-  caseEntry: CaseEntries,
+  entries: Entry[],
   variables: Variable[],
   category: CATEGORY
-) => {
-  const INITIAL_COLUMN = {
-    ...INITIAL_ENTRY,
-    index: 0,
-    category,
-    dataType: DATA_TYPE_WITHOUT_ENUM.String
-  };
-
-  if (!caseEntry?.[category]?.length) {
-    return category === CATEGORIES.Conditions ? [INITIAL_COLUMN] : [];
-  }
-
-  return (caseEntry[category] || []).map((el, index) => {
-    const variablesDataTypes = variables.reduce<Record<string, DATA_TYPE>>(
-      (acc, current) => ({
-        ...acc,
-        [current.name]: current.dataType
-      }),
-      {}
-    );
-
-    const isDataTypeWithEnum = Object.values<string>(
-      DATA_TYPE_WITH_ENUM_PREFIX
-    ).includes(variablesDataTypes[el.name]);
+) =>
+  entries.map((el, index) => {
+    const variable = variables.find((variable) => variable.name === el.name);
 
     // if variable enum type we have additional prop with allowedValues
-    const allowedValues = isDataTypeWithEnum
-      ? variables.find((variable) => variable.name === el.name)?.allowedValues
-      : undefined;
+    const allowedValues =
+      variable?.dataType && checkDataType(variable.dataType).isWithEnum
+        ? variable?.allowedValues
+        : undefined;
+
+    // pass data type directly to prevent issues with the object properties
+    const dataType =
+      el.dataType || variable?.dataType || DATA_TYPE_WITHOUT_ENUM.String;
 
     return {
-      ...el,
       index,
       category,
       allowedValues,
-      name: el.name,
-      // pass data type directly to prevent issues with the object properties
-      dataType: el.dataType || variablesDataTypes[el.name]
+      dataType,
+      name: el.name
     };
   });
-};
 
-export const getVariableSources = (
-  caseEntries: CaseEntry[],
-  variables: Variable[]
-) =>
-  caseEntries.reduce(
+export const getVariableSources = (entries: Entry[], variables: Variable[]) =>
+  entries.reduce(
     (acc, { name, sourceName, sourceType }) => {
       const isAdded = Boolean(
         acc.find(
@@ -134,39 +115,31 @@ export const updateCaseEntry = ({
   category,
   start,
   deleteCount = 0,
-  insertEntry,
-  initialEntries = [] // We need to provide initial entries for rows in case when we don`t have any already created Entries
+  insertEntry
 }: {
-  caseEntries: CaseEntries[];
+  caseEntries: CaseEntry[];
   category: CATEGORY;
   start: number;
   deleteCount: number;
-  insertEntry?: CaseEntry;
-  initialEntries?: CaseEntry[];
+  insertEntry?: Entry;
 }) =>
-  (caseEntries.length ? caseEntries : INITIAL_CASE_ENTRIES).map((row) => {
-    if (!row[category]?.length)
-      return {
-        ...row,
-        [category]: initialEntries
-      };
-
-    const newColumns = [...(row[category] || [])];
+  caseEntries.map((caseEntry) => {
+    const newColumns = [...caseEntry[category]];
 
     if (insertEntry) newColumns.splice(start, deleteCount, insertEntry);
     else newColumns.splice(start, deleteCount);
 
     return {
-      ...row,
+      ...caseEntry,
       [category]: newColumns
     };
   });
 
 export const getHeaderCellBgColor = (category: CATEGORY) => {
   switch (category) {
-    case CATEGORIES.Conditions:
+    case 'conditions':
       return lightBlue[50];
-    case CATEGORIES.Actions:
+    case 'actions':
     default:
       return lightGreen[50];
   }
@@ -175,7 +148,7 @@ export const getHeaderCellBgColor = (category: CATEGORY) => {
 export const getFormatedOptions = (
   enumTypeSelectOptions: string | string[]
 ) => {
-  // in case API returns array in string "[ContactTime.Morning,ContactTime.Afternoon]"
+  // In case API returns array in string "[ContactTime.Morning,ContactTime.Afternoon]"
   if (typeof enumTypeSelectOptions === 'string') {
     return enumTypeSelectOptions
       .replace(/\[|\]/g, '')
@@ -196,10 +169,10 @@ export const filterVariablesByUsageMode = (
   let usageMode: VARIABLE_USAGE_MODE;
 
   switch (category) {
-    case CATEGORIES.Conditions:
+    case 'conditions':
       usageMode = VARIABLE_USAGE_MODE.WriteOnly;
       break;
-    case CATEGORIES.Actions:
+    case 'actions':
       usageMode = VARIABLE_USAGE_MODE.ReadOnly;
       break;
   }
@@ -208,16 +181,6 @@ export const filterVariablesByUsageMode = (
     filter(arr, (item) => item.usageMode !== usageMode)
   );
 };
-
-// OBJECT type separate from other because this type comes only from CRA variables
-export const checkDataType = (dataType: DATA_TYPE | typeof OBJECT) => ({
-  isWithEnum: Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
-    dataType as DATA_TYPE_WITH_ENUM_PREFIX
-  ),
-  isBoolean: dataType === DATA_TYPE_WITHOUT_ENUM.Boolean,
-  isString: dataType === DATA_TYPE_WITHOUT_ENUM.String,
-  isObject: dataType === OBJECT
-});
 
 // We should wrap the string with extra double quotes "\"string value\"" because the backend expects this
 export const addExtraDoubleQuotes = (string: string) =>

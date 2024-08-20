@@ -29,16 +29,16 @@ import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
   isCondition: boolean;
-  handleClose: () => void;
   selectedCell: SelectedCell;
+  handleClose: () => void;
   handleSubmitForm: (data: FormFieldsProps) => void;
 };
 
 const SelectVariableValueDialog = ({
   modalOpen,
   isCondition,
-  handleClose,
   selectedCell,
+  handleClose,
   handleSubmitForm
 }: SelectVariableValueDialogProps) => {
   const bounds =

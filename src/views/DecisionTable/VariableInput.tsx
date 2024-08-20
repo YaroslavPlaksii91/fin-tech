@@ -5,7 +5,6 @@ import OutlinedInput, { OutlinedInputProps } from '@mui/material/OutlinedInput';
 import MoreHorizontalIcon from '@icons/moreHorizontal.svg';
 
 type VariableInputProps = {
-  open: boolean;
   menuItems: {
     key: string;
     onClick: () => void;

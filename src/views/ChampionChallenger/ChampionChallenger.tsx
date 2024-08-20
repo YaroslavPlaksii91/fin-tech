@@ -253,7 +253,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                     {fields.map((field, index) => (
                       <StyledTableRow
                         key={field.id}
-                        parity={(index + 1) % 2 === 0 ? 'even' : 'odd'}
+                        parity={index % 2 === 0 ? 'even' : 'odd'}
                       >
                         <StyledTableCell>
                           <NumberRangeInput
@@ -298,8 +298,12 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                       </StyledTableRow>
                     ))}
                     {!fields.length ? (
-                      <StyledTableRow parity="odd">
-                        <StyledTableCell colSpan={3} align="center">
+                      <StyledTableRow>
+                        <StyledTableCell
+                          colSpan={3}
+                          align="center"
+                          sx={{ bgcolor: theme.palette.common.white }}
+                        >
                           <Typography variant="body2">No Split Yet.</Typography>
                         </StyledTableCell>
                       </StyledTableRow>
@@ -342,7 +346,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         resetActiveStepId={resetActiveStepId}
         isEdited={isDirty}
         isSubmitting={isSubmitting}
-        onApplyChangesClick={() => {
+        handleConfirm={() => {
           void handleSubmit(onSubmit)();
         }}
         isShow={!isPreview}

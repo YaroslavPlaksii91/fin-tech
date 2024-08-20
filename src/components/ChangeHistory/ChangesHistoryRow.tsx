@@ -23,7 +23,7 @@ export function ChangesHistoryRow(props: {
   const { row, handleRowClick, index, isFirstChangeHistoryItem } = props;
   const navigate = useNavigate();
 
-  const rowParity = (index + 1) % 2 === 0 ? 'even' : 'odd';
+  const rowParity = index % 2 === 0 ? 'even' : 'odd';
 
   const handleClick = (id: string, index: number) => {
     if (index == 0) {

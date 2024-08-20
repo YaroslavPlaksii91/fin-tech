@@ -5,14 +5,14 @@ import LoadingButton from '@components/shared/LoadingButton.tsx';
 import Dialog from '@components/shared/Modals/Dialog';
 
 const StepDetailsControlBar: React.FC<StepDetailsControlBarProps> = ({
+  isShow = true,
+  isSubmitting = false,
+  isEdited,
   disabled,
   resetActiveStepId,
-  isSubmitting,
-  onApplyChangesClick,
-  isShow = true,
-  isEdited
+  handleConfirm
 }) => {
-  const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
+  const [openDiscardModal, setOpenDiscardModal] = useState(false);
 
   const onCancel = useCallback(() => {
     isEdited ? setOpenDiscardModal(true) : resetActiveStepId();
@@ -31,10 +31,10 @@ const StepDetailsControlBar: React.FC<StepDetailsControlBarProps> = ({
           >
             <LoadingButton
               disabled={disabled}
-              loading={Boolean(isSubmitting)}
+              loading={isSubmitting}
               type="submit"
               variant="contained"
-              onClick={() => onApplyChangesClick()}
+              onClick={handleConfirm}
             >
               Save step
             </LoadingButton>
@@ -62,12 +62,12 @@ const StepDetailsControlBar: React.FC<StepDetailsControlBarProps> = ({
   );
 };
 interface StepDetailsControlBarProps {
-  disabled?: boolean;
-  isSubmitting?: boolean;
-  onApplyChangesClick: () => void;
-  resetActiveStepId: () => void;
-  isEdited: boolean;
   isShow?: boolean;
+  isEdited: boolean;
+  isSubmitting?: boolean;
+  disabled?: boolean;
+  handleConfirm: () => void;
+  resetActiveStepId: () => void;
 }
 
 export default StepDetailsControlBar;

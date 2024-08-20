@@ -13,11 +13,10 @@ import { STEP } from '../constants';
 import {
   SelectedCell,
   FormFieldsProps,
-  VariableColumnData,
+  ColumnData,
   OPERATORS,
-  CATEGORIES,
   CATEGORY,
-  CaseEntries
+  CaseEntry
 } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
 import { checkDataType, removeExtraDoubleQuotes } from '../utils';
@@ -36,27 +35,27 @@ import { DataDictionaryVariable, Variable } from '@domain/dataDictionary';
 
 interface Table {
   stepIds: (string | null)[];
-  columns: VariableColumnData[];
-  rows: CaseEntries[];
+  columns: ColumnData[];
+  rows: CaseEntry[];
   variables: Record<string, Variable[]>;
   integrationData: Record<string, Variable[]>;
   stepOptions: { value: string; label: string }[];
   handleDeleteRow: (index: number) => void;
-  handleAddColumn: (column: VariableColumnData) => void;
-  handleDeleteColumn: (column: VariableColumnData) => void;
+  handleAddColumn: (column: ColumnData) => void;
+  handleDeleteColumn: (column: ColumnData) => void;
   handleChangeStep: (rowIndex: number, stepId: string) => void;
-  handleChangeColumnVariable: (
-    column: VariableColumnData
-  ) => (newVariable: DataDictionaryVariable) => void;
-  handleSubmitVariableValue: (
+  handleChangeColumn: (
+    column: ColumnData
+  ) => (variable: DataDictionaryVariable) => void;
+  handleEntryChange: (
     data: FormFieldsProps,
-    category: CATEGORY,
-    index: number
+    selectedCell: SelectedCell
   ) => void;
   hasUserPermission: boolean;
 }
 
 const Table = ({
+  hasUserPermission,
   stepIds,
   columns,
   rows,
@@ -66,10 +65,9 @@ const Table = ({
   handleDeleteRow,
   handleAddColumn,
   handleDeleteColumn,
-  handleChangeColumnVariable,
+  handleChangeColumn,
   handleChangeStep,
-  handleSubmitVariableValue,
-  hasUserPermission
+  handleEntryChange
 }: Table) => {
   const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
 
@@ -79,12 +77,14 @@ const Table = ({
   const handleSubmitSelectedCellData = (data: FormFieldsProps) => {
     if (!selectedCell) return;
 
-    handleSubmitVariableValue(
-      data,
-      selectedCell.category,
-      selectedCell.rowIndex
-    );
+    handleEntryChange(data, selectedCell);
     setSelectedCell(null);
+  };
+
+  const handleCellClick = (data: SelectedCell) => () => {
+    if (!hasUserPermission) return;
+
+    setSelectedCell(data);
   };
 
   return (
@@ -94,7 +94,7 @@ const Table = ({
       thereby removing the extra styles for the table body use Paper with borders */}
         <TableHead>
           <StyledTableRow sx={{ th: { borderBottom: 'none', padding: 0 } }}>
-            <TableCell colSpan={getColSpanLength(CATEGORIES.Conditions)}>
+            <TableCell colSpan={getColSpanLength('conditions')}>
               <Head
                 sx={{
                   bgcolor: lightBlue[50],
@@ -105,7 +105,7 @@ const Table = ({
                 <Typography variant="subtitle2">Input</Typography>
               </Head>
             </TableCell>
-            <TableCell colSpan={getColSpanLength(CATEGORIES.Actions) + 1}>
+            <TableCell colSpan={getColSpanLength('actions') + 1}>
               <Head
                 sx={{
                   bgcolor: lightGreen[50],
@@ -124,20 +124,18 @@ const Table = ({
             columns={columns}
             variables={variables}
             integrationData={integrationData}
-            handleChangeColumnVariable={handleChangeColumnVariable}
+            handleChangeColumn={handleChangeColumn}
             handleAddColumn={handleAddColumn}
             handleDeleteColumn={handleDeleteColumn}
           />
           {rows.map((row, rowIndex) => (
             <StyledTableRow
               key={rowIndex}
-              parity={(rowIndex + 1) % 2 === 0 ? 'even' : 'odd'}
+              parity={rowIndex % 2 === 0 ? 'even' : 'odd'}
             >
               {columns.map((column, columnIndex) => {
                 const dataType = checkDataType(column.dataType);
-                const caseEntry = row[column.category]?.find(
-                  (caseEntry) => caseEntry.name === column.name
-                );
+                const entry = row[column.category][column.index];
 
                 if (column.name === STEP) {
                   return (
@@ -169,42 +167,40 @@ const Table = ({
                   );
                 }
 
-                if (!caseEntry?.name)
+                if (columnIndex === 0 && rows.length - 1 === rowIndex)
                   return (
-                    <StyledTableCell key={columnIndex}>
-                      {rows.length - 1 === rowIndex && columnIndex === 0
-                        ? 'Else'
-                        : ''}
-                    </StyledTableCell>
+                    <StyledTableCell key={columnIndex}>Else</StyledTableCell>
                   );
+                if (
+                  (rows.length - 1 === rowIndex &&
+                    column.category === 'conditions') ||
+                  !entry?.name
+                )
+                  return <StyledTableCell key={columnIndex} />;
 
                 const hasValue =
-                  Boolean(caseEntry.expression) || Boolean(caseEntry.operator);
+                  Boolean(entry.expression) || Boolean(entry.operator);
 
                 const expression = dataType.isString
-                  ? removeExtraDoubleQuotes(caseEntry.expression)
-                  : caseEntry.expression;
+                  ? removeExtraDoubleQuotes(entry.expression)
+                  : entry.expression;
 
                 return (
                   <StyledTableCell
                     sx={{ cursor: hasUserPermission ? 'pointer' : 'default' }}
                     key={columnIndex}
-                    onClick={() => {
-                      hasUserPermission &&
-                        setSelectedCell({
-                          ...caseEntry,
-                          rowIndex,
-                          expression,
-                          category: column.category,
-                          dataType: column.dataType,
-                          allowedValues: column.allowedValues
-                        });
-                    }}
+                    onClick={handleCellClick({
+                      ...column,
+                      ...entry,
+                      columnIndex: column.index,
+                      rowIndex,
+                      expression
+                    })}
                   >
                     <Typography variant="body2">
                       {hasValue
-                        ? `${column.category === CATEGORIES.Conditions ? caseEntry.operator : OPERATORS.EQUAL} ${expression}`
-                        : `Enter ${column.category === CATEGORIES.Conditions ? 'Condition' : 'Value'}`}
+                        ? `${column.category === 'conditions' ? entry.operator : OPERATORS.EQUAL} ${expression}`
+                        : `Enter ${column.category === 'conditions' ? 'Condition' : 'Value'}`}
                     </Typography>
                   </StyledTableCell>
                 );
@@ -226,8 +222,8 @@ const Table = ({
       </MuiTable>
       {selectedCell && (
         <SelectVariableValueDialog
-          isCondition={selectedCell.category === CATEGORIES.Conditions}
-          modalOpen={!!selectedCell}
+          isCondition={selectedCell.category === 'conditions'}
+          modalOpen={Boolean(selectedCell)}
           handleClose={() => setSelectedCell(null)}
           selectedCell={selectedCell}
           handleSubmitForm={handleSubmitSelectedCellData}

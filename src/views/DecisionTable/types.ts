@@ -4,7 +4,7 @@ import {
   VARIABLE_SOURCE_TYPE
 } from '@domain/dataDictionary';
 
-export type CaseEntry = {
+export type Entry = {
   name: string;
   operator: Operator;
   expression: string;
@@ -14,26 +14,25 @@ export type CaseEntry = {
   sourceName?: string;
 };
 
-export type CaseEntries = {
-  conditions?: CaseEntry[];
-  actions?: CaseEntry[];
-  edgeId?: string | null;
+export type CaseEntry = {
+  conditions: Entry[];
+  actions: Entry[];
+  edgeId: string | null;
 };
 
-export interface SelectedCell extends CaseEntry {
-  category: CATEGORY;
-  rowIndex: number;
-  dataType: DATA_TYPE;
-  allowedValues?: string | string[];
-}
-
-export type VariableColumnData = {
+export type ColumnData = {
   category: CATEGORY;
   name: string;
   dataType: DATA_TYPE;
   allowedValues?: string | string[];
   index: number;
 };
+
+export interface SelectedCell extends Entry, ColumnData {
+  rowIndex: number;
+  dataType: DATA_TYPE;
+  columnIndex: number;
+}
 
 export type FormFieldsProps = {
   name: string;
