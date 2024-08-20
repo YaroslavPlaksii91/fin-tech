@@ -206,7 +206,7 @@ export const filterVariablesByUsageMode = (
 
       break;
     case CATEGORIES.Actions: {
-      // User-defined variables with the data type Object:CraFactorTrust should be excluded from Action.
+      // User-defined variables with the data types Object:CraFactorTrust and Object:CraFactorTrust should be excluded from Action.
       const filteredUserDefinedVariables = copyVariables['userDefined'].filter(
         (variable) =>
           variable.dataType !==
