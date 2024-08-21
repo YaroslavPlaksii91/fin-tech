@@ -27,6 +27,7 @@ import TuneIcon from '@icons/tune.svg';
 import ExportCSVButton from '@components/shared/ExportCSVButton';
 import { removeSingleQuotesODataParams } from '@utils/helpers';
 import { getDateInUTC } from '@utils/date';
+import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 
 const DenialReasons = () => {
   const [loading, setLoading] = useState(false);
@@ -194,6 +195,7 @@ const DenialReasons = () => {
             if (!rows.length) return '';
             return params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd';
           }}
+          slots={{ noRowsOverlay: CustomNoResultsOverlay }}
         />
       </Paper>
       <Filters

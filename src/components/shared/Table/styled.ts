@@ -118,3 +118,11 @@ export const StyledDataGridPremium = styled(DataGridPremium)(
     }
   })
 );
+
+export const StyledGridOverlay = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100%'
+});

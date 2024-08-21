@@ -26,6 +26,7 @@ import { WaterfallReport } from '@domain/waterfallReport';
 import ExportCSVButton from '@components/shared/ExportCSVButton';
 import { InputFiltersType } from '@components/Filters/types';
 import { getDateInUTC } from '@utils/date';
+import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 
 const Waterfall = () => {
   const [loading, setLoading] = useState(false);
@@ -173,6 +174,7 @@ const Waterfall = () => {
             if (!rows.length) return '';
             return params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd';
           }}
+          slots={{ noRowsOverlay: CustomNoResultsOverlay }}
         />
       </Paper>
       <Filters

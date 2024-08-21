@@ -13,34 +13,42 @@ const getDataGridColumns = ({
   handleDetails
 }: GetDataGridColumnsProps): GridColDef[] => [
   {
-    field: COLUMN_IDS.requestId,
-    headerName: 'Request ID'
+    field: COLUMN_IDS.origin,
+    headerName: 'Origin',
+    width: 168
   },
   {
-    field: COLUMN_IDS.origin,
-    headerName: 'Origin'
+    field: COLUMN_IDS.requestId,
+    headerName: 'Request ID',
+    width: 280
   },
-  { field: COLUMN_IDS.loanId, headerName: 'Loan ID' },
+  { field: COLUMN_IDS.loanId, headerName: 'Loan ID', width: 104 },
   {
     field: COLUMN_IDS.leadProvider,
-    headerName: 'Lead Provider'
+    headerName: 'Lead Provider',
+    width: 168
   },
-  { field: COLUMN_IDS.leadCampaign, headerName: 'Lead Campaign' },
-  { field: COLUMN_IDS.customerId, headerName: 'Customer ID' },
-  { field: COLUMN_IDS.leadPrice, headerName: 'Lead Price' },
-  { field: COLUMN_IDS.affiliate, headerName: 'Affiliate' },
-  { field: COLUMN_IDS.requestDate, headerName: 'Request date' },
-  { field: COLUMN_IDS.requestedAmount, headerName: 'Request amount' },
-  { field: COLUMN_IDS.stackName, headerName: 'Stack Name' },
-  { field: COLUMN_IDS.loanType, headerName: 'Loan Type' },
-  { field: COLUMN_IDS.promoCode, headerName: 'Promo Code' },
-  { field: COLUMN_IDS.store, headerName: 'Store' },
-  { field: COLUMN_IDS.ssn, headerName: 'SSN' },
-  { field: COLUMN_IDS.email, headerName: 'Email' },
+  { field: COLUMN_IDS.leadCampaign, headerName: 'Lead Campaign', width: 144 },
+  { field: COLUMN_IDS.customerId, headerName: 'Customer ID', width: 120 },
+  { field: COLUMN_IDS.leadPrice, headerName: 'Lead Price', width: 120 },
+  { field: COLUMN_IDS.affiliate, headerName: 'Affiliate', width: 120 },
+  { field: COLUMN_IDS.requestDate, headerName: 'Request date', width: 192 },
+  {
+    field: COLUMN_IDS.requestedAmount,
+    headerName: 'Request amount',
+    width: 144
+  },
+  { field: COLUMN_IDS.stackName, headerName: 'Stack Name', width: 120 },
+  { field: COLUMN_IDS.loanType, headerName: 'Loan Type', width: 144 },
+  { field: COLUMN_IDS.promoCode, headerName: 'Promo Code', width: 144 },
+  { field: COLUMN_IDS.store, headerName: 'Store', width: 96 },
+  { field: COLUMN_IDS.ssn, headerName: 'SSN', width: 120 },
+  { field: COLUMN_IDS.email, headerName: 'Email', width: 304 },
   {
     field: COLUMN_IDS.decision,
     headerName: 'Decision',
     align: 'left',
+    width: 104,
     renderCell: (row) => {
       let color;
       switch (row.value) {
@@ -65,11 +73,15 @@ const getDataGridColumns = ({
       );
     }
   },
-  { field: COLUMN_IDS.denialReason, headerName: 'Denial Reason' },
-  { field: COLUMN_IDS.state, headerName: 'State' },
-  { field: COLUMN_IDS.apiVersion, headerName: 'API Version' },
-  { field: COLUMN_IDS.totalTime, headerName: 'Total Time(sec)' },
-  { field: COLUMN_IDS.cachedConnector, headerName: 'Cached Connector' },
+  { field: COLUMN_IDS.denialReason, headerName: 'Denial Reason', width: 440 },
+  { field: COLUMN_IDS.state, headerName: 'State', width: 120 },
+  { field: COLUMN_IDS.apiVersion, headerName: 'API Version', width: 120 },
+  { field: COLUMN_IDS.totalTime, headerName: 'Total Time(sec)', width: 144 },
+  {
+    field: COLUMN_IDS.cachedConnector,
+    headerName: 'Cached Connector',
+    width: 168
+  },
   {
     field: COLUMN_IDS.details,
     headerName: '',
