@@ -37,7 +37,8 @@ export const TABS_LABELS: { [key: string]: string } = {
   userDefined: 'User Defined',
   outputVariables: 'Output',
   historicDataVariables: 'Underwriting History',
-  craReportVariables: 'CRA Reports'
+  craReportVariables: 'CRA Reports',
+  all: 'All'
 };
 
 export const INITIAL_FILTERS = {

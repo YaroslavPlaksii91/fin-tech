@@ -148,13 +148,6 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
               aria-controls={`tabpanel-${index}`}
             />
           ))}
-          <StyledTab
-            key="all"
-            label="All"
-            value="all"
-            id="tab-all"
-            aria-controls="tabpanel-all"
-          />
         </Tabs>
       </Box>
       {Object.keys(VARIABLES_TABS).map((tabName) => (
@@ -192,28 +185,6 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
           </>
         </TabPanel>
       ))}
-      {tab === VARIABLES_TABS.all && (
-        <TabPanel key="all" value={tab} tabName="all">
-          <Stack alignItems="flex-end" my={2}>
-            <Button
-              size="small"
-              color="inherit"
-              variant="outlined"
-              startIcon={<TuneIcon />}
-              onClick={handleFiltersOpen}
-            >
-              Filters
-            </Button>
-          </Stack>
-          <TableList
-            headers={headers}
-            tableData={filteredBySelects}
-            tabName={tab as VARIABLES_TABS}
-            flowNodes={flow.nodes}
-            flowId={flow.id}
-          />
-        </TabPanel>
-      )}
       <Filters
         isOpen={isFiltersOpen}
         filters={filters}
