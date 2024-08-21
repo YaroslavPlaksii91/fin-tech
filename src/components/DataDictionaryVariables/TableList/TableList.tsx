@@ -4,7 +4,7 @@ import { TableHead, TableBody, IconButton, Table } from '@mui/material';
 import { AddBoxOutlined } from '@mui/icons-material';
 import dayjs from 'dayjs';
 
-import { TableHeader, VARIABLES_TABS } from '../constants';
+import { TableHeader } from '../constants';
 import {
   getProductionUserDefinedUsage,
   getUserDefinedUsage,
@@ -12,6 +12,7 @@ import {
 } from '../utils';
 import { VariableForm } from '../VariableForm/VariableForm';
 import { DeleteVariable } from '../DeleteVariable/DeleteVariable';
+import { TAB } from '../types';
 
 import { TableRow } from './TableRow';
 
@@ -38,7 +39,7 @@ import { DATE_FORMAT } from '@constants/common';
 
 interface TableListProps {
   flowNodes: FlowNode[];
-  tabName: VARIABLES_TABS;
+  tabName: TAB;
   headers: TableHeader[];
   tableData: Variable[];
   flowId: string;
@@ -130,7 +131,7 @@ const TableList = ({
   };
 
   useEffect(() => {
-    if (tabName !== VARIABLES_TABS.userDefined) return;
+    if (tabName !== 'userDefined') return;
 
     const variables = map(tableData, 'name');
 
@@ -152,7 +153,7 @@ const TableList = ({
             {headers.map(({ key, label }) => (
               <StyledTableCell key={key}>{label}</StyledTableCell>
             ))}
-            {tabName === VARIABLES_TABS.userDefined && (
+            {tabName === 'userDefined' && (
               <StyledTableCell align="right">
                 {!isViewMode && (
                   <IconButton

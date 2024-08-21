@@ -3,7 +3,8 @@ import { IconButton, Stack, Button, Collapse, Typography } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
-import { TableHeader, VARIABLES_TABS } from '../constants';
+import { TableHeader } from '../constants';
+import { TAB } from '../types';
 
 import StepBreadcrumbs from './StepBreadcrumbs';
 
@@ -28,7 +29,7 @@ type TableRowProps = {
   headers: TableHeader[];
   row: Variable;
   index: number;
-  tabName: VARIABLES_TABS;
+  tabName: TAB;
   flowId: string;
   flowNodes: FlowNode[];
   userDefinedUsageStepIds: string[] | undefined;
@@ -122,7 +123,7 @@ export const TableRow = ({
             onClick={() => {
               setisExpanded(!isExpanded);
               !isExpanded &&
-                tabName !== VARIABLES_TABS.userDefined &&
+                tabName !== 'userDefined' &&
                 void getVariableUsage(row.name);
             }}
           >
@@ -132,7 +133,7 @@ export const TableRow = ({
         {headers.map(({ key }) => (
           <StyledTableCell key={key}>{row[key]?.toString()}</StyledTableCell>
         ))}
-        {tabName === VARIABLES_TABS.userDefined && (
+        {tabName === 'userDefined' && (
           <StyledTableCell>
             {!isViewMode && (
               <Stack spacing={1} direction="row">

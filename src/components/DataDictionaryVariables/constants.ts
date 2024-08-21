@@ -1,9 +1,12 @@
+import { TAB } from './types';
+
 import {
   DATA_TYPE_WITHOUT_ENUM,
   DATA_TYPE_WITH_ENUM_PREFIX,
   INTEGRATION_VARIABLE_SOURCE_TYPE,
   INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
-  Variable
+  Variable,
+  DATA_DICTIONARY_GROUP
 } from '@domain/dataDictionary';
 
 export const SOURCES_DESCRIPTIONS: { [key: string]: string } = {
@@ -21,15 +24,11 @@ export const SOURCES_DESCRIPTIONS: { [key: string]: string } = {
     'This source contains the data about the leads we may receive from multiple Credit Rating Agencies (CRAs). When designing the flow the Risk Manager must fetch this data explicitly via the GET_REPORT function in the calculation step.'
 };
 
-export enum VARIABLES_TABS {
-  laPMSVariables = 'laPMSVariables',
-  outputVariables = 'outputVariables',
-  historicDataVariables = 'historicDataVariables',
-  craReportVariables = 'craReportVariables',
-  lmsInputVariables = 'lmsInputVariables',
-  userDefined = 'userDefined',
-  all = 'all'
-}
+export const TAB_ALL = 'all';
+export const TABS = {
+  ...DATA_DICTIONARY_GROUP,
+  all: TAB_ALL as typeof TAB_ALL
+};
 
 export const TABS_LABELS: { [key: string]: string } = {
   laPMSVariables: 'LaPMS (Input)',
@@ -55,19 +54,19 @@ export const FILTER_GROUPS = [
       ...DATA_TYPE_WITHOUT_ENUM,
       ...DATA_TYPE_WITH_ENUM_PREFIX
     }),
-    applyFor: Object.values(VARIABLES_TABS)
+    applyFor: Object.values(TABS) as TAB[]
   },
   {
     filterBy: 'source',
     title: 'By CRA',
     fields: Object.values(INTEGRATION_VARIABLE_SOURCE_TYPE),
-    applyFor: [VARIABLES_TABS.craReportVariables]
+    applyFor: [TABS.craReportVariables] as TAB[]
   },
   {
     filterBy: 'sourceType',
     title: 'By Report Name',
     fields: Object.values(INTEGRATION_VARIABLE_SOURCE_SUB_TYPE),
-    applyFor: [VARIABLES_TABS.craReportVariables]
+    applyFor: [TABS.craReportVariables] as TAB[]
   }
 ];
 

@@ -3,7 +3,7 @@ import { Box, Stack, Tabs, Typography, Button } from '@mui/material';
 import { omitBy } from 'lodash';
 
 import {
-  VARIABLES_TABS,
+  TABS,
   TABS_LABELS,
   SOURCES_DESCRIPTIONS,
   FILTER_GROUPS,
@@ -17,6 +17,7 @@ import {
 import TableList from './TableList/TableList';
 import TabPanel from './Tabs/TabPanel';
 import { StyledTab } from './styled';
+import { TAB } from './types';
 
 import TuneIcon from '@icons/tune.svg';
 import Filters from '@components/Filters/Filters';
@@ -27,7 +28,7 @@ import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import useFilters from '@hooks/useFilters';
 
 const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
-  const [tab, setTab] = useState(VARIABLES_TABS.laPMSVariables);
+  const [tab, setTab] = useState<TAB>('laPMSVariables');
 
   const {
     isFiltersOpen,
@@ -46,10 +47,10 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
   const tableData = useMemo(() => {
     if (!variables) return [];
-    if (tab === VARIABLES_TABS.craReportVariables) {
+    if (tab === 'craReportVariables') {
       return Object.values(integrationVariables).flat();
     }
-    if (tab === VARIABLES_TABS.all) {
+    if (tab === 'all') {
       return [
         ...Object.values(variables).flat(),
         ...Object.values(integrationVariables).flat()
@@ -60,11 +61,11 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   }, [tab, variables]);
 
   const headers: TableHeader[] = useMemo(() => {
-    if (tab === VARIABLES_TABS.craReportVariables) {
+    if (tab === 'craReportVariables') {
       return CRA_REPORTS_HEADERS;
     }
 
-    if (tab === VARIABLES_TABS.userDefined) {
+    if (tab === 'userDefined') {
       const userDefinedHeaders = Object.values(
         omitBy(DEFAULT_HEADERS, { key: 'isRequired' })
       ) as TableHeader[];
@@ -77,7 +78,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const filterGroupsToShow = useMemo(
     () =>
       FILTER_GROUPS.map((filter) =>
-        tab === VARIABLES_TABS.userDefined
+        tab === 'userDefined'
           ? { ...filter, fields: Object.values(DATA_TYPE_WITHOUT_ENUM) }
           : filter
       ).filter(({ applyFor }) => applyFor.includes(tab)),
@@ -118,10 +119,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     return filteredData;
   }, [filteredBySearch, filters]);
 
-  const handleChange = (
-    _event: React.SyntheticEvent,
-    newValue: VARIABLES_TABS
-  ) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: TAB) => {
     setTab(newValue);
   };
 
@@ -139,7 +137,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
           aria-label="tabs"
           variant="scrollable"
         >
-          {Object.keys(VARIABLES_TABS).map((tabName, index) => (
+          {Object.keys(TABS).map((tabName, index) => (
             <StyledTab
               key={index}
               label={TABS_LABELS[tabName]}
@@ -150,7 +148,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
           ))}
         </Tabs>
       </Box>
-      {Object.keys(VARIABLES_TABS).map((tabName) => (
+      {Object.keys(TABS).map((tabName) => (
         <TabPanel key={tabName} value={tab} tabName={tabName}>
           <>
             <Stack
@@ -178,7 +176,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
             <TableList
               headers={headers}
               tableData={filteredBySelects}
-              tabName={tabName as VARIABLES_TABS}
+              tabName={tabName as TAB}
               flowNodes={flow.nodes}
               flowId={flow.id}
             />
