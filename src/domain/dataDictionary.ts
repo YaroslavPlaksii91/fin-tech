@@ -11,6 +11,7 @@ export enum DATA_TYPE_WITH_ENUM_PREFIX {
   ReferenceRelationship = 'Enum:ReferenceRelationship',
   LeadResponseResult = 'Enum:LeadResponseResult',
   RequestType = 'Enum:RequestType',
+  StoreType = 'Enum:StoreType',
   /*for mocked data*/
   Store = 'Enum:Store',
   LoyaltyTier = 'Enum:LoyaltyTier',

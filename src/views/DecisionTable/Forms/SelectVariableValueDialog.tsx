@@ -24,7 +24,6 @@ import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';
 import { SingleSelect } from '@components/shared/Forms/SingleSelect';
-import { DATA_TYPE_WITHOUT_ENUM } from '@domain/dataDictionary';
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
@@ -48,6 +47,9 @@ const SelectVariableValueDialog = ({
 
   const dataType = checkDataType(selectedCell.dataType);
   const operatorOptions = getOperatorOptions(selectedCell.dataType);
+  const valueSelectOptions = getFormatedOptions(
+    dataType.isBoolean ? BOOLEAN_OPTIONS : selectedCell.allowedValues || []
+  );
 
   const {
     handleSubmit,
@@ -59,9 +61,7 @@ const SelectVariableValueDialog = ({
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      dataType: isCondition
-        ? selectedCell.dataType
-        : DATA_TYPE_WITHOUT_ENUM.String,
+      dataType: selectedCell.dataType,
       name: selectedCell.name,
       operator: selectedCell.operator || OPERATORS.EQUAL,
       value: selectedCell.expression,
@@ -96,14 +96,13 @@ const SelectVariableValueDialog = ({
   }, [watchOperator]);
 
   useEffect(() => {
-    if (!isCondition) return;
     if (watchOperator === OPERATORS.ANY) {
       setValue('value', '');
       return;
     }
 
     if (dataType.isObject) setValue('value', 'null');
-  }, [watchOperator, isCondition, dataType.isObject]);
+  }, [watchOperator, dataType.isObject]);
 
   return (
     <Dialog
@@ -151,7 +150,7 @@ const SelectVariableValueDialog = ({
               </MenuItem>
             ))}
           </SingleSelect>
-          {(dataType.isWithEnum || dataType.isBoolean) && isCondition ? (
+          {dataType.isWithEnum || dataType.isBoolean ? (
             <SingleSelect
               name="value"
               control={control}
@@ -159,11 +158,7 @@ const SelectVariableValueDialog = ({
               label="Value*"
               disabled={watchOperator === OPERATORS.ANY}
             >
-              {getFormatedOptions(
-                dataType.isBoolean
-                  ? BOOLEAN_OPTIONS
-                  : selectedCell.allowedValues || []
-              ).map((option) => (
+              {valueSelectOptions.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
@@ -190,10 +185,7 @@ const SelectVariableValueDialog = ({
               name="value"
               control={control}
               label="Value*"
-              disabled={
-                watchOperator === OPERATORS.ANY ||
-                (dataType.isObject && isCondition)
-              }
+              disabled={watchOperator === OPERATORS.ANY || dataType.isObject}
             />
           )}
         </Stack>
