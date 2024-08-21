@@ -128,7 +128,7 @@ export enum DATA_DICTIONARY_GROUP {
   craReportVariables = 'craReportVariables'
 }
 
-export enum CRA_REPORT_VARIABLE {
+export enum CRA_REPORT_VARIABLES {
   craClarityReportVariables = 'craClarityReportVariables',
   craFactorTrustReportVariables = 'craFactorTrustReportVariables'
 }

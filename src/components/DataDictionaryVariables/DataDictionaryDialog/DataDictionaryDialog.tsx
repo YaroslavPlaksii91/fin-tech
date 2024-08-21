@@ -22,6 +22,7 @@ import { palette } from '@theme';
 import { highlightText } from '@utils/text.ts';
 import LoadingButton from '@components/shared/LoadingButton.tsx';
 import {
+  CRA_REPORT_VARIABLES,
   DATA_TYPE,
   DATA_TYPE_WITHOUT_ENUM,
   DataDictionaryVariableRecord,
@@ -33,11 +34,11 @@ const objectVariableTypes: DATA_TYPE[] = [
   DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']
 ];
 
-// TODO move to constants
 const objectVariablesDataSourceMap: Record<string, string> = {
-  [DATA_TYPE_WITHOUT_ENUM['Object:CraClarity']]: 'craClarityReportVariables',
+  [DATA_TYPE_WITHOUT_ENUM['Object:CraClarity']]:
+    CRA_REPORT_VARIABLES.craClarityReportVariables,
   [DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']]:
-    'craFactorTrustReportVariables'
+    CRA_REPORT_VARIABLES.craFactorTrustReportVariables
 };
 
 const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({

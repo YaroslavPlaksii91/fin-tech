@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 
 import { dataDictionaryService } from '@services/data-dictionary';
 import {
+  CRA_REPORT_VARIABLES,
   DATA_DICTIONARY_GROUP,
   DataDictionaryVariableRecord,
   VARIABLE_SOURCE_TYPE,
@@ -13,8 +14,8 @@ const useDataDictionaryVariables = (flow: IFlow) => {
   const [variables, setVariables] = useState<DataDictionaryVariableRecord>();
   const [integrationVariables, setIntegrationVariables] =
     useState<DataDictionaryVariableRecord>({
-      craClarityReportVariables: [],
-      craFactorTrustReportVariables: []
+      [CRA_REPORT_VARIABLES.craClarityReportVariables]: [],
+      [CRA_REPORT_VARIABLES.craFactorTrustReportVariables]: []
     });
 
   const getVariables = useCallback(async () => {
