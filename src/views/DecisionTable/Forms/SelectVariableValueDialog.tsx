@@ -47,7 +47,7 @@ const SelectVariableValueDialog = ({
 
   const dataType = checkDataType(selectedCell.dataType);
   const operatorOptions = getOperatorOptions(selectedCell.dataType);
-  const selectOption = getFormatedOptions(
+  const valueSelectOptions = getFormatedOptions(
     dataType.isBoolean ? BOOLEAN_OPTIONS : selectedCell.allowedValues || []
   );
 
@@ -158,7 +158,7 @@ const SelectVariableValueDialog = ({
               label="Value*"
               disabled={watchOperator === OPERATORS.ANY}
             >
-              {selectOption.map((option) => (
+              {valueSelectOptions.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
