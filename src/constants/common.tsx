@@ -40,17 +40,6 @@ export const SPECIAL_KEY_CODES = {
   Minus: '-'
 };
 
-export const DATA_DICTIONARY_LABELS: { [key: string]: string } = {
-  userDefined: 'User Defined',
-  laPMSVariables: 'Lead and Provider Management System'
-};
-
-export enum DATA_DICTIONARY_GROUP {
-  userDefined = 'userDefined',
-  laPMSVariables = 'laPMSVariables',
-  outputVariables = 'outputVariables'
-}
-
 export const RULES_LIMIT = 10;
 
 export const SCOPES_LIST = {

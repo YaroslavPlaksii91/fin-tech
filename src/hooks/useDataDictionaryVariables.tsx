@@ -2,43 +2,27 @@ import { useEffect, useState, useCallback } from 'react';
 
 import { dataDictionaryService } from '@services/data-dictionary';
 import {
+  DATA_DICTIONARY_GROUP,
   DataDictionaryVariableRecord,
   VARIABLE_SOURCE_TYPE,
   VARIABLE_USAGE_MODE
 } from '@domain/dataDictionary';
 import { IFlow } from '@domain/flow';
 
-enum PROMISE_TYPES {
-  Fulfilled = 'fulfilled',
-  Rejected = 'rejected'
-}
-
-const isFulfilled = function <T>(
-  input: PromiseSettledResult<T>
-): input is PromiseFulfilledResult<T> {
-  return input.status === PROMISE_TYPES.Fulfilled;
-};
-
-const useDataDictionaryVariables = (flow?: IFlow) => {
+const useDataDictionaryVariables = (flow: IFlow) => {
   const [variables, setVariables] = useState<DataDictionaryVariableRecord>();
   const [integrationVariables, setIntegrationVariables] =
     useState<DataDictionaryVariableRecord>({
       craClarityReportVariables: [],
       craFactorTrustReportVariables: []
     });
-  const [isLoadingData, setIsLoadingData] = useState(false);
 
   const getVariables = useCallback(async () => {
-    setIsLoadingData(true);
-
-    // TODO: extends with new endpoints for getting data dictionary variables
-    const results = await Promise.allSettled([
-      dataDictionaryService.getDataDictionaryVariables(),
-      dataDictionaryService.getIntegrationVariables().then((data) => {
-        setIntegrationVariables(data);
-        return data;
-      })
-    ]);
+    const [dataDictionaryVariables, integrationVariables] =
+      await Promise.allSettled([
+        dataDictionaryService.getDataDictionaryVariables(),
+        dataDictionaryService.getIntegrationVariables()
+      ]);
 
     const temporaryVariables =
       flow?.temporaryVariables?.map((variable) => ({
@@ -60,46 +44,39 @@ const useDataDictionaryVariables = (flow?: IFlow) => {
 
     const extendedVariables: DataDictionaryVariableRecord = {};
 
-    const fulfilledValues = results.filter(isFulfilled).map((p) => p.value);
+    if (dataDictionaryVariables.status === 'fulfilled') {
+      Object.assign(extendedVariables, dataDictionaryVariables.value);
+    }
 
-    fulfilledValues.forEach((obj) => {
-      Object.keys(obj).forEach((key) => {
-        if (
-          [
-            'craClarityReportVariables',
-            'craFactorTrustReportVariables'
-          ].includes(key)
-        ) {
-          const { craReportVariables } = extendedVariables;
+    if (integrationVariables.status === 'fulfilled') {
+      const {
+        lmsInputVariables,
+        craClarityReportVariables,
+        craFactorTrustReportVariables
+      } = integrationVariables.value;
 
-          extendedVariables.craReportVariables = craReportVariables
-            ? [...craReportVariables, ...obj[key]]
-            : obj[key];
+      extendedVariables[DATA_DICTIONARY_GROUP.lmsInputVariables] =
+        lmsInputVariables;
 
-          return;
-        }
-
-        extendedVariables[key] = obj[key];
+      setIntegrationVariables({
+        craClarityReportVariables,
+        craFactorTrustReportVariables
       });
-    });
+    }
 
-    extendedVariables.userDefined = [
+    extendedVariables[DATA_DICTIONARY_GROUP.userDefined] = [
       ...temporaryVariables,
       ...permanentVariables
     ];
 
-    if (fulfilledValues.length) {
-      setVariables(extendedVariables);
-    }
-
-    setIsLoadingData(false);
+    setVariables(extendedVariables);
   }, [flow]);
 
   useEffect(() => {
     void getVariables();
   }, [getVariables]);
 
-  return { isLoadingData, variables, integrationVariables };
+  return { variables, integrationVariables };
 };
 
 export default useDataDictionaryVariables;

@@ -116,3 +116,19 @@ export type VariableUsageParams = {
   path: string[];
   place: string;
 }[];
+
+// UserDefined group contains temporary and permanent variables
+// CraReportVariables group contains craClarityReportVariables and craFactorTrustReportVariables
+export enum DATA_DICTIONARY_GROUP {
+  laPMSVariables = 'laPMSVariables',
+  lmsInputVariables = 'lmsInputVariables',
+  userDefined = 'userDefined',
+  outputVariables = 'outputVariables',
+  historicDataVariables = 'historicDataVariables',
+  craReportVariables = 'craReportVariables'
+}
+
+export enum CRA_REPORT_VARIABLE {
+  craClarityReportVariables = 'craClarityReportVariables',
+  craFactorTrustReportVariables = 'craFactorTrustReportVariables'
+}

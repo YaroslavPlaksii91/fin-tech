@@ -33,6 +33,7 @@ const objectVariableTypes: DATA_TYPE[] = [
   DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']
 ];
 
+// TODO move to constants
 const objectVariablesDataSourceMap: Record<string, string> = {
   [DATA_TYPE_WITHOUT_ENUM['Object:CraClarity']]: 'craClarityReportVariables',
   [DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']]:

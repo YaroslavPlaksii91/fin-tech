@@ -5,7 +5,6 @@ import { debounce, flatMap, isEmpty } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import omit from 'lodash/omit';
 
 import {
   INITIAL_ENTRY,
@@ -111,11 +110,7 @@ const DecisionTable = ({
   const nodes: FlowNode[] = getNodes();
   const edges = getEdges();
 
-  // Discussed with Yaryna, and decided to hide craReportVariables here
-  const variables = useMemo(
-    () => omit(dataDictionary?.variables, ['craReportVariables']) || {},
-    [dataDictionary?.variables]
-  );
+  const variables = dataDictionary?.variables || {};
 
   const flatVariables = useMemo(() => flatMap(variables), [variables]);
 

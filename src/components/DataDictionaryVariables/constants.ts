@@ -6,15 +6,6 @@ import {
   Variable
 } from '@domain/dataDictionary';
 
-export const TABS_LABELS: { [key: string]: string } = {
-  laPMSVariables: 'LaPMS (Input)',
-  lmsInputVariables: 'LMS',
-  userDefined: 'User Defined',
-  outputVariables: 'Output',
-  historicDataVariables: 'Underwriting History',
-  craReportVariables: 'CRA Reports'
-};
-
 export const SOURCES_DESCRIPTIONS: { [key: string]: string } = {
   laPMSVariables:
     'This source contains all the variables from Lead Request sent to underwriting as input from the Lead and Provider Management System (LaPMS)',
@@ -32,13 +23,22 @@ export const SOURCES_DESCRIPTIONS: { [key: string]: string } = {
 
 export enum VARIABLES_TABS {
   laPMSVariables = 'laPMSVariables',
-  lmsInputVariables = 'lmsInputVariables',
-  userDefined = 'userDefined',
   outputVariables = 'outputVariables',
   historicDataVariables = 'historicDataVariables',
   craReportVariables = 'craReportVariables',
+  lmsInputVariables = 'lmsInputVariables',
+  userDefined = 'userDefined',
   all = 'all'
 }
+
+export const TABS_LABELS: { [key: string]: string } = {
+  laPMSVariables: 'LaPMS (Input)',
+  lmsInputVariables: 'LMS',
+  userDefined: 'User Defined',
+  outputVariables: 'Output',
+  historicDataVariables: 'Underwriting History',
+  craReportVariables: 'CRA Reports'
+};
 
 export const INITIAL_FILTERS = {
   dataType: [],

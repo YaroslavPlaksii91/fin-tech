@@ -42,16 +42,19 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     initialInputFilters: INITIAL_INPUT_FILTERS
   });
 
-  const { variables } = useDataDictionaryVariables(flow);
+  const { variables, integrationVariables } = useDataDictionaryVariables(flow);
 
   const tableData = useMemo(() => {
     if (!variables) return [];
-    if (tab === VARIABLES_TABS.all)
+    if (tab === VARIABLES_TABS.craReportVariables) {
+      return Object.values(integrationVariables).flat();
+    }
+    if (tab === VARIABLES_TABS.all) {
       return [
-        ...variables['userDefined'],
-        ...variables['laPMSVariables'],
-        ...variables['craReportVariables']
+        ...Object.values(variables).flat(),
+        ...Object.values(integrationVariables).flat()
       ];
+    }
 
     return variables[tab];
   }, [tab, variables]);
@@ -136,7 +139,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
           aria-label="tabs"
           variant="scrollable"
         >
-          {Object.keys(variables).map((tabName, index) => (
+          {Object.keys(VARIABLES_TABS).map((tabName, index) => (
             <StyledTab
               key={index}
               label={TABS_LABELS[tabName]}
@@ -154,7 +157,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
           />
         </Tabs>
       </Box>
-      {Object.keys(variables).map((tabName) => (
+      {Object.keys(VARIABLES_TABS).map((tabName) => (
         <TabPanel key={tabName} value={tab} tabName={tabName}>
           <>
             <Stack
