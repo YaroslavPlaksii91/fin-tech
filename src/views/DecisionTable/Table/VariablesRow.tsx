@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { TableCell } from '@mui/material';
 import { lightGreen } from '@mui/material/colors';
 
-import { CATEGORIES, VariableColumnData } from '../types';
+import { ColumnData } from '../types';
 import { getHeaderCellBgColor, filterVariablesByUsageMode } from '../utils';
 import VariableInput from '../VariableInput';
 import { STEP } from '../constants';
@@ -15,15 +15,15 @@ import { StyledTableRow } from '@components/shared/Table/styled';
 import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog';
 
 interface VariablesRowProps {
-  columns: VariableColumnData[];
+  columns: ColumnData[];
   hasUserPermission: boolean;
   variables: Record<string, Variable[]>;
   integrationData: Record<string, Variable[]>;
-  handleChangeColumnVariable: (
-    column: VariableColumnData
-  ) => (newVariable: DataDictionaryVariable) => void;
-  handleAddColumn: (column: VariableColumnData) => void;
-  handleDeleteColumn: (column: VariableColumnData) => void;
+  handleChangeColumn: (
+    column: ColumnData
+  ) => (variable: DataDictionaryVariable) => void;
+  handleAddColumn: (column: ColumnData) => void;
+  handleDeleteColumn: (column: ColumnData) => void;
 }
 
 const VariablesRow = ({
@@ -31,33 +31,28 @@ const VariablesRow = ({
   columns,
   variables,
   integrationData,
-  handleChangeColumnVariable,
+  handleChangeColumn,
   handleAddColumn,
   handleDeleteColumn
 }: VariablesRowProps) => {
-  const [selectedColumn, setSelectedColumn] =
-    useState<VariableColumnData | null>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectedColumn, setSelectedColumn] = useState<ColumnData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleCloseDialog = () => setIsDialogOpen(false);
 
   const handleAddVariable = () => {
     setIsDialogOpen(true);
-    setIsMenuOpen(false);
   };
 
   const handleAddNewColumn = () => {
     if (selectedColumn) handleAddColumn(selectedColumn);
-    setIsMenuOpen(false);
   };
 
   const handleDelete = () => {
     if (selectedColumn) handleDeleteColumn(selectedColumn);
-    setIsMenuOpen(false);
   };
 
-  const getMenuItems = (column: VariableColumnData) => {
+  const getMenuItems = (column: ColumnData) => {
     const columnsCount = columns.filter(
       ({ category }) => category === column.category && column.name !== STEP
     ).length;
@@ -87,8 +82,7 @@ const VariablesRow = ({
     ];
   };
 
-  const handleClick = (column: VariableColumnData) => () => {
-    setIsMenuOpen(true);
+  const handleClick = (column: ColumnData) => () => {
     setSelectedColumn(column);
   };
 
@@ -110,11 +104,6 @@ const VariablesRow = ({
               '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
             }}
             size="small"
-            open={
-              isMenuOpen &&
-              column.index === selectedColumn?.index &&
-              column.category === selectedColumn?.category
-            }
             value={column.name}
             menuItems={getMenuItems(column)}
             onClick={handleClick(column)}
@@ -127,14 +116,12 @@ const VariablesRow = ({
         <DataDictionaryDialog
           data={filterVariablesByUsageMode(variables, selectedColumn.category)}
           integrationData={
-            selectedColumn.category === CATEGORIES.Actions
-              ? undefined
-              : integrationData
+            selectedColumn.category === 'actions' ? undefined : integrationData
           }
           title="Add Variable"
           isOpen={isDialogOpen}
           onClose={handleCloseDialog}
-          onConfirm={handleChangeColumnVariable(selectedColumn)}
+          onConfirm={handleChangeColumn(selectedColumn)}
           setSelectedObjectPropertyFunction={(object, property) => ({
             ...property,
             // Technically is not correct source type, but for calculations this is backend requirement -

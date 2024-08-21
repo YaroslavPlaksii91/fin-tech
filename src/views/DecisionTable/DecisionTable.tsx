@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext, useMemo, useCallback } from 'react';
 import { Button, Paper } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
-import { debounce, flatMap, isEmpty, keyBy } from 'lodash';
+import { debounce, flatMap, isEmpty } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -11,15 +11,15 @@ import {
   INITIAL_ENTRY,
   STEP_DETAILS,
   STEP,
-  INITIAL_STEP_IDS
+  INITIAL_CASE_ENTRIES
 } from './constants';
 import {
-  VariableColumnData,
+  ColumnData,
   FormFieldsProps,
-  CaseEntries,
   CaseEntry,
   CATEGORIES,
-  CATEGORY
+  CATEGORY,
+  SelectedCell
 } from './types';
 import { getColumns, getVariableSources, updateCaseEntry } from './utils';
 import Table from './Table/Table';
@@ -83,32 +83,16 @@ const DecisionTable = ({
     onAddNodeBetweenEdges
   }
 }: DecisionTableStepProps) => {
-  const { setIsDirty } = useIsDirty();
+  const { isDirty, setIsDirty } = useIsDirty();
   const dataDictionary = useContext(DataDictionaryContext);
   const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
   const user = useAppSelector(selectUserInfo);
 
-  const [isEdited, setIsEdited] = useState(false);
-  const [caseEntries, setCaseEntries] = useState<CaseEntries[]>([]);
-  const [defaultActions, setDefaultActions] = useState<CaseEntry[]>([]);
-  const [stepIds, setStepIds] = useState<(string | null)[]>(INITIAL_STEP_IDS);
-
-  const isPreview = isViewMode || !canUpdateFlow;
-  const username = getFullUserName(user);
-  // Discussed with Yaryna, and decided to hide craReportVariables here
-  const variables = useMemo(
-    () => omit(dataDictionary?.variables, ['craReportVariables']) || {},
-    [dataDictionary?.variables]
-  );
-  const integrationVariables = dataDictionary?.integrationVariables || {};
-  const flatVariables = flatMap(variables);
-  const nodes: FlowNode[] = getNodes();
-  const edges = getEdges();
+  const [caseEntries, setCaseEntries] = useState<CaseEntry[]>([]);
 
   const {
     handleSubmit,
     control,
-    setValue,
     watch,
     formState: { errors, isSubmitting }
   } = useForm<FieldValues>({
@@ -121,26 +105,37 @@ const DecisionTable = ({
   });
 
   const watchNote = watch('note');
+  const isPreview = isViewMode || !canUpdateFlow;
+  const username = getFullUserName(user);
+  const integrationVariables = dataDictionary?.integrationVariables || {};
+  const nodes: FlowNode[] = getNodes();
+  const edges = getEdges();
 
-  const stepOptions = useMemo(
-    () =>
-      getConnectableNodes(nodes, step.id).map((node) => ({
-        value: node.id,
-        label: node.data.name
-      })),
-    [nodes.length, step.id]
+  // Discussed with Yaryna, and decided to hide craReportVariables here
+  const variables = useMemo(
+    () => omit(dataDictionary?.variables, ['craReportVariables']) || {},
+    [dataDictionary?.variables]
   );
 
+  const flatVariables = useMemo(() => flatMap(variables), [variables]);
+
+  const stepIds = caseEntries.map(({ edgeId }) => edgeId);
+
   const conditionsColumns = getColumns(
-    caseEntries[0],
+    // If we have empty conditions, then we should provide the initial
+    // entry to make possible to trigger variable menu.
+    // note: actions columns always have step column with this menu
+    caseEntries[0]?.conditions?.length
+      ? caseEntries[0]?.conditions
+      : [INITIAL_ENTRY],
     flatVariables,
-    CATEGORIES.Conditions
+    'conditions'
   );
 
   const actionsColumns = getColumns(
-    caseEntries[0],
+    caseEntries[0]?.actions || [],
     flatVariables,
-    CATEGORIES.Actions
+    'actions'
   );
 
   const stepColumn = {
@@ -150,98 +145,113 @@ const DecisionTable = ({
     index: actionsColumns.length
   };
 
-  const columns = [...conditionsColumns, ...actionsColumns];
-  const columnsWithStep = [...columns, stepColumn];
+  const columns = [...conditionsColumns, ...actionsColumns, stepColumn];
 
-  const rows = caseEntries.map((row) => ({
-    ...keyBy(row.conditions, 'name'),
-    ...keyBy(row.actions, 'name')
-  }));
+  const stepOptions = useMemo(
+    () =>
+      getConnectableNodes(nodes, step.id).map((node) => ({
+        value: node.id,
+        label: node.data.name
+      })),
+    [nodes, step.id]
+  );
 
-  const elseConditionRow = keyBy(defaultActions, 'name');
+  const initialData = useMemo(() => {
+    const { data } = step;
 
-  const rowsWithElseCondition = rows.length ? [...rows, elseConditionRow] : [];
+    // To make possible setup default actions for already existed table
+    const defaultActions =
+      data.defaultActions?.length === 0
+        ? (data.caseEntries?.[0]?.actions || []).map((entry) => ({
+            ...INITIAL_ENTRY,
+            name: entry.name
+          }))
+        : data.defaultActions;
+
+    // Compose default actions, and defaultEdgeId here, to manage state the same way as for actions
+    const caseEntriesWithDefaultActions = data.caseEntries?.length
+      ? [
+          ...data.caseEntries,
+          {
+            conditions: [],
+            actions: defaultActions || [],
+            edgeId: data.defaultEdgeId || null
+          }
+        ]
+      : [];
+
+    const savedCaseEntries = caseEntriesWithDefaultActions.map((caseEntry) => ({
+      ...caseEntry,
+      // We manipulate with stepIds so this field will contain the stepId, untill send to backend
+      edgeId: getEdge(caseEntry.edgeId || '')?.target || null
+    }));
+
+    return {
+      savedCaseEntries,
+      savedNote: data.note || ''
+    };
+  }, [step.data]);
 
   const handleAddNewLayer = () => {
-    const addNewLayerColumns = (category: CATEGORY) =>
-      columns
-        .filter((column) => column.category === category)
-        .map((column) => ({
+    setCaseEntries((prev) => {
+      if (!prev.length) return INITIAL_CASE_ENTRIES;
+
+      const caseEntries = [...prev];
+
+      const addEntries = (category: CATEGORY) =>
+        // The last one always defaultActions and we don`t have any conditions for this,
+        // so should be added based on the second last
+        caseEntries[caseEntries.length - 2][category].map((entry) => ({
           ...INITIAL_ENTRY,
-          name: column.name
+          name: entry.name
         }));
 
-    setCaseEntries((prev) => [
-      ...prev,
-      {
-        conditions: addNewLayerColumns(CATEGORIES.Conditions),
-        actions: addNewLayerColumns(CATEGORIES.Actions),
+      const newCaseEntry = {
+        conditions: addEntries('conditions'),
+        actions: addEntries('actions'),
         edgeId: null
-      }
-    ]);
+      };
 
-    setStepIds((prev) => {
-      const steps = [...prev];
-      steps.splice(prev.length - 1, 0, null);
+      caseEntries.splice(prev.length - 1, 0, newCaseEntry);
 
-      return steps;
+      return caseEntries;
     });
   };
 
   const handleDeleteLayer = (index: number) => {
-    const newCaseEntries = [...caseEntries];
-    newCaseEntries.splice(index, 1);
-
-    setCaseEntries(newCaseEntries);
-
-    if (!caseEntries.length) {
-      setDefaultActions([]);
-      setStepIds(INITIAL_STEP_IDS);
-      return;
-    }
-
-    setStepIds((prev) => prev.filter((_, stepIndex) => stepIndex !== index));
-  };
-
-  const handleAddColumn = ({ category, index }: VariableColumnData) => {
-    const isActionsCategory = category === CATEGORIES.Actions;
-
-    const updatedCaseEntries = updateCaseEntry({
-      caseEntries,
-      category,
-      start: index + 1,
-      deleteCount: 0,
-      insertEntry: INITIAL_ENTRY,
-      initialEntries: isActionsCategory
-        ? [INITIAL_ENTRY]
-        : [INITIAL_ENTRY, INITIAL_ENTRY]
+    setCaseEntries((prev) => {
+      // Else condition row always present in the table,
+      // the last possible deleted row will be the first one and additionally remove the last one
+      if (prev.length === 2) return [];
+      return prev.filter((_, prevIndex) => prevIndex !== index);
     });
-
-    if (!caseEntries.length) setStepIds(INITIAL_STEP_IDS);
-    if (isActionsCategory)
-      setDefaultActions((prev) => [...prev, INITIAL_ENTRY]);
-
-    setCaseEntries(updatedCaseEntries);
   };
 
-  const handleDeleteColumn = ({ category, index }: VariableColumnData) => {
-    const updatedCaseEntries = updateCaseEntry({
-      caseEntries,
-      category,
-      start: index,
-      deleteCount: 1
-    });
-
-    if (category === CATEGORIES.Actions)
-      setDefaultActions((prev) =>
-        prev.filter((_, actionIndex) => actionIndex !== index)
-      );
-
-    setCaseEntries(updatedCaseEntries);
+  const handleAddColumn = ({ category, index }: ColumnData) => {
+    setCaseEntries((prev) =>
+      updateCaseEntry({
+        caseEntries: prev.length ? prev : INITIAL_CASE_ENTRIES,
+        category,
+        start: index + 1,
+        deleteCount: 0,
+        insertEntry: INITIAL_ENTRY
+      })
+    );
   };
 
-  const handleChangeColumnVariable =
-    ({ category, index }: VariableColumnData) =>
+  const handleDeleteColumn = ({ category, index }: ColumnData) => {
+    setCaseEntries((prev) =>
+      updateCaseEntry({
+        caseEntries: prev,
+        category,
+        start: index,
+        deleteCount: 1
+      })
+    );
+  };
+
+  const handleChangeColumn =
+    ({ category, index }: ColumnData) =>
     (newVariable: DataDictionaryVariable) => {
       const insertEntry = {
         ...INITIAL_ENTRY,
@@ -251,56 +261,29 @@ const DecisionTable = ({
         sourceType: newVariable.sourceType
       };
 
-      const updatedCaseEntries = updateCaseEntry({
-        caseEntries,
-        category,
-        start: index,
-        deleteCount: 1,
-        insertEntry,
-        initialEntries: [insertEntry]
-      });
-
-      if (category === CATEGORIES.Actions)
-        setDefaultActions((prev) =>
-          prev.map((prevEntry, actionIndex) =>
-            actionIndex === index ? insertEntry : prevEntry
-          )
-        );
-
-      if (!caseEntries.length) setStepIds(INITIAL_STEP_IDS);
-      setCaseEntries(updatedCaseEntries);
+      setCaseEntries((prev) =>
+        updateCaseEntry({
+          caseEntries: prev.length ? prev : INITIAL_CASE_ENTRIES,
+          category,
+          start: index,
+          deleteCount: 1,
+          insertEntry
+        })
+      );
     };
 
-  const handleSubmitVariableValue = (
+  const handleEntryChange = (
     data: FormFieldsProps,
-    category: CATEGORY,
-    rowIndex: number
+    { category, rowIndex, columnIndex }: SelectedCell
   ) => {
-    if (
-      category === CATEGORIES.Actions &&
-      rowIndex === rowsWithElseCondition.length - 1
-    ) {
-      setDefaultActions((prev) =>
-        prev.map((prevEntry) =>
-          prevEntry.name === data.name
-            ? {
-                ...prevEntry,
-                expression: data.value || '',
-                operator: data.operator
-              }
-            : prevEntry
-        )
-      );
-      return;
-    }
-
     setCaseEntries((prev) =>
-      prev.map((row, index) =>
-        index === rowIndex
-          ? {
+      prev.map((row, currentRowIndex) =>
+        currentRowIndex !== rowIndex
+          ? row
+          : {
               ...row,
-              [category]: row[category]?.map((column) =>
-                column.name !== data.name
+              [category]: row[category]?.map((column, currentColumnIndex) =>
+                currentColumnIndex !== columnIndex
                   ? column
                   : {
                       ...column,
@@ -309,18 +292,19 @@ const DecisionTable = ({
                     }
               )
             }
-          : row
       )
     );
   };
 
   const handleChangeStep = (rowIndex: number, stepId: string) => {
-    setStepIds((prev) =>
-      prev.map((oldStepId, index) => (rowIndex === index ? stepId : oldStepId))
+    setCaseEntries((prev) =>
+      prev.map((entry, index) =>
+        rowIndex === index ? { ...entry, edgeId: stepId } : entry
+      )
     );
   };
 
-  const onApplyChangesClick = async ({ note }: FieldValues) => {
+  const handleConfirm = async ({ note }: FieldValues) => {
     const splitEdges = stepIds.map((targetNodeId, index) => ({
       id: uuidv4(),
       sourceHandle: index.toString(),
@@ -340,25 +324,20 @@ const DecisionTable = ({
 
     const updatedNodes = nodes.map((node: FlowNode) => {
       if (node.id === step.id) {
-        const updatedCaseEntries = caseEntries.map((row, caseEntryIndex) => ({
-          edgeId: splitEdges[caseEntryIndex].target
-            ? splitEdges[caseEntryIndex].id
-            : null,
-          conditions: row.conditions?.map((condition) => ({ ...condition })),
-          actions: row.actions?.map((action) => ({
-            ...action,
-            destinationType: flatVariables.find(
-              ({ name }) => action.name === name
-            )?.destinationType
-          }))
-        }));
+        const updatedCaseEntries = caseEntries.map(
+          ({ actions, conditions }, index) => ({
+            conditions,
+            edgeId: splitEdges[index]?.target ? splitEdges[index].id : null,
+            actions: actions?.map((action) => ({
+              ...action,
+              destinationType: flatVariables.find(
+                ({ name }) => action.name === name
+              )?.destinationType
+            }))
+          })
+        );
 
-        const updatedDefaultActions = defaultActions.map((defaultAction) => ({
-          ...defaultAction,
-          destinationType: flatVariables.find(
-            ({ name }) => defaultAction.name === name
-          )?.destinationType
-        }));
+        const lastCaseEntry = updatedCaseEntries.pop();
 
         const updatedVariableSources = getVariableSources(
           [
@@ -370,14 +349,14 @@ const DecisionTable = ({
 
         node.data = {
           ...node.data,
-          defaultEdgeId: splitEdges[splitEdges.length - 1].target
+          defaultEdgeId: splitEdges[splitEdges.length - 1]?.target
             ? splitEdges[splitEdges.length - 1].id
             : null,
           caseEntries: updatedCaseEntries,
           editedBy: username,
           editedOn: new Date().toISOString(),
           note,
-          defaultActions: updatedDefaultActions,
+          defaultActions: lastCaseEntry?.actions,
           variableSources: updatedVariableSources
         };
       }
@@ -412,81 +391,13 @@ const DecisionTable = ({
     }
   };
 
-  const initialData = useMemo(() => {
-    const { data } = step;
-
-    const savedDefaultStepId =
-      getEdge(data.defaultEdgeId || '')?.target || null;
-
-    const savedStepIds = data.caseEntries?.map((entry) => {
-      const connectedEdge = getEdge(entry.edgeId || '');
-
-      return connectedEdge?.target || null;
-    }) || [null];
-
-    // To make possible setup default Actions for already existed table
-    const savedDefaultActions =
-      data.defaultActions?.length === 0
-        ? (data.caseEntries?.[0]?.actions || []).map((entry) => ({
-            ...INITIAL_ENTRY,
-            name: entry.name
-          }))
-        : data.defaultActions;
-
-    return {
-      savedDefaultStepId,
-      savedDefaultActions,
-      savedStepIds: savedStepIds,
-      savedCaseEntries: data.caseEntries,
-      savedNote: data.note || ''
-    };
-  }, [step]);
-
-  const setInitialData = useCallback(() => {
-    if (initialData) {
-      setStepIds([...initialData.savedStepIds, initialData.savedDefaultStepId]);
-      setCaseEntries(initialData.savedCaseEntries || []);
-      setDefaultActions(initialData.savedDefaultActions || []);
-      setValue('note', initialData.savedNote);
-    }
-  }, [initialData]);
-
-  useEffect(() => setInitialData(), [step.data]);
-
-  const checkIsDirty = (
-    caseEntries: CaseEntries[],
-    defaultActions: CaseEntry[],
-    noteValue: string | null,
-    stepIds: (string | null)[]
-  ) => {
+  const checkIsDirty = (caseEntries: CaseEntry[], noteValue: string | null) => {
     const hasChangesInCaseEntries =
-      JSON.stringify(initialData?.savedCaseEntries) !==
+      JSON.stringify(initialData.savedCaseEntries) !==
       JSON.stringify(caseEntries);
+    const isNoteValueChanged = initialData.savedNote !== noteValue;
 
-    const hasChangesInDefaultActions =
-      JSON.stringify(initialData?.savedDefaultActions) !==
-      JSON.stringify(defaultActions);
-
-    const hasChangesDefaultStepId =
-      initialData?.savedDefaultStepId !== stepIds[stepIds.length - 1];
-
-    const hasChangesNoteValue = (step.data.note ?? '') !== noteValue;
-
-    const hasChangesStepIds =
-      JSON.stringify(initialData?.savedStepIds) !== JSON.stringify(stepIds);
-
-    const isEdit =
-      hasChangesInCaseEntries ||
-      hasChangesInDefaultActions ||
-      hasChangesDefaultStepId ||
-      hasChangesNoteValue ||
-      hasChangesStepIds;
-
-    if (isEdit) {
-      setIsEdited(true);
-    } else {
-      setIsEdited(false);
-    }
+    setIsDirty(hasChangesInCaseEntries || isNoteValueChanged);
   };
 
   const debounceCheckIsDirty = useCallback(debounce(checkIsDirty, 300), [
@@ -494,12 +405,12 @@ const DecisionTable = ({
   ]);
 
   useEffect(() => {
-    debounceCheckIsDirty(caseEntries, defaultActions, watchNote, stepIds);
-  }, [caseEntries, defaultActions, stepIds, watchNote]);
+    setCaseEntries(initialData.savedCaseEntries);
+  }, [initialData]);
 
   useEffect(() => {
-    setIsDirty(isEdited);
-  }, [isEdited]);
+    debounceCheckIsDirty(caseEntries, watchNote);
+  }, [caseEntries, watchNote]);
 
   return (
     <>
@@ -519,8 +430,8 @@ const DecisionTable = ({
           <Table
             hasUserPermission={!isPreview}
             stepIds={stepIds}
-            columns={columnsWithStep}
-            rows={rowsWithElseCondition}
+            columns={columns}
+            rows={caseEntries}
             variables={variables}
             integrationData={integrationVariables}
             stepOptions={stepOptions}
@@ -528,8 +439,8 @@ const DecisionTable = ({
             handleDeleteRow={handleDeleteLayer}
             handleAddColumn={handleAddColumn}
             handleDeleteColumn={handleDeleteColumn}
-            handleChangeColumnVariable={handleChangeColumnVariable}
-            handleSubmitVariableValue={handleSubmitVariableValue}
+            handleChangeColumn={handleChangeColumn}
+            handleEntryChange={handleEntryChange}
           />
         </Paper>
         {!isPreview && (
@@ -558,10 +469,10 @@ const DecisionTable = ({
       </StepContentWrapper>
       <StepDetailsControlBar
         disabled={!isEmpty(errors) || isSubmitting}
-        isEdited={isEdited}
+        isEdited={isDirty}
         resetActiveStepId={resetActiveStepId}
-        onApplyChangesClick={() => {
-          void handleSubmit(onApplyChangesClick)();
+        handleConfirm={() => {
+          void handleSubmit(handleConfirm)();
         }}
         isShow={!isPreview}
       />

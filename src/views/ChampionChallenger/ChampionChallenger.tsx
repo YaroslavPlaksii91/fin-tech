@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Button,
   Stack,
@@ -83,7 +83,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   );
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
-  const { setIsDirty } = useIsDirty();
+  const { isDirty, setIsDirty } = useIsDirty();
 
   const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
   const isPreview = isViewMode || !canUpdateFlow;
@@ -113,13 +113,6 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   });
 
   const watchNote = watch('note');
-
-  const isEdited = useMemo(
-    () =>
-      Object.keys(dirtyFields).length !== 0 ||
-      watchNote !== (step.data.note ?? ''),
-    [dirtyFields, watchNote, step.data.note]
-  );
 
   const onSubmit = async (data: FieldValues) => {
     const existingSplitEdges =
@@ -221,9 +214,14 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     setInitialData();
   }, [step.data]);
 
-  useEffect(() => {
-    setIsDirty(isEdited);
-  }, [isEdited]);
+  useEffect(
+    () =>
+      setIsDirty(
+        Object.keys(dirtyFields).length !== 0 ||
+          watchNote !== (step.data.note ?? '')
+      ),
+    [dirtyFields, watchNote, step.data.note]
+  );
 
   return (
     <>
@@ -255,7 +253,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                     {fields.map((field, index) => (
                       <StyledTableRow
                         key={field.id}
-                        parity={(index + 1) % 2 === 0 ? 'even' : 'odd'}
+                        parity={index % 2 === 0 ? 'even' : 'odd'}
                       >
                         <StyledTableCell>
                           <NumberRangeInput
@@ -300,8 +298,12 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                       </StyledTableRow>
                     ))}
                     {!fields.length ? (
-                      <StyledTableRow parity="odd">
-                        <StyledTableCell colSpan={3} align="center">
+                      <StyledTableRow>
+                        <StyledTableCell
+                          colSpan={3}
+                          align="center"
+                          sx={{ bgcolor: theme.palette.common.white }}
+                        >
                           <Typography variant="body2">No Split Yet.</Typography>
                         </StyledTableCell>
                       </StyledTableRow>
@@ -342,9 +344,9 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       <StepDetailsControlBar
         disabled={!isEmpty(errors) || isSubmitting}
         resetActiveStepId={resetActiveStepId}
-        isEdited={isEdited}
+        isEdited={isDirty}
         isSubmitting={isSubmitting}
-        onApplyChangesClick={() => {
+        handleConfirm={() => {
           void handleSubmit(onSubmit)();
         }}
         isShow={!isPreview}

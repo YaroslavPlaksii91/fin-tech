@@ -36,7 +36,7 @@ export const StyledTableRow = styled(TableRow)<{ parity?: 'odd' | 'even' }>(
     },
     '& > td': {
       ...(parity && {
-        background: parity === 'even' ? background.default : common.white
+        background: parity === 'even' ? common.white : background.default
       })
     }
   })

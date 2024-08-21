@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -62,7 +62,7 @@ const Calculation: React.FC<CalculationProps> = ({
     Expression & { id: string }
   >();
 
-  const { setIsDirty } = useIsDirty();
+  const { isDirty, setIsDirty } = useIsDirty();
   const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
   const isPreview = isViewMode || !canUpdateFlow;
   const user = useAppSelector(selectUserInfo);
@@ -84,13 +84,6 @@ const Calculation: React.FC<CalculationProps> = ({
     resolver: yupResolver(validationSchema)
   });
   const watchNote = watch('note');
-
-  const isEdited = useMemo(
-    () =>
-      Object.keys(dirtyFields).length !== 0 ||
-      watchNote !== (step.data.note ?? ''),
-    [dirtyFields, watchNote, step.data.note]
-  );
 
   const { fields, append, remove, update } = useFieldArray({
     name: 'expressions',
@@ -142,9 +135,14 @@ const Calculation: React.FC<CalculationProps> = ({
     setValue('note', step.data.note || '');
   }, [step.data]);
 
-  useEffect(() => {
-    setIsDirty(isEdited);
-  }, [isEdited]);
+  useEffect(
+    () =>
+      setIsDirty(
+        Object.keys(dirtyFields).length !== 0 ||
+          watchNote !== (step.data.note ?? '')
+      ),
+    [dirtyFields, watchNote, step.data.note]
+  );
 
   return (
     <>
@@ -198,7 +196,7 @@ const Calculation: React.FC<CalculationProps> = ({
                           {fields.map((expression, index) => (
                             <StyledTableRow
                               key={index}
-                              parity={(index + 1) % 2 === 0 ? 'even' : 'odd'}
+                              parity={index % 2 === 0 ? 'even' : 'odd'}
                             >
                               <TableCell>{expression.outputName}</TableCell>
                               <TableCell>
@@ -284,10 +282,10 @@ const Calculation: React.FC<CalculationProps> = ({
           </StepContentWrapper>
           <StepDetailsControlBar
             disabled={!isEmpty(errors) || isSubmitting}
-            isEdited={isEdited}
+            isEdited={isDirty}
             resetActiveStepId={resetActiveStepId}
             isSubmitting={isSubmitting}
-            onApplyChangesClick={() => {
+            handleConfirm={() => {
               void handleSubmit(onSubmit)();
             }}
             isShow={!isPreview}
