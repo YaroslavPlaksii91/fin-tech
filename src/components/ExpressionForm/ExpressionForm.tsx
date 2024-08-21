@@ -27,7 +27,6 @@ import { groupBy } from 'lodash';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AxiosError } from 'axios';
 import pick from 'lodash/pick';
-import omit from 'lodash/omit';
 
 import validationSchema from './validationSchema';
 import { FieldValues } from './types';
@@ -37,6 +36,7 @@ import LoadingButton from '@components/shared/LoadingButton';
 import { Expression } from '@views/Calculation/types';
 import ExpressionOperatorsList from '@components/ExpressionForm/ExpressionOperatorsList/ExpressionOperatorsList.tsx';
 import {
+  DATA_DICTIONARY_GROUP,
   DataDictionaryVariable,
   UserDefinedVariable
 } from '@domain/dataDictionary';
@@ -51,7 +51,6 @@ import {
 import { dataDictionaryService } from '@services/data-dictionary';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext.tsx';
 import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog.tsx';
-import { DATA_DICTIONARY_GROUP } from '@constants/common.tsx';
 import { StepContentWrapper } from '@views/styled';
 import { customBoxShadows } from '@theme';
 
@@ -85,11 +84,8 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   renderTitle
 }) => {
   const dataDictionary = useContext(DataDictionaryContext);
-  // Discussed with Yaryna, and decided to hide craReportVariables here
-  const variables = useMemo(
-    () => omit(dataDictionary?.variables, ['craReportVariables']) || {},
-    [dataDictionary?.variables]
-  );
+  const variables = dataDictionary?.variables || {};
+
   const [dataDictMode, setDataDictMode] = useState<DataDictMode | null>(null);
 
   const expressionEditorRef: MutableRefObject<ExpressionEditorAPI | null> =
