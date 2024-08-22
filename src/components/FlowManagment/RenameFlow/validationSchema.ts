@@ -12,22 +12,20 @@ export const validationSchema = yup.object().shape({
 
 export const updateFlowDataHelper = (
   id: string,
-  name: string
-): { id: string; operations: JSONPatchOperation[] } => {
-  const username = 'username';
-  return {
-    id,
-    operations: [
-      {
-        value: name,
-        path: 'data/name',
-        op: 'replace'
-      },
-      {
-        value: username,
-        path: 'data/editedBy',
-        op: 'replace'
-      }
-    ]
-  };
-};
+  name: string,
+  username: string
+): { id: string; operations: JSONPatchOperation[] } => ({
+  id,
+  operations: [
+    {
+      value: name,
+      path: 'data/name',
+      op: 'replace'
+    },
+    {
+      value: username,
+      path: 'data/editedBy',
+      op: 'replace'
+    }
+  ]
+});

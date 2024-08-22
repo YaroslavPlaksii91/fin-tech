@@ -77,7 +77,6 @@ const ActionsMenu: React.FC<{
         navigate(routes.underwriting.flow.dataDictionary(id));
         break;
       }
-
       case ActionTypes.EDIT_FLOW: {
         navigate(routes.underwriting.flow.edit(flow.id));
         break;

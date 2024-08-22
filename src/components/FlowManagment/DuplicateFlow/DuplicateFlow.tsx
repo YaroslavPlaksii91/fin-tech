@@ -16,8 +16,10 @@ import {
   SnackbarMessage
 } from '@components/shared/Snackbar/SnackbarMessage';
 import { SNACK_TYPE } from '@constants/common';
-import { useAppDispatch } from '@store/hooks';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { createFlow } from '@store/flowList/asyncThunk';
+import { selectUserInfo } from '@store/auth/auth';
+import { getFullUserName } from '@utils/helpers';
 
 interface DuplicateFlowProps {
   flow: IFlowListItem;
@@ -33,12 +35,14 @@ export const DuplicateFlow: React.FC<DuplicateFlowProps> = ({
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUserInfo);
 
   const handleDuplicateFlow = async () => {
+    const username = getFullUserName(user);
     try {
       setConfirmLoading(true);
       const flowDetails = await flowService.getFlow(flow.id);
-      const flowDuplicateData = createDuplicateFlowData(flowDetails);
+      const flowDuplicateData = createDuplicateFlowData(flowDetails, username);
       const resultAction = await dispatch(createFlow(flowDuplicateData));
       const createdFlow = unwrapResult(resultAction);
       navigate(`${routes.underwriting.flow.list(createdFlow.id)}`);
