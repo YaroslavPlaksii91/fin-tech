@@ -97,7 +97,7 @@ const hasPermission = (
 };
 
 const getFullUserName = (user: UserInfoModel | null) =>
-  user ? `${user.firstName} ${user.lastName}` : '';
+  user ? user.userId : '';
 
 export {
   parseErrorMessages,
