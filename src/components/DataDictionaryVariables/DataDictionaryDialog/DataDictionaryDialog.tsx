@@ -4,11 +4,8 @@ import {
   Dialog,
   Divider,
   Grid,
-  List,
   ListItemText,
-  Stack,
-  TextField,
-  Typography
+  TextField
 } from '@mui/material';
 import { startCase } from 'lodash';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -16,7 +13,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 
-import { StyledListItemButton, StyledListSubheader } from './styled';
+import { StyledListItemButton } from './styled';
+import List from './List';
 
 import { palette } from '@theme';
 import { highlightText } from '@utils/text.ts';
@@ -172,36 +170,10 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
           <Grid container>
             <Grid item xs={selectVarIsObjectType ? 4 : 6}>
               <List
-                sx={{
-                  padding: 0,
-                  height: 350,
-                  maxHeight: '70vh',
-                  display: dictsEmptyState ? 'flex' : 'block',
-                  flexDirection: 'column',
-                  overflowY: 'auto'
-                }}
-                subheader={
-                  <StyledListSubheader>
-                    <Typography variant="body1">Select Source</Typography>
-                  </StyledListSubheader>
-                }
+                isEmpty={dictsEmptyState}
+                emptyStateText="The list is empty. Try to change search query"
+                title="Select Source"
               >
-                {dictsEmptyState && (
-                  <Stack
-                    flexGrow={1}
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Typography
-                      sx={{ transform: 'translateY(-40px)' }}
-                      textAlign="center"
-                      variant="body2"
-                      color="gray"
-                    >
-                      The list is empty. Try to change search query
-                    </Typography>
-                  </Stack>
-                )}
                 {Object.keys(filteredData).map((key) => (
                   <StyledListItemButton
                     selected={selectedDict === key}
@@ -223,39 +195,12 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
               }}
             >
               <List
-                sx={{
-                  padding: 0,
-                  height: 350,
-                  maxHeight: '70vh',
-                  display: variablesEmptyState ? 'flex' : 'block',
-                  flexDirection: 'column',
-                  overflowY: 'auto'
-                }}
-                subheader={
-                  <StyledListSubheader>
-                    <Typography variant="body1">Available Variables</Typography>
-                  </StyledListSubheader>
-                }
+                isEmpty={variablesEmptyState}
+                emptyStateText="The list is empty. To fill it select item from the another list."
+                title="Available Variables"
               >
-                {variablesEmptyState && (
-                  <Stack
-                    flexGrow={1}
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Typography
-                      sx={{ transform: 'translateY(-40px)' }}
-                      textAlign="center"
-                      variant="body2"
-                      color="gray"
-                    >
-                      The list is empty. To fill it select item from the another
-                      list.
-                    </Typography>
-                  </Stack>
-                )}
-                {selectedDict &&
-                  filteredData[selectedDict]?.map((variable) => (
+                {(selectedDict ? filteredData[selectedDict] : [])?.map(
+                  (variable) => (
                     <StyledListItemButton
                       key={variable.name}
                       dense
@@ -275,7 +220,8 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                         }
                       />
                     </StyledListItemButton>
-                  ))}
+                  )
+                )}
               </List>
             </Grid>
             {selectVarIsObjectType && (
@@ -288,42 +234,10 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                 }}
               >
                 <List
-                  sx={{
-                    padding: 0,
-                    height: 350,
-                    maxHeight: '70vh',
-                    display:
-                      filteredIntegrationDataList.length === 0
-                        ? 'flex'
-                        : 'block',
-                    flexDirection: 'column',
-                    overflowY: 'auto'
-                  }}
-                  subheader={
-                    <StyledListSubheader>
-                      <Typography variant="body1">
-                        Available Attributes
-                      </Typography>
-                    </StyledListSubheader>
-                  }
+                  title="Available Attributes"
+                  emptyStateText="The list is empty. To fill it select item from the another list."
+                  isEmpty={filteredIntegrationDataList.length === 0}
                 >
-                  {filteredIntegrationDataList.length === 0 && (
-                    <Stack
-                      flexGrow={1}
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Typography
-                        sx={{ transform: 'translateY(-40px)' }}
-                        textAlign="center"
-                        variant="body2"
-                        color="gray"
-                      >
-                        The list is empty. To fill it select item from the
-                        another list.
-                      </Typography>
-                    </Stack>
-                  )}
                   {filteredIntegrationDataList.map((property) => {
                     const title = [property.source, property.name].join('.');
                     return (
