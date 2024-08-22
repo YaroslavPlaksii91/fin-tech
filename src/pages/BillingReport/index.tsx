@@ -10,6 +10,7 @@ import { reportingService } from '@services/reports';
 import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
 import { BilingReport } from '@domain/billingReport';
+import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 
 const BillingReport = () => {
   const [loading, setLoading] = useState(false);
@@ -73,6 +74,7 @@ const BillingReport = () => {
             if (!rows.length) return '';
             return params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd';
           }}
+          slots={{ noRowsOverlay: CustomNoResultsOverlay }}
         />
       </Paper>
     </Box>

@@ -28,6 +28,7 @@ import TuneIcon from '@icons/tune.svg';
 import ExportCSVButton from '@components/shared/ExportCSVButton';
 import { removeSingleQuotesODataParams } from '@utils/helpers';
 import { getDateInUTC } from '@utils/date';
+import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 
 const LeadRequestsReports = () => {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -214,6 +215,7 @@ const LeadRequestsReports = () => {
             params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
           }
           slots={{
+            noRowsOverlay: CustomNoResultsOverlay,
             footer: () => (
               <TablePagination
                 isDisabled={loading}
