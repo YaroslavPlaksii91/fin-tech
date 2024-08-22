@@ -5,7 +5,7 @@ import DialogActions from '@mui/material/DialogActions';
 
 export const StyledDialog = styled(Dialog)(({ theme: { palette } }) => ({
   '& .MuiDialogContent-root': {
-    paddingTop: '5px'
+    paddingTop: '5px !important'
   },
   '& .MuiDialog-paper': {
     backgroundColor: palette.white,
