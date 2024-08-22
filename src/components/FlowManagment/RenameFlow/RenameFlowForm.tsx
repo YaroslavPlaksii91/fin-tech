@@ -9,10 +9,12 @@ import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
 import Logger from '@utils/logger';
 import { IFlow, IFlowListItem } from '@domain/flow';
-import { useAppDispatch } from '@store/hooks';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { renameFlow } from '@store/flowList/asyncThunk';
 import LoadingButton from '@components/shared/LoadingButton';
 import { updateFlowData } from '@store/flow/flow';
+import { selectUserInfo } from '@store/auth/auth';
+import { getFullUserName } from '@utils/helpers';
 
 type FormData = {
   name: string;
@@ -39,9 +41,11 @@ export const RenameFlow: React.FC<RenameFlowProps> = ({
     defaultValues: { name: flow.name }
   });
   const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUserInfo);
 
   const onSubmit: SubmitHandler<FormData> = async ({ name }): Promise<void> => {
-    const reqData = updateFlowDataHelper(flow.id, name);
+    const username = getFullUserName(user);
+    const reqData = updateFlowDataHelper(flow.id, name, username);
     try {
       const { payload } = await dispatch(renameFlow(reqData));
       const updatedFlow = payload as IFlow;
