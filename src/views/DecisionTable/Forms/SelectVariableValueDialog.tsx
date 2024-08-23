@@ -24,6 +24,7 @@ import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';
 import { SingleSelect } from '@components/shared/Forms/SingleSelect';
+import { preventIdleTimeout } from '@utils/preventIdleTimeout';
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
@@ -72,8 +73,10 @@ const SelectVariableValueDialog = ({
 
   const watchOperator = watch('operator');
 
-  const onSubmit = (data: FormFieldsProps) => {
+  const onSubmit = async (data: FormFieldsProps) => {
     let value;
+
+    await preventIdleTimeout();
 
     switch (data.operator) {
       case OPERATORS.BETWEEN:

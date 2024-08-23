@@ -32,6 +32,7 @@ import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { CUSTOM_FLOW_EVENT } from '@components/FlowManagment/FlowChart/constants';
 import { removeNodesAndEdgesInSubFlow } from '@views/Subflow/utils';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
+import { preventIdleTimeout } from '@utils/preventIdleTimeout';
 
 interface StepActionsMenuOnNode {
   isOpen?: boolean;
@@ -121,6 +122,7 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
 
         break;
       case ActionTypes.EDIT_STEP: {
+        await preventIdleTimeout();
         const { activeSubflowId, activeStepId } = handleStep(
           flowNode,
           subFlowId
@@ -142,9 +144,6 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
 
       case ActionTypes.RENAME_STEP:
         Logger.info('Rename step');
-        break;
-      case ActionTypes.DUPLICATE_STEP:
-        Logger.info('Duplicate step');
         break;
       case ActionTypes.DELETE_STEP: {
         const answer = await asyncConfirmDialog({
