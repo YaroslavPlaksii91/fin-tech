@@ -6,25 +6,25 @@ const getDataGridColumns = (): GridColDef[] => [
   {
     field: COLUMN_IDS.month,
     headerName: 'Month',
-    minWidth: 140,
+    minWidth: 132,
     flex: 1
   },
   {
     field: COLUMN_IDS.vendorName,
     headerName: 'Vendors',
-    minWidth: 140,
+    minWidth: 132,
     flex: 1
   },
   {
     field: COLUMN_IDS.looks,
     headerName: 'Looks',
-    minWidth: 140,
+    minWidth: 132,
     flex: 1
   },
   {
     field: COLUMN_IDS.cost,
     headerName: 'Cost',
-    minWidth: 140,
+    minWidth: 132,
     flex: 1,
     renderCell: (params) => `$${params.value as number}`
   }
