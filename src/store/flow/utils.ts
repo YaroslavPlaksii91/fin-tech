@@ -49,3 +49,36 @@ export function removeNodes(nodes: FlowNode[], deleteNodes: FlowNode[]) {
     .map((node) => filterNodes(node))
     .filter((node) => node !== null) as FlowNode[];
 }
+
+export function updateNodes(
+  nodes: FlowNode[],
+  updateNode: FlowNode
+): FlowNode[] {
+  function update(nodes: FlowNode[]): FlowNode[] {
+    return nodes.map((node) => {
+      if (node.id === updateNode.id) {
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            ...updateNode.data
+          }
+        };
+      }
+
+      if (node.data?.nodes) {
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            nodes: update(node.data.nodes)
+          }
+        };
+      }
+
+      return node;
+    });
+  }
+
+  return update(nodes);
+}

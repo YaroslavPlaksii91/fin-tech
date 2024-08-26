@@ -10,7 +10,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { useReactFlow } from 'reactflow';
 
-import { RenameStep } from '../StepModals/RenameStep';
+import { renameConfirmDialog } from '../StepModals/RenameStep';
 
 import Details from './Details';
 
@@ -31,10 +31,14 @@ import { ActiveStep } from '@contexts/StepContext';
 import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
-import { CUSTOM_FLOW_EVENT } from '@components/FlowManagment/FlowChart/constants';
+import {
+  CUSTOM_FLOW_EVENT,
+  CUSTOM_FLOW_EVENT_RENAME
+} from '@components/FlowManagment/FlowChart/constants';
 import { removeNodesAndEdgesInSubFlow } from '@views/Subflow/utils';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
 import { preventIdleTimeout } from '@utils/preventIdleTimeout';
+import { updateNodes } from '@store/flow/utils';
 
 interface StepActionsMenuOnNode {
   isOpen?: boolean;
@@ -70,9 +74,6 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   const [open, setIsOpen] = useState(isOpen);
   const canUserViewFlow = useHasUserPermission(permissionsMap.canViewFlow);
   const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
-
-  const [openRenameStepModal, setOpenRenameStepModal] =
-    useState<boolean>(false);
 
   const options = useMemo(() => {
     if (isEditMode) {
@@ -113,24 +114,30 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   const handleRenameStep = useCallback(
     (name: string) => {
       if (flowNode) {
-        const updatedNodes = nodes.map((node: FlowNode) => {
-          if (node.id === flowNode?.id) {
-            node.data = { ...node.data, name };
-          }
-          return node;
-        });
+        const updatedNode = { ...flowNode, data: { ...flowNode?.data, name } };
+
+        if (activeStep?.subFlowId && subFlowId) {
+          document.dispatchEvent(
+            new CustomEvent(CUSTOM_FLOW_EVENT_RENAME, {
+              detail: {
+                updatedNode,
+                subFlowId
+              }
+            })
+          );
+        }
+
+        const updatedNodes = updateNodes(nodes, updatedNode);
         setNodes(updatedNodes);
 
-        const updatedNode = { ...flowNode, data: { ...flowNode?.data, name } };
         dispatch(
           updateNodeData({
-            node: updatedNode,
-            flowId: '90'
+            node: updatedNode
           })
         );
       }
     },
-    [nodes, flowNode, setNodes]
+    [nodes, flowNode, setNodes, activeStep, subFlowId]
   );
 
   const handleSelectedActions = async (action: ActionTypes) => {
@@ -169,9 +176,16 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
         }
         break;
       }
-      case ActionTypes.RENAME_STEP:
-        setOpenRenameStepModal(true);
+      case ActionTypes.RENAME_STEP: {
+        if (!flowNode) break;
+        const newName = await renameConfirmDialog({
+          initialName: flowNode?.data?.name
+        });
+        if (!newName) break;
+        handleRenameStep(newName);
         break;
+      }
+
       case ActionTypes.DELETE_STEP: {
         const answer = await asyncConfirmDialog({
           title: 'Delete Step?',
@@ -253,14 +267,6 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
         options={options}
         footer={<Details data={flowNode.data} />}
       />
-      {openRenameStepModal && (
-        <RenameStep
-          initialName={flowNode.data.name}
-          setModalOpen={setOpenRenameStepModal}
-          modalOpen={openRenameStepModal}
-          handleRenameStep={handleRenameStep}
-        />
-      )}
     </>
   );
 };

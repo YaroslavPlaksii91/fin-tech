@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { getFlow, getProductionFlow, saveFlow } from './asyncThunk';
-import { addNodeToSubflow, removeNodes } from './utils';
+import { addNodeToSubflow, removeNodes, updateNodes } from './utils';
 
 import { FlowData, FlowNode, IFlow } from '@domain/flow';
 
@@ -62,13 +62,9 @@ export const flowSlicer = createSlice({
       }
     ),
     updateNodeData: create.reducer(
-      (state, action: PayloadAction<{ node: FlowNode; flowId: string }>) => {
-        const shouldUpdatedNode = state.flow.nodes.find(
-          (node) => node.id === action.payload.node.id
-        );
-        if (shouldUpdatedNode) {
-          shouldUpdatedNode.data = action.payload.node.data;
-        }
+      (state, action: PayloadAction<{ node: FlowNode }>) => {
+        const { nodes } = state.flow;
+        state.flow.nodes = updateNodes(nodes, action.payload.node);
       }
     ),
     updateFlowData: create.reducer(

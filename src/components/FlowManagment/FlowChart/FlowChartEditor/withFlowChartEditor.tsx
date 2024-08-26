@@ -41,7 +41,11 @@ import {
   updateEdges
 } from '../utils/workflowElementsUtils';
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
-import { CUSTOM_FLOW_EVENT, DEFAULT_SOURCE_HANDLE } from '../constants';
+import {
+  CUSTOM_FLOW_EVENT,
+  CUSTOM_FLOW_EVENT_RENAME,
+  DEFAULT_SOURCE_HANDLE
+} from '../constants';
 
 import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
 import { FlowNode, IFlow } from '@domain/flow';
@@ -111,6 +115,22 @@ const withFlowChartEditor =
       [rfInstance, flow.id]
     );
 
+    const handleRenameNode = useCallback(
+      (e: CustomEvent<{ updatedNode: FlowNode; subFlowId: string }>) => {
+        const { updatedNode, subFlowId } = e.detail;
+        if (subFlowId === flow.id) {
+          const updatedNodes = nodes.map((node: FlowNode) => {
+            if (node.id === updatedNode.id) {
+              node.data = { ...node.data, name: updatedNode.data.name };
+            }
+            return node;
+          });
+          setNodes(updatedNodes);
+        }
+      },
+      [rfInstance, flow.id, nodes]
+    );
+
     useEffect(() => {
       document.addEventListener(CUSTOM_FLOW_EVENT, (e) => {
         handleDeleteElements(e);
@@ -120,6 +140,19 @@ const withFlowChartEditor =
         document.removeEventListener(CUSTOM_FLOW_EVENT, handleDeleteElements);
       };
     }, [rfInstance, flow.id]);
+
+    useEffect(() => {
+      document.addEventListener(CUSTOM_FLOW_EVENT_RENAME, (e) => {
+        handleRenameNode(e);
+      });
+
+      return () => {
+        document.removeEventListener(
+          CUSTOM_FLOW_EVENT_RENAME,
+          handleRenameNode
+        );
+      };
+    }, [rfInstance, flow.id, nodes]);
 
     useEffect(() => {
       if (mainFlow && newNode) {
