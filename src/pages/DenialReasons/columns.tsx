@@ -2,6 +2,8 @@ import { GridColDef } from '@mui/x-data-grid-premium';
 
 import { COLUMN_IDS } from './types';
 
+import { roundToHundredths } from '@utils/number';
+
 const getDataGridColumns = (): GridColDef[] => [
   {
     field: COLUMN_IDS.denialReason,
@@ -24,11 +26,11 @@ const getDataGridColumns = (): GridColDef[] => [
     headerName: 'Percentage of Total',
     type: 'number',
     width: 168,
-    valueFormatter: (percentage?: number) => {
-      if (!percentage) return null;
-      const roundedToHundred = Math.round(percentage * 100) / 100;
+    valueFormatter: (value?: number) => {
+      if (!value) return '-';
+      const roundedValue = roundToHundredths(value);
 
-      return roundedToHundred === 0 ? '< 0.01%' : `${roundedToHundred}%`;
+      return value > 0 && roundedValue === 0 ? '< 0.01%' : `${roundedValue}%`;
     }
   }
 ];
