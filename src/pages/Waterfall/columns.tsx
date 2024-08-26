@@ -4,6 +4,7 @@ import { COLUMN_IDS } from './types';
 import { getExternalSystemsColumns } from './utils';
 import { EXTERNAL_SYSTEM_KEYS, GROUP_COLORS_NAMES } from './constants';
 
+import { roundToHundredths } from '@utils/number';
 import { WaterfallReport } from '@domain/waterfallReport';
 
 const STATIC_COLUMNS: GridColDef[] = [
@@ -33,31 +34,56 @@ const STATIC_COLUMNS: GridColDef[] = [
     field: COLUMN_IDS.totalApprovalRate,
     headerName: 'Total Approval Rate',
     width: 168,
-    valueFormatter: (value: number) => `${value}%`
+    valueFormatter: (value?: number) => {
+      if (!value) return '-';
+      const roundedValue = roundToHundredths(value);
+
+      return value > 0 && roundedValue === 0 ? '< 0.01%' : `${roundedValue}%`;
+    }
   },
   {
     field: COLUMN_IDS.totalCost,
     headerName: 'Total Cost',
     width: 104,
-    valueFormatter: (value: number) => `$${value}`
+    valueFormatter: (value?: number) => {
+      if (!value) return '-';
+      const roundedValue = roundToHundredths(value);
+
+      return value > 0 && roundedValue === 0 ? '< $0.01' : `$${roundedValue}`;
+    }
   },
   {
     field: COLUMN_IDS.totalCpa,
     headerName: 'Total CPA',
     width: 104,
-    valueFormatter: (value: number) => `$${value}`
+    valueFormatter: (value?: number) => {
+      if (!value) return '-';
+      const roundedValue = roundToHundredths(value);
+
+      return value > 0 && roundedValue === 0 ? '< $0.01' : `$${roundedValue}`;
+    }
   },
   {
     field: COLUMN_IDS.totalLeadCost,
     headerName: 'Total Lead Cost',
     width: 144,
-    valueFormatter: (value: number) => `$${value}`
+    valueFormatter: (value?: number) => {
+      if (!value) return '-';
+      const roundedValue = roundToHundredths(value);
+
+      return value > 0 && roundedValue === 0 ? '< $0.01' : `$${roundedValue}`;
+    }
   },
   {
     field: COLUMN_IDS.totalDataCost,
     headerName: 'Total Data Cost',
     width: 144,
-    valueFormatter: (value: number) => `$${value}`
+    valueFormatter: (value?: number) => {
+      if (!value) return '-';
+      const roundedValue = roundToHundredths(value);
+
+      return value > 0 && roundedValue === 0 ? '< $0.01' : `$${roundedValue}`;
+    }
   },
   {
     field: COLUMN_IDS.totalTimeouts,
@@ -67,7 +93,13 @@ const STATIC_COLUMNS: GridColDef[] = [
   {
     field: COLUMN_IDS.totalCostSavings,
     headerName: 'Total Cost Savings',
-    width: 168
+    width: 168,
+    valueFormatter: (value?: number) => {
+      if (!value) return '-';
+      const roundedValue = roundToHundredths(value);
+
+      return value > 0 && roundedValue === 0 ? '< $0.01' : `$${roundedValue}`;
+    }
   },
   {
     field: COLUMN_IDS.totalCachedLead,
