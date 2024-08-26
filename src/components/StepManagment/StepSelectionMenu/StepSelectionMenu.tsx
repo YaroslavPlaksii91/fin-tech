@@ -4,7 +4,7 @@ import {
   EdgeData,
   FunctionalStepType
 } from '../../FlowManagment/FlowChart/types';
-import { AddStep } from '../AddStep/AddStep';
+import { AddStep } from '../StepModals/AddStep';
 
 import { StyledRhombButton } from './styled';
 import { options } from './options';
@@ -55,7 +55,7 @@ export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
         handleCloseMenu={handleCloseMenu}
         options={options}
       />
-      {selectedStep && (
+      {selectedStep && addStepModalOpen && (
         <AddStep
           edgeId={id}
           onAddNodeBetweenEdges={data.onAdd}

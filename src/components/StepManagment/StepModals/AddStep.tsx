@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch } from 'react-redux/es/hooks/useDispatch';
 import { cloneDeep } from 'lodash';
 
-import { validationSchema } from './validationSchema';
+import { validationSchema, FormData } from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import { InputText } from '@components/shared/Forms/InputText';
@@ -16,10 +16,6 @@ import {
 } from '@components/FlowManagment/FlowChart/types';
 import { FlowNode } from '@domain/flow';
 import { addNode } from '@store/flow/flow';
-
-type FormData = {
-  name: string;
-};
 
 const defaultValue = {
   [StepType.CHAMPION_CHALLENGER]: 'Champion Challenger',

@@ -61,6 +61,16 @@ export const flowSlicer = createSlice({
         state.flow.nodes = removeNodes(nodes, action.payload.deletedNodes);
       }
     ),
+    updateNodeData: create.reducer(
+      (state, action: PayloadAction<{ node: FlowNode; flowId: string }>) => {
+        const shouldUpdatedNode = state.flow.nodes.find(
+          (node) => node.id === action.payload.node.id
+        );
+        if (shouldUpdatedNode) {
+          shouldUpdatedNode.data = action.payload.node.data;
+        }
+      }
+    ),
     updateFlowData: create.reducer(
       (state, action: PayloadAction<Omit<FlowData, 'id'>>) => {
         state.flow.data = action.payload;
@@ -90,5 +100,6 @@ export const {
   addNode,
   deleteNodes,
   updateFlowData,
-  updateFlow
+  updateFlow,
+  updateNodeData
 } = flowSlicer.actions;
