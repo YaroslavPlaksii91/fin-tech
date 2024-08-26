@@ -42,6 +42,7 @@ import { getFullUserName } from '@utils/helpers';
 import { customBoxShadows, theme } from '@theme';
 import { useIsDirty } from '@contexts/IsDirtyContext';
 import { StyledTableRow } from '@components/shared/Table/styled';
+import { preventIdleTimeout } from '@utils/preventIdleTimeout';
 
 interface CalculationProps {
   step: FlowNode;
@@ -90,7 +91,8 @@ const Calculation: React.FC<CalculationProps> = ({
     control
   });
 
-  const onSubmit = (data: FieldValues) => {
+  const onSubmit = async (data: FieldValues) => {
+    await preventIdleTimeout();
     const updatedNodes = nodes.map((node: FlowNode) => {
       if (node.id === step.id) {
         node.data = {

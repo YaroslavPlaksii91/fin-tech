@@ -1,7 +1,6 @@
 import { theme } from '@theme';
 import EditIcon from '@icons/edit.svg';
 import RenameIcon from '@icons/rename.svg';
-import CopyIcon from '@icons/copy.svg';
 import VisibleIcon from '@icons/visible.svg';
 import DeleteIcon from '@icons/delete.svg';
 import { OptionsFlowParams } from '@components/FlowManagment/ActionsMenu/options';
@@ -25,11 +24,12 @@ export const renameStepOption = {
   dataKey: ActionTypes.RENAME_STEP,
   icon: <RenameIcon />
 };
-export const duplicateStepOption = {
-  label: 'Duplicate step',
-  dataKey: ActionTypes.DUPLICATE_STEP,
-  icon: <CopyIcon />
-};
+//TODO: POST MVP
+// export const duplicateStepOption = {
+//   label: 'Duplicate step',
+//   dataKey: ActionTypes.DUPLICATE_STEP,
+//   icon: <CopyIcon />
+// };
 
 export const editStepOption = {
   label: 'Edit step',
@@ -63,6 +63,5 @@ export const getEditModeOptions = ({
   { ...viewStepOption, hide: !canUserViewFlow },
   { ...editStepOption, hide: !canUserUpdateFlow },
   { ...renameStepOption, hide: !canUserUpdateFlow },
-  duplicateStepOption,
   { ...deleteStepOption, hide: !canUserUpdateFlow }
 ];
