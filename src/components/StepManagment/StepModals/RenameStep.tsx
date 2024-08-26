@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -26,15 +25,11 @@ export const RenameStep: React.FC<RenameConfirmDialogProps> = ({
   const {
     handleSubmit,
     control,
-    setValue,
     formState: { isSubmitting }
   } = useForm<FormData>({
+    defaultValues: { name: initialName },
     resolver: yupResolver(validationSchema)
   });
-
-  useEffect(() => {
-    setValue('name', initialName);
-  }, [initialName, setValue]);
 
   const onSubmit: SubmitHandler<FormData> = ({ name }) => {
     proceed && proceed(name);

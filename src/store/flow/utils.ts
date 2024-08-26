@@ -61,7 +61,7 @@ export function updateNodes(
           ...node,
           data: {
             ...node.data,
-            ...updateNode.data
+            name: updateNode.data.name
           }
         };
       }
