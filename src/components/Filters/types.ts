@@ -10,17 +10,8 @@ export interface IDateFilters {
 }
 
 export interface IFormState {
-  filters?: FiltersType;
   dateFilters?: IDateFilters;
   inputFilters?: InputFiltersType;
-}
-
-export interface IFilterGroup {
-  filterBy: keyof FiltersType;
-  title: string;
-  fields: string[];
-  fieldsFormatting?: { key: string; value: string }[];
-  applyFor: string[];
 }
 
 export interface IInputGroup {

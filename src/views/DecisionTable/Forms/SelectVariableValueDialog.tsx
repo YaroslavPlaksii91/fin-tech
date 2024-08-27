@@ -1,15 +1,8 @@
 import { useEffect } from 'react';
-import {
-  Button,
-  Stack,
-  InputAdornment,
-  MenuItem,
-  Typography
-} from '@mui/material';
+import { Button, Stack, InputAdornment, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { BOOLEAN_OPTIONS } from '../constants';
 import { SelectedCell, FormFieldsProps, OPERATORS } from '../types';
 import {
   checkDataType,
@@ -23,8 +16,9 @@ import validationSchema from './validationSchema';
 import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';
-import { SingleSelect } from '@components/shared/Forms/SingleSelect';
+import Select from '@components/shared/Forms/Select';
 import { preventIdleTimeout } from '@utils/preventIdleTimeout';
+import { BOOLEAN_OPTIONS } from '@constants/common';
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
@@ -47,10 +41,6 @@ const SelectVariableValueDialog = ({
       : [];
 
   const dataType = checkDataType(selectedCell.dataType);
-  const operatorOptions = getOperatorOptions(selectedCell.dataType);
-  const valueSelectOptions = getFormatedOptions(
-    dataType.isBoolean ? BOOLEAN_OPTIONS : selectedCell.allowedValues || []
-  );
 
   const {
     handleSubmit,
@@ -137,7 +127,7 @@ const SelectVariableValueDialog = ({
               )
             }}
           />
-          <SingleSelect
+          <Select
             name="operator"
             control={control}
             disabled={!isCondition}
@@ -146,27 +136,21 @@ const SelectVariableValueDialog = ({
               minWidth: '140px'
             }}
             label="Operator*"
-          >
-            {operatorOptions.map((option) => (
-              <MenuItem key={option.key} value={option.value}>
-                {option.value}
-              </MenuItem>
-            ))}
-          </SingleSelect>
+            options={getOperatorOptions(selectedCell.dataType)}
+          />
           {dataType.isWithEnum || dataType.isBoolean ? (
-            <SingleSelect
+            <Select
               name="value"
               control={control}
               fullWidth
               label="Value*"
               disabled={watchOperator === OPERATORS.ANY}
-            >
-              {valueSelectOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </SingleSelect>
+              options={getFormatedOptions(
+                dataType.isBoolean
+                  ? BOOLEAN_OPTIONS
+                  : selectedCell.allowedValues || []
+              )}
+            />
           ) : watchOperator === OPERATORS.BETWEEN ? (
             <>
               <InputText

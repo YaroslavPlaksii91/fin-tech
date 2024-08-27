@@ -15,12 +15,10 @@ interface UseFiltersProps {
 
 const useFilters = ({
   initialDateFilters = { dateFrom: null, dateTo: null },
-  initialFilters = {},
   initialInputFilters = {}
 }: UseFiltersProps = {}) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [inputFilters, setInputFilters] = useState(initialInputFilters);
-  const [filters, setFilters] = useState(initialFilters);
   const [dateFrom, setDateFrom] = useState(initialDateFilters.dateFrom);
   const [dateTo, setDateTo] = useState(initialDateFilters.dateTo);
 
@@ -32,21 +30,15 @@ const useFilters = ({
     setDateFrom(initialDateFilters.dateFrom);
     setDateTo(initialDateFilters.dateTo);
     setInputFilters(initialInputFilters);
-    setFilters(initialFilters);
     handleFiltersClose();
   };
 
-  const handleFiltersApply = ({
-    dateFilters,
-    filters,
-    inputFilters
-  }: IFormState) => {
+  const handleFiltersApply = ({ dateFilters, inputFilters }: IFormState) => {
     if (dateFilters) {
       setDateFrom(dateFilters.dateFrom);
       setDateTo(dateFilters.dateTo);
     }
 
-    if (filters) setFilters(filters);
     if (inputFilters) setInputFilters(inputFilters);
 
     handleFiltersClose();
@@ -59,7 +51,6 @@ const useFilters = ({
     handleFiltersReset,
     handleFiltersApply,
     inputFilters,
-    filters,
     dateFilters: { dateFrom, dateTo }
   };
 };

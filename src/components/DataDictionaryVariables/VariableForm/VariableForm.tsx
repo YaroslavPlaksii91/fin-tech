@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, Stack, MenuItem } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { useDispatch } from 'react-redux/es/hooks/useDispatch';
 import { DatePicker } from '@mui/x-date-pickers-pro';
 import dayjs from 'dayjs';
@@ -12,7 +12,7 @@ import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
 import { InputText } from '@components/shared/Forms/InputText';
 import { Textarea } from '@components/shared/Forms/Textarea';
-import { SingleSelect } from '@components/shared/Forms/SingleSelect';
+import Select from '@components/shared/Forms/Select';
 import {
   VARIABLE_SOURCE_TYPE,
   DATA_TYPE_WITHOUT_ENUM,
@@ -25,7 +25,7 @@ import Logger from '@utils/logger';
 import { modifyFirstLetter } from '@utils/text';
 import { updateFlow } from '@store/flow/flow';
 import CalendarIcon from '@icons/calendar.svg';
-import { DATE_FORMAT } from '@constants/common';
+import { BOOLEAN_OPTIONS, DATE_FORMAT } from '@constants/common';
 import { parseErrorMessages } from '@utils/helpers';
 
 type VariableFormProps = {
@@ -162,34 +162,30 @@ export const VariableForm: React.FC<VariableFormProps> = ({
             control={control}
             disabled={formData && formData.variableIsUsed}
           />
-          <SingleSelect
+          <Select
+            fullWidth
             variant="outlined"
             name="sourceType"
             label="Source Type"
             control={control}
-            fullWidth
+            options={VARIABLE_SOURCE_TYPE_OPTIONS.map((option) => ({
+              value: option.value,
+              label: option.value
+            }))}
             disabled={Boolean(formData)}
-          >
-            {VARIABLE_SOURCE_TYPE_OPTIONS.map((sourceType) => (
-              <MenuItem key={sourceType.key} value={sourceType.value}>
-                {sourceType.value}
-              </MenuItem>
-            ))}
-          </SingleSelect>
-          <SingleSelect
+          />
+          <Select
+            fullWidth
             variant="outlined"
             name="dataType"
             label="Data Type"
             control={control}
+            options={dataTypeOptions.map((option) => ({
+              value: option,
+              label: option
+            }))}
             disabled={formData && formData.variableIsUsed}
-            fullWidth
-          >
-            {dataTypeOptions.map((dataType, index) => (
-              <MenuItem key={index} value={dataType}>
-                {dataType}
-              </MenuItem>
-            ))}
-          </SingleSelect>
+          />
           {(watchDataType === DATA_TYPE_WITHOUT_ENUM.Decimal ||
             watchDataType === DATA_TYPE_WITHOUT_ENUM.Integer) && (
             <InputText
@@ -210,17 +206,16 @@ export const VariableForm: React.FC<VariableFormProps> = ({
             />
           )}
           {watchDataType === DATA_TYPE_WITHOUT_ENUM.Boolean && (
-            <SingleSelect
+            <Select
+              fullWidth
               variant="outlined"
               name="defaultValue"
               control={control}
-              fullWidth
-            >
-              <MenuItem selected value="false">
-                false
-              </MenuItem>
-              <MenuItem value="true">true</MenuItem>
-            </SingleSelect>
+              options={BOOLEAN_OPTIONS.map((option) => ({
+                value: option,
+                label: option
+              }))}
+            />
           )}
           {watchDataType === DATA_TYPE_WITHOUT_ENUM.DateTime && (
             <Controller

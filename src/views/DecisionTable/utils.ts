@@ -39,7 +39,7 @@ export const getOperatorOptions = (dataType: DATA_TYPE) => {
   }
 
   return [...operators, OPERATORS.ANY].map((operator) => ({
-    key: operator,
+    label: operator,
     value: operator
   }));
 };
