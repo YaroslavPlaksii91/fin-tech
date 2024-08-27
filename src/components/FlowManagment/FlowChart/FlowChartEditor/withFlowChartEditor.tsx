@@ -142,9 +142,7 @@ const withFlowChartEditor =
     }, [rfInstance, flow.id]);
 
     useEffect(() => {
-      document.addEventListener(CUSTOM_FLOW_EVENT_RENAME, (e) => {
-        handleRenameNode(e);
-      });
+      document.addEventListener(CUSTOM_FLOW_EVENT_RENAME, handleRenameNode);
 
       return () => {
         document.removeEventListener(
