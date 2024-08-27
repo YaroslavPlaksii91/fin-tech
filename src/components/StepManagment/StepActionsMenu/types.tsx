@@ -24,7 +24,7 @@ export const renameStepOption = {
   dataKey: ActionTypes.RENAME_STEP,
   icon: <RenameIcon />
 };
-//TODO: POST MVP
+// TODO: POST MVP
 // export const duplicateStepOption = {
 //   label: 'Duplicate step',
 //   dataKey: ActionTypes.DUPLICATE_STEP,

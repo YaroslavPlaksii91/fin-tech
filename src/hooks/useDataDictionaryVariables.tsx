@@ -71,7 +71,7 @@ const useDataDictionaryVariables = (flow: IFlow) => {
     ];
 
     setVariables(extendedVariables);
-  }, [flow]);
+  }, [flow.temporaryVariables, flow.permanentVariables]);
 
   useEffect(() => {
     void getVariables();

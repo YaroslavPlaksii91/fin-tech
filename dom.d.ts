@@ -2,6 +2,10 @@ import { FlowNode } from './src/domain/flow';
 
 interface CustomEventMap {
   customflowevent: CustomEvent<{ subFlowId: string; deleteNodes: FlowNode[] }>;
+  customfloweventrename: CustomEvent<{
+    updatedNode: FlowNode;
+    subFlowId: string;
+  }>;
 }
 declare global {
   interface Document {
