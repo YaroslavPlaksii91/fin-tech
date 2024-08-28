@@ -127,8 +127,10 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
           );
         }
 
-        const updatedNodes = updateNodes(nodes, updatedNode);
-        setNodes(updatedNodes);
+        if (!activeStep?.subFlowId) {
+          const updatedNodes = updateNodes(nodes, updatedNode);
+          setNodes(updatedNodes);
+        }
 
         dispatch(
           updateNodeData({
@@ -204,7 +206,7 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
           setActiveStep?.({ subFlowId: null, stepId: null });
         }
 
-        if (subFlowId) {
+        if (subFlowId && !activeStep?.subFlowId) {
           const updatedNodes = removeNodesAndEdgesInSubFlow(nodes, [flowNode]);
           setNodes(updatedNodes);
         }

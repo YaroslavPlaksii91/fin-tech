@@ -60,15 +60,17 @@ import { useIsDirty } from '@contexts/IsDirtyContext';
 
 type FlowChartEditorProps = {
   flow: IFlow;
-  mainFlow?: IFlow;
   setCopyFlow: (flow: IFlow) => void;
   isViewMode: boolean;
+  mainFlow?: IFlow;
+  mainFlowRfInstance?: CustomReactFlowInstance;
   addNodeAndSyncMainFlow?: (
     subflowId: string,
     newNode: FlowNode,
     edges: Edge[]
   ) => void;
   deleteNodeAndSyncMainFlow?: (deleteNodes: FlowNode[]) => void;
+  updateNodeNameAndSyncMainFlow?: (updatedNode: FlowNode) => void;
 };
 
 const withFlowChartEditor =
@@ -84,8 +86,11 @@ const withFlowChartEditor =
       setCopyFlow,
       addNodeAndSyncMainFlow,
       deleteNodeAndSyncMainFlow,
-      isViewMode
+      updateNodeNameAndSyncMainFlow,
+      isViewMode,
+      mainFlowRfInstance
     } = props;
+
     const user = useAppSelector(selectUserInfo);
     const dispatch = useAppDispatch();
 
@@ -125,6 +130,7 @@ const withFlowChartEditor =
             }
             return node;
           });
+          updateNodeNameAndSyncMainFlow?.(updatedNode);
           setNodes(updatedNodes);
         }
       },
@@ -515,6 +521,7 @@ const withFlowChartEditor =
             mainFlow={mainFlow}
             flow={flow}
             rfInstance={rfInstance}
+            mainFlowRfInstance={mainFlowRfInstance}
             isViewMode={isViewMode}
           />
         )}
