@@ -70,6 +70,7 @@ type FlowChartEditorProps = {
     edges: Edge[]
   ) => void;
   deleteNodeAndSyncMainFlow?: (deleteNodes: FlowNode[]) => void;
+  updateNodeNameAndSyncMainFlow?: (updatedNode: FlowNode) => void;
 };
 
 const withFlowChartEditor =
@@ -85,6 +86,7 @@ const withFlowChartEditor =
       setCopyFlow,
       addNodeAndSyncMainFlow,
       deleteNodeAndSyncMainFlow,
+      updateNodeNameAndSyncMainFlow,
       isViewMode,
       mainFlowRfInstance
     } = props;
@@ -128,6 +130,7 @@ const withFlowChartEditor =
             }
             return node;
           });
+          updateNodeNameAndSyncMainFlow?.(updatedNode);
           setNodes(updatedNodes);
         }
       },
