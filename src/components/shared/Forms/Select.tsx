@@ -12,11 +12,14 @@ import {
   InputLabel,
   MenuItem,
   ListItemText,
-  Checkbox
+  Checkbox,
+  IconButton
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 import { StyledError } from './styled';
+
+import CloseIcon from '@icons/cross.svg';
 
 type Option = {
   label: string;
@@ -30,6 +33,7 @@ interface SelectProps<
   label?: string;
   placeholder?: string;
   multiple?: boolean;
+  clearable?: boolean;
   options: Option[];
 }
 
@@ -42,9 +46,12 @@ const Select = <
   options,
   label,
   multiple = false,
+  clearable = false,
   ...props
 }: SelectProps<TFieldValues, TName> & MuiSelectProps & FormControlProps) => {
   const { field, fieldState } = useController({ control, name });
+
+  const handleClearOptions = () => field.onChange(multiple ? [] : '');
 
   return (
     <FormControl error={!!fieldState?.error} size="small" {...props}>
@@ -61,6 +68,19 @@ const Select = <
             : field.value
         }
         {...field}
+        MenuProps={{ sx: { '.MuiMenu-paper': { maxHeight: '450px' } } }}
+        endAdornment={
+          clearable && field.value.length > 0 ? (
+            <IconButton
+              sx={{ position: 'absolute', right: '24px' }}
+              size="small"
+              aria-label="clear-options"
+              onClick={handleClearOptions}
+            >
+              <CloseIcon />
+            </IconButton>
+          ) : null
+        }
       >
         {options.map((option, index) => (
           <MenuItem key={index} value={option.value} sx={{ height: '36px' }}>

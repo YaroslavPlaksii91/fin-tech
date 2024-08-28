@@ -56,6 +56,7 @@ const Filters = ({
         <Select
           fullWidth
           multiple
+          clearable
           key={filterBy}
           name={`filters.${filterBy}`}
           variant="outlined"
