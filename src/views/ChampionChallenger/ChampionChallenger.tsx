@@ -59,8 +59,9 @@ interface ChampionChallengerProps {
   resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
   flow: IFlow;
-  mainFlow?: IFlow;
   isViewMode: boolean;
+  mainFlow?: IFlow;
+  mainFlowRfInstance?: CustomReactFlowInstance;
 }
 
 const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
@@ -69,6 +70,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
   flow,
   mainFlow,
   isViewMode,
+  mainFlowRfInstance,
   rfInstance: {
     getEdge,
     getNodes,
@@ -158,6 +160,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
     try {
       const data = formatFlowDataForValidation(
         mainFlow,
+        mainFlowRfInstance,
         flow,
         updatedNodes,
         newEdges

@@ -65,13 +65,12 @@ const ControlPanelSubFlow: React.FC<ControlPanelProps> = ({
         <Typography variant="h4">{flow.data.name}</Typography>
       </Box>
       {!isPreview && (
-        <Stack
-          onClick={() => setOpenDiscardModal(true)}
-          spacing={1}
-          direction="row"
-          justifyContent="flex-end"
-        >
-          <Button size="small" variant="outlined">
+        <Stack spacing={1} direction="row" justifyContent="flex-end">
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={() => setOpenDiscardModal(true)}
+          >
             Cancel
           </Button>
           <Button size="small" variant="contained" onClick={onSave}>

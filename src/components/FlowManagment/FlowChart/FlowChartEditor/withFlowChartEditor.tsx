@@ -60,9 +60,10 @@ import { useIsDirty } from '@contexts/IsDirtyContext';
 
 type FlowChartEditorProps = {
   flow: IFlow;
-  mainFlow?: IFlow;
   setCopyFlow: (flow: IFlow) => void;
   isViewMode: boolean;
+  mainFlow?: IFlow;
+  mainFlowRfInstance?: CustomReactFlowInstance;
   addNodeAndSyncMainFlow?: (
     subflowId: string,
     newNode: FlowNode,
@@ -84,8 +85,10 @@ const withFlowChartEditor =
       setCopyFlow,
       addNodeAndSyncMainFlow,
       deleteNodeAndSyncMainFlow,
-      isViewMode
+      isViewMode,
+      mainFlowRfInstance
     } = props;
+
     const user = useAppSelector(selectUserInfo);
     const dispatch = useAppDispatch();
 
@@ -515,6 +518,7 @@ const withFlowChartEditor =
             mainFlow={mainFlow}
             flow={flow}
             rfInstance={rfInstance}
+            mainFlowRfInstance={mainFlowRfInstance}
             isViewMode={isViewMode}
           />
         )}

@@ -27,6 +27,7 @@ interface SubFlowProps {
 
 const SubFlow: React.FC<SubFlowProps> = ({
   mainFlow,
+  rfInstance,
   rfInstance: { getNodes, setNodes },
   activeStepId,
   resetActiveStepId,
@@ -98,6 +99,7 @@ const SubFlow: React.FC<SubFlowProps> = ({
             mainFlow={mainFlow}
             flow={subFlow}
             isViewMode={isViewMode}
+            mainFlowRfInstance={rfInstance}
             setCopyFlow={saveSubflow}
             addNodeAndSyncMainFlow={addNodeAndSyncMainFlow}
             deleteNodeAndSyncMainFlow={deleteNodeAndSyncMainFlow}

@@ -46,8 +46,9 @@ export type StepListData = NodeData &
 export interface StepConfigureViewProps {
   flow: IFlow;
   rfInstance: CustomReactFlowInstance;
-  mainFlow?: IFlow;
   isViewMode: boolean;
+  mainFlowRfInstance?: CustomReactFlowInstance;
+  mainFlow?: IFlow;
 }
 
 export interface ControlPanelProps {
