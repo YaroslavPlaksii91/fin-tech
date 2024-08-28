@@ -136,7 +136,6 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
 
     const newEdges = edges
       .filter((edg) => !existingSplitEdges.includes(edg.id))
-      .filter((edg) => !targetNodesIds.includes(edg.target))
       .concat(splitEdges);
 
     const newSplits = splitEdges.map((splitEdge, index) => ({
