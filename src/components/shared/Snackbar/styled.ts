@@ -6,6 +6,7 @@ export const StyledSnackbar = styled(MaterialDesignContent)(
     '&.notistack-MuiContent': {
       padding: '6px 16px',
       maxWidth: '410px',
+      wordBreak: 'break-word',
       boxSizing: 'border-box'
     },
     '&.notistack-MuiContent-success': {
