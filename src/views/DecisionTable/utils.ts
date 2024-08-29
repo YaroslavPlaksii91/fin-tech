@@ -204,4 +204,4 @@ export const addExtraDoubleQuotes = (string: string) =>
 
 // Unwrap extra double quotes
 export const removeExtraDoubleQuotes = (string: string) =>
-  string.replace(/^"(.*)"$/, '$1');
+  string?.replace(/^"(.*)"$/, '$1');
