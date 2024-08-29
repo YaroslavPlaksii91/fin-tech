@@ -15,8 +15,6 @@ export interface IFormState {
 interface FiltersProps
   extends Pick<TemplateProps, 'isOpen' | 'onClose' | 'onReset'>,
     IFormState {
-  search: string;
-  filters: typeof INITIAL_FILTERS;
   filterGroups: typeof FILTER_GROUPS;
   onSubmit: (data: IFormState) => void;
 }

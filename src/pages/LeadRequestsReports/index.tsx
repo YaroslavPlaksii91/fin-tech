@@ -8,27 +8,31 @@ import {
   FetchList,
   FiltersParams,
   OdataQueries,
-  RowData
+  RowData,
+  IDateFilters
 } from './types';
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
-import { DEFAULT_EXPORT_FILE_NAME, DEFAULT_SORT } from './constants';
+import {
+  DEFAULT_EXPORT_FILE_NAME,
+  DEFAULT_SORT,
+  INITIAL_DATE_FILTERS
+} from './constants';
 
 import { reportingService } from '@services/reports';
 import TablePagination from '@components/shared/TablePagination';
-import Filters from '@components/Filters/Filters';
 import { theme } from '@theme';
 import { StyledDataGridPremium } from '@components/shared/Table/styled';
 import Details from '@components/LeadRequestsReports/Details';
 import useTablePagination from '@hooks/useTablePagination';
 import Logger from '@utils/logger';
-import useFilters from '@hooks/useFilters';
 import { TABLE } from '@constants/themeConstants';
 import TuneIcon from '@icons/tune.svg';
 import ExportCSVButton from '@components/shared/ExportCSVButton';
 import { removeSingleQuotesODataParams } from '@utils/helpers';
 import { getDateInUTC } from '@utils/date';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
+import Filters, { IFormState } from '@components/LeadRequestsReports/Filters';
 
 const LeadRequestsReports = () => {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -37,6 +41,9 @@ const LeadRequestsReports = () => {
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [totalCount, setTotalCount] = useState(0);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [dateFilters, setDateFilters] =
+    useState<IDateFilters>(INITIAL_DATE_FILTERS);
 
   const {
     rowsPerPage,
@@ -47,16 +54,21 @@ const LeadRequestsReports = () => {
     handleRowsPerPageChange
   } = useTablePagination({ totalCount });
 
-  const {
-    isFiltersOpen,
-    handleFiltersOpen,
-    handleFiltersClose,
-    handleFiltersReset,
-    handleFiltersApply,
-    dateFilters: { dateFrom, dateTo }
-  } = useFilters();
+  const handleFiltersOpen = () => setIsFiltersOpen(true);
 
-  const handleDetailsOpen = useCallback(() => setIsDetailsOpen(true), []);
+  const handleFiltersClose = () => setIsFiltersOpen(false);
+
+  const handleFiltersReset = () => {
+    setDateFilters(INITIAL_DATE_FILTERS);
+    handleFiltersClose();
+  };
+
+  const handleSubmit = (data: IFormState) => {
+    setDateFilters(data.dateFilters);
+    handleFiltersClose();
+  };
+
+  const handleDetailsOpen = () => setIsDetailsOpen(true);
 
   const handleDetailsClose = () => setIsDetailsOpen(false);
 
@@ -130,20 +142,20 @@ const LeadRequestsReports = () => {
       page,
       sort,
       filters: {
-        startDate: dateFrom,
-        endDate: dateTo
+        startDate: dateFilters.from,
+        endDate: dateFilters.to
       }
     };
 
     void fetchList(params);
   };
 
-  useEffect(() => fetch(), [page, rowsPerPage, sort, dateFrom, dateTo]);
+  useEffect(() => fetch(), [page, rowsPerPage, sort, dateFilters]);
 
   const handleExportLeadRequestReports = useCallback(async () => {
     const filters = {
-      startDate: dateFrom,
-      endDate: dateTo
+      startDate: dateFilters.from,
+      endDate: dateFilters.to
     };
 
     const correctedParams = buildOdataParams({
@@ -154,7 +166,7 @@ const LeadRequestsReports = () => {
     });
 
     return reportingService.getLeadRequestsReportsExportCSV(correctedParams);
-  }, [dateFrom, dateTo, sort, page]);
+  }, [dateFilters, sort, page]);
 
   return (
     <Box sx={{ padding: '16px 24px' }}>
@@ -233,10 +245,10 @@ const LeadRequestsReports = () => {
       </Paper>
       <Filters
         isOpen={isFiltersOpen}
-        dateFilters={{ dateFrom, dateTo }}
-        handleReset={handleFiltersReset}
-        handleApply={handleFiltersApply}
-        handleClose={handleFiltersClose}
+        dateFilters={dateFilters}
+        onReset={handleFiltersReset}
+        onSubmit={handleSubmit}
+        onClose={handleFiltersClose}
       />
       <Drawer anchor="right" open={isDetailsOpen} onClose={handleDetailsClose}>
         {selectedRow ? (

@@ -2,14 +2,12 @@ import { useState } from 'react';
 
 import {
   IDateFilters,
-  FiltersType,
   IFormState,
   InputFiltersType
 } from '@components/Filters/types';
 
 interface UseFiltersProps {
   initialDateFilters?: IDateFilters;
-  initialFilters?: FiltersType;
   initialInputFilters?: InputFiltersType;
 }
 

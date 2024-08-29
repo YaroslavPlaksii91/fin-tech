@@ -1,7 +1,5 @@
 import { Dayjs } from 'dayjs';
 
-export type FiltersType = Record<string, string[]>;
-
 export type InputFiltersType = Record<string, string>;
 
 export interface IDateFilters {

@@ -12,7 +12,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import {
   IDateFilters,
-  FiltersType,
   IFormState,
   InputFiltersType,
   IInputGroup
@@ -23,7 +22,6 @@ import { InputFilters } from './InputFilters';
 interface FiltersProps {
   isOpen: boolean;
   hasTimePicker?: boolean;
-  filters?: FiltersType;
   dateFilters?: IDateFilters;
   inputFilters?: InputFiltersType;
   inputGroupsToShow?: IInputGroup[];
