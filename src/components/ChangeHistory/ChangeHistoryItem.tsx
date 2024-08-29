@@ -17,7 +17,7 @@ import ChangeHistoryDetailedView from './ChangeHistoryDetailedView';
 
 import CheckCircleDoneIcon from '@icons/checkCircleDone.svg';
 import CheckDuotoneIcon from '@icons/checkDuotone.svg';
-import { palette, theme } from '@theme';
+import { customBoxShadows, palette, theme } from '@theme';
 import { ChangeHistoryRecord } from '@domain/changeHistory.ts';
 import { FULL_DATE_TIME_FORMAT } from '@constants/common.tsx';
 import {
@@ -127,7 +127,14 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
           )}
         </Box>
         <Box mt={1}>
-          <TableContainer component={Paper}>
+          <TableContainer
+            component={Paper}
+            sx={{
+              boxShadow: customBoxShadows.elevation1,
+              border: `1px solid ${theme.palette.divider}`,
+              borderRadius: '16px'
+            }}
+          >
             <Table size="small">
               <TableHead>
                 <StyledTableRow>

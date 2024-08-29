@@ -149,7 +149,7 @@ const TableList = ({
       <Table stickyHeader size="small" aria-label="sticky table">
         <TableHead>
           <StyledTableRow>
-            <StyledTableCell></StyledTableCell>
+            <StyledTableCell />
             {headers.map(({ key, label }) => (
               <StyledTableCell key={key}>{label}</StyledTableCell>
             ))}
