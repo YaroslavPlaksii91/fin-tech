@@ -11,6 +11,8 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
+  Menu,
+  MenuItem,
   Typography
 } from '@mui/material';
 import { NavLink, useParams } from 'react-router-dom';
@@ -80,6 +82,9 @@ const Sidebar = () => {
   const [expandedFlowList, setExpandedFlowList] = useState<boolean>(true);
   const [expandedReports, setExpandedReports] = useState(false);
 
+  const [reportMenuAnchorEl, setReportMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
+
   const [isScrolled, setIsScrolled] = useState(false);
   const scrollableRef = useRef<HTMLDivElement | null>(null);
   const throttle = useThrottle();
@@ -87,6 +92,15 @@ const Sidebar = () => {
   const hasVisibleReports = reportPages.some((item) =>
     hasPermission(user?.policies, item.permission)
   );
+
+  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+    setReportMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setReportMenuAnchorEl(null);
+  };
 
   const handleReportsToggle = () => setExpandedReports((prev) => !prev);
 
@@ -438,11 +452,51 @@ const Sidebar = () => {
                 </StyledAccordionDetails>
               </StyledAccordion>
             ) : (
-              <StyledListItemButton>
-                <ListItemIcon>
-                  <ReportsIcon />
-                </ListItemIcon>
-              </StyledListItemButton>
+              <>
+                <StyledListItemButton onClick={handleOpenMenu}>
+                  <ListItemIcon>
+                    <ReportsIcon />
+                  </ListItemIcon>
+                </StyledListItemButton>
+                <Menu
+                  anchorEl={reportMenuAnchorEl}
+                  open={Boolean(reportMenuAnchorEl)}
+                  onClose={handleCloseMenu}
+                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                >
+                  <MenuItem
+                    sx={{
+                      background: theme.palette.background.default,
+                      padding: '2px 16px'
+                    }}
+                  >
+                    <Typography
+                      color={theme.palette.text.secondary}
+                      variant="body2"
+                    >
+                      Reports
+                    </Typography>
+                  </MenuItem>
+                  {reportPages.map((item, index) =>
+                    hasPermission(user?.policies, item.permission) ? (
+                      <MenuItem
+                        key={index}
+                        component={NavLink}
+                        to={item.to}
+                        onClick={handleCloseMenu}
+                        sx={{
+                          '&.active': {
+                            background: palette.amber,
+                            color: theme.palette.primary.main
+                          }
+                        }}
+                      >
+                        <ListItemText primary={item.text} />
+                      </MenuItem>
+                    ) : null
+                  )}
+                </Menu>
+              </>
             ))}
         </StyledList>
       </StyledWrapper>
