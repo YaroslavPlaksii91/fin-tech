@@ -15,7 +15,7 @@ import validationSchema from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
-import { InputText } from '@components/shared/Forms/InputText';
+import InputText from '@components/shared/Forms/InputText';
 import Select from '@components/shared/Forms/Select';
 import { preventIdleTimeout } from '@utils/preventIdleTimeout';
 import { BOOLEAN_OPTIONS } from '@constants/common';

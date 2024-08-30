@@ -2,10 +2,13 @@ import { useForm } from 'react-hook-form';
 
 import Template, { TemplateProps } from '@components/shared/Filters';
 import DatePicker from '@components/shared/Forms/DatePicker';
-import { IDateFilters } from '@pages/LeadRequestsReports/types';
+import { IDateFilters } from '@pages/DenialReasons/types';
+import InputText from '@components/shared/Forms/InputText';
 
 export interface IFormState {
   dateFilters: IDateFilters;
+  denialReasons: string;
+  deniedBy: string;
 }
 
 interface FiltersProps
@@ -17,12 +20,14 @@ interface FiltersProps
 const Filters = ({
   isOpen,
   dateFilters,
+  denialReasons,
+  deniedBy,
   onClose,
   onReset,
   onSubmit
 }: FiltersProps) => {
   const { handleSubmit, control, reset } = useForm<IFormState>({
-    values: { dateFilters }
+    values: { dateFilters, denialReasons, deniedBy }
   });
 
   const handleClose = () => {
@@ -37,18 +42,22 @@ const Filters = ({
       onReset={onReset}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <DatePicker
-        hasTimePicker
-        name="dateFilters.from"
-        label="Date From"
+      <InputText
+        fullWidth
+        name="denialReasons"
+        label="Denial Reasons"
+        placeholder="Denial Reasons"
         control={control}
       />
-      <DatePicker
-        hasTimePicker
-        name="dateFilters.to"
-        label="Date To"
+      <InputText
+        fullWidth
+        name="deniedBy"
+        label="Denied by"
+        placeholder="Denied by"
         control={control}
       />
+      <DatePicker name="dateFilters.from" label="Date From" control={control} />
+      <DatePicker name="dateFilters.to" label="Date To" control={control} />
     </Template>
   );
 };

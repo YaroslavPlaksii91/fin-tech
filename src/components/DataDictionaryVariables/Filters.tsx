@@ -1,10 +1,9 @@
 import { useForm } from 'react-hook-form';
-import { useEffect } from 'react';
 
-import { FILTER_GROUPS, INITIAL_FILTERS } from '../constants';
+import { FILTER_GROUPS, INITIAL_FILTERS } from './constants';
 
-import Template, { TemplateProps } from '@components/Filters/Template';
-import { InputText } from '@components/shared/Forms/InputText';
+import Template, { TemplateProps } from '@components/shared/Filters';
+import InputText from '@components/shared/Forms/InputText';
 import Select from '@components/shared/Forms/Select';
 
 export interface IFormState {
@@ -32,14 +31,15 @@ const Filters = ({
     values: { search, filters }
   });
 
-  useEffect(() => {
+  const handleClose = () => {
+    onClose();
     reset();
-  }, [isOpen]);
+  };
 
   return (
     <Template
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       onReset={onReset}
       onSubmit={handleSubmit(onSubmit)}
     >

@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { updateFlowDataHelper, validationSchema } from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
-import { InputText } from '@components/shared/Forms/InputText';
+import InputText from '@components/shared/Forms/InputText';
 import Logger from '@utils/logger';
 import { IFlow, IFlowListItem } from '@domain/flow';
 import { useAppDispatch, useAppSelector } from '@store/hooks';

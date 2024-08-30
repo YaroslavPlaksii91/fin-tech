@@ -13,7 +13,7 @@ import {
 import { StyledButton, StyledDiv } from './styled';
 
 import Dialog from '@components/shared/Modals/Dialog';
-import { InputText } from '@components/shared/Forms/InputText';
+import InputText from '@components/shared/Forms/InputText';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
 import LoadingButton from '@components/shared/LoadingButton';

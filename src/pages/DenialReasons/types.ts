@@ -24,3 +24,8 @@ export type FetchList = {
     deniedBy?: string;
   };
 };
+
+export interface IDateFilters {
+  from: Dayjs | null;
+  to: Dayjs | null;
+}

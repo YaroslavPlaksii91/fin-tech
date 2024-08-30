@@ -10,7 +10,7 @@ import { validationSchema } from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
-import { InputText } from '@components/shared/Forms/InputText';
+import InputText from '@components/shared/Forms/InputText';
 import { Textarea } from '@components/shared/Forms/Textarea';
 import Select from '@components/shared/Forms/Select';
 import {

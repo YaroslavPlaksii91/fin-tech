@@ -2,10 +2,13 @@ import { useForm } from 'react-hook-form';
 
 import Template, { TemplateProps } from '@components/shared/Filters';
 import DatePicker from '@components/shared/Forms/DatePicker';
-import { IDateFilters } from '@pages/LeadRequestsReports/types';
+import { IDateFilters } from '@pages/Waterfall/types';
+import InputText from '@components/shared/Forms/InputText';
 
 export interface IFormState {
   dateFilters: IDateFilters;
+  stack: string;
+  campaignId: string;
 }
 
 interface FiltersProps
@@ -17,12 +20,14 @@ interface FiltersProps
 const Filters = ({
   isOpen,
   dateFilters,
+  stack,
+  campaignId,
   onClose,
   onReset,
   onSubmit
 }: FiltersProps) => {
   const { handleSubmit, control, reset } = useForm<IFormState>({
-    values: { dateFilters }
+    values: { dateFilters, stack, campaignId }
   });
 
   const handleClose = () => {
@@ -37,18 +42,22 @@ const Filters = ({
       onReset={onReset}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <DatePicker
-        hasTimePicker
-        name="dateFilters.from"
-        label="Date From"
+      <InputText
+        fullWidth
+        name="stack"
+        label="Stack"
+        placeholder="Stack"
         control={control}
       />
-      <DatePicker
-        hasTimePicker
-        name="dateFilters.to"
-        label="Date To"
+      <InputText
+        fullWidth
+        name="campaignId"
+        label="Campaign ID"
+        placeholder="Campaign ID"
         control={control}
       />
+      <DatePicker name="dateFilters.from" label="Date From" control={control} />
+      <DatePicker name="dateFilters.to" label="Date To" control={control} />
     </Template>
   );
 };
