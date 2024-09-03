@@ -65,6 +65,7 @@ type DecisionTableStepProps = {
   resetActiveStepId: () => void;
   rfInstance: CustomReactFlowInstance;
   isViewMode: boolean;
+  mainFlowRfInstance?: CustomReactFlowInstance;
 };
 
 const DecisionTable = ({
@@ -73,6 +74,7 @@ const DecisionTable = ({
   mainFlow,
   resetActiveStepId,
   isViewMode,
+  mainFlowRfInstance,
   rfInstance: {
     getNodes,
     getEdge,
@@ -351,7 +353,7 @@ const DecisionTable = ({
           editedBy: username,
           editedOn: new Date().toISOString(),
           note,
-          defaultActions: lastCaseEntry?.actions,
+          defaultActions: lastCaseEntry?.actions ?? [],
           variableSources: updatedVariableSources
         };
       }
@@ -362,6 +364,7 @@ const DecisionTable = ({
     try {
       const data = formatFlowDataForValidation(
         mainFlow,
+        mainFlowRfInstance,
         flow,
         updatedNodes,
         newEdges

@@ -10,11 +10,12 @@ import { StepContainer } from '@views/styled';
 
 interface StepConfigureViewProps {
   flow: IFlow;
-  mainFlow?: IFlow;
   rfInstance: CustomReactFlowInstance;
   activeStepId: string;
   resetActiveStepId: () => void;
   isViewMode: boolean;
+  mainFlow?: IFlow;
+  mainFlowRfInstance?: CustomReactFlowInstance;
 }
 
 const StepConfigureView: React.FC<StepConfigureViewProps> = ({
@@ -23,7 +24,8 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
   flow,
   mainFlow,
   rfInstance,
-  isViewMode
+  isViewMode,
+  mainFlowRfInstance
 }) => {
   const currentNode = rfInstance.getNode(activeStepId);
   const step = currentNode;
@@ -34,6 +36,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
         <ChampionChallenger
           flow={flow}
           step={step}
+          mainFlowRfInstance={mainFlowRfInstance}
           mainFlow={mainFlow}
           rfInstance={rfInstance}
           resetActiveStepId={resetActiveStepId}
@@ -46,6 +49,7 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
           mainFlow={mainFlow}
           step={step}
           rfInstance={rfInstance}
+          mainFlowRfInstance={mainFlowRfInstance}
           resetActiveStepId={resetActiveStepId}
           isViewMode={isViewMode}
         />

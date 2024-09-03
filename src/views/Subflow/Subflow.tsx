@@ -16,6 +16,7 @@ import SubFlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEdi
 import { selectUserInfo } from '@store/auth/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
+import { updateNodes } from '@store/flow/utils';
 
 interface SubFlowProps {
   mainFlow: IFlow;
@@ -27,6 +28,7 @@ interface SubFlowProps {
 
 const SubFlow: React.FC<SubFlowProps> = ({
   mainFlow,
+  rfInstance,
   rfInstance: { getNodes, setNodes },
   activeStepId,
   resetActiveStepId,
@@ -89,6 +91,12 @@ const SubFlow: React.FC<SubFlowProps> = ({
     setNodes(updatedNodes);
   }, []);
 
+  const updateNodeNameAndSyncMainFlow = useCallback((updatedNode: FlowNode) => {
+    const mainFlowNodes: FlowNode[] = getNodes();
+    const updatedNodes = updateNodes(mainFlowNodes, updatedNode);
+    setNodes(updatedNodes);
+  }, []);
+
   return (
     // As subFlow is sub instance main flow, it needs own flow provider
     <StepContainer>
@@ -98,9 +106,11 @@ const SubFlow: React.FC<SubFlowProps> = ({
             mainFlow={mainFlow}
             flow={subFlow}
             isViewMode={isViewMode}
+            mainFlowRfInstance={rfInstance}
             setCopyFlow={saveSubflow}
             addNodeAndSyncMainFlow={addNodeAndSyncMainFlow}
             deleteNodeAndSyncMainFlow={deleteNodeAndSyncMainFlow}
+            updateNodeNameAndSyncMainFlow={updateNodeNameAndSyncMainFlow}
           />
         </ReactFlowProvider>
       )}

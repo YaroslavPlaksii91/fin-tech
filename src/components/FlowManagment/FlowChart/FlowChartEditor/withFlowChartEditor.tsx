@@ -41,7 +41,11 @@ import {
   updateEdges
 } from '../utils/workflowElementsUtils';
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
-import { CUSTOM_FLOW_EVENT, DEFAULT_SOURCE_HANDLE } from '../constants';
+import {
+  CUSTOM_FLOW_EVENT,
+  CUSTOM_FLOW_EVENT_RENAME,
+  DEFAULT_SOURCE_HANDLE
+} from '../constants';
 
 import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
 import { FlowNode, IFlow } from '@domain/flow';
@@ -56,15 +60,17 @@ import { useIsDirty } from '@contexts/IsDirtyContext';
 
 type FlowChartEditorProps = {
   flow: IFlow;
-  mainFlow?: IFlow;
   setCopyFlow: (flow: IFlow) => void;
   isViewMode: boolean;
+  mainFlow?: IFlow;
+  mainFlowRfInstance?: CustomReactFlowInstance;
   addNodeAndSyncMainFlow?: (
     subflowId: string,
     newNode: FlowNode,
     edges: Edge[]
   ) => void;
   deleteNodeAndSyncMainFlow?: (deleteNodes: FlowNode[]) => void;
+  updateNodeNameAndSyncMainFlow?: (updatedNode: FlowNode) => void;
 };
 
 const withFlowChartEditor =
@@ -80,8 +86,11 @@ const withFlowChartEditor =
       setCopyFlow,
       addNodeAndSyncMainFlow,
       deleteNodeAndSyncMainFlow,
-      isViewMode
+      updateNodeNameAndSyncMainFlow,
+      isViewMode,
+      mainFlowRfInstance
     } = props;
+
     const user = useAppSelector(selectUserInfo);
     const dispatch = useAppDispatch();
 
@@ -111,6 +120,23 @@ const withFlowChartEditor =
       [rfInstance, flow.id]
     );
 
+    const handleRenameNode = useCallback(
+      (e: CustomEvent<{ updatedNode: FlowNode; subFlowId: string }>) => {
+        const { updatedNode, subFlowId } = e.detail;
+        if (subFlowId === flow.id) {
+          const updatedNodes = nodes.map((node: FlowNode) => {
+            if (node.id === updatedNode.id) {
+              node.data = { ...node.data, name: updatedNode.data.name };
+            }
+            return node;
+          });
+          updateNodeNameAndSyncMainFlow?.(updatedNode);
+          setNodes(updatedNodes);
+        }
+      },
+      [rfInstance, flow.id, nodes]
+    );
+
     useEffect(() => {
       document.addEventListener(CUSTOM_FLOW_EVENT, (e) => {
         handleDeleteElements(e);
@@ -120,6 +146,17 @@ const withFlowChartEditor =
         document.removeEventListener(CUSTOM_FLOW_EVENT, handleDeleteElements);
       };
     }, [rfInstance, flow.id]);
+
+    useEffect(() => {
+      document.addEventListener(CUSTOM_FLOW_EVENT_RENAME, handleRenameNode);
+
+      return () => {
+        document.removeEventListener(
+          CUSTOM_FLOW_EVENT_RENAME,
+          handleRenameNode
+        );
+      };
+    }, [rfInstance, flow.id, nodes]);
 
     useEffect(() => {
       if (mainFlow && newNode) {
@@ -484,6 +521,7 @@ const withFlowChartEditor =
             mainFlow={mainFlow}
             flow={flow}
             rfInstance={rfInstance}
+            mainFlowRfInstance={mainFlowRfInstance}
             isViewMode={isViewMode}
           />
         )}

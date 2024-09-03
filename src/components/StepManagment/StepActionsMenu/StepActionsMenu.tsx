@@ -1,5 +1,6 @@
 import React, {
   MutableRefObject,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -9,10 +10,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { useReactFlow } from 'reactflow';
 
+import { renameConfirmDialog } from '../StepModals/RenameStep';
+
 import Details from './Details';
 
 import Menu from '@components/shared/Menu/Menu';
-import Logger from '@utils/logger';
 import {
   ActionTypes,
   getEditModeOptions,
@@ -24,15 +26,19 @@ import routes from '@constants/routes.ts';
 import MoreHorizontalIcon from '@icons/moreHorizontal.svg';
 import { asyncConfirmDialog } from '@components/shared/Confirmation/AsyncConfirmDialog.tsx';
 import { useAppDispatch } from '@store/hooks';
-import { deleteNodes } from '@store/flow/flow';
+import { deleteNodes, updateNodeData } from '@store/flow/flow';
 import { ActiveStep } from '@contexts/StepContext';
 import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
-import { CUSTOM_FLOW_EVENT } from '@components/FlowManagment/FlowChart/constants';
+import {
+  CUSTOM_FLOW_EVENT,
+  CUSTOM_FLOW_EVENT_RENAME
+} from '@components/FlowManagment/FlowChart/constants';
 import { removeNodesAndEdgesInSubFlow } from '@views/Subflow/utils';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
 import { preventIdleTimeout } from '@utils/preventIdleTimeout';
+import { updateNodes } from '@store/flow/utils';
 
 interface StepActionsMenuOnNode {
   isOpen?: boolean;
@@ -105,6 +111,37 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
     return { activeSubflowId, activeStepId };
   };
 
+  const handleRenameStep = useCallback(
+    (name: string) => {
+      if (flowNode) {
+        const updatedNode = { ...flowNode, data: { ...flowNode?.data, name } };
+
+        if (activeStep?.subFlowId && subFlowId) {
+          document.dispatchEvent(
+            new CustomEvent(CUSTOM_FLOW_EVENT_RENAME, {
+              detail: {
+                updatedNode,
+                subFlowId
+              }
+            })
+          );
+        }
+
+        if (!activeStep?.subFlowId) {
+          const updatedNodes = updateNodes(nodes, updatedNode);
+          setNodes(updatedNodes);
+        }
+
+        dispatch(
+          updateNodeData({
+            node: updatedNode
+          })
+        );
+      }
+    },
+    [nodes, flowNode, setNodes, activeStep, subFlowId]
+  );
+
   const handleSelectedActions = async (action: ActionTypes) => {
     switch (action) {
       case ActionTypes.STEP_TEXT_VIEW:
@@ -141,10 +178,16 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
         }
         break;
       }
-
-      case ActionTypes.RENAME_STEP:
-        Logger.info('Rename step');
+      case ActionTypes.RENAME_STEP: {
+        if (!flowNode) break;
+        const newName = await renameConfirmDialog({
+          initialName: flowNode?.data?.name
+        });
+        if (!newName) break;
+        handleRenameStep(newName);
         break;
+      }
+
       case ActionTypes.DELETE_STEP: {
         const answer = await asyncConfirmDialog({
           title: 'Delete Step?',
@@ -163,7 +206,7 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
           setActiveStep?.({ subFlowId: null, stepId: null });
         }
 
-        if (subFlowId) {
+        if (subFlowId && !activeStep?.subFlowId) {
           const updatedNodes = removeNodesAndEdgesInSubFlow(nodes, [flowNode]);
           setNodes(updatedNodes);
         }

@@ -1,7 +1,10 @@
 import { Edge } from 'reactflow';
 
 import { FlowNode, IFlow } from '@domain/flow';
-import { StepType } from '@components/FlowManagment/FlowChart/types';
+import {
+  CustomReactFlowInstance,
+  StepType
+} from '@components/FlowManagment/FlowChart/types';
 import { updateNodesInSubFlow } from '@views/Subflow/utils';
 
 export const getConnectableNodes = (nodes: FlowNode[], currentNodeId: string) =>
@@ -11,13 +14,15 @@ export const getConnectableNodes = (nodes: FlowNode[], currentNodeId: string) =>
 
 export const formatFlowDataForValidation = (
   mainFlow: IFlow | undefined,
+  mainFlowRfInstance: CustomReactFlowInstance | undefined,
   flow: IFlow,
   updatedNodes: FlowNode[],
   updatedEdges: Edge[]
 ) => {
   let formattedData;
-  if (mainFlow) {
-    const nodes = updateNodesInSubFlow(mainFlow.nodes, {
+  if (mainFlow && mainFlowRfInstance) {
+    const mainInstance = mainFlowRfInstance.toObject();
+    const nodes = updateNodesInSubFlow(mainInstance.nodes, {
       ...flow,
       nodes: updatedNodes,
       edges: updatedEdges
@@ -25,7 +30,7 @@ export const formatFlowDataForValidation = (
     formattedData = {
       ...mainFlow,
       nodes,
-      edges: mainFlow.edges
+      edges: mainInstance.edges
     };
   } else {
     formattedData = {

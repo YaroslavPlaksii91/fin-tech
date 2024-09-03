@@ -9,3 +9,7 @@ export const validationSchema = yup.object().shape({
 });
 
 export default validationSchema;
+
+export type FormData = {
+  name: string;
+};
