@@ -34,8 +34,8 @@ const STATIC_COLUMNS: GridColDef[] = [
     field: COLUMN_IDS.totalApprovalRate,
     headerName: 'Total Approval Rate',
     width: 168,
-    valueFormatter: (value?: number) => {
-      if (!value) return '-';
+    valueFormatter: (value) => {
+      if (!value || value === '-') return '-';
       const roundedValue = roundToHundredths(value);
 
       return value > 0 && roundedValue === 0 ? '< 0.01%' : `${roundedValue}%`;
@@ -45,8 +45,8 @@ const STATIC_COLUMNS: GridColDef[] = [
     field: COLUMN_IDS.totalCost,
     headerName: 'Total Cost',
     width: 104,
-    valueFormatter: (value?: number) => {
-      if (!value || !Number.isFinite(value)) return '-';
+    valueFormatter: (value) => {
+      if (!value || value === '-' || !Number.isFinite(value)) return '-';
       const roundedValue = roundToHundredths(value);
 
       return value > 0 && roundedValue === 0 ? '< $0.01' : `$${roundedValue}`;
@@ -56,8 +56,8 @@ const STATIC_COLUMNS: GridColDef[] = [
     field: COLUMN_IDS.totalCpa,
     headerName: 'Total CPA',
     width: 104,
-    valueFormatter: (value?: number) => {
-      if (!value) return '-';
+    valueFormatter: (value) => {
+      if (!value || value === '-') return '-';
       const roundedValue = roundToHundredths(value);
 
       return value > 0 && roundedValue === 0 ? '< $0.01' : `$${roundedValue}`;
@@ -67,8 +67,8 @@ const STATIC_COLUMNS: GridColDef[] = [
     field: COLUMN_IDS.totalLeadCost,
     headerName: 'Total Lead Cost',
     width: 144,
-    valueFormatter: (value?: number) => {
-      if (!value) return '-';
+    valueFormatter: (value) => {
+      if (!value || value === '-') return '-';
       const roundedValue = roundToHundredths(value);
 
       return value > 0 && roundedValue === 0 ? '< $0.01' : `$${roundedValue}`;
@@ -78,8 +78,8 @@ const STATIC_COLUMNS: GridColDef[] = [
     field: COLUMN_IDS.totalDataCost,
     headerName: 'Total Data Cost',
     width: 144,
-    valueFormatter: (value?: number) => {
-      if (!value) return '-';
+    valueFormatter: (value) => {
+      if (!value || value === '-') return '-';
       const roundedValue = roundToHundredths(value);
 
       return value > 0 && roundedValue === 0 ? '< $0.01' : `$${roundedValue}`;
@@ -94,8 +94,8 @@ const STATIC_COLUMNS: GridColDef[] = [
     field: COLUMN_IDS.totalCostSavings,
     headerName: 'Total Cost Savings',
     width: 168,
-    valueFormatter: (value?: number) => {
-      if (!value) return '-';
+    valueFormatter: (value) => {
+      if (!value || value === '-') return '-';
       const roundedValue = roundToHundredths(value);
 
       return value > 0 && roundedValue === 0 ? '< $0.01' : `$${roundedValue}`;
@@ -128,7 +128,7 @@ const getDataGridColumns = (data: WaterfallReport['item2']) => {
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' '),
       width: 220,
-      renderCell: (params) => (params.value as string) ?? '-'
+      valueFormatter: (value) => value || '-'
     })
   );
 

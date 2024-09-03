@@ -21,7 +21,7 @@ export enum COLUMN_IDS {
   store = 'output/store',
   ssn = 'leadRequest/ssn',
   email = 'leadRequest/email',
-  decision = 'leadResponse/decision',
+  decision = 'output/decision',
   denialReason = 'leadResponse/rejectionReason',
   state = 'leadRequest/state',
   apiVersion = 'processingMetadata/apiVersion',

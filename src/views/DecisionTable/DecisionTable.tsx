@@ -353,7 +353,7 @@ const DecisionTable = ({
           editedBy: username,
           editedOn: new Date().toISOString(),
           note,
-          defaultActions: lastCaseEntry?.actions,
+          defaultActions: lastCaseEntry?.actions ?? [],
           variableSources: updatedVariableSources
         };
       }
