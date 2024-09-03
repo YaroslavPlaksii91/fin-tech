@@ -30,7 +30,12 @@ export const getFormattedData = (data: LeadRequestsReport) => {
     result: data.output?.decision || null,
     scores: null,
     requestJson: data.leadRequest ? JSON.stringify(data.leadRequest) : null,
-    responseJson: data.leadResponse ? JSON.stringify(data.leadResponse) : null
+    responseJson: data.leadResponse
+      ? JSON.stringify({
+          ...data.leadResponse,
+          result: data.output?.decision || null
+        })
+      : null
   };
 
   const externalCalls = (data.executionHistory?.externalCalls || []).map(
