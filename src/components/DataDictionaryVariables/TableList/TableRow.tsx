@@ -120,6 +120,7 @@ export const TableRow = ({
           <IconButton
             aria-label="expand row"
             size="small"
+            sx={{ padding: 0 }}
             onClick={() => {
               setisExpanded(!isExpanded);
               !isExpanded &&
