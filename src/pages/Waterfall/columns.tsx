@@ -46,7 +46,7 @@ const STATIC_COLUMNS: GridColDef[] = [
     headerName: 'Total Cost',
     width: 104,
     valueFormatter: (value) => {
-      if (!value || value === '-') return '-';
+      if (!value || value === '-' || !Number.isFinite(value)) return '-';
       const roundedValue = roundToHundredths(value);
 
       return value > 0 && roundedValue === 0 ? '< $0.01' : `$${roundedValue}`;
