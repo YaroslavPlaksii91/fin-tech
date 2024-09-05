@@ -488,7 +488,7 @@ const withFlowChartEditor =
           onPaneClick={onPaneClick}
           onNodeContextMenu={onNodeContextMenu}
           onNodeDragStop={onNodeDragStop}
-          onEdgesDelete={onEdgesDelete}
+          onEdgesDelete={isViewMode ? undefined : onEdgesDelete}
           onNodeDragStart={onNodeDragStart}
           onNodeDoubleClick={onNodeDoubleClick}
           onInit={(instance) => {
