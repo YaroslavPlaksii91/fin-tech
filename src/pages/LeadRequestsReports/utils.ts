@@ -36,7 +36,7 @@ export const getFormattedRows = (data: LeadRequestsReport[]) => {
       [COLUMN_IDS.store]: output?.store ?? '-',
       [COLUMN_IDS.ssn]: leadRequest.ssn ?? '-',
       [COLUMN_IDS.email]: leadRequest.email,
-      [COLUMN_IDS.decision]: output?.decision ?? '-',
+      [COLUMN_IDS.decision]: leadResponse.result ?? '-',
       [COLUMN_IDS.denialReason]: output?.denialReason ?? '-',
       [COLUMN_IDS.state]: leadRequest.state ?? '-',
       [COLUMN_IDS.apiVersion]: processingMetadata?.apiVersion ?? '-',
