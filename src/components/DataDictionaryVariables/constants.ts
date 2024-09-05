@@ -1,4 +1,4 @@
-import { TAB } from './types';
+import { TAB, FILTER_BY } from './types';
 
 import {
   DATA_TYPE_WITHOUT_ENUM,
@@ -41,15 +41,15 @@ export const TABS_LABELS: { [key: string]: string } = {
 };
 
 export const INITIAL_FILTERS = {
-  dataType: [],
-  sourceType: [],
-  source: []
+  [FILTER_BY.dataType]: [],
+  [FILTER_BY.sourceType]: [],
+  [FILTER_BY.source]: []
 };
 
 export const FILTER_GROUPS = [
   {
-    filterBy: 'dataType',
-    title: 'By Data Type',
+    filterBy: FILTER_BY.dataType,
+    text: 'By Data Type',
     fields: Object.values({
       ...DATA_TYPE_WITHOUT_ENUM,
       ...DATA_TYPE_WITH_ENUM_PREFIX
@@ -57,30 +57,19 @@ export const FILTER_GROUPS = [
     applyFor: Object.values(TABS) as TAB[]
   },
   {
-    filterBy: 'source',
-    title: 'By CRA',
+    filterBy: FILTER_BY.source,
+    text: 'By CRA',
     fields: Object.values(INTEGRATION_VARIABLE_SOURCE_TYPE),
     applyFor: [TABS.craReportVariables] as TAB[]
   },
   {
-    filterBy: 'sourceType',
-    title: 'By Report Name',
+    filterBy: FILTER_BY.sourceType,
+    text: 'By Report Name',
     fields: Object.values(INTEGRATION_VARIABLE_SOURCE_SUB_TYPE),
     applyFor: [TABS.craReportVariables] as TAB[]
   }
 ];
 
-export const INITIAL_INPUT_FILTERS = {
-  search: ''
-};
-
-export const INPUT_GROUPS = [
-  {
-    field: 'search',
-    placeholder: 'Search By Keyword',
-    label: 'Search By Keyword'
-  }
-];
 export interface TableHeader {
   key: keyof Variable;
   label?: string;

@@ -52,3 +52,8 @@ export type OdataQueries = {
   count?: boolean;
   filter?: Record<string, object>;
 };
+
+export interface IDateFilters {
+  from: Dayjs | null;
+  to: Dayjs | null;
+}

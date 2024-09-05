@@ -30,7 +30,7 @@ import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/typ
 import { RULES_LIMIT, SNACK_TYPE } from '@constants/common';
 import { ExpressionForm } from '@components/ExpressionForm/ExpressionForm.tsx';
 import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
-import { InputText } from '@components/shared/Forms/InputText';
+import InputText from '@components/shared/Forms/InputText';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar.tsx';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { StepContentWrapper } from '@views/styled';

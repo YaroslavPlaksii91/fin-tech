@@ -17,7 +17,7 @@ interface InputProps<
   type?: string;
 }
 
-export const InputText = <
+const InputText = <
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>
 >({
@@ -45,3 +45,5 @@ export const InputText = <
     </FormControl>
   );
 };
+
+export default InputText;

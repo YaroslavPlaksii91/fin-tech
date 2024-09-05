@@ -3,20 +3,17 @@ import { GridSortModel } from '@mui/x-data-grid-premium';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { Dayjs } from 'dayjs';
 
-import { FetchList } from './types';
+import { FetchList, IDateFilters } from './types';
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
   DEFAULT_EXPORT_FILE_NAME,
   DEFAULT_SORT,
-  INITIAL_INPUT_FILTERS,
-  INPUT_GROUPS_TO_SHOW,
+  INITIAL_DATE_FILTERS,
   TOTAL_ROW_NAME
 } from './constants';
 import { StyledDataGridPremium } from './styled';
 
-import useFilters from '@hooks/useFilters';
-import Filters from '@components/Filters/Filters';
 import { theme } from '@theme';
 import { reportingService } from '@services/reports';
 import Logger from '@utils/logger';
@@ -24,24 +21,19 @@ import { TABLE } from '@constants/themeConstants';
 import TuneIcon from '@icons/tune.svg';
 import { WaterfallReport } from '@domain/waterfallReport';
 import ExportCSVButton from '@components/shared/ExportCSVButton';
-import { InputFiltersType } from '@components/Filters/types';
 import { getDateInUTC } from '@utils/date';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
+import Filters, { IFormState } from '@components/Waterfall/Filters';
 
 const Waterfall = () => {
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [data, setData] = useState<WaterfallReport>({ item1: 0, item2: [] });
-
-  const {
-    isFiltersOpen,
-    handleFiltersOpen,
-    handleFiltersClose,
-    handleFiltersReset,
-    handleFiltersApply,
-    inputFilters,
-    dateFilters: { dateFrom, dateTo }
-  } = useFilters({ initialInputFilters: INITIAL_INPUT_FILTERS });
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [dateFilters, setDateFilters] =
+    useState<IDateFilters>(INITIAL_DATE_FILTERS);
+  const [stack, setStack] = useState('');
+  const [campaignId, setCampaignId] = useState('');
 
   const columns = useMemo(() => getDataGridColumns(data.item2), [data.item2]);
 
@@ -51,6 +43,24 @@ const Waterfall = () => {
     () => rows.filter((row) => row.stack === TOTAL_ROW_NAME),
     [rows]
   );
+
+  const handleFiltersOpen = () => setIsFiltersOpen(true);
+
+  const handleFiltersClose = () => setIsFiltersOpen(false);
+
+  const handleFiltersReset = () => {
+    setDateFilters(INITIAL_DATE_FILTERS);
+    setCampaignId('');
+    setStack('');
+    handleFiltersClose();
+  };
+
+  const handleSubmit = (data: IFormState) => {
+    setDateFilters(data.dateFilters);
+    setCampaignId(data.campaignId);
+    setStack(data.stack);
+    handleFiltersClose();
+  };
 
   const handleSortModelChange = (model: GridSortModel) => {
     if (!model.length) return;
@@ -76,19 +86,21 @@ const Waterfall = () => {
 
   const buildWaterfallParams = ({
     sort,
-    inputFilters,
+    stack,
+    campaignId,
     dateFrom,
     dateTo
   }: {
     sort: string;
-    inputFilters: InputFiltersType;
+    stack: string;
+    campaignId: string;
     dateFrom: Dayjs | null;
     dateTo: Dayjs | null;
   }) => ({
     sortBy: sort,
     pageSize: 10000, // temporary desion to retrive all records
-    stack: inputFilters.stack || undefined,
-    campaign: inputFilters.campaignId || undefined,
+    stack: stack || undefined,
+    campaign: campaignId || undefined,
     startTime: dateFrom ? getDateInUTC(dateFrom).toISOString() : undefined,
     endTime: dateTo ? getDateInUTC(dateTo).toISOString() : undefined
   });
@@ -96,24 +108,28 @@ const Waterfall = () => {
   const fetch = useCallback(() => {
     const params = buildWaterfallParams({
       sort,
-      inputFilters,
-      dateFrom,
-      dateTo
+      stack,
+      campaignId,
+      dateFrom: dateFilters.from,
+      dateTo: dateFilters.to
     });
+
     void fetchList(params);
-  }, [sort, inputFilters, dateFrom, dateTo]);
+  }, [sort, stack, campaignId, dateFilters]);
 
   useEffect(() => fetch(), [fetch]);
 
   const handleExportWaterfallReports = useCallback(async () => {
     const params = buildWaterfallParams({
       sort,
-      inputFilters,
-      dateFrom,
-      dateTo
+      stack,
+      campaignId,
+      dateFrom: dateFilters.from,
+      dateTo: dateFilters.to
     });
+
     return reportingService.getWaterfallReportExportCSV({ params });
-  }, [sort, inputFilters, dateFrom, dateTo]);
+  }, [sort, stack, campaignId, dateFilters]);
 
   return (
     <Box sx={{ padding: '16px 24px' }}>
@@ -179,13 +195,12 @@ const Waterfall = () => {
       </Paper>
       <Filters
         isOpen={isFiltersOpen}
-        hasTimePicker={false}
-        dateFilters={{ dateFrom, dateTo }}
-        inputFilters={inputFilters}
-        inputGroupsToShow={INPUT_GROUPS_TO_SHOW}
-        handleReset={handleFiltersReset}
-        handleApply={handleFiltersApply}
-        handleClose={handleFiltersClose}
+        dateFilters={dateFilters}
+        stack={stack}
+        campaignId={campaignId}
+        onReset={handleFiltersReset}
+        onSubmit={handleSubmit}
+        onClose={handleFiltersClose}
       />
     </Box>
   );

@@ -8,7 +8,7 @@ import { cloneDeep } from 'lodash';
 import { validationSchema, FormData } from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
-import { InputText } from '@components/shared/Forms/InputText';
+import InputText from '@components/shared/Forms/InputText';
 import LoadingButton from '@components/shared/LoadingButton';
 import {
   FunctionalStepType,

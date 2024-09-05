@@ -6,19 +6,16 @@ import {
 } from '@mui/x-data-grid-premium';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 
-import { COLUMN_IDS, FetchList, RowData } from './types';
+import { COLUMN_IDS, FetchList, IDateFilters, RowData } from './types';
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
   DEFAULT_EXPORT_FILE_NAME,
   DEFAULT_SORT,
-  INITIAL_INPUT_FILTERS,
-  INPUT_GROUPS_TO_SHOW
+  INITIAL_DATE_FILTERS
 } from './constants';
 
-import useFilters from '@hooks/useFilters';
 import { StyledDataGridPremium } from '@components/shared/Table/styled';
-import Filters from '@components/Filters/Filters';
 import { theme } from '@theme';
 import { reportingService } from '@services/reports';
 import Logger from '@utils/logger';
@@ -28,21 +25,35 @@ import ExportCSVButton from '@components/shared/ExportCSVButton';
 import { removeSingleQuotesODataParams } from '@utils/helpers';
 import { getDateInUTC } from '@utils/date';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
+import Filters, { IFormState } from '@components/DenialReasons/Filters';
 
 const DenialReasons = () => {
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [rows, setRows] = useState<RowData[]>([]);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [dateFilters, setDateFilters] =
+    useState<IDateFilters>(INITIAL_DATE_FILTERS);
+  const [denialReasons, setDenialReasons] = useState('');
+  const [deniedBy, setDeniedBy] = useState('');
 
-  const {
-    isFiltersOpen,
-    handleFiltersOpen,
-    handleFiltersClose,
-    handleFiltersReset,
-    handleFiltersApply,
-    inputFilters,
-    dateFilters: { dateFrom, dateTo }
-  } = useFilters({ initialInputFilters: INITIAL_INPUT_FILTERS });
+  const handleFiltersOpen = () => setIsFiltersOpen(true);
+
+  const handleFiltersClose = () => setIsFiltersOpen(false);
+
+  const handleFiltersReset = () => {
+    setDateFilters(INITIAL_DATE_FILTERS);
+    setDenialReasons('');
+    setDeniedBy('');
+    handleFiltersClose();
+  };
+
+  const handleSubmit = (data: IFormState) => {
+    setDateFilters(data.dateFilters);
+    setDenialReasons(data.denialReasons);
+    setDeniedBy(data.deniedBy);
+    handleFiltersClose();
+  };
 
   const handleSortModelChange = (model: GridSortModel) => {
     if (!model.length) return;
@@ -97,31 +108,31 @@ const DenialReasons = () => {
     const params: FetchList = {
       sort,
       filters: {
-        startDate: dateFrom,
-        endDate: dateTo,
-        rejectionReason: inputFilters.denialReasons,
-        deniedBy: inputFilters.deniedBy
+        deniedBy,
+        startDate: dateFilters.from,
+        endDate: dateFilters.to,
+        rejectionReason: denialReasons
       }
     };
 
     void fetchList(params);
   };
 
-  useEffect(() => fetch(), [sort, dateFrom, dateTo, inputFilters]);
+  useEffect(() => fetch(), [sort, dateFilters, deniedBy, denialReasons]);
 
   const handleExportDenialReasonReports = useCallback(async () => {
     const params: FetchList = {
       sort,
       filters: {
-        startDate: dateFrom,
-        endDate: dateTo,
-        rejectionReason: inputFilters.denialReasons,
-        deniedBy: inputFilters.deniedBy
+        deniedBy,
+        startDate: dateFilters.from,
+        endDate: dateFilters.to,
+        rejectionReason: denialReasons
       }
     };
     const correctedParams = buildOdataParams(params);
     return reportingService.getDenialReasonsReportExportCSV(correctedParams);
-  }, [sort, dateFrom, dateTo, inputFilters]);
+  }, [sort, dateFilters, deniedBy, denialReasons]);
 
   return (
     <Box sx={{ padding: '16px 24px' }}>
@@ -200,13 +211,12 @@ const DenialReasons = () => {
       </Paper>
       <Filters
         isOpen={isFiltersOpen}
-        hasTimePicker={false}
-        dateFilters={{ dateFrom, dateTo }}
-        inputFilters={inputFilters}
-        inputGroupsToShow={INPUT_GROUPS_TO_SHOW}
-        handleReset={handleFiltersReset}
-        handleApply={handleFiltersApply}
-        handleClose={handleFiltersClose}
+        dateFilters={dateFilters}
+        denialReasons={denialReasons}
+        deniedBy={deniedBy}
+        onReset={handleFiltersReset}
+        onSubmit={handleSubmit}
+        onClose={handleFiltersClose}
       />
     </Box>
   );

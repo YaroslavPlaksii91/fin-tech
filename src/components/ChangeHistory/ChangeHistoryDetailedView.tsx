@@ -23,8 +23,8 @@ import {
 import { ChangeHistoryRecord, ChangeTypeEnum } from '@domain/changeHistory.ts';
 import { customBoxShadows, theme } from '@theme';
 import { FULL_DATE_TIME_FORMAT } from '@constants/common';
-import AngelLeft from '@icons/angleLeft.svg';
-import AngelRight from '@icons/angleRight.svg';
+import AngleLeftIcon from '@icons/angleLeft.svg';
+import AngleRightIcon from '@icons/angleRight.svg';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 
 interface ChangeHistoryDetailedViewProps {
@@ -88,7 +88,7 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
             size="small"
             onClick={handlePrevRow}
           >
-            <AngelLeft />
+            <AngleLeftIcon />
           </IconButton>
           <Typography variant="body2" color={theme.palette.text.secondary}>
             {selectedRowIndex + 1} of {data.diffs.length}
@@ -100,7 +100,7 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
             size="small"
             onClick={handleNextRow}
           >
-            <AngelRight />
+            <AngleRightIcon />
           </IconButton>
         </Stack>
       </Stack>

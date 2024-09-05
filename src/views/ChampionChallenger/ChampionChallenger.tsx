@@ -28,7 +28,7 @@ import {
   CustomReactFlowInstance
 } from '@components/FlowManagment/FlowChart/types';
 import ErrorMessage from '@components/shared/ErrorText/ErrorText';
-import { InputText } from '@components/shared/Forms/InputText';
+import InputText from '@components/shared/Forms/InputText';
 import {
   StyledPaper,
   StyledTableCell,

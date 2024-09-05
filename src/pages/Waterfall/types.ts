@@ -1,3 +1,5 @@
+import { Dayjs } from 'dayjs';
+
 import { getFormattedRows } from './utils';
 
 import { GetWaterfallReport } from '@domain/waterfallReport';
@@ -23,3 +25,8 @@ export type RowData = ExtractArrayElementType<
 >;
 
 export type FetchList = GetWaterfallReport['params'];
+
+export interface IDateFilters {
+  from: Dayjs | null;
+  to: Dayjs | null;
+}

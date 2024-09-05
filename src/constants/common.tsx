@@ -66,3 +66,5 @@ export const STEP_ICONS = {
   [StepType.DECISION_TABLE]: <DecisionTableIcon />,
   [StepType.SUBFLOW]: <SubflowIcon />
 };
+
+export const BOOLEAN_OPTIONS = ['true', 'false'];

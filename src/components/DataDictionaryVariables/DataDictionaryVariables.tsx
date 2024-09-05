@@ -8,8 +8,6 @@ import {
   SOURCES_DESCRIPTIONS,
   FILTER_GROUPS,
   INITIAL_FILTERS,
-  INITIAL_INPUT_FILTERS,
-  INPUT_GROUPS,
   CRA_REPORTS_HEADERS,
   DEFAULT_HEADERS,
   TableHeader
@@ -18,30 +16,36 @@ import TableList from './TableList/TableList';
 import TabPanel from './Tabs/TabPanel';
 import { StyledTab } from './styled';
 import { TAB } from './types';
+import Filters, { IFormState } from './Filters';
 
 import TuneIcon from '@icons/tune.svg';
-import Filters from '@components/Filters/Filters';
 import { theme } from '@theme';
 import { IFlow } from '@domain/flow';
 import { DATA_TYPE_WITHOUT_ENUM, Variable } from '@domain/dataDictionary';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
-import useFilters from '@hooks/useFilters';
 
 const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const [tab, setTab] = useState<TAB>('laPMSVariables');
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [filters, setFilters] = useState(INITIAL_FILTERS);
 
-  const {
-    isFiltersOpen,
-    handleFiltersOpen,
-    handleFiltersClose,
-    handleFiltersReset,
-    handleFiltersApply,
-    filters,
-    inputFilters
-  } = useFilters({
-    initialFilters: INITIAL_FILTERS,
-    initialInputFilters: INITIAL_INPUT_FILTERS
-  });
+  const handleFiltersOpen = () => setIsFiltersOpen(true);
+
+  const handleFiltersClose = () => setIsFiltersOpen(false);
+
+  const handleFiltersReset = () => {
+    setFilters(INITIAL_FILTERS);
+    setSearch('');
+    handleFiltersClose();
+  };
+
+  const handleSubmit = (data: IFormState) => {
+    setFilters(data.filters);
+    setSearch(data.search);
+
+    handleFiltersClose();
+  };
 
   const { variables, integrationVariables } = useDataDictionaryVariables(flow);
 
@@ -75,7 +79,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     return DEFAULT_HEADERS;
   }, [tab]);
 
-  const filterGroupsToShow = useMemo(
+  const filterGroups = useMemo(
     () =>
       FILTER_GROUPS.map((filter) =>
         tab === 'userDefined'
@@ -86,7 +90,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   );
 
   const filteredBySearch = useMemo(() => {
-    const filterBySearch = inputFilters.search.trim().toUpperCase();
+    const filterBySearch = search.trim().toUpperCase();
 
     if (filterBySearch)
       return tableData.filter((tableEl) =>
@@ -94,7 +98,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       );
 
     return tableData;
-  }, [tableData, inputFilters]);
+  }, [tableData, search]);
 
   const filteredBySelects = useMemo(() => {
     const filtersEntries = Object.entries(filters) as [
@@ -107,7 +111,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     filtersEntries.forEach(([field, activeFilters]) => {
       if (
         !activeFilters.length ||
-        !filterGroupsToShow.find(({ filterBy }) => filterBy === field)
+        !filterGroups.find(({ filterBy }) => filterBy === field)
       )
         return;
 
@@ -186,12 +190,11 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       <Filters
         isOpen={isFiltersOpen}
         filters={filters}
-        inputFilters={inputFilters}
-        inputGroupsToShow={INPUT_GROUPS}
-        filterGroupsToShow={filterGroupsToShow}
-        handleReset={handleFiltersReset}
-        handleApply={handleFiltersApply}
-        handleClose={handleFiltersClose}
+        search={search}
+        filterGroups={filterGroups}
+        onReset={handleFiltersReset}
+        onSubmit={handleSubmit}
+        onClose={handleFiltersClose}
       />
     </Stack>
   );

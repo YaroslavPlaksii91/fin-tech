@@ -56,7 +56,7 @@ import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
 import { useIsDirty } from '@contexts/IsDirtyContext';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
-import { InputText } from '@components/shared/Forms/InputText';
+import InputText from '@components/shared/Forms/InputText';
 
 type DecisionTableStepProps = {
   flow: IFlow;
