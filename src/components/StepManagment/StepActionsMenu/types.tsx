@@ -1,6 +1,7 @@
 import { theme } from '@theme';
 import EditIcon from '@icons/edit.svg';
 import RenameIcon from '@icons/rename.svg';
+import CopyIcon from '@icons/copy.svg';
 import VisibleIcon from '@icons/visible.svg';
 import DeleteIcon from '@icons/delete.svg';
 import { OptionsFlowParams } from '@components/FlowManagment/ActionsMenu/options';
@@ -24,12 +25,12 @@ export const renameStepOption = {
   dataKey: ActionTypes.RENAME_STEP,
   icon: <RenameIcon />
 };
-// TODO: POST MVP
-// export const duplicateStepOption = {
-//   label: 'Duplicate step',
-//   dataKey: ActionTypes.DUPLICATE_STEP,
-//   icon: <CopyIcon />
-// };
+
+export const duplicateStepOption = {
+  label: 'Duplicate step',
+  dataKey: ActionTypes.DUPLICATE_STEP,
+  icon: <CopyIcon />
+};
 
 export const editStepOption = {
   label: 'Edit step',
@@ -58,9 +59,11 @@ export const getProductionFlowOptions = ({
 
 export const getEditModeOptions = ({
   canUserViewFlow,
-  canUserUpdateFlow
-}: OptionsFlowParams) => [
+  canUserUpdateFlow,
+  isSubFlow
+}: OptionsFlowParams & { isSubFlow: boolean }) => [
   { ...viewStepOption, hide: !canUserViewFlow },
+  { ...duplicateStepOption, hide: !canUserUpdateFlow || isSubFlow },
   { ...editStepOption, hide: !canUserUpdateFlow },
   { ...renameStepOption, hide: !canUserUpdateFlow },
   { ...deleteStepOption, hide: !canUserUpdateFlow }

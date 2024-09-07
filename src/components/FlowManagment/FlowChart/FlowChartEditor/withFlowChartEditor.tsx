@@ -42,8 +42,9 @@ import {
 } from '../utils/workflowElementsUtils';
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
 import {
-  CUSTOM_FLOW_EVENT,
+  CUSTOM_FLOW_EVENT_DELETE,
   CUSTOM_FLOW_EVENT_RENAME,
+  CUSTOM_FLOW_EVENT_DUPLICATE,
   DEFAULT_SOURCE_HANDLE
 } from '../constants';
 
@@ -134,16 +135,26 @@ const withFlowChartEditor =
           setNodes(updatedNodes);
         }
       },
-      [rfInstance, flow.id, nodes]
+      [flow.id, nodes]
+    );
+
+    const handleDuplicate = useCallback(
+      (e: CustomEvent<{ subFlowId: string; newNode: FlowNode }>) => {
+        const { newNode, subFlowId } = e.detail;
+
+        if (subFlowId === flow.id) setNodes([...nodes, newNode]);
+      },
+      [flow.id, nodes]
     );
 
     useEffect(() => {
-      document.addEventListener(CUSTOM_FLOW_EVENT, (e) => {
-        handleDeleteElements(e);
-      });
+      document.addEventListener(CUSTOM_FLOW_EVENT_DELETE, handleDeleteElements);
 
       return () => {
-        document.removeEventListener(CUSTOM_FLOW_EVENT, handleDeleteElements);
+        document.removeEventListener(
+          CUSTOM_FLOW_EVENT_DELETE,
+          handleDeleteElements
+        );
       };
     }, [rfInstance, flow.id]);
 
@@ -157,6 +168,17 @@ const withFlowChartEditor =
         );
       };
     }, [rfInstance, flow.id, nodes]);
+
+    useEffect(() => {
+      document.addEventListener(CUSTOM_FLOW_EVENT_DUPLICATE, handleDuplicate);
+
+      return () => {
+        document.removeEventListener(
+          CUSTOM_FLOW_EVENT_DUPLICATE,
+          handleDuplicate
+        );
+      };
+    }, [handleDuplicate]);
 
     useEffect(() => {
       if (mainFlow && newNode) {
@@ -184,7 +206,7 @@ const withFlowChartEditor =
         );
 
         setNewNode(newNode);
-        return { newNode, flowId: flow.id };
+        return { newNode, subFlowId: mainFlow ? flow.id : null };
       },
       [setNodes, setEdges, flow.id]
     );

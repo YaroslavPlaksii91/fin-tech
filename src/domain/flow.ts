@@ -25,9 +25,9 @@ export type FlowData = {
 };
 
 export type NodeData = {
-  $type: StepType;
+  $type: `${StepType}`;
   stepId: string;
-  stepType: StepType;
+  stepType: `${StepType}`;
   name: string;
   editedBy: string;
   editedOn: string;
