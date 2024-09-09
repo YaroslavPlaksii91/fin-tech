@@ -82,7 +82,7 @@ export const TableRow = ({
   };
 
   useEffect(() => {
-    if (userDefinedUsageStepIds?.length) {
+    if (userDefinedUsageStepIds) {
       setStepIds(userDefinedUsageStepIds);
     }
   }, [userDefinedUsageStepIds]);
@@ -167,7 +167,7 @@ export const TableRow = ({
         <StyledTableCell
           style={{ paddingBottom: 0, paddingTop: 0 }}
           // TODO: if don`t have collapsing then should be controlled
-          colSpan={headers.length + 1}
+          colSpan={headers.length + 2}
           sx={{ ...(!isExpanded && { border: 'unset' }) }}
         >
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>

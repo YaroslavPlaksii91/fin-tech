@@ -177,7 +177,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     (literal: string) => {
       const prev = getValues('expressionString');
       const isFunction = functionsLiterals.includes(literal);
-      const newValue = prev + literal + (isFunction ? '(' : '');
+      const newValue = prev + literal + (isFunction ? '(' : ' ');
       setValue('expressionString', newValue, { shouldValidate: true });
 
       expressionEditorRef.current?.focus({
