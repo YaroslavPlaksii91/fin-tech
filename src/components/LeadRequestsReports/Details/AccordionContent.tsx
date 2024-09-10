@@ -4,9 +4,9 @@ import { Typography } from '@mui/material';
 
 import { jsonViewTheme } from './constants';
 
-const AccordionContent = ({ json }: { json?: string | null }) =>
-  json ? (
-    <Typography sx={{ overflow: 'auto' }} component="div" variant="body2">
+const AccordionContent = ({ json }: { json?: string | null }) => (
+  <Typography sx={{ overflow: 'auto' }} component="div" variant="body2">
+    {json ? (
       <ReactJson
         name={false}
         displayObjectSize={false}
@@ -15,7 +15,10 @@ const AccordionContent = ({ json }: { json?: string | null }) =>
         theme={jsonViewTheme}
         style={{ fontFamily: 'inherit', fontSize: 'inherit' }}
       />
-    </Typography>
-  ) : null;
+    ) : (
+      'No data'
+    )}
+  </Typography>
+);
 
 export default memo(AccordionContent);

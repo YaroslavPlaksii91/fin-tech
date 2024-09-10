@@ -25,7 +25,7 @@ type ExecutionHistory = {
 type ExternalCall = {
   callType: null | string;
   controlFile: null | string;
-  executionTime: null | number;
+  executionTimeSpan: null | number;
   isCached: null | boolean;
   result: null | string;
   invokedServices: null | string[];

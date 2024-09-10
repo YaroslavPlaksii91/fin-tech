@@ -56,10 +56,10 @@ const Details = ({ data, handleClose }: DetailsProps) => {
 
   const handleScoresClose = useCallback(() => setIsScoresOpen(false), []);
 
-  const handleApiReviewDialogClose = useCallback(
-    () => setIsApiReviewOpen(false),
-    []
-  );
+  const handleApiReviewDialogClose = useCallback(() => {
+    setIsApiReviewOpen(false);
+    setExpandedAccordion(null);
+  }, []);
 
   const handleChange = useCallback(
     (accordionName: string) =>
