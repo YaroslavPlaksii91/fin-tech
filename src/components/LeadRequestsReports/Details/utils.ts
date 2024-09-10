@@ -42,7 +42,8 @@ export const getFormattedData = (data: LeadRequestsReport) => {
     (externalCall) => ({
       id: externalCall.callType,
       api: externalCall.callType,
-      time: externalCall.executionTime && externalCall.executionTime / 1000,
+      time:
+        externalCall.executionTimeSpan && externalCall.executionTimeSpan / 1000,
       result: externalCall.result,
       scores: externalCall.detailedResults,
       requestJson: externalCall.requestJson,
