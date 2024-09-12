@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { FlowNode } from '@domain/flow';
 
-export const getDuplicatedNode = (node: FlowNode) => {
+export const getDuplicatedNode = (node: FlowNode, nodeName: string) => {
   let data;
 
   // Remove all edges that might be inside step
@@ -38,7 +38,7 @@ export const getDuplicatedNode = (node: FlowNode) => {
   const duplicatedNode = {
     ...node,
     id,
-    data: { ...data, stepId: id, name: `Copy of (${node.data.name})` }
+    data: { ...data, stepId: id, name: nodeName }
   };
 
   return duplicatedNode;

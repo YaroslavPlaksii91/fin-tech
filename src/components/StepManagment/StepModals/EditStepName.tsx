@@ -12,15 +12,17 @@ import LoadingButton from '@components/shared/LoadingButton';
 import { theme } from '@theme';
 
 interface RenameConfirmDialogProps {
+  initialName: string;
+  title: string;
   show?: boolean;
   proceed?: (newName: string | null) => void;
-  initialName: string;
 }
 
-export const RenameStep: React.FC<RenameConfirmDialogProps> = ({
+export const EditStepName: React.FC<RenameConfirmDialogProps> = ({
   show,
   proceed,
-  initialName
+  initialName,
+  title
 }) => {
   const {
     handleSubmit,
@@ -42,7 +44,8 @@ export const RenameStep: React.FC<RenameConfirmDialogProps> = ({
   return (
     <ThemeProvider theme={theme}>
       <Dialog
-        title="Rename Step"
+        title={title}
+        // title="Rename Step"
         open={Boolean(show)}
         displayConfirmBtn={false}
         displayedCancelBtn={false}
@@ -74,11 +77,11 @@ export const RenameStep: React.FC<RenameConfirmDialogProps> = ({
   );
 };
 
-export const renameConfirmDialog = createConfirmation<
+export const editStepNameConfirmDialog = createConfirmation<
   RenameConfirmDialogProps,
   string | null
 >(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
-  confirmable(RenameStep)
+  confirmable(EditStepName)
 );

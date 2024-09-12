@@ -9,8 +9,9 @@ import React, {
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { useReactFlow } from 'reactflow';
+import cloneDeep from 'lodash/cloneDeep';
 
-import { renameConfirmDialog } from '../StepModals/RenameStep';
+import { editStepNameConfirmDialog } from '../StepModals/EditStepName';
 
 import Details from './Details';
 import { getDuplicatedNode } from './utils';
@@ -143,33 +144,36 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
     [nodes, flowNode, setNodes, activeStep, subFlowId]
   );
 
-  const handleDuplicateStep = useCallback(() => {
-    if (!flowNode) return;
+  const handleDuplicateStep = useCallback(
+    (nodeName: string) => {
+      if (!flowNode) return;
 
-    const duplicatedNode = getDuplicatedNode(flowNode);
+      const duplicatedNode = getDuplicatedNode(flowNode, nodeName);
 
-    if (activeStep?.subFlowId && subFlowId) {
-      document.dispatchEvent(
-        new CustomEvent(CUSTOM_FLOW_EVENT_DUPLICATE, {
-          detail: {
-            newNode: duplicatedNode,
-            subFlowId
-          }
-        })
-      );
-    }
+      if (activeStep?.subFlowId && subFlowId) {
+        document.dispatchEvent(
+          new CustomEvent(CUSTOM_FLOW_EVENT_DUPLICATE, {
+            detail: {
+              newNode: duplicatedNode,
+              subFlowId
+            }
+          })
+        );
+      }
 
-    if (!subFlowId) {
-      addNodes(duplicatedNode);
-    }
+      if (!subFlowId) {
+        addNodes(duplicatedNode);
+      }
 
-    if (!activeStep?.subFlowId && subFlowId) {
-      const updatedNodes = addNodeToSubflow(nodes, subFlowId, duplicatedNode);
-      setNodes(updatedNodes);
-    }
+      if (!activeStep?.subFlowId && subFlowId) {
+        const updatedNodes = addNodeToSubflow(nodes, subFlowId, duplicatedNode);
+        setNodes(updatedNodes);
+      }
 
-    dispatch(addNode({ subFlowId, node: duplicatedNode }));
-  }, [flowNode, activeStep, subFlowId]);
+      dispatch(addNode({ subFlowId, node: cloneDeep(duplicatedNode) }));
+    },
+    [flowNode, activeStep, subFlowId]
+  );
 
   const handleSelectedActions = async (action: ActionTypes) => {
     switch (action) {
@@ -210,7 +214,8 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
 
       case ActionTypes.RENAME_STEP: {
         if (!flowNode) break;
-        const newName = await renameConfirmDialog({
+        const newName = await editStepNameConfirmDialog({
+          title: 'Rename Step',
           initialName: flowNode?.data?.name
         });
         if (!newName) break;
@@ -264,7 +269,13 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
       }
 
       case ActionTypes.DUPLICATE_STEP: {
-        handleDuplicateStep();
+        if (!flowNode) break;
+        const newName = await editStepNameConfirmDialog({
+          title: 'Duplicate Step',
+          initialName: flowNode?.data?.name
+        });
+        if (!newName) break;
+        handleDuplicateStep(newName);
         break;
       }
 
