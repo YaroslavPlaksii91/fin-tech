@@ -141,8 +141,10 @@ const withFlowChartEditor =
     const handleDuplicate = useCallback(
       (e: CustomEvent<{ subFlowId: string; newNode: FlowNode }>) => {
         const { newNode, subFlowId } = e.detail;
-
-        if (subFlowId === flow.id) setNodes([...nodes, newNode]);
+        if (subFlowId === flow.id) {
+          setNodes([...nodes, newNode]);
+          addNodeAndSyncMainFlow?.(subFlowId, newNode, edges);
+        }
       },
       [flow.id, nodes]
     );

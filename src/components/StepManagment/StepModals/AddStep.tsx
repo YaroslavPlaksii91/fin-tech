@@ -62,7 +62,7 @@ export const AddStep: React.FC<AddStepProps> = ({
       edgeId
     );
 
-    if (newNode && subFlowId) {
+    if (newNode) {
       // For update list of steps in the sidebar
       dispatch(addNode({ node: cloneDeep(newNode), subFlowId }));
     }

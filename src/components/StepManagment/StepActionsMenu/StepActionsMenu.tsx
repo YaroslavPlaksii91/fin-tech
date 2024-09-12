@@ -9,11 +9,11 @@ import React, {
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { useReactFlow } from 'reactflow';
-import { v4 as uuidv4 } from 'uuid';
 
 import { renameConfirmDialog } from '../StepModals/RenameStep';
 
 import Details from './Details';
+import { getDuplicatedNode } from './utils';
 
 import Menu from '@components/shared/Menu/Menu';
 import {
@@ -40,7 +40,7 @@ import {
 import { removeNodesAndEdgesInSubFlow } from '@views/Subflow/utils';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
 import { preventIdleTimeout } from '@utils/preventIdleTimeout';
-import { updateNodes } from '@store/flow/utils';
+import { addNodeToSubflow, updateNodes } from '@store/flow/utils';
 
 interface StepActionsMenuOnNode {
   isOpen?: boolean;
@@ -82,7 +82,7 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
       return getEditModeOptions({
         canUserViewFlow,
         canUserUpdateFlow,
-        isSubFlow: flowNode?.data.$type === 'Subflow'
+        isSubFlow: flowNode?.data.$type === StepType.SUBFLOW
       });
     }
 
@@ -143,58 +143,33 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
     [nodes, flowNode, setNodes, activeStep, subFlowId]
   );
 
-  const handleDuplicateStep = () => {
+  const handleDuplicateStep = useCallback(() => {
     if (!flowNode) return;
-    let data;
 
-    // Remove all edges that might be inside step
-    switch (flowNode.data.$type) {
-      case 'DecisionTable': {
-        data = {
-          ...flowNode.data,
-          defaultEdgeId: null,
-          caseEntries: flowNode.data?.caseEntries?.map((caseEntry) => ({
-            ...caseEntry,
-            edgeId: null
-          }))
-        };
-        break;
-      }
-      case 'ChampionChallenger': {
-        data = {
-          ...flowNode.data,
-          splits: flowNode.data?.splits?.map((split) => ({
-            ...split,
-            edgeId: null
-          }))
-        };
-        break;
-      }
-      default:
-        data = flowNode.data;
-    }
+    const duplicatedNode = getDuplicatedNode(flowNode);
 
-    const newNode = {
-      ...flowNode,
-      id: uuidv4(),
-      data: { ...data, name: `Copy of (${flowNode.data.name})` }
-    };
-
-    if (subFlowId) {
+    if (activeStep?.subFlowId && subFlowId) {
       document.dispatchEvent(
         new CustomEvent(CUSTOM_FLOW_EVENT_DUPLICATE, {
           detail: {
-            newNode,
+            newNode: duplicatedNode,
             subFlowId
           }
         })
       );
     }
 
-    if (!subFlowId) addNodes(newNode);
+    if (!subFlowId) {
+      addNodes(duplicatedNode);
+    }
 
-    dispatch(addNode({ subFlowId, node: newNode }));
-  };
+    if (!activeStep?.subFlowId && subFlowId) {
+      const updatedNodes = addNodeToSubflow(nodes, subFlowId, duplicatedNode);
+      setNodes(updatedNodes);
+    }
+
+    dispatch(addNode({ subFlowId, node: duplicatedNode }));
+  }, [flowNode, activeStep, subFlowId]);
 
   const handleSelectedActions = async (action: ActionTypes) => {
     switch (action) {
