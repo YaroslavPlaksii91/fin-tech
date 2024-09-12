@@ -538,7 +538,7 @@ const withFlowChartEditor =
               isViewMode={isViewMode}
             />
           )}
-          <Controls />
+          <Controls showInteractive={false} />
         </ReactFlow>
         {rfInstance && (
           <StepConfigureView
