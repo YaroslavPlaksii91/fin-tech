@@ -45,7 +45,6 @@ export const EditStepName: React.FC<RenameConfirmDialogProps> = ({
     <ThemeProvider theme={theme}>
       <Dialog
         title={title}
-        // title="Rename Step"
         open={Boolean(show)}
         displayConfirmBtn={false}
         displayedCancelBtn={false}

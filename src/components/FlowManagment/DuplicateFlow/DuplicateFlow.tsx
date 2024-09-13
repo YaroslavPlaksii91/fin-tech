@@ -1,12 +1,13 @@
-import { Typography } from '@mui/material';
-import { useState } from 'react';
+import { Button, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { enqueueSnackbar } from 'notistack';
 import { unwrapResult } from '@reduxjs/toolkit';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
 
 import { createDuplicateFlowData } from './createDuplicateFlowData';
+import { validationSchema, FormData } from './validationSchema';
 
-import { theme } from '@theme';
 import Dialog from '@components/shared/Modals/Dialog';
 import { IFlowListItem } from '@domain/flow';
 import { flowService } from '@services/flow-service';
@@ -20,6 +21,8 @@ import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { createFlow } from '@store/flowList/asyncThunk';
 import { selectUserInfo } from '@store/auth/auth';
 import { getFullUserName } from '@utils/helpers';
+import { InputText } from '@components/shared/Forms/InputText';
+import LoadingButton from '@components/shared/LoadingButton';
 
 interface DuplicateFlowProps {
   flow: IFlowListItem;
@@ -32,17 +35,28 @@ export const DuplicateFlow: React.FC<DuplicateFlowProps> = ({
   modalOpen,
   setModalOpen
 }) => {
-  const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
+  const {
+    handleSubmit,
+    control,
+    formState: { isSubmitting }
+  } = useForm<FormData>({
+    defaultValues: { name: flow.name },
+    resolver: yupResolver(validationSchema)
+  });
+
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUserInfo);
 
-  const handleDuplicateFlow = async () => {
+  const onSubmit = async ({ name }: FormData) => {
     const username = getFullUserName(user);
     try {
-      setConfirmLoading(true);
       const flowDetails = await flowService.getFlow(flow.id);
-      const flowDuplicateData = createDuplicateFlowData(flowDetails, username);
+      const flowDuplicateData = createDuplicateFlowData(
+        flowDetails,
+        username,
+        name
+      );
       const resultAction = await dispatch(createFlow(flowDuplicateData));
       const createdFlow = unwrapResult(resultAction);
       navigate(`${routes.underwriting.flow.list(createdFlow.id)}`);
@@ -58,31 +72,43 @@ export const DuplicateFlow: React.FC<DuplicateFlowProps> = ({
         variant: SNACK_TYPE.ERROR
       });
     } finally {
-      handleCloseModal();
-      setConfirmLoading(false);
+      handleCancel();
     }
   };
 
-  const handleCloseModal = () => {
+  const handleCancel = () => {
     setModalOpen(false);
   };
 
   return (
     <Dialog
-      title={`Duplicate flow ${flow.name}?`}
+      title="Duplicate flow?"
       open={modalOpen}
-      onClose={handleCloseModal}
-      onConfirm={handleDuplicateFlow}
-      confirmLoading={confirmLoading}
+      displayConfirmBtn={false}
+      displayedCancelBtn={false}
     >
-      <Typography
-        width={396}
-        variant="body1"
-        color={theme.palette.text.secondary}
-      >
-        Do you want to duplicate this flow with all existing steps and sub flows
-        in it?
-      </Typography>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <InputText
+          fullWidth
+          name="name"
+          control={control}
+          label="Name"
+          placeholder="Enter name"
+        />
+        <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
+          <LoadingButton
+            loading={isSubmitting}
+            disabled={isSubmitting}
+            variant="text"
+            type="submit"
+          >
+            Confirm
+          </LoadingButton>
+          <Button variant="text" onClick={handleCancel}>
+            Cancel
+          </Button>
+        </Stack>
+      </form>
     </Dialog>
   );
 };

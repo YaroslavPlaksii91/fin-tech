@@ -271,7 +271,7 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
       case ActionTypes.DUPLICATE_STEP: {
         if (!flowNode) break;
         const newName = await editStepNameConfirmDialog({
-          title: 'Duplicate Step',
+          title: 'Duplicate Step?',
           initialName: flowNode?.data?.name
         });
         if (!newName) break;
