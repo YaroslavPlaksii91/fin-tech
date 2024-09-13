@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Edge, Node } from 'reactflow';
+import { Edge, Node, XYPosition } from 'reactflow';
 import pick from 'lodash/pick';
 
 import { ADD_BUTTON_ON_EDGE, StepType } from '../types';
@@ -15,13 +15,14 @@ interface GetUpdatedNodes {
 }
 
 const defaultPosition = { x: 0, y: 0 };
-const defaultNodeSize = { width: 100, height: 100 };
+const defaultNodeSize = { width: 140, height: 50 };
 
 export const createNewNode = (
   type: StepType,
   name: string,
   username: string,
-  edgeId?: string
+  edgeId?: string,
+  nodePosition = defaultPosition
 ): FlowNode => {
   const newNodeId = uuidv4();
   const newNode: FlowNode = {
@@ -35,7 +36,10 @@ export const createNewNode = (
       editedOn: new Date().toISOString(),
       editedBy: username
     },
-    position: defaultPosition,
+    position: {
+      x: nodePosition.x - defaultNodeSize.width / 2,
+      y: nodePosition.y - defaultNodeSize.height / 2
+    },
     deletable: true,
     draggable: true,
     ...defaultNodeSize
@@ -103,7 +107,8 @@ type updateEdgesParams = {
   onAddNodeBetweenEdges: (
     type: StepType,
     name: string,
-    edgeId: string
+    edgeId: string,
+    nodePosition: XYPosition
   ) => { newNode: FlowNode; subFlowId: string | null };
 };
 

@@ -29,6 +29,11 @@ export function CustomEdge({
     targetPosition
   });
 
+  const nodePosition = {
+    x: (sourceX + targetX) / 2,
+    y: (sourceY + targetY) / 2
+  };
+
   return (
     <>
       <BaseEdge
@@ -48,7 +53,13 @@ export function CustomEdge({
           }}
           className={data?.animated ? 'edge-animation' : ''}
         >
-          {data && <StepSelectionMenu id={id} data={data} />}
+          {data && (
+            <StepSelectionMenu
+              nodePosition={nodePosition}
+              id={id}
+              data={data}
+            />
+          )}
         </div>
       </EdgeLabelRenderer>
     </>

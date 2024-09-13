@@ -11,7 +11,8 @@ import ReactFlow, {
   useReactFlow,
   Edge,
   ConnectionMode,
-  Controls
+  Controls,
+  XYPosition
 } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 import 'reactflow/dist/style.css';
@@ -19,7 +20,6 @@ import debounce from 'lodash/debounce';
 
 import { nodeTypes } from '../Nodes';
 import { edgeTypes } from '../Edges';
-import NodePositioning from '../Nodes/NodePositioning';
 import '../overview.css';
 import {
   ADD_BUTTON_ON_EDGE,
@@ -40,7 +40,6 @@ import {
   getUpdatedDecisionTableNodes,
   updateEdges
 } from '../utils/workflowElementsUtils';
-import { getLayoutedElements } from '../utils/workflowLayoutUtils';
 import {
   CUSTOM_FLOW_EVENT_DELETE,
   CUSTOM_FLOW_EVENT_RENAME,
@@ -190,10 +189,21 @@ const withFlowChartEditor =
     }, [newNode]);
 
     const onAddNodeBetweenEdges = useCallback(
-      (type: StepType, name: string, edgeId: string) => {
+      (
+        type: StepType,
+        name: string,
+        edgeId: string,
+        nodePosition: XYPosition
+      ) => {
         const newEdgeId = uuidv4();
         const username = getFullUserName(user);
-        const newNode = createNewNode(type, name, username, newEdgeId);
+        const newNode = createNewNode(
+          type,
+          name,
+          username,
+          newEdgeId,
+          nodePosition
+        );
 
         setNodes((nodes) => nodes.concat(newNode));
 
@@ -214,15 +224,13 @@ const withFlowChartEditor =
     );
 
     const initialElements = useMemo(() => {
-      const { nodes: layoutedNodes, edges: layoutedEdges } =
-        getLayoutedElements(flow.nodes, flow.edges);
-      const edges = layoutedEdges.map((edge) => ({
+      const edges = flow.edges.map((edge) => ({
         ...edge,
         type: isViewMode ? DEFAULT_EDGE_TYPE : ADD_BUTTON_ON_EDGE,
         data: { onAdd: onAddNodeBetweenEdges }
       }));
-      const nodes = layoutedNodes;
-      return { edges, nodes };
+
+      return { edges: edges, nodes: flow.nodes };
     }, [flow, isViewMode]);
 
     useEffect(() => {
@@ -492,12 +500,6 @@ const withFlowChartEditor =
 
     return (
       <>
-        <NodePositioning
-          edges={edges}
-          nodes={nodes}
-          setEdges={setEdges}
-          setNodes={setNodes}
-        />
         <ReactFlow
           id={flow.id}
           data-flow-id={flow.id}
