@@ -32,7 +32,7 @@ export type EdgeData = {
     type: StepType,
     name: string,
     id: string
-  ) => { newNode: FlowNode; flowId: string };
+  ) => { newNode: FlowNode; subFlowId: string };
   animated?: boolean;
 };
 

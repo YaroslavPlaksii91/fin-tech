@@ -104,7 +104,7 @@ type updateEdgesParams = {
     type: StepType,
     name: string,
     edgeId: string
-  ) => { newNode: FlowNode; flowId: string };
+  ) => { newNode: FlowNode; subFlowId: string | null };
 };
 
 export const updateEdges = ({

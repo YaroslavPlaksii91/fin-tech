@@ -9,10 +9,12 @@ import React, {
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { useReactFlow } from 'reactflow';
+import cloneDeep from 'lodash/cloneDeep';
 
-import { renameConfirmDialog } from '../StepModals/RenameStep';
+import { editStepNameConfirmDialog } from '../StepModals/EditStepName';
 
 import Details from './Details';
+import { getDuplicatedNode } from './utils';
 
 import Menu from '@components/shared/Menu/Menu';
 import {
@@ -26,19 +28,20 @@ import routes from '@constants/routes.ts';
 import MoreHorizontalIcon from '@icons/moreHorizontal.svg';
 import { asyncConfirmDialog } from '@components/shared/Confirmation/AsyncConfirmDialog.tsx';
 import { useAppDispatch } from '@store/hooks';
-import { deleteNodes, updateNodeData } from '@store/flow/flow';
+import { deleteNodes, updateNodeData, addNode } from '@store/flow/flow';
 import { ActiveStep } from '@contexts/StepContext';
 import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import {
-  CUSTOM_FLOW_EVENT,
-  CUSTOM_FLOW_EVENT_RENAME
+  CUSTOM_FLOW_EVENT_DELETE,
+  CUSTOM_FLOW_EVENT_RENAME,
+  CUSTOM_FLOW_EVENT_DUPLICATE
 } from '@components/FlowManagment/FlowChart/constants';
 import { removeNodesAndEdgesInSubFlow } from '@views/Subflow/utils';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
 import { preventIdleTimeout } from '@utils/preventIdleTimeout';
-import { updateNodes } from '@store/flow/utils';
+import { addNodeToSubflow, updateNodes } from '@store/flow/utils';
 
 interface StepActionsMenuOnNode {
   isOpen?: boolean;
@@ -63,7 +66,7 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
   setActiveStep,
   activeStep
 }) => {
-  const { getNodes, setNodes, deleteElements } = useReactFlow();
+  const { getNodes, setNodes, deleteElements, addNodes } = useReactFlow();
   const navigate = useNavigate();
   const { id } = useParams();
   const dispatch = useAppDispatch();
@@ -79,14 +82,17 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
     if (isEditMode) {
       return getEditModeOptions({
         canUserViewFlow,
-        canUserUpdateFlow
+        canUserUpdateFlow,
+        isSubFlow: flowNode?.data.$type === StepType.SUBFLOW
       });
     }
+
     if (id === PRODUCTION_FLOW_ID) {
       return getProductionFlowOptions({ canUserViewFlow });
     }
+
     return getOptions({ canUserViewFlow, canUserUpdateFlow });
-  }, [id, isEditMode]);
+  }, [id, isEditMode, flowNode?.data.stepType]);
 
   useEffect(() => {
     setIsOpen(isOpen);
@@ -113,51 +119,78 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
 
   const handleRenameStep = useCallback(
     (name: string) => {
-      if (flowNode) {
-        const updatedNode = { ...flowNode, data: { ...flowNode?.data, name } };
+      if (!flowNode) return;
 
-        if (activeStep?.subFlowId && subFlowId) {
-          document.dispatchEvent(
-            new CustomEvent(CUSTOM_FLOW_EVENT_RENAME, {
-              detail: {
-                updatedNode,
-                subFlowId
-              }
-            })
-          );
-        }
+      const updatedNode = { ...flowNode, data: { ...flowNode?.data, name } };
 
-        if (!activeStep?.subFlowId) {
-          const updatedNodes = updateNodes(nodes, updatedNode);
-          setNodes(updatedNodes);
-        }
-
-        dispatch(
-          updateNodeData({
-            node: updatedNode
+      if (activeStep?.subFlowId && subFlowId) {
+        document.dispatchEvent(
+          new CustomEvent(CUSTOM_FLOW_EVENT_RENAME, {
+            detail: {
+              updatedNode,
+              subFlowId
+            }
           })
         );
       }
+
+      if (!activeStep?.subFlowId) {
+        const updatedNodes = updateNodes(nodes, updatedNode);
+        setNodes(updatedNodes);
+      }
+
+      dispatch(updateNodeData({ node: updatedNode }));
     },
     [nodes, flowNode, setNodes, activeStep, subFlowId]
   );
 
+  const handleDuplicateStep = useCallback(
+    (nodeName: string) => {
+      if (!flowNode) return;
+
+      const duplicatedNode = getDuplicatedNode(flowNode, nodeName);
+
+      if (activeStep?.subFlowId && subFlowId) {
+        document.dispatchEvent(
+          new CustomEvent(CUSTOM_FLOW_EVENT_DUPLICATE, {
+            detail: {
+              newNode: duplicatedNode,
+              subFlowId
+            }
+          })
+        );
+      }
+
+      if (!subFlowId) {
+        addNodes(duplicatedNode);
+      }
+
+      if (!activeStep?.subFlowId && subFlowId) {
+        const updatedNodes = addNodeToSubflow(nodes, subFlowId, duplicatedNode);
+        setNodes(updatedNodes);
+      }
+
+      dispatch(addNode({ subFlowId, node: cloneDeep(duplicatedNode) }));
+    },
+    [flowNode, activeStep, subFlowId]
+  );
+
   const handleSelectedActions = async (action: ActionTypes) => {
     switch (action) {
-      case ActionTypes.STEP_TEXT_VIEW:
-        {
-          const { activeSubflowId, activeStepId } = handleStep(
-            flowNode,
-            subFlowId
-          );
-          if (!activeSubflowId && !activeStepId) return;
+      case ActionTypes.STEP_TEXT_VIEW: {
+        const { activeSubflowId, activeStepId } = handleStep(
+          flowNode,
+          subFlowId
+        );
+        if (!activeSubflowId && !activeStepId) return;
 
-          navigate(routes.underwriting.flow.list(id as string), {
-            state: { subFlowId: activeSubflowId, stepId: activeStepId }
-          });
-        }
+        navigate(routes.underwriting.flow.list(id as string), {
+          state: { subFlowId: activeSubflowId, stepId: activeStepId }
+        });
 
         break;
+      }
+
       case ActionTypes.EDIT_STEP: {
         await preventIdleTimeout();
         const { activeSubflowId, activeStepId } = handleStep(
@@ -178,9 +211,11 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
         }
         break;
       }
+
       case ActionTypes.RENAME_STEP: {
         if (!flowNode) break;
-        const newName = await renameConfirmDialog({
+        const newName = await editStepNameConfirmDialog({
+          title: 'Rename Step',
           initialName: flowNode?.data?.name
         });
         if (!newName) break;
@@ -213,7 +248,7 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
 
         if (activeStep?.subFlowId) {
           document.dispatchEvent(
-            new CustomEvent(CUSTOM_FLOW_EVENT, {
+            new CustomEvent(CUSTOM_FLOW_EVENT_DELETE, {
               detail: {
                 deleteNodes: [flowNode],
                 subFlowId: activeStep.subFlowId
@@ -232,7 +267,20 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
 
         break;
       }
+
+      case ActionTypes.DUPLICATE_STEP: {
+        if (!flowNode) break;
+        const newName = await editStepNameConfirmDialog({
+          title: 'Duplicate Step?',
+          initialName: flowNode?.data?.name
+        });
+        if (!newName) break;
+        handleDuplicateStep(newName);
+        break;
+      }
+
       default:
+        break;
     }
   };
 

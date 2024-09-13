@@ -37,16 +37,19 @@ export const flowSlicer = createSlice({
       state.flow = initialFlow;
     }),
     addNode: create.reducer(
-      (state, action: PayloadAction<{ node: FlowNode; flowId: string }>) => {
-        if (state.flow.id === action.payload.flowId) {
-          state.flow.nodes.push(action.payload.node);
-        } else {
+      (
+        state,
+        action: PayloadAction<{ node: FlowNode; subFlowId: string | null }>
+      ) => {
+        if (action.payload.subFlowId) {
           const { nodes } = state.flow;
           state.flow.nodes = addNodeToSubflow(
             nodes,
-            action.payload.flowId,
+            action.payload.subFlowId,
             action.payload.node
           );
+        } else {
+          state.flow.nodes.push(action.payload.node);
         }
       }
     ),
