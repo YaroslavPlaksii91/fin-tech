@@ -1,5 +1,4 @@
 import { Button, Stack } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import { enqueueSnackbar } from 'notistack';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -11,7 +10,6 @@ import { validationSchema, FormData } from './validationSchema';
 import Dialog from '@components/shared/Modals/Dialog';
 import { IFlowListItem } from '@domain/flow';
 import { flowService } from '@services/flow-service';
-import routes from '@constants/routes';
 import {
   SnackbarErrorMessage,
   SnackbarMessage
@@ -44,7 +42,6 @@ export const DuplicateFlow: React.FC<DuplicateFlowProps> = ({
     resolver: yupResolver(validationSchema)
   });
 
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUserInfo);
 
@@ -59,7 +56,6 @@ export const DuplicateFlow: React.FC<DuplicateFlowProps> = ({
       );
       const resultAction = await dispatch(createFlow(flowDuplicateData));
       const createdFlow = unwrapResult(resultAction);
-      navigate(`${routes.underwriting.flow.list(createdFlow.id)}`);
       enqueueSnackbar(
         <SnackbarMessage
           message="Success"
