@@ -46,6 +46,8 @@ import {
   CUSTOM_FLOW_EVENT_DUPLICATE,
   DEFAULT_SOURCE_HANDLE
 } from '../constants';
+import { AutoLayoutButton } from '../AutoLayoutButton';
+import { getLayoutedElements } from '../utils/workflowLayoutUtils';
 
 import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
 import { FlowNode, IFlow } from '@domain/flow';
@@ -498,6 +500,17 @@ const withFlowChartEditor =
       [flow.id, mainFlow]
     );
 
+    const handleAutoLayout = useCallback(() => {
+      const lastElement = nodes.length - 1;
+      if (nodes[lastElement]?.width) {
+        if (nodes.length > 0) {
+          const layouted = getLayoutedElements(nodes, edges);
+          setNodes(layouted.nodes);
+          setEdges(layouted.edges);
+        }
+      }
+    }, [nodes, edges]);
+
     return (
       <>
         <ReactFlow
@@ -530,6 +543,7 @@ const withFlowChartEditor =
           connectionLineType={ConnectionLineType.SmoothStep}
         >
           <Background variant={BackgroundVariant.Dots} />
+          <AutoLayoutButton handleAutoLayout={handleAutoLayout} />
           {rfInstance && flow.id && (
             <ControlPanel
               mainFlow={mainFlow}
