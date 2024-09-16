@@ -197,11 +197,3 @@ export const filterVariablesByUsageMode = (
     filter(arr, (item) => usageModes.includes(item.usageMode))
   );
 };
-
-// We should wrap the string with extra double quotes "\"string value\"" because the backend expects this
-export const addExtraDoubleQuotes = (string: string) =>
-  string.length ? `"${string}"` : '';
-
-// Unwrap extra double quotes
-export const removeExtraDoubleQuotes = (string: string) =>
-  string?.replace(/^"(.*)"$/, '$1');

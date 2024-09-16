@@ -19,7 +19,6 @@ import {
   CaseEntry
 } from '../types';
 import SelectVariableValueDialog from '../Forms/SelectVariableValueDialog';
-import { checkDataType, removeExtraDoubleQuotes } from '../utils';
 import Select from '../Select';
 
 import { Head, StyledTableBody } from './styled';
@@ -134,7 +133,6 @@ const Table = ({
               parity={rowIndex % 2 === 0 ? 'even' : 'odd'}
             >
               {columns.map((column, columnIndex) => {
-                const dataType = checkDataType(column.dataType);
                 const entry = row[column.category][column.index];
 
                 if (column.name === STEP) {
@@ -181,10 +179,6 @@ const Table = ({
                 const hasValue =
                   Boolean(entry.expression) || Boolean(entry.operator);
 
-                const expression = dataType.isString
-                  ? removeExtraDoubleQuotes(entry.expression)
-                  : entry.expression;
-
                 return (
                   <StyledTableCell
                     sx={{ cursor: hasUserPermission ? 'pointer' : 'default' }}
@@ -193,13 +187,12 @@ const Table = ({
                       ...column,
                       ...entry,
                       columnIndex: column.index,
-                      rowIndex,
-                      expression
+                      rowIndex
                     })}
                   >
                     <Typography variant="body2">
                       {hasValue
-                        ? `${column.category === 'conditions' ? entry.operator : OPERATORS.EQUAL} ${expression}`
+                        ? `${column.category === 'conditions' ? entry.operator : OPERATORS.EQUAL} ${entry.expression}`
                         : `Enter ${column.category === 'conditions' ? 'Condition' : 'Value'}`}
                     </Typography>
                   </StyledTableCell>
