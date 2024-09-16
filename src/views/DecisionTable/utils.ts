@@ -1,7 +1,6 @@
 import { lightGreen, lightBlue } from '@mui/material/colors';
 import { mapValues, filter, cloneDeep } from 'lodash';
 
-import { OBJECT } from './constants';
 import { CaseEntry, Entry, Operator, OPERATORS, CATEGORY } from './types';
 
 import {
@@ -44,14 +43,12 @@ export const getOperatorOptions = (dataType: DATA_TYPE) => {
   }));
 };
 
-// OBJECT type separate from other because this type comes only from CRA variables
-export const checkDataType = (dataType: DATA_TYPE | typeof OBJECT) => ({
+export const checkDataType = (dataType: DATA_TYPE) => ({
   isWithEnum: Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
     dataType as DATA_TYPE_WITH_ENUM_PREFIX
   ),
   isBoolean: dataType === DATA_TYPE_WITHOUT_ENUM.Boolean,
-  isString: dataType === DATA_TYPE_WITHOUT_ENUM.String,
-  isObject: dataType === OBJECT
+  isString: dataType === DATA_TYPE_WITHOUT_ENUM.String
 });
 
 export const getColumns = (

@@ -93,9 +93,7 @@ const SelectVariableValueDialog = ({
       setValue('value', '');
       return;
     }
-
-    if (dataType.isObject) setValue('value', 'null');
-  }, [watchOperator, dataType.isObject]);
+  }, [watchOperator]);
 
   return (
     <Dialog
@@ -172,7 +170,7 @@ const SelectVariableValueDialog = ({
               name="value"
               control={control}
               label="Value*"
-              disabled={watchOperator === OPERATORS.ANY || dataType.isObject}
+              disabled={watchOperator === OPERATORS.ANY}
             />
           )}
         </Stack>
