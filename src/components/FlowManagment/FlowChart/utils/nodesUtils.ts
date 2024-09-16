@@ -4,7 +4,6 @@ import { StepType, StepListData } from '../types';
 
 import { FlowNode } from '@domain/flow';
 import { Entry, OPERATORS } from '@views/DecisionTable/types';
-import { removeExtraDoubleQuotes } from '@views/DecisionTable/utils';
 
 const getTooltipText = (entries: Entry[]) =>
   entries.reduce((acc, { name, operator, expression }, index) => {
@@ -20,7 +19,7 @@ const getTooltipText = (entries: Entry[]) =>
       acc,
       name,
       anyOperatorText || defaultOperatorText,
-      removeExtraDoubleQuotes(expression)
+      expression
     );
 
     if (hasDividingWord && name) textPieces.push('and');

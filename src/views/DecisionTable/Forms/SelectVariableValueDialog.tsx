@@ -6,7 +6,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { SelectedCell, FormFieldsProps, OPERATORS } from '../types';
 import {
   checkDataType,
-  addExtraDoubleQuotes,
   getOperatorOptions,
   getFormatedOptions
 } from '../utils';
@@ -78,8 +77,6 @@ const SelectVariableValueDialog = ({
       default:
         value = data.value;
     }
-
-    if (dataType.isString) value = addExtraDoubleQuotes(data.value || '');
 
     handleSubmitForm({ ...data, value });
   };
