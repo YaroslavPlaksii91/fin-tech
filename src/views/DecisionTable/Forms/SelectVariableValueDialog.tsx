@@ -85,14 +85,9 @@ const SelectVariableValueDialog = ({
   };
 
   useEffect(() => {
-    clearErrors();
-  }, [watchOperator]);
+    if (watchOperator === OPERATORS.ANY) setValue('value', '');
 
-  useEffect(() => {
-    if (watchOperator === OPERATORS.ANY) {
-      setValue('value', '');
-      return;
-    }
+    clearErrors();
   }, [watchOperator]);
 
   return (
