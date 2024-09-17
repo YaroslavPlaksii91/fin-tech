@@ -36,7 +36,6 @@ export const StyledDrawer = styled(MuiDrawer)({
 export const StyledListItemButton = styled(ListItemButton, {
   shouldForwardProp: (prop) => prop !== 'isSelected'
 })<ListItemProps & { isSelected?: boolean }>(({ isSelected }) => ({
-  borderRadius: '2px',
   justifyContent: 'center',
   width: '40px',
   height: '40px',
@@ -44,17 +43,17 @@ export const StyledListItemButton = styled(ListItemButton, {
   display: 'flex',
   alignItems: 'center',
   transition: '--color-opacity 0.3s, all 0.3s',
+  borderRadius: '8px',
 
   '&:hover': {
-    '--color-opacity': '16%',
-    borderRadius: '6px'
+    '--color-opacity': '36%'
   },
 
-  '&.iam': getGradient(188, 243, 255, 240, 187, 0),
+  '&.iam': getGradient(255, 212, 60, 255, 88, 88),
   '&.communication': getGradient(195, 218, 253, 57, 77, 106),
   '&.admin': getGradient(0, 211, 59, 0, 117, 255),
   '&.lms': getGradient(144, 135, 245, 163, 35, 184),
-  '&.underwriting': getGradient(255, 212, 60, 225, 88, 88),
+  '&.underwriting': getGradient(242, 117, 177, 225, 85, 48),
   '&.leads': getGradient(177, 239, 0, 64, 184, 35),
   '&.payments': getGradient(255, 235, 56, 205, 114, 0),
   '&.reports': getGradient(73, 158, 255, 78, 68, 210),
@@ -64,7 +63,7 @@ export const StyledListItemButton = styled(ListItemButton, {
     padding: 0
   },
 
-  ...(isSelected && { '--color-opacity': '16%', borderRadius: '6px' }),
+  ...(isSelected && { '--color-opacity': '56%' }),
   img: {
     maxWidth: '40px',
     maxHeight: '40px'
