@@ -1,5 +1,6 @@
 import { api, integrationApi } from '@utils/api';
 import {
+  ConditionValidate,
   DataDictionaryIntegrationVariable,
   DataDictionaryVariable,
   ExpressionValidate,
@@ -25,6 +26,14 @@ class DataDictionaryService {
   async validateExpression(data: ExpressionValidate) {
     const res = await api.post<ExpressionValidate>(
       '/expression-builder/validate',
+      data
+    );
+    return res;
+  }
+
+  async validateCondition(data: ConditionValidate) {
+    const res = await api.post<ConditionValidate>(
+      '/expression-builder/validate-condition',
       data
     );
     return res;

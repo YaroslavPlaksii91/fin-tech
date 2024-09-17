@@ -1,3 +1,5 @@
+import { Operator } from '@views/DecisionTable/types';
+
 export enum DATA_TYPE_WITH_ENUM_PREFIX {
   Gender = 'Enum:Gender',
   ContactTime = 'Enum:ContactTime',
@@ -106,9 +108,20 @@ export interface DataDictionaryVariableRecord {
 
 export type ExpressionValidateParams = { name: string; dataType: DATA_TYPE }[];
 
+export type Condition = {
+  name: string;
+  operator: Operator;
+  expression: string;
+};
+
 export type ExpressionValidate = {
   expression: string;
   targetDataType: string;
+  params: ExpressionValidateParams;
+};
+
+export type ConditionValidate = {
+  condition: Condition;
   params: ExpressionValidateParams;
 };
 

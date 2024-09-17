@@ -16,8 +16,8 @@ import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
 import InputText from '@components/shared/Forms/InputText';
 import Select from '@components/shared/Forms/Select';
-import { preventIdleTimeout } from '@utils/preventIdleTimeout';
 import { BOOLEAN_OPTIONS } from '@constants/common';
+import { dataDictionaryService } from '@services/data-dictionary';
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
@@ -65,8 +65,6 @@ const SelectVariableValueDialog = ({
   const onSubmit = async (data: FormFieldsProps) => {
     let value;
 
-    await preventIdleTimeout();
-
     switch (data.operator) {
       case OPERATORS.BETWEEN:
         value = `${data.lowerBound} and ${data.upperBound}`;
@@ -77,6 +75,15 @@ const SelectVariableValueDialog = ({
       default:
         value = data.value;
     }
+
+    await dataDictionaryService.validateCondition({
+      condition: {
+        name: selectedCell.name,
+        operator: data.operator,
+        expression: value
+      },
+      params: [{ name: selectedCell.name, dataType: selectedCell.dataType }]
+    });
 
     handleSubmitForm({ ...data, value });
   };
