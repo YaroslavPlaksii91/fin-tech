@@ -20,7 +20,13 @@ export const getOperatorOptions = (dataType: DATA_TYPE) => {
 
   switch (dataType) {
     case String:
-      operators = [OPERATORS.IN, OPERATORS.EQUAL, OPERATORS.NOT_EQUAL];
+      operators = [
+        OPERATORS.IN,
+        OPERATORS.NOT_IN,
+        OPERATORS.CONTAINS,
+        OPERATORS.EQUAL,
+        OPERATORS.NOT_EQUAL
+      ];
       break;
     case Integer:
     case Decimal:

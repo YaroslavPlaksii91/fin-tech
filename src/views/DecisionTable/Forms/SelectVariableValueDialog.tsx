@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Button, Stack, InputAdornment, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { AxiosError } from 'axios';
 
 import { SelectedCell, FormFieldsProps, OPERATORS } from '../types';
 import {
@@ -18,6 +19,7 @@ import InputText from '@components/shared/Forms/InputText';
 import Select from '@components/shared/Forms/Select';
 import { BOOLEAN_OPTIONS } from '@constants/common';
 import { dataDictionaryService } from '@services/data-dictionary';
+import { parseError } from '@components/ExpressionForm/utils';
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
@@ -47,7 +49,8 @@ const SelectVariableValueDialog = ({
     formState: { isSubmitting },
     watch,
     setValue,
-    clearErrors
+    clearErrors,
+    setError
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -76,16 +79,24 @@ const SelectVariableValueDialog = ({
         value = data.value;
     }
 
-    await dataDictionaryService.validateCondition({
-      condition: {
-        name: selectedCell.name,
-        operator: data.operator,
-        expression: value
-      },
-      params: [{ name: selectedCell.name, dataType: selectedCell.dataType }]
-    });
-
-    handleSubmitForm({ ...data, value });
+    try {
+      await dataDictionaryService.validateCondition({
+        condition: {
+          name: selectedCell.name,
+          operator: data.operator,
+          expression: value
+        },
+        params: [{ name: selectedCell.name, dataType: selectedCell.dataType }]
+      });
+      handleSubmitForm({ ...data, value });
+    } catch (error) {
+      const dataError = error instanceof AxiosError && parseError(error);
+      if (dataError) {
+        setError('value', {
+          message: dataError.message
+        });
+      }
+    }
   };
 
   useEffect(() => {
