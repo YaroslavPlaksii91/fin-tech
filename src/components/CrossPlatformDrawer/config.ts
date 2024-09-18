@@ -16,7 +16,7 @@ export const applications = [
   },
   {
     key: 'Communication Platform',
-    name: 'Communication',
+    name: 'Communication Platform',
     iconSrc: communicationIcon,
     className: 'communication'
   },
@@ -27,8 +27,8 @@ export const applications = [
     className: 'admin'
   },
   {
-    key: 'Loan Management System',
-    name: 'Loan Management',
+    key: 'LMS',
+    name: 'Loan Management System',
     iconSrc: lmsIcon,
     className: 'lms'
   },
@@ -51,8 +51,8 @@ export const applications = [
     className: 'payments'
   },
   {
-    key: 'Reports',
-    name: 'Reports',
+    key: 'Reporting',
+    name: 'Reporting',
     iconSrc: reportsIcon,
     className: 'reports'
   }
