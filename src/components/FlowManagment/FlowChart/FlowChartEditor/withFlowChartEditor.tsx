@@ -232,7 +232,7 @@ const withFlowChartEditor =
         data: { onAdd: onAddNodeBetweenEdges }
       }));
 
-      return { edges: edges, nodes: flow.nodes };
+      return { edges, nodes: flow.nodes };
     }, [flow, isViewMode]);
 
     useEffect(() => {
@@ -501,14 +501,9 @@ const withFlowChartEditor =
     );
 
     const handleAutoLayout = useCallback(() => {
-      const lastElement = nodes.length - 1;
-      if (nodes[lastElement]?.width) {
-        if (nodes.length > 0) {
-          const layouted = getLayoutedElements(nodes, edges);
-          setNodes(layouted.nodes);
-          setEdges(layouted.edges);
-        }
-      }
+      const layouted = getLayoutedElements(nodes, edges);
+      setNodes(layouted.nodes);
+      setEdges(layouted.edges);
     }, [nodes, edges]);
 
     return (
@@ -543,7 +538,8 @@ const withFlowChartEditor =
           connectionLineType={ConnectionLineType.SmoothStep}
         >
           <Background variant={BackgroundVariant.Dots} />
-          <AutoLayoutButton handleAutoLayout={handleAutoLayout} />
+          {!isViewMode && <AutoLayoutButton onClick={handleAutoLayout} />}
+          <Controls showInteractive={false} />
           {rfInstance && flow.id && (
             <ControlPanel
               mainFlow={mainFlow}
@@ -554,7 +550,6 @@ const withFlowChartEditor =
               isViewMode={isViewMode}
             />
           )}
-          <Controls showInteractive={false} />
         </ReactFlow>
         {rfInstance && (
           <StepConfigureView
