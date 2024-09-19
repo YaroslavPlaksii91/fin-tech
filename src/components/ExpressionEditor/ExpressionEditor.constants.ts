@@ -39,7 +39,8 @@ export enum ExpressionEditorFunction {
   LEN = 'LEN',
   SUBSTRING = 'SUBSTRING',
   DATEDIFF = 'DATEDIFF',
-  GET_REPORT = 'GET_REPORT'
+  GET_REPORT = 'GET_REPORT',
+  STRCMP = 'STRCMP'
 }
 
 // POST MVP
@@ -200,6 +201,13 @@ export const functionsConfig: FunctionConfig[] = [
     domesticDescription:
       'GET_REPORT(This function accepts two arguments. CRA the Enum that allows two different values: ReportType.CraFactorTrust, ReportType.CraClarity. Should you choose ReportType.CraFactorTrust you do not need to provide the second argument. Whereas if you choose ReportType.CraClarity, you must provide the second argument - the name of the control file in string format e.g.',
     category: ExpressionOperatorCategory.MISCELANEOUS
+  },
+  {
+    literal: ExpressionEditorFunction.STRCMP,
+    description:
+      'Compares two string and return true if they are equal, otherwise false',
+    domesticDescription: 'STRCMP(string1, string2)',
+    category: ExpressionOperatorCategory.BASIC_TEXT
   }
 ];
 
