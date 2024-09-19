@@ -206,7 +206,7 @@ export const functionsConfig: FunctionConfig[] = [
   {
     literal: ExpressionEditorFunction.MATCH,
     description:
-      'Takes one input string and the second is a regular expression and returns true/false',
+      'Indicates whether the specified regular expression (second parameter) finds a match in the specified input string (first parameter)',
     domesticDescription: 'MATCH(string, pattern)',
     category: ExpressionOperatorCategory.ADVANCED
   }
