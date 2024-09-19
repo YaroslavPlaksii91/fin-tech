@@ -65,7 +65,7 @@ const SelectVariableValueDialog = ({
   const watchOperator = watch('operator');
 
   const onSubmit = async (data: FormFieldsProps) => {
-    let value;
+    let value = '';
 
     switch (data.operator) {
       case OPERATORS.BETWEEN:
@@ -75,7 +75,7 @@ const SelectVariableValueDialog = ({
         value = '';
         break;
       default:
-        value = data.value;
+        value = data.value || '';
     }
 
     try {
