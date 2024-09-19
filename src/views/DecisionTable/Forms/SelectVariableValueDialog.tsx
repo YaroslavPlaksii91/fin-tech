@@ -176,12 +176,14 @@ const SelectVariableValueDialog = ({
             <>
               <InputText
                 fullWidth
+                type="number"
                 name="lowerBound"
                 control={control}
                 label="Lowest Value*"
               />
               <InputText
                 fullWidth
+                type="number"
                 name="upperBound"
                 control={control}
                 label="Highest Value*"
