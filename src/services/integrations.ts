@@ -1,3 +1,4 @@
+import { DataDictionaryIntegrationVariable } from '@domain/dataDictionary';
 import { integrationApi } from '@utils/api';
 
 class IntegrationsService {
@@ -6,6 +7,14 @@ class IntegrationsService {
       '/cra-clarity/controlfiles'
     );
 
+    return data;
+  }
+
+  async getIntegrationVariables() {
+    const { data } =
+      await integrationApi.get<
+        Record<string, DataDictionaryIntegrationVariable[]>
+      >('/data-dictionary');
     return data;
   }
 }

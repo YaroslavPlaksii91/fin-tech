@@ -1,9 +1,6 @@
-import { api, integrationApi } from '@utils/api';
+import { api } from '@utils/api';
 import {
-  ConditionValidate,
-  DataDictionaryIntegrationVariable,
   DataDictionaryVariable,
-  ExpressionValidate,
   VariableUsageParams
 } from '@domain/dataDictionary';
 
@@ -13,30 +10,6 @@ class DataDictionaryService {
       '/expression-builder/data-dictionary-variables'
     );
     return data;
-  }
-
-  async getIntegrationVariables() {
-    const { data } =
-      await integrationApi.get<
-        Record<string, DataDictionaryIntegrationVariable[]>
-      >('/data-dictionary');
-    return data;
-  }
-
-  async validateExpression(data: ExpressionValidate) {
-    const res = await api.post<ExpressionValidate>(
-      '/expression-builder/validate',
-      data
-    );
-    return res;
-  }
-
-  async validateCondition(data: ConditionValidate) {
-    const res = await api.post<ConditionValidate>(
-      '/expression-builder/validate-condition',
-      data
-    );
-    return res;
   }
 
   async getVariableUsage(flowId: string, variableName: string) {

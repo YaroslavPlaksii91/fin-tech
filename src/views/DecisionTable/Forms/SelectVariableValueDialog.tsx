@@ -2,13 +2,12 @@ import { useEffect } from 'react';
 import { Button, Stack, InputAdornment, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { AxiosError } from 'axios';
 
 import { SelectedCell, FormFieldsProps, OPERATORS } from '../types';
 import {
   checkDataType,
   getOperatorOptions,
-  getFormatedOptions
+  getFormattedOptions
 } from '../utils';
 
 import validationSchema from './validationSchema';
@@ -18,8 +17,8 @@ import LoadingButton from '@components/shared/LoadingButton';
 import InputText from '@components/shared/Forms/InputText';
 import Select from '@components/shared/Forms/Select';
 import { BOOLEAN_OPTIONS } from '@constants/common';
-import { dataDictionaryService } from '@services/data-dictionary';
-import { parseError } from '@components/ExpressionForm/utils';
+import { flowService } from '@services/flow-service';
+import { parseExpressionError } from '@utils/helpers';
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
@@ -80,22 +79,29 @@ const SelectVariableValueDialog = ({
     }
 
     try {
-      await dataDictionaryService.validateCondition({
-        condition: {
-          name: selectedCell.name,
-          operator: data.operator,
-          expression: value
-        },
-        params: [{ name: selectedCell.name, dataType: selectedCell.dataType }]
-      });
-      handleSubmitForm({ ...data, value });
-    } catch (error) {
-      const dataError = error instanceof AxiosError && parseError(error);
-      if (dataError) {
-        setError('value', {
-          message: dataError.message
+      if (isCondition) {
+        await flowService.validateCondition({
+          condition: {
+            name: selectedCell.name,
+            operator: data.operator,
+            expression: value
+          },
+          params: [{ name: selectedCell.name, dataType: selectedCell.dataType }]
+        });
+      } else {
+        await flowService.validateExpression({
+          expression: value,
+          targetDataType: selectedCell.dataType,
+          params: []
         });
       }
+
+      handleSubmitForm({ ...data, value });
+    } catch (error) {
+      const dataError = parseExpressionError(error);
+      setError('value', {
+        message: dataError?.message
+      });
     }
   };
 
@@ -160,7 +166,7 @@ const SelectVariableValueDialog = ({
               fullWidth
               label="Value*"
               disabled={watchOperator === OPERATORS.ANY}
-              options={getFormatedOptions(
+              options={getFormattedOptions(
                 dataType.isBoolean
                   ? BOOLEAN_OPTIONS
                   : selectedCell.allowedValues || []

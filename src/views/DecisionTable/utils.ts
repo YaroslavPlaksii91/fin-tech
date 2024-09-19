@@ -151,7 +151,7 @@ export const getHeaderCellBgColor = (category: CATEGORY) => {
   }
 };
 
-export const getFormatedOptions = (
+export const getFormattedOptions = (
   enumTypeSelectOptions: string | string[]
 ) => {
   // In case API returns array in string "[ContactTime.Morning,ContactTime.Afternoon]"
