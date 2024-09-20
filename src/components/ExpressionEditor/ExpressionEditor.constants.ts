@@ -9,7 +9,8 @@ enum ExpressionOperatorCategory {
   BASIC_MATH = 'BASIC_MATH',
   BASIC_TEXT = 'BASIC_TEXT',
   MISCELANEOUS = 'MISCELANEOUS',
-  EXTERNAL = 'EXTERNAL'
+  EXTERNAL = 'EXTERNAL',
+  ADVANCED = 'ADVANCED'
 }
 
 export interface FunctionConfig {
@@ -40,6 +41,7 @@ export enum ExpressionEditorFunction {
   SUBSTRING = 'SUBSTRING',
   DATEDIFF = 'DATEDIFF',
   GET_REPORT = 'GET_REPORT',
+  MATCH = 'MATCH',
   STRCMP = 'STRCMP'
 }
 
@@ -201,6 +203,13 @@ export const functionsConfig: FunctionConfig[] = [
     domesticDescription:
       'GET_REPORT(This function accepts two arguments. CRA the Enum that allows two different values: ReportType.CraFactorTrust, ReportType.CraClarity. Should you choose ReportType.CraFactorTrust you do not need to provide the second argument. Whereas if you choose ReportType.CraClarity, you must provide the second argument - the name of the control file in string format e.g.',
     category: ExpressionOperatorCategory.MISCELANEOUS
+  },
+  {
+    literal: ExpressionEditorFunction.MATCH,
+    description:
+      'Indicates whether the specified regular expression (second parameter) finds a match in the specified input string (first parameter)',
+    domesticDescription: 'MATCH(string, pattern)',
+    category: ExpressionOperatorCategory.ADVANCED
   },
   {
     literal: ExpressionEditorFunction.STRCMP,
