@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Grid, Stack, Typography, Box } from '@mui/material';
 
-import { changeHistoryService } from '@services/change-history';
 import Logger from '@utils/logger.ts';
 import { ChangeHistoryRecord } from '@domain/changeHistory.ts';
 import { useLoading } from '@contexts/LoadingContext.tsx';
 import LoadingButton from '@components/shared/LoadingButton.tsx';
 import ChangeHistoryItem from '@components/ChangeHistory/ChangeHistoryItem.tsx';
+import { flowService } from '@services/flow-service';
 
 const PAGE_SIZE = 10;
 
@@ -21,7 +21,7 @@ const ChangeHistoryPage = () => {
       if (page === 1) {
         startLoading();
       }
-      const res = await changeHistoryService.getList(page, PAGE_SIZE);
+      const res = await flowService.getChangeHistoryList(page, PAGE_SIZE);
       if (res.length < PAGE_SIZE) {
         setHasMore(false);
       }

@@ -9,6 +9,7 @@ import {
   VARIABLE_USAGE_MODE
 } from '@domain/dataDictionary';
 import { IFlow } from '@domain/flow';
+import { integrationsService } from '@services/integrations';
 
 const useDataDictionaryVariables = (flow: IFlow) => {
   const [variables, setVariables] = useState<DataDictionaryVariableRecord>();
@@ -22,7 +23,7 @@ const useDataDictionaryVariables = (flow: IFlow) => {
     const [dataDictionaryVariables, integrationVariables] =
       await Promise.allSettled([
         dataDictionaryService.getDataDictionaryVariables(),
-        dataDictionaryService.getIntegrationVariables()
+        integrationsService.getIntegrationVariables()
       ]);
 
     const temporaryVariables =

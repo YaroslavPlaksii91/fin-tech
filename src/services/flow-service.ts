@@ -1,6 +1,8 @@
 import { api } from '@utils/api';
 import { FlowData, IFlow, IFlowDataCreate, IFlowListItem } from '@domain/flow';
 import { JSONPatchOperation } from '@domain/entity';
+import { ChangeHistoryRecord } from '@domain/changeHistory';
+import { ConditionValidate, ExpressionValidate } from '@domain/dataDictionary';
 
 class FlowService {
   async getFlows() {
@@ -64,6 +66,32 @@ class FlowService {
     const res = await api.post(
       '/flows/validate-is-directed-acyclic-graph',
       flow
+    );
+    return res;
+  }
+
+  async getChangeHistoryList(pageNumber: number = 1, pageSize: number = 10) {
+    const { data } = await api.get<ChangeHistoryRecord[]>('/change-history', {
+      params: {
+        pageNumber,
+        pageSize
+      }
+    });
+    return data;
+  }
+
+  async validateExpression(data: ExpressionValidate) {
+    const res = await api.post<ExpressionValidate>(
+      '/expression-builder/validate',
+      data
+    );
+    return res;
+  }
+
+  async validateCondition(data: ConditionValidate) {
+    const res = await api.post<ConditionValidate>(
+      '/expression-builder/validate-condition',
+      data
     );
     return res;
   }

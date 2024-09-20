@@ -52,7 +52,9 @@ export enum OPERATORS {
   GREATER_AND_EQUAL = '>=',
   LESS_AND_EQUAL = '<=',
   BETWEEN = 'between',
-  ANY = 'any'
+  ANY = 'any',
+  CONTAINS = 'contains',
+  NOT_IN = 'not in'
 }
 
 export enum CATEGORIES {

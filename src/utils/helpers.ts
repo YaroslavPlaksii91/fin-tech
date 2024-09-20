@@ -39,7 +39,7 @@ const parseAxiosError = (error: AxiosError) => {
   }
 };
 
-const parseErrorMessages = (error: unknown) => {
+export const parseErrorMessages = (error: unknown) => {
   if (error instanceof AxiosError) {
     return parseAxiosError(error);
   } else {
@@ -47,7 +47,7 @@ const parseErrorMessages = (error: unknown) => {
   }
 };
 
-const parseValidationError = (
+export const parseValidationError = (
   errors: FieldErrors,
   name: string
 ): string | undefined => {
@@ -73,14 +73,14 @@ const parseValidationError = (
   return undefined;
 };
 
-const checkIsProductionFlow = () => {
+export const checkIsProductionFlow = () => {
   const { id } = useParams();
   return id === PRODUCTION_FLOW_ID;
 };
 
 type PermissionCheckTarget = MenuItem | string;
 
-const hasPermission = (
+export const hasPermission = (
   permissions: string[] | undefined,
   target?: PermissionCheckTarget
 ): boolean | undefined => {
@@ -96,16 +96,8 @@ const hasPermission = (
   // update code if MenuItem will have two or more permissions
 };
 
-const getFullUserName = (user: UserInfoModel | null) =>
+export const getFullUserName = (user: UserInfoModel | null) =>
   user ? user.userId : '';
-
-export {
-  parseErrorMessages,
-  parseValidationError,
-  checkIsProductionFlow,
-  hasPermission,
-  getFullUserName
-};
 
 export const removeSingleQuotesODataParams = (odataParams: string) =>
   odataParams.replace(/'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z)'/g, '$1');
@@ -120,4 +112,20 @@ export const downloadFile = (data: BlobPart, filename: string) => {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(href);
+};
+
+type ExpressionError = { message: string; position: number };
+
+export const parseExpressionError = (error: unknown): ExpressionError => {
+  if (
+    error instanceof AxiosError &&
+    error.response &&
+    error.response.data &&
+    typeof error.response.data === 'object' &&
+    'message' in error.response.data
+  ) {
+    return error.response.data as ExpressionError;
+  } else {
+    return { message: GENERAL_SERVER_ERROR, position: 0 };
+  }
 };

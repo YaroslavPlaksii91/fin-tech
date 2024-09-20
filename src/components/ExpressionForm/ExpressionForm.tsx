@@ -25,12 +25,11 @@ import React, {
 } from 'react';
 import { groupBy } from 'lodash';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { AxiosError } from 'axios';
 import pick from 'lodash/pick';
 
 import validationSchema from './validationSchema';
 import { FieldValues } from './types';
-import { mapVariablesToParamsAndSources, parseError } from './utils';
+import { mapVariablesToParamsAndSources } from './utils';
 
 import LoadingButton from '@components/shared/LoadingButton';
 import { Expression } from '@views/Calculation/types';
@@ -48,11 +47,12 @@ import {
   functionsLiterals,
   operatorsConfig
 } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
-import { dataDictionaryService } from '@services/data-dictionary';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext.tsx';
 import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog.tsx';
 import { StepContentWrapper } from '@views/styled';
 import { customBoxShadows } from '@theme';
+import { flowService } from '@services/flow-service';
+import { parseExpressionError } from '@utils/helpers';
 
 const operatorsList = [
   ...Object.values(groupBy(operatorsConfig, 'category')),
@@ -120,7 +120,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
       mapVariablesToParamsAndSources(usageVariables);
 
     try {
-      await dataDictionaryService.validateExpression({
+      await flowService.validateExpression({
         expression: data.expressionString,
         targetDataType: data.variable.dataType,
         params
@@ -137,7 +137,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         id: initialValues?.id
       });
     } catch (error) {
-      const dataError = error instanceof AxiosError && parseError(error);
+      const dataError = parseExpressionError(error);
       if (dataError) {
         setError('expressionString', {
           message: dataError.message

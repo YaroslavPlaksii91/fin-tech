@@ -7,7 +7,7 @@ import { SelectedCell, FormFieldsProps, OPERATORS } from '../types';
 import {
   checkDataType,
   getOperatorOptions,
-  getFormatedOptions
+  getFormattedOptions
 } from '../utils';
 
 import validationSchema from './validationSchema';
@@ -16,8 +16,9 @@ import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
 import InputText from '@components/shared/Forms/InputText';
 import Select from '@components/shared/Forms/Select';
-import { preventIdleTimeout } from '@utils/preventIdleTimeout';
 import { BOOLEAN_OPTIONS } from '@constants/common';
+import { flowService } from '@services/flow-service';
+import { parseExpressionError } from '@utils/helpers';
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
@@ -47,7 +48,8 @@ const SelectVariableValueDialog = ({
     formState: { isSubmitting },
     watch,
     setValue,
-    clearErrors
+    clearErrors,
+    setError
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -63,9 +65,7 @@ const SelectVariableValueDialog = ({
   const watchOperator = watch('operator');
 
   const onSubmit = async (data: FormFieldsProps) => {
-    let value;
-
-    await preventIdleTimeout();
+    let value = '';
 
     switch (data.operator) {
       case OPERATORS.BETWEEN:
@@ -75,10 +75,34 @@ const SelectVariableValueDialog = ({
         value = '';
         break;
       default:
-        value = data.value;
+        value = data.value || '';
     }
 
-    handleSubmitForm({ ...data, value });
+    try {
+      if (isCondition) {
+        await flowService.validateCondition({
+          condition: {
+            name: selectedCell.name,
+            operator: data.operator,
+            expression: value
+          },
+          params: [{ name: selectedCell.name, dataType: selectedCell.dataType }]
+        });
+      } else {
+        await flowService.validateExpression({
+          expression: value,
+          targetDataType: selectedCell.dataType,
+          params: []
+        });
+      }
+
+      handleSubmitForm({ ...data, value });
+    } catch (error) {
+      const dataError = parseExpressionError(error);
+      setError('value', {
+        message: dataError?.message
+      });
+    }
   };
 
   useEffect(() => {
@@ -135,7 +159,7 @@ const SelectVariableValueDialog = ({
               fullWidth
               label="Value*"
               disabled={watchOperator === OPERATORS.ANY}
-              options={getFormatedOptions(
+              options={getFormattedOptions(
                 dataType.isBoolean
                   ? BOOLEAN_OPTIONS
                   : selectedCell.allowedValues || []
@@ -145,12 +169,14 @@ const SelectVariableValueDialog = ({
             <>
               <InputText
                 fullWidth
+                type="number"
                 name="lowerBound"
                 control={control}
                 label="Lowest Value*"
               />
               <InputText
                 fullWidth
+                type="number"
                 name="upperBound"
                 control={control}
                 label="Highest Value*"

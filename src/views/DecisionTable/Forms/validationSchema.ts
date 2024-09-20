@@ -40,16 +40,50 @@ export const validationSchema = yup.object().shape({
     }),
   lowerBound: yup
     .number()
-    .when('operator', ([operator], schema) =>
+    .when(['dataType', 'operator'], ([dataType, operator], schema) =>
       operator === OPERATORS.BETWEEN
-        ? schema.required()
+        ? schema
+            .required('Lowest value is required')
+            .test(
+              'is-decimal',
+              'Lowest value must be a valid decimal',
+              (value) =>
+                dataType === DATA_TYPE_WITHOUT_ENUM.Decimal
+                  ? isDecimal(value)
+                  : true
+            )
+            .test(
+              'is-integer',
+              'Lowest value must be a valid integer',
+              (value) =>
+                dataType === DATA_TYPE_WITHOUT_ENUM.Integer
+                  ? isInteger(value)
+                  : true
+            )
         : schema.notRequired().nullable()
     ),
   upperBound: yup
     .number()
-    .when('operator', ([operator], schema) =>
+    .when(['dataType', 'operator'], ([dataType, operator], schema) =>
       operator === OPERATORS.BETWEEN
-        ? schema.required()
+        ? schema
+            .required('Highest value is required')
+            .test(
+              'is-decimal',
+              'Lowest value must be a valid decimal',
+              (value) =>
+                dataType === DATA_TYPE_WITHOUT_ENUM.Decimal
+                  ? isDecimal(value)
+                  : true
+            )
+            .test(
+              'is-integer',
+              'Lowest value must be a valid integer',
+              (value) =>
+                dataType === DATA_TYPE_WITHOUT_ENUM.Integer
+                  ? isInteger(value)
+                  : true
+            )
         : schema.notRequired().nullable()
     )
 });

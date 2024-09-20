@@ -19,7 +19,13 @@ export const getOperatorOptions = (dataType: DATA_TYPE) => {
 
   switch (dataType) {
     case String:
-      operators = [OPERATORS.IN, OPERATORS.EQUAL, OPERATORS.NOT_EQUAL];
+      operators = [
+        OPERATORS.IN,
+        OPERATORS.NOT_IN,
+        OPERATORS.CONTAINS,
+        OPERATORS.EQUAL,
+        OPERATORS.NOT_EQUAL
+      ];
       break;
     case Integer:
     case Decimal:
@@ -142,7 +148,7 @@ export const getHeaderCellBgColor = (category: CATEGORY) => {
   }
 };
 
-export const getFormatedOptions = (
+export const getFormattedOptions = (
   enumTypeSelectOptions: string | string[]
 ) => {
   // In case API returns array in string "[ContactTime.Morning,ContactTime.Afternoon]"
