@@ -128,7 +128,11 @@ const getDataGridColumns = (data: WaterfallReport['item2']) => {
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' '),
       width: 220,
-      valueFormatter: (value) => value || '-'
+      valueFormatter: (value: number) => {
+        const isCostOrSavings = /cost|savings/i.test(column);
+        if (value && isCostOrSavings) return `$${value}`;
+        return value || '-';
+      }
     })
   );
 
