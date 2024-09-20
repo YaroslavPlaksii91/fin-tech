@@ -4,11 +4,13 @@ import { lightGreen } from '@mui/material/colors';
 
 import { ColumnData } from '../types';
 import { getHeaderCellBgColor, filterVariablesByUsageMode } from '../utils';
-import VariableInput from '../VariableInput';
 import { STEP } from '../constants';
+
+import VariableInput from './VariableInput';
 
 import TrashIcon from '@icons/trash.svg';
 import AddIcon from '@icons/plusSquare.svg';
+import EditIcon from '@icons/editPencil.svg';
 import GridSquarePlusIcon from '@icons/gridSquarePlus.svg';
 import { DataDictionaryVariable, Variable } from '@domain/dataDictionary';
 import { StyledTableRow } from '@components/shared/Table/styled';
@@ -62,8 +64,8 @@ const VariablesRow = ({
         key: 'add-variable-action',
         disabled: column.name === STEP,
         onClick: handleAddVariable,
-        icon: <AddIcon height={24} width={24} />,
-        text: `Add ${column.category === 'conditions' ? 'Input' : 'Output'} Variable`
+        icon: column.name ? <AddIcon height={24} width={24} /> : <EditIcon />,
+        text: `${column.name ? 'Edit' : 'Add'} ${column.category === 'conditions' ? 'Input' : 'Output'} Variable`
       },
       {
         key: 'add-column-action',

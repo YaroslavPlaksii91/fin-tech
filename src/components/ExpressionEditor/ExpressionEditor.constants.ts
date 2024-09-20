@@ -41,7 +41,8 @@ export enum ExpressionEditorFunction {
   SUBSTRING = 'SUBSTRING',
   DATEDIFF = 'DATEDIFF',
   GET_REPORT = 'GET_REPORT',
-  MATCH = 'MATCH'
+  MATCH = 'MATCH',
+  STRCMP = 'STRCMP'
 }
 
 // POST MVP
@@ -209,6 +210,13 @@ export const functionsConfig: FunctionConfig[] = [
       'Indicates whether the specified regular expression (second parameter) finds a match in the specified input string (first parameter)',
     domesticDescription: 'MATCH(string, pattern)',
     category: ExpressionOperatorCategory.ADVANCED
+  },
+  {
+    literal: ExpressionEditorFunction.STRCMP,
+    description:
+      'Compares two string and return true if they are equal, otherwise false',
+    domesticDescription: 'STRCMP(string1, string2)',
+    category: ExpressionOperatorCategory.BASIC_TEXT
   }
 ];
 

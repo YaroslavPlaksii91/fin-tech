@@ -279,22 +279,22 @@ const DecisionTable = ({
     { category, rowIndex, columnIndex }: SelectedCell
   ) => {
     setCaseEntries((prev) =>
-      prev.map((row, currentRowIndex) =>
-        currentRowIndex !== rowIndex
-          ? row
-          : {
-              ...row,
-              [category]: row[category]?.map((column, currentColumnIndex) =>
-                currentColumnIndex !== columnIndex
-                  ? column
-                  : {
-                      ...column,
-                      expression: data.value,
-                      operator: data.operator
-                    }
-              )
-            }
-      )
+      prev.map((row, currentRowIndex) => {
+        if (currentRowIndex !== rowIndex) return row;
+
+        return {
+          ...row,
+          [category]: row[category]?.map((column, currentColumnIndex) =>
+            currentColumnIndex !== columnIndex
+              ? column
+              : {
+                  ...column,
+                  expression: data.value,
+                  operator: data.operator
+                }
+          )
+        };
+      })
     );
   };
 

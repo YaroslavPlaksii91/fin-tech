@@ -82,17 +82,10 @@ const SelectVariableValueDialog = ({
   };
 
   useEffect(() => {
+    if (watchOperator === OPERATORS.ANY) setValue('value', '');
+
     clearErrors();
   }, [watchOperator]);
-
-  useEffect(() => {
-    if (watchOperator === OPERATORS.ANY) {
-      setValue('value', '');
-      return;
-    }
-
-    if (dataType.isObject) setValue('value', 'null');
-  }, [watchOperator, dataType.isObject]);
 
   return (
     <Dialog
@@ -169,7 +162,7 @@ const SelectVariableValueDialog = ({
               name="value"
               control={control}
               label="Value*"
-              disabled={watchOperator === OPERATORS.ANY || dataType.isObject}
+              disabled={watchOperator === OPERATORS.ANY}
             />
           )}
         </Stack>

@@ -18,4 +18,3 @@ const INITIAL_CASE_ENTRY: CaseEntry = {
 export const INITIAL_CASE_ENTRIES = [INITIAL_CASE_ENTRY, INITIAL_CASE_ENTRY];
 
 export const STEP = 'Step';
-export const OBJECT = 'Object';
