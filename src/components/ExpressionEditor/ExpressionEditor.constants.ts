@@ -36,13 +36,14 @@ export enum ExpressionEditorFunction {
   INT = 'INT',
   LEFT = 'LEFT',
   RIGHT = 'RIGHT',
-  CONTAIN = 'CONTAIN',
+  CONTAINS = 'CONTAINS',
   LEN = 'LEN',
   SUBSTRING = 'SUBSTRING',
   DATEDIFF = 'DATEDIFF',
   GET_REPORT = 'GET_REPORT',
   MATCH = 'MATCH',
-  STRCMP = 'STRCMP'
+  STRCMP = 'STRCMP',
+  DOESNOTCONTAIN = 'DOESNOTCONTAIN'
 }
 
 // POST MVP
@@ -173,9 +174,9 @@ export const functionsConfig: FunctionConfig[] = [
     category: ExpressionOperatorCategory.BASIC_TEXT
   },
   {
-    literal: ExpressionEditorFunction.CONTAIN,
+    literal: ExpressionEditorFunction.CONTAINS,
     description: 'Check whether the string contains the given value',
-    domesticDescription: 'CONTAIN(string, [search_query])',
+    domesticDescription: 'CONTAINS(string, [search_query])',
     category: ExpressionOperatorCategory.BASIC_TEXT
   },
   {
@@ -216,6 +217,12 @@ export const functionsConfig: FunctionConfig[] = [
     description:
       'Compares two string and return true if they are equal, otherwise false',
     domesticDescription: 'STRCMP(string1, string2)',
+    category: ExpressionOperatorCategory.BASIC_TEXT
+  },
+  {
+    literal: ExpressionEditorFunction.DOESNOTCONTAIN,
+    description: "Check whether the string doesn't contain the given value",
+    domesticDescription: 'DOESNOTCONTAIN(string, [search_query])',
     category: ExpressionOperatorCategory.BASIC_TEXT
   }
 ];
