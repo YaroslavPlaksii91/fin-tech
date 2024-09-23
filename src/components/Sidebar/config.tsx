@@ -2,7 +2,9 @@ import DotIcon from '@icons/dot.svg';
 import { permissionsMap } from '@constants/permissions';
 import { theme } from '@theme';
 import routes from '@constants/routes';
+import { PRODUCTION_FLOW_ID } from '@constants/common';
 import ChangesHistoryIcon from '@icons/changes-history.svg';
+import DataDictionaryIcon from '@icons/data-dictionary.svg';
 
 const iconSize = 24;
 
@@ -37,6 +39,16 @@ export interface MenuItem {
 }
 
 export const pages = [
+  {
+    icon: <DataDictionaryIcon />,
+    text: 'Data Dictionary',
+    to: routes.underwriting.flow.dataDictionary(PRODUCTION_FLOW_ID),
+    permission: permissionsMap.canViewFlow,
+    activeUrl: routes.underwriting.flow
+      .dataDictionary(PRODUCTION_FLOW_ID)
+      .split('/')
+      .pop()
+  },
   {
     icon: <ChangesHistoryIcon />,
     text: 'Changes History',

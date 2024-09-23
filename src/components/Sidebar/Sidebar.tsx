@@ -15,7 +15,7 @@ import {
   MenuItem,
   Typography
 } from '@mui/material';
-import { NavLink, useParams } from 'react-router-dom';
+import { NavLink, useParams, useLocation } from 'react-router-dom';
 
 import {
   Label,
@@ -66,6 +66,7 @@ import ReportsIcon from '@icons/reports.svg';
 
 const Sidebar = () => {
   const { id } = useParams();
+  const location = useLocation();
   const dispatch = useAppDispatch();
   const { resetActive } = useActiveStep();
   const { startLoading, stopLoading } = useLoading();
@@ -387,6 +388,11 @@ const Sidebar = () => {
                 component={NavLink}
                 to={item.to}
                 expanded={expanded ? 1 : 0}
+                className={
+                  location.pathname.includes(item.activeUrl as string)
+                    ? 'active'
+                    : ''
+                }
               >
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 {expanded && (

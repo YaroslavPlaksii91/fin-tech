@@ -17,6 +17,7 @@ import TabPanel from './Tabs/TabPanel';
 import { StyledTab } from './styled';
 import { TAB } from './types';
 import Filters, { IFormState } from './Filters';
+import FlowSelect from './FlowSelect';
 
 import TuneIcon from '@icons/tune.svg';
 import { theme } from '@theme';
@@ -131,9 +132,23 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
   return (
     <Stack>
-      <Typography variant="h4" pt={1} pb={1} color={theme.palette.text.primary}>
-        Data Dictionary
-      </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
+        <Typography
+          variant="h4"
+          pt={1}
+          pb={1}
+          color={theme.palette.text.primary}
+        >
+          Data Dictionary
+        </Typography>
+        <FlowSelect />
+      </Box>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
           value={tab}
