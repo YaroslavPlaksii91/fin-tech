@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridSortModel } from '@mui/x-data-grid-premium';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
-import { Dayjs } from 'dayjs';
 
-import { FetchList, IDateFilters } from './types';
+import { COLUMN_IDS, FetchData, IFilters } from './types';
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
   DEFAULT_EXPORT_FILE_NAME,
   DEFAULT_SORT,
-  INITIAL_DATE_FILTERS,
+  INITIAL_FILTERS,
   TOTAL_ROW_NAME
 } from './constants';
 import { StyledDataGridPremium } from './styled';
@@ -21,23 +20,21 @@ import { TABLE } from '@constants/themeConstants';
 import TuneIcon from '@icons/tune.svg';
 import { WaterfallReport } from '@domain/waterfallReport';
 import ExportCSVButton from '@components/shared/ExportCSVButton';
-import { getDateInUTC } from '@utils/date';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
-import Filters, { IFormState } from '@components/Waterfall/Filters';
+import Filters from '@components/Waterfall/Filters';
+import { Option } from '@components/shared/Forms/Select';
 
 const Waterfall = () => {
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState(DEFAULT_SORT);
-  const [data, setData] = useState<WaterfallReport>({ item1: 0, item2: [] });
+  const [data, setData] = useState<WaterfallReport[]>([]);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [dateFilters, setDateFilters] =
-    useState<IDateFilters>(INITIAL_DATE_FILTERS);
-  const [stack, setStack] = useState('');
-  const [campaignId, setCampaignId] = useState('');
+  const [filters, setFilters] = useState<IFilters>(INITIAL_FILTERS);
+  const [stackOptions, setStackOptions] = useState<Option[]>([]);
+  const [campaignIdOptions, setCampaignIdOptions] = useState<Option[]>([]);
 
-  const columns = useMemo(() => getDataGridColumns(data.item2), [data.item2]);
-
-  const rows = useMemo(() => getFormattedRows(data.item2), [data.item2]);
+  const columns = useMemo(() => getDataGridColumns(data), [data]);
+  const rows = useMemo(() => getFormattedRows(data), [data]);
 
   const totalRow = useMemo(
     () => rows.filter((row) => row.stack === TOTAL_ROW_NAME),
@@ -49,28 +46,23 @@ const Waterfall = () => {
   const handleFiltersClose = () => setIsFiltersOpen(false);
 
   const handleFiltersReset = () => {
-    setDateFilters(INITIAL_DATE_FILTERS);
-    setCampaignId('');
-    setStack('');
+    setFilters(INITIAL_FILTERS);
     handleFiltersClose();
   };
 
-  const handleSubmit = (data: IFormState) => {
-    setDateFilters(data.dateFilters);
-    setCampaignId(data.campaignId);
-    setStack(data.stack);
+  const handleSubmit = (data: IFilters) => {
+    setFilters(data);
     handleFiltersClose();
   };
 
-  const handleSortModelChange = (model: GridSortModel) => {
+  const handleSortModelChange = useCallback((model: GridSortModel) => {
     if (!model.length) return;
-    const formatedSortField = model[0].sort === 'asc' ? '' : '-';
-    const sortParams = `${formatedSortField}${model[0].field}`;
+    const sortParams = `${model[0].field} ${model[0].sort}`;
 
     setSort(sortParams);
-  };
+  }, []);
 
-  const fetchList = useCallback(async (params: FetchList) => {
+  const fetchData = useCallback(async (params: FetchData) => {
     setLoading(true);
 
     try {
@@ -84,52 +76,37 @@ const Waterfall = () => {
     }
   }, []);
 
-  const buildWaterfallParams = ({
-    sort,
-    stack,
-    campaignId,
-    dateFrom,
-    dateTo
-  }: {
-    sort: string;
-    stack: string;
-    campaignId: string;
-    dateFrom: Dayjs | null;
-    dateTo: Dayjs | null;
-  }) => ({
-    sortBy: sort,
-    pageSize: 10000, // temporary desion to retrive all records
-    stack: stack || undefined,
-    campaign: campaignId || undefined,
-    startTime: dateFrom ? getDateInUTC(dateFrom).toISOString() : undefined,
-    endTime: dateTo ? getDateInUTC(dateTo).toISOString() : undefined
-  });
+  const handleExport = useCallback(
+    async () => reportingService.getWaterfallReportExportCSV({ params: {} }),
+    [sort, filters]
+  );
 
-  const fetch = useCallback(() => {
-    const params = buildWaterfallParams({
-      sort,
-      stack,
-      campaignId,
-      dateFrom: dateFilters.from,
-      dateTo: dateFilters.to
-    });
+  const getOptions = async () => {
+    setLoading(true);
+    const [stack, campaignId] = await Promise.allSettled([
+      reportingService.getWaterfallReportUniqueValuesByField(COLUMN_IDS.stack),
+      reportingService.getWaterfallReportUniqueValuesByField(
+        COLUMN_IDS.campaignId
+      )
+    ]);
 
-    void fetchList(params);
-  }, [sort, stack, campaignId, dateFilters]);
+    if (stack.status === 'fulfilled' && campaignId.status === 'fulfilled') {
+      setStackOptions(stack.value.map((value) => ({ value, label: value })));
+      setCampaignIdOptions(
+        campaignId.value.map((value) => ({ value, label: value }))
+      );
+    }
 
-  useEffect(() => fetch(), [fetch]);
+    setLoading(false);
+  };
 
-  const handleExportWaterfallReports = useCallback(async () => {
-    const params = buildWaterfallParams({
-      sort,
-      stack,
-      campaignId,
-      dateFrom: dateFilters.from,
-      dateTo: dateFilters.to
-    });
+  useEffect(() => {
+    void fetchData({});
+  }, [sort, filters]);
 
-    return reportingService.getWaterfallReportExportCSV({ params });
-  }, [sort, stack, campaignId, dateFilters]);
+  useEffect(() => {
+    void getOptions();
+  }, []);
 
   return (
     <Box sx={{ padding: '16px 24px' }}>
@@ -149,7 +126,7 @@ const Waterfall = () => {
         >
           <ExportCSVButton
             defaultFileName={DEFAULT_EXPORT_FILE_NAME}
-            exportFile={handleExportWaterfallReports}
+            exportFile={handleExport}
           />
           <Button
             size="small"
@@ -195,9 +172,9 @@ const Waterfall = () => {
       </Paper>
       <Filters
         isOpen={isFiltersOpen}
-        dateFilters={dateFilters}
-        stack={stack}
-        campaignId={campaignId}
+        filters={filters}
+        stackOptions={stackOptions}
+        campaignIdOptions={campaignIdOptions}
         onReset={handleFiltersReset}
         onSubmit={handleSubmit}
         onClose={handleFiltersClose}
