@@ -21,7 +21,7 @@ import { StyledError } from './styled';
 
 import CloseIcon from '@icons/cross.svg';
 
-type Option = {
+export type Option = {
   label: string;
   value: string | number;
 };
