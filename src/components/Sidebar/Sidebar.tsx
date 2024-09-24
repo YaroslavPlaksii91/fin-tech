@@ -389,7 +389,7 @@ const Sidebar = () => {
                 to={item.to}
                 expanded={expanded ? 1 : 0}
                 className={
-                  location.pathname.includes(item.activeUrl as string)
+                  item.activeUrl && location.pathname.includes(item.activeUrl)
                     ? 'active'
                     : ''
                 }

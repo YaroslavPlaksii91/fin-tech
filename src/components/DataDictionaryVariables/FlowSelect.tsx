@@ -1,5 +1,10 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { FormControl, InputLabel, MenuItem } from '@mui/material';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  SelectChangeEvent
+} from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { StyledSelect, StyledListSubheader } from './styled';
@@ -13,19 +18,21 @@ const FlowSelect = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { flowList, flowProduction } = useAppSelector(selectFlowList);
+  const flowId = id === PRODUCTION_FLOW_ID ? PRODUCTION_FLOW_ID : id;
+
+  const handleChange = (event: SelectChangeEvent<unknown>) => {
+    const selectedValue = event.target.value as string;
+    const id =
+      selectedValue === PRODUCTION_FLOW_ID ? PRODUCTION_FLOW_ID : selectedValue;
+    navigate(routes.underwriting.flow.dataDictionary(id));
+  };
 
   return (
     <FormControl sx={{ width: 320 }}>
       <InputLabel>Select Flow</InputLabel>
       <StyledSelect
-        value={id === PRODUCTION_FLOW_ID ? PRODUCTION_FLOW_ID : id}
-        onChange={(event) => {
-          const id =
-            event.target.value === PRODUCTION_FLOW_ID
-              ? PRODUCTION_FLOW_ID
-              : event.target.value;
-          navigate(routes.underwriting.flow.dataDictionary(String(id)));
-        }}
+        value={flowId}
+        onChange={handleChange}
         label="Select Flow"
         defaultValue={PRODUCTION_FLOW_ID}
         IconComponent={ExpandMoreIcon}
