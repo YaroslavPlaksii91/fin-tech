@@ -108,7 +108,7 @@ const STATIC_COLUMNS: GridColDef[] = [
   }
 ];
 
-const getDataGridColumns = (data: WaterfallReport['item2']) => {
+const getDataGridColumns = (data: WaterfallReport[]) => {
   const externalSystemsColumns = getExternalSystemsColumns(data);
 
   const dynamicColumns: GridColDef[] = externalSystemsColumns.map(

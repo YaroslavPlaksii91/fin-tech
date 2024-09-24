@@ -1,6 +1,6 @@
-import { ExternalSystemsData } from '@domain/waterfallReport';
+import { IRangeFilter, RANGE_FILTERS_KEYS, RangeFiltersKey } from './types';
 
-export const DEFAULT_SORT = 'totalLooks';
+export const DEFAULT_SORT = 'totalLooks asc';
 export const TOTAL_ROW_NAME = 'Total';
 
 export const GROUP_COLORS_NAMES = [
@@ -8,19 +8,79 @@ export const GROUP_COLORS_NAMES = [
   'teal',
   'lightGreen',
   'deepPurple'
-];
+] as const;
 
-export const EXTERNAL_SYSTEM_KEYS: (keyof ExternalSystemsData)[] = [
+export const EXTERNAL_SYSTEM_KEYS = [
   'looks',
   'approved',
   'cost',
   'savings',
   'timeouts'
-];
+] as const;
 
 export const DEFAULT_EXPORT_FILE_NAME = 'waterfall-reports';
 
-export const INITIAL_DATE_FILTERS = {
+export const INITIAL_DATE_FILTER = {
   from: null,
   to: null
+};
+
+export const INITIAL_RANGE_FILTER = { from: '', to: '' };
+
+export const RANGE_FILTERS_GROUPS = [
+  {
+    name: RANGE_FILTERS_KEYS.totalLooks,
+    title: 'Total Looks'
+  },
+  {
+    name: RANGE_FILTERS_KEYS.totalApproved,
+    title: 'Total Approved'
+  },
+  {
+    name: RANGE_FILTERS_KEYS.totalApprovalRate,
+    title: 'Total Approval Rate'
+  },
+  {
+    name: RANGE_FILTERS_KEYS.totalCost,
+    title: 'Total Cost',
+    symb: '$'
+  },
+  {
+    name: RANGE_FILTERS_KEYS.totalCPA,
+    title: 'Total CPA',
+    symb: '$'
+  },
+  {
+    name: RANGE_FILTERS_KEYS.totalLeadCost,
+    title: 'Total Lead Cost',
+    symb: '$'
+  },
+  {
+    name: RANGE_FILTERS_KEYS.totalDataCost,
+    title: 'Total Data Cost',
+    symb: '$'
+  },
+  {
+    name: RANGE_FILTERS_KEYS.totalTimeouts,
+    title: 'Total Timeouts'
+  },
+  {
+    name: RANGE_FILTERS_KEYS.totalCostSavings,
+    title: 'Total Cost Savings',
+    symb: '$'
+  },
+  {
+    name: RANGE_FILTERS_KEYS.totalCachedLeads,
+    title: 'Total Cached Leads'
+  }
+];
+
+export const INITIAL_FILTERS = {
+  stack: [],
+  campaignId: [],
+  date: INITIAL_DATE_FILTER,
+  ...RANGE_FILTERS_GROUPS.reduce(
+    (acc, { name }) => ({ ...acc, [name]: INITIAL_RANGE_FILTER }),
+    {} as Record<RangeFiltersKey, IRangeFilter>
+  )
 };

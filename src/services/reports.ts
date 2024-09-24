@@ -38,20 +38,27 @@ class ReportingService {
   }
 
   async getWaterfallReport({ params }: GetWaterfallReport) {
-    const { data } = await reportApi.get<WaterfallReport>(`/waterfall-report`, {
-      params
-    });
+    const { data } = await reportApi.get<WaterfallReport[]>(
+      `/waterfall-report`,
+      {
+        params
+      }
+    );
+    return data;
+  }
+
+  async getWaterfallReportUniqueValuesByField(field: string) {
+    const { data } = await reportApi.get<string[]>(
+      `/waterfall-report/${field}`
+    );
     return data;
   }
 
   async getWaterfallReportExportCSV({ params }: GetWaterfallReport) {
-    const res = await reportApi.get<WaterfallReport>(
-      `/waterfall-report/export`,
-      {
-        params,
-        responseType: 'blob'
-      }
-    );
+    const res = await reportApi.get(`/waterfall-report/export`, {
+      params,
+      responseType: 'blob'
+    });
     return res;
   }
 
