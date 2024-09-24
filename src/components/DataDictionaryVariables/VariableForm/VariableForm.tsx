@@ -79,7 +79,9 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       name: formData ? formData.name : '',
-      sourceType: VARIABLE_SOURCE_TYPE_OPTIONS[0].value,
+      sourceType: formData
+        ? (formData.sourceType as VARIABLE_SOURCE_TYPE)
+        : VARIABLE_SOURCE_TYPE_OPTIONS[0].value,
       dataType: formData ? formData.dataType : DATA_TYPE_WITHOUT_ENUM.String,
       defaultValue: formData ? formData.defaultValue : '',
       description: formData ? formData.description : ''
