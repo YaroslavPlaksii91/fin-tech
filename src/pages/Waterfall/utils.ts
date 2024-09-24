@@ -3,7 +3,7 @@ import { COLUMN_IDS } from './types';
 
 import { WaterfallReport } from '@domain/waterfallReport';
 
-export const getExternalSystemsColumns = (data: WaterfallReport['item2']) => {
+export const getExternalSystemsColumns = (data: WaterfallReport[]) => {
   const setOfExternalSystemNames = new Set<string>();
 
   data.forEach((row) => {
@@ -19,7 +19,7 @@ export const getExternalSystemsColumns = (data: WaterfallReport['item2']) => {
     .flat(1);
 };
 
-export const getFormattedRows = (data: WaterfallReport['item2']) =>
+export const getFormattedRows = (data: WaterfallReport[]) =>
   data.map((row, index) => {
     const extractedExternalSystemsData = row.externalSystemsData.reduce(
       (rowAcc, system) => ({
