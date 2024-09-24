@@ -3,7 +3,7 @@ import { GridSortModel } from '@mui/x-data-grid-premium';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 
 import { COLUMN_IDS, FetchData, IFilters } from './types';
-import { getFormattedRows } from './utils';
+import { getFormattedRows, buildParams } from './utils';
 import getDataGridColumns from './columns';
 import {
   DEFAULT_EXPORT_FILE_NAME,
@@ -77,7 +77,10 @@ const Waterfall = () => {
   }, []);
 
   const handleExport = useCallback(
-    async () => reportingService.getWaterfallReportExportCSV({ params: {} }),
+    async () =>
+      reportingService.getWaterfallReportExportCSV({
+        params: buildParams({ sort, filters })
+      }),
     [sort, filters]
   );
 
@@ -101,7 +104,7 @@ const Waterfall = () => {
   };
 
   useEffect(() => {
-    void fetchData({});
+    void fetchData(buildParams({ sort, filters }));
   }, [sort, filters]);
 
   useEffect(() => {
