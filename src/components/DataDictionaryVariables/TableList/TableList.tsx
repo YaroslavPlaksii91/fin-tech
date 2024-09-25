@@ -25,7 +25,8 @@ import {
   Variable,
   VariableUsageParams,
   VARIABLE_SOURCE_TYPE,
-  DATA_TYPE_WITHOUT_ENUM
+  DATA_TYPE_WITHOUT_ENUM,
+  UserDefinedVariable
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { useAppSelector } from '@store/hooks';
@@ -53,7 +54,10 @@ const TableList = ({
   flowId
 }: TableListProps) => {
   const [selectedVariable, setSelectedVariable] = useState<
-    Variable & { index: number; variableIsUsed: boolean }
+    UserDefinedVariable & {
+      index: number;
+      variableIsUsed: boolean;
+    }
   >();
 
   const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
@@ -97,7 +101,10 @@ const TableList = ({
     setIsDeleteModalOpen(false);
   };
 
-  const handleVariable = (row: Variable, variableUsageStepIds: string[]) => {
+  const handleVariable = (
+    row: UserDefinedVariable,
+    variableUsageStepIds: string[]
+  ) => {
     let variables;
 
     switch (row.sourceType) {
@@ -120,12 +127,18 @@ const TableList = ({
     });
   };
 
-  const handleEditClick = (row: Variable, variableUsageStepIds: string[]) => {
+  const handleEditClick = (
+    row: UserDefinedVariable,
+    variableUsageStepIds: string[]
+  ) => {
     handleVariable(row, variableUsageStepIds);
     setIsVariableModalOpen(true);
   };
 
-  const handleDeleteClick = (row: Variable, variableUsageStepIds: string[]) => {
+  const handleDeleteClick = (
+    row: UserDefinedVariable,
+    variableUsageStepIds: string[]
+  ) => {
     handleVariable(row, variableUsageStepIds);
     setIsDeleteModalOpen(true);
   };

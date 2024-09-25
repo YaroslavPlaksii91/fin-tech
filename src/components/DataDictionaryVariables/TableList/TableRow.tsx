@@ -14,7 +14,7 @@ import {
   StyledTableCell,
   StyledTableRow
 } from '@components/shared/Table/styled';
-import { Variable } from '@domain/dataDictionary';
+import { UserDefinedVariable, Variable } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { dataDictionaryService } from '@services/data-dictionary';
 import Logger from '@utils/logger';
@@ -33,8 +33,8 @@ type TableRowProps = {
   flowId: string;
   flowNodes: FlowNode[];
   userDefinedUsageStepIds: string[] | undefined;
-  onDelete: (row: Variable, variableUsageStepIds: string[]) => void;
-  onEdit: (row: Variable, variableUsageStepIds: string[]) => void;
+  onDelete: (row: UserDefinedVariable, variableUsageStepIds: string[]) => void;
+  onEdit: (row: UserDefinedVariable, variableUsageStepIds: string[]) => void;
 };
 
 export const TableRow = ({
@@ -144,7 +144,7 @@ export const TableRow = ({
                     width: 'auto',
                     p: 0
                   }}
-                  onClick={() => onEdit(row, stepIds)}
+                  onClick={() => onEdit(row as UserDefinedVariable, stepIds)}
                 >
                   <EditIcon color={theme.palette.action.active} />
                 </Button>
@@ -154,7 +154,7 @@ export const TableRow = ({
                     width: 'auto',
                     p: 0
                   }}
-                  onClick={() => onDelete(row, stepIds)}
+                  onClick={() => onDelete(row as UserDefinedVariable, stepIds)}
                 >
                   <TrashIcon color={theme.palette.error.main} />
                 </Button>
