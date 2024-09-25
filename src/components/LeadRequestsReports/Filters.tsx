@@ -5,6 +5,7 @@ import DatePicker from '@components/shared/Forms/DatePicker';
 import InputText from '@components/shared/Forms/InputText';
 import { IFilters } from '@pages/LeadRequestsReports/types';
 import Range from '@components/shared/Forms/Range';
+import Autocomplete from '@components/shared/Autocomplete/Autocomplete';
 
 interface FiltersProps
   extends Pick<TemplateProps, 'isOpen' | 'onClose' | 'onReset'> {
@@ -40,6 +41,12 @@ const Filters = ({
         name="requestId"
         label="Request ID"
         placeholder="Request ID"
+        control={control}
+      />
+      <Autocomplete
+        label="Lead Provider"
+        placeholder="Lead Provider"
+        name="leadProvider"
         control={control}
       />
       <InputText

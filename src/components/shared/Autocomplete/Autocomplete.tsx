@@ -6,11 +6,19 @@ import {
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { useState } from 'react';
+import {
+  useController,
+  FieldValues,
+  FieldPath,
+  UseControllerProps
+} from 'react-hook-form';
 
 import { CircularProgress } from '@components/shared/Icons';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
+type Option = { title: string };
 
 function sleep(duration: number): Promise<void> {
   return new Promise<void>((resolve) => {
@@ -20,25 +28,34 @@ function sleep(duration: number): Promise<void> {
   });
 }
 
-type AutocompleteProps = {
+type AutocompleteProps<
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>
+> = UseControllerProps<TFieldValues, TName> & {
   placeholder: string;
+  label: string;
 };
 
-type Option = { title: string };
+const Autocomplete = <
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>
+>({
+  control,
+  name,
+  placeholder
+}: AutocompleteProps<TFieldValues, TName>) => {
+  const { field, fieldState } = useController({ control, name });
 
-const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder }) => {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<{ title: string; year: number }[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleOpen = () => {
     setOpen(true);
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    (async () => {
+    void (async () => {
       setLoading(true);
-      await sleep(1e3); // For demo purposes.
+      await sleep(1000);
       setLoading(false);
-
       setOptions([...topFilms]);
     })();
   };
@@ -62,18 +79,20 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder }) => {
       getOptionLabel={(option: Option) => option.title}
       renderTags={(selected) =>
         selected.map((option, index) => (
-          <span key={index}> {option.title}, </span>
+          <span key={index}>{option.title}, </span>
         ))
       }
-      renderOption={(props, option: Option, { selected }) => {
-        const { ...optionProps } = props;
+      renderOption={(props, option: Option) => {
+        const isSelected = (field.value || []).some(
+          (selectedOption: Option) => selectedOption.title === option.title
+        );
         return (
-          <li {...optionProps}>
+          <li {...props}>
             <Checkbox
               icon={icon}
               checkedIcon={checkedIcon}
               style={{ marginRight: 8 }}
-              checked={selected}
+              checked={isSelected}
             />
             {option.title}
           </li>
@@ -83,8 +102,9 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder }) => {
         <TextField
           {...params}
           size="small"
-          sx={{ padding: 0 }}
           placeholder={placeholder}
+          error={!!fieldState.error}
+          helperText={fieldState.error?.message}
           InputProps={{
             ...params.InputProps,
             endAdornment: (
@@ -96,6 +116,8 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder }) => {
           }}
         />
       )}
+      onChange={(_, data) => field.onChange(data)}
+      value={field.value || []}
     />
   );
 };
@@ -110,44 +132,6 @@ const topFilms = [
   { title: '12 Angry Men', year: 1957 },
   { title: "Schindler's List", year: 1993 },
   { title: 'Pulp Fiction', year: 1994 },
-  {
-    title: 'The Lord of the Rings: The Return of the King',
-    year: 2003
-  },
-  { title: 'The Good, the Bad and the Ugly', year: 1966 },
   { title: 'Fight Club', year: 1999 },
-  {
-    title: 'The Lord of the Rings: The Fellowship of the Ring',
-    year: 2001
-  },
-  {
-    title: 'Star Wars: Episode V - The Empire Strikes Back',
-    year: 1980
-  },
-  { title: 'Forrest Gump', year: 1994 },
-  { title: 'Inception', year: 2010 },
-  {
-    title: 'The Lord of the Rings: The Two Towers',
-    year: 2002
-  },
-  { title: "One Flew Over the Cuckoo's Nest", year: 1975 },
-  { title: 'Goodfellas', year: 1990 },
-  { title: 'The Matrix', year: 1999 },
-  { title: 'Seven Samurai', year: 1954 },
-  {
-    title: 'Star Wars: Episode IV - A New Hope',
-    year: 1977
-  },
-  { title: 'City of God', year: 2002 },
-  { title: 'Se7en', year: 1995 },
-  { title: 'The Silence of the Lambs', year: 1991 },
-  { title: "It's a Wonderful Life", year: 1946 },
-  { title: 'Life Is Beautiful', year: 1997 },
-  { title: 'The Usual Suspects', year: 1995 },
-  { title: 'Léon: The Professional', year: 1994 },
-  { title: 'Spirited Away', year: 2001 },
-  { title: 'Saving Private Ryan', year: 1998 },
-  { title: 'Once Upon a Time in the West', year: 1968 },
-  { title: 'American History X', year: 1998 },
-  { title: 'Interstellar', year: 2014 }
+  { title: 'Inception', year: 2010 }
 ];
