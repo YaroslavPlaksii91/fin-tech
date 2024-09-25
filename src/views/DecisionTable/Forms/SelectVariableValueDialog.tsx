@@ -79,21 +79,25 @@ const SelectVariableValueDialog = ({
     }
 
     try {
-      if (isCondition) {
-        await flowService.validateCondition({
-          condition: {
-            name: selectedCell.name,
-            operator: data.operator,
-            expression: value
-          },
-          params: [{ name: selectedCell.name, dataType: selectedCell.dataType }]
-        });
-      } else {
-        await flowService.validateExpression({
-          expression: value,
-          targetDataType: selectedCell.dataType,
-          params: []
-        });
+      if (data.operator !== OPERATORS.ANY) {
+        if (isCondition) {
+          await flowService.validateCondition({
+            condition: {
+              name: selectedCell.name,
+              operator: data.operator,
+              expression: value
+            },
+            params: [
+              { name: selectedCell.name, dataType: selectedCell.dataType }
+            ]
+          });
+        } else {
+          await flowService.validateExpression({
+            expression: value,
+            targetDataType: selectedCell.dataType,
+            params: []
+          });
+        }
       }
 
       handleSubmitForm({ ...data, value });
