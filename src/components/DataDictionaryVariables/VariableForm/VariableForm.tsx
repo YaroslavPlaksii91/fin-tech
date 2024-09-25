@@ -34,6 +34,7 @@ type VariableFormProps = {
   formData?: Variable & {
     index: number;
     variableIsUsed: boolean;
+    sourceType: VARIABLE_SOURCE_TYPE;
   };
   onClose: () => void;
 };
@@ -83,7 +84,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     defaultValues: {
       name: formData ? formData.name : '',
       sourceType: formData
-        ? (formData.sourceType as VARIABLE_SOURCE_TYPE)
+        ? formData.sourceType
         : VARIABLE_SOURCE_TYPE_OPTIONS[0].value,
       dataType: formData ? formData.dataType : DATA_TYPE_WITHOUT_ENUM.String,
       defaultValue: formData ? formData.defaultValue : '',
