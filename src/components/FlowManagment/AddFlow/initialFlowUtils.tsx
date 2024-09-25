@@ -46,7 +46,7 @@ export const createInitialFlow = (username: string) => {
     },
     width: 40,
     height: 40,
-    position: { x: 440, y: 0 },
+    position: { x: 540, y: 0 },
     deletable: false,
     draggable: true
   };
