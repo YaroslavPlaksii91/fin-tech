@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { XYPosition } from 'reactflow';
 
 import {
   EdgeData,
@@ -15,11 +16,13 @@ import Menu from '@components/shared/Menu/Menu';
 interface StepSelectionMenuProps {
   id: string;
   data: EdgeData;
+  nodePosition: XYPosition;
 }
 
 export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
   id,
-  data
+  data,
+  nodePosition
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [addStepModalOpen, setAddStepModalOpen] = useState<boolean>(false);
@@ -57,6 +60,7 @@ export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
       />
       {selectedStep && addStepModalOpen && (
         <AddStep
+          nodePosition={nodePosition}
           edgeId={id}
           onAddNodeBetweenEdges={data.onAdd}
           stepType={selectedStep}

@@ -4,6 +4,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch } from 'react-redux/es/hooks/useDispatch';
 import { cloneDeep } from 'lodash';
+import { XYPosition } from 'reactflow';
 
 import { validationSchema, FormData } from './validationSchema';
 
@@ -30,10 +31,12 @@ interface AddStepProps {
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
   edgeId: string;
+  nodePosition: XYPosition;
   onAddNodeBetweenEdges: (
     type: FunctionalStepType,
     name: string,
-    edgeId: string
+    edgeId: string,
+    nodePosition: XYPosition
   ) => { newNode: FlowNode; subFlowId: string };
 }
 
@@ -43,7 +46,8 @@ export const AddStep: React.FC<AddStepProps> = ({
   modalOpen,
   setModalOpen,
   onAddNodeBetweenEdges,
-  edgeId
+  edgeId,
+  nodePosition
 }) => {
   const {
     handleSubmit,
@@ -59,7 +63,8 @@ export const AddStep: React.FC<AddStepProps> = ({
     const { newNode, subFlowId } = onAddNodeBetweenEdges(
       stepType,
       name,
-      edgeId
+      edgeId,
+      nodePosition
     );
 
     if (newNode) {
