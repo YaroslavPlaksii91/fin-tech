@@ -35,6 +35,8 @@ export type RowData = ExtractArrayElementType<
 >;
 
 export type FiltersParams = {
+  requestId: string;
+  loanId: string;
   startDate: Dayjs | null;
   endDate: Dayjs | null;
 };

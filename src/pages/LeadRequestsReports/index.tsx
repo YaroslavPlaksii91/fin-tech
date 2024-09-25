@@ -42,8 +42,12 @@ const LeadRequestsReports = () => {
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [totalCount, setTotalCount] = useState(0);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+
   const [dateFilters, setDateFilters] =
     useState<IDateFilters>(INITIAL_DATE_FILTERS);
+
+  const [requestId, setRequestId] = useState('');
+  const [loanId, setLoanId] = useState('');
 
   const {
     rowsPerPage,
@@ -60,11 +64,15 @@ const LeadRequestsReports = () => {
 
   const handleFiltersReset = () => {
     setDateFilters(INITIAL_DATE_FILTERS);
+    setRequestId('');
+    setLoanId('');
     handleFiltersClose();
   };
 
   const handleSubmit = (data: IFormState) => {
     setDateFilters(data.dateFilters);
+    setRequestId(data.requestId);
+    setLoanId(data.loanId);
     handleFiltersClose();
   };
 
@@ -89,7 +97,7 @@ const LeadRequestsReports = () => {
   const buildOdataParams = ({
     page,
     sort,
-    filters: { startDate, endDate },
+    filters: { startDate, endDate, requestId, loanId },
     includePagination = true
   }: {
     page: number;
@@ -105,7 +113,12 @@ const LeadRequestsReports = () => {
             ge: startDate ? getDateInUTC(startDate).toISOString() : undefined,
             le: endDate ? getDateInUTC(endDate).toISOString() : undefined
           }
-        }
+        },
+        // ...(requestId && { requestId: { eq: requestId } }),
+        and: [
+          requestId && { 'leadRequest/requestId': { contains: requestId } },
+          loanId && { 'leadResponse/loanId': { contains: loanId } }
+        ]
       }
     };
 
@@ -143,14 +156,19 @@ const LeadRequestsReports = () => {
       sort,
       filters: {
         startDate: dateFilters.from,
-        endDate: dateFilters.to
+        endDate: dateFilters.to,
+        requestId,
+        loanId
       }
     };
 
     void fetchList(params);
   };
 
-  useEffect(() => fetch(), [page, rowsPerPage, sort, dateFilters]);
+  useEffect(
+    () => fetch(),
+    [page, rowsPerPage, sort, dateFilters, requestId, loanId]
+  );
 
   const handleExportLeadRequestReports = useCallback(async () => {
     const filters = {
@@ -245,6 +263,8 @@ const LeadRequestsReports = () => {
       </Paper>
       <Filters
         isOpen={isFiltersOpen}
+        requestId={requestId}
+        loanId={loanId}
         dateFilters={dateFilters}
         onReset={handleFiltersReset}
         onSubmit={handleSubmit}
