@@ -31,7 +31,11 @@ import { parseErrorMessages } from '@utils/helpers';
 type VariableFormProps = {
   flowId: string;
   isOpen: boolean;
-  formData?: Variable & { index: number; variableIsUsed: boolean };
+  formData?: Variable & {
+    index: number;
+    variableIsUsed: boolean;
+    sourceType: VARIABLE_SOURCE_TYPE;
+  };
   onClose: () => void;
 };
 
@@ -79,7 +83,9 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       name: formData ? formData.name : '',
-      sourceType: VARIABLE_SOURCE_TYPE_OPTIONS[0].value,
+      sourceType: formData
+        ? formData.sourceType
+        : VARIABLE_SOURCE_TYPE_OPTIONS[0].value,
       dataType: formData ? formData.dataType : DATA_TYPE_WITHOUT_ENUM.String,
       defaultValue: formData ? formData.defaultValue : '',
       description: formData ? formData.description : ''

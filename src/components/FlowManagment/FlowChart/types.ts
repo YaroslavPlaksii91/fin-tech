@@ -1,4 +1,4 @@
-import { ReactFlowInstance } from 'reactflow';
+import { ReactFlowInstance, XYPosition } from 'reactflow';
 
 import {
   ChampionChallengerData,
@@ -37,7 +37,12 @@ export type EdgeData = {
 };
 
 export type CustomReactFlowInstance = ReactFlowInstance & {
-  onAddNodeBetweenEdges: (type: StepType, name: string, edgeId: string) => void;
+  onAddNodeBetweenEdges: (
+    type: StepType,
+    name: string,
+    edgeId: string,
+    nodePosition: XYPosition
+  ) => void;
 };
 
 export type StepListData = NodeData &

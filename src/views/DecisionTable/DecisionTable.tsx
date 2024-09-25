@@ -195,18 +195,14 @@ const DecisionTable = ({
 
       const caseEntries = [...prev];
 
-      const firstEntry = caseEntries[0]?.conditions?.find(
-        (condition) => !!condition.dataType
-      );
-
       const addEntries = (category: CATEGORY) =>
-        // The last one always defaultActions and we don`t have any conditions for this,
-        // so should be added based on the second last
-        caseEntries[caseEntries.length - 2][category].map((entry) => ({
-          ...INITIAL_ENTRY,
-          name: entry.name,
-          dataType: firstEntry?.dataType
-        }));
+        (category === 'conditions' ? conditionsColumns : actionsColumns).map(
+          (column) => ({
+            ...INITIAL_ENTRY,
+            name: column.name,
+            dataType: column.dataType
+          })
+        );
 
       const newCaseEntry = {
         conditions: addEntries('conditions'),
