@@ -98,7 +98,7 @@ export const buildOdataParams = ({
     [COLUMN_IDS.apiVersion]: apiVersion
   };
 
-  Object.entries(containsFields).map(([key, value]) => {
+  Object.entries(containsFields).forEach(([key, value]) => {
     if (value) {
       filterConditions.push({
         [key]: { contains: value }
@@ -112,7 +112,7 @@ export const buildOdataParams = ({
     [COLUMN_IDS.customerId]: customerId
   };
 
-  Object.entries(exactMatchFields).map(([key, value]) => {
+  Object.entries(exactMatchFields).forEach(([key, value]) => {
     if (value) {
       filterConditions.push(`${key} eq ${value}`);
     }
@@ -121,6 +121,7 @@ export const buildOdataParams = ({
   if (leadPrice.from) {
     filterConditions.push(`${COLUMN_IDS.leadPrice} ge ${leadPrice.from}`);
   }
+
   if (leadPrice.to) {
     filterConditions.push(`${COLUMN_IDS.leadPrice} le ${leadPrice.to}`);
   }
@@ -130,6 +131,7 @@ export const buildOdataParams = ({
       `${COLUMN_IDS.requestedAmount} ge ${requestedAmount.from}`
     );
   }
+
   if (requestedAmount.to) {
     filterConditions.push(
       `${COLUMN_IDS.requestedAmount} le ${requestedAmount.to}`
@@ -148,7 +150,7 @@ export const buildOdataParams = ({
     [COLUMN_IDS.state]: state
   };
 
-  Object.entries(multiSearchFields).map(([key, data]) => {
+  Object.entries(multiSearchFields).forEach(([key, data]) => {
     if (data?.length) {
       const conditions = data.map((item) => `${key} eq '${item}'`).join(' or ');
 
