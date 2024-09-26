@@ -13,6 +13,14 @@ class ReportingService {
     return data;
   }
 
+  async getLeadRequestsReportsFieldOptions(field: string) {
+    const encodedField = encodeURIComponent(field);
+    const { data } = await reportApi.get<string[]>(
+      `/lead-request-processing-history/${encodedField}`
+    );
+    return data;
+  }
+
   async getLeadRequestsReportsExportCSV(params: string) {
     const res = await reportOdataApi.get(
       `/lead-request-processing-history/export${params}`,

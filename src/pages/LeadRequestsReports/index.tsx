@@ -1,22 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
-import buildQuery from 'odata-query';
 import { Box, Button, Drawer, Paper, Stack, Typography } from '@mui/material';
 
-import {
-  COLUMN_IDS,
-  FetchList,
-  FiltersParams,
-  OdataQueries,
-  RowData,
-  IDateFilters
-} from './types';
-import { getFormattedRows } from './utils';
+import { COLUMN_IDS, FetchList, RowData, IFilters } from './types';
+import { buildOdataParams, getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
   DEFAULT_EXPORT_FILE_NAME,
   DEFAULT_SORT,
-  INITIAL_DATE_FILTERS
+  INITIAL_FILTERS
 } from './constants';
 
 import { reportingService } from '@services/reports';
@@ -29,10 +21,8 @@ import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
 import TuneIcon from '@icons/tune.svg';
 import ExportCSVButton from '@components/shared/ExportCSVButton';
-import { removeSingleQuotesODataParams } from '@utils/helpers';
-import { getDateInUTC } from '@utils/date';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
-import Filters, { IFormState } from '@components/LeadRequestsReports/Filters';
+import Filters from '@components/LeadRequestsReports/Filters';
 
 const LeadRequestsReports = () => {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -42,8 +32,8 @@ const LeadRequestsReports = () => {
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [totalCount, setTotalCount] = useState(0);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [dateFilters, setDateFilters] =
-    useState<IDateFilters>(INITIAL_DATE_FILTERS);
+
+  const [filters, setFilters] = useState<IFilters>(INITIAL_FILTERS);
 
   const {
     rowsPerPage,
@@ -59,12 +49,12 @@ const LeadRequestsReports = () => {
   const handleFiltersClose = () => setIsFiltersOpen(false);
 
   const handleFiltersReset = () => {
-    setDateFilters(INITIAL_DATE_FILTERS);
+    setFilters(INITIAL_FILTERS);
     handleFiltersClose();
   };
 
-  const handleSubmit = (data: IFormState) => {
-    setDateFilters(data.dateFilters);
+  const handleSubmit = (data: IFilters) => {
+    setFilters(data);
     handleFiltersClose();
   };
 
@@ -86,43 +76,15 @@ const LeadRequestsReports = () => {
   const handleRowSelection = (data: GridRowParams<RowData>) =>
     setSelectedRow(data.row);
 
-  const buildOdataParams = ({
-    page,
-    sort,
-    filters: { startDate, endDate },
-    includePagination = true
-  }: {
-    page: number;
-    sort: string;
-    filters: FiltersParams;
-    includePagination?: boolean;
-  }): string => {
-    const queries: OdataQueries = {
-      orderBy: sort,
-      filter: {
-        processingMetadata: {
-          executionEndDateTimeUtc: {
-            ge: startDate ? getDateInUTC(startDate).toISOString() : undefined,
-            le: endDate ? getDateInUTC(endDate).toISOString() : undefined
-          }
-        }
-      }
-    };
-
-    if (includePagination) {
-      queries.top = rowsPerPage;
-      queries.skip = rowsPerPage * page;
-      queries.count = true;
-    }
-
-    const params = buildQuery(queries);
-    return removeSingleQuotesODataParams(params);
-  };
-
-  const fetchList = async ({ page, sort, filters }: FetchList) => {
+  const fetchList = async ({ page, sort, rowsPerPage, filters }: FetchList) => {
     setLoading(true);
 
-    const correctedParams = buildOdataParams({ page, sort, filters });
+    const correctedParams = buildOdataParams({
+      page,
+      rowsPerPage,
+      sort,
+      filters
+    });
     try {
       const data =
         await reportingService.getLeadRequestsReports(correctedParams);
@@ -141,32 +103,26 @@ const LeadRequestsReports = () => {
     const params: FetchList = {
       page,
       sort,
-      filters: {
-        startDate: dateFilters.from,
-        endDate: dateFilters.to
-      }
+      rowsPerPage,
+      filters
     };
 
     void fetchList(params);
   };
 
-  useEffect(() => fetch(), [page, rowsPerPage, sort, dateFilters]);
+  useEffect(() => fetch(), [page, rowsPerPage, sort, filters]);
 
   const handleExportLeadRequestReports = useCallback(async () => {
-    const filters = {
-      startDate: dateFilters.from,
-      endDate: dateFilters.to
-    };
-
     const correctedParams = buildOdataParams({
       page,
       sort,
+      rowsPerPage,
       filters,
       includePagination: false
     });
 
     return reportingService.getLeadRequestsReportsExportCSV(correctedParams);
-  }, [dateFilters, sort, page]);
+  }, [filters, rowsPerPage, sort, page]);
 
   return (
     <Box sx={{ padding: '16px 24px' }}>
@@ -245,7 +201,7 @@ const LeadRequestsReports = () => {
       </Paper>
       <Filters
         isOpen={isFiltersOpen}
-        dateFilters={dateFilters}
+        filters={filters}
         onReset={handleFiltersReset}
         onSubmit={handleSubmit}
         onClose={handleFiltersClose}
