@@ -2,32 +2,25 @@ import { useForm } from 'react-hook-form';
 
 import Template, { TemplateProps } from '@components/shared/Filters';
 import DatePicker from '@components/shared/Forms/DatePicker';
-import { IDateFilters } from '@pages/LeadRequestsReports/types';
 import InputText from '@components/shared/Forms/InputText';
-
-export interface IFormState {
-  loanId: string;
-  requestId: string;
-  dateFilters: IDateFilters;
-}
+import { IFilters } from '@pages/LeadRequestsReports/types';
+import Range from '@components/shared/Forms/Range';
 
 interface FiltersProps
-  extends Pick<TemplateProps, 'isOpen' | 'onClose' | 'onReset'>,
-    IFormState {
-  onSubmit: (data: IFormState) => void;
+  extends Pick<TemplateProps, 'isOpen' | 'onClose' | 'onReset'> {
+  filters: IFilters;
+  onSubmit: (data: IFilters) => void;
 }
 
 const Filters = ({
   isOpen,
-  requestId,
-  loanId,
-  dateFilters,
+  filters,
   onClose,
   onReset,
   onSubmit
 }: FiltersProps) => {
-  const { handleSubmit, control, reset } = useForm<IFormState>({
-    values: { requestId, loanId, dateFilters }
+  const { handleSubmit, control, reset } = useForm<IFilters>({
+    values: { ...filters }
   });
 
   const handleClose = () => {
@@ -54,17 +47,82 @@ const Filters = ({
         name="loanId"
         label="Loan ID"
         placeholder="Loan ID"
+        type="number"
+        control={control}
+      />
+      <InputText
+        fullWidth
+        name="customerId"
+        label="Customer ID"
+        placeholder="Customer ID"
+        type="number"
+        control={control}
+      />
+      <Range
+        title="Lead Price"
+        startAdornmentSymb="$"
+        name="leadPrice"
+        type="number"
+        control={control}
+      />
+      <Range
+        title="Requested Amount"
+        startAdornmentSymb="$"
+        type="number"
+        name="requestedAmount"
+        control={control}
+      />
+      <InputText
+        fullWidth
+        name="affiliate"
+        label="Affiliate"
+        placeholder="Affiliate"
+        control={control}
+      />
+      <InputText
+        fullWidth
+        name="ssn"
+        label="SSN"
+        placeholder="SSN"
+        control={control}
+      />
+      <InputText
+        fullWidth
+        name="email"
+        label="Email"
+        placeholder="Email"
+        control={control}
+      />
+      <InputText
+        fullWidth
+        name="denialReason"
+        label="Denial Reason"
+        placeholder="Denial Reason"
+        control={control}
+      />
+      <InputText
+        fullWidth
+        name="apiVersion"
+        label="API Version"
+        placeholder="API Version"
+        control={control}
+      />
+      <InputText
+        fullWidth
+        name="cachedConnector"
+        label="Cached Connector"
+        placeholder="Cached Connector"
         control={control}
       />
       <DatePicker
         hasTimePicker
-        name="dateFilters.from"
+        name="requestDate.from"
         label="Date From"
         control={control}
       />
       <DatePicker
         hasTimePicker
-        name="dateFilters.to"
+        name="requestDate.to"
         label="Date To"
         control={control}
       />
