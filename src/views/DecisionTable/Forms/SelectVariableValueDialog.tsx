@@ -131,7 +131,6 @@ const SelectVariableValueDialog = ({
             label="Variable*"
             name="name"
             control={control}
-            clearable={false}
             InputProps={{
               startAdornment: isCondition && (
                 <InputAdornment position="start">

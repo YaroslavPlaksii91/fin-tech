@@ -34,7 +34,7 @@ const InputText = <
   startAdornmentSymb,
   type = 'text',
   fullWidth = false,
-  clearable = true,
+  clearable = false,
   InputProps,
   ...props
 }: InputTextFormProps<TFieldValues, TName> &
@@ -42,7 +42,11 @@ const InputText = <
   TextFieldProps) => {
   const { field, fieldState } = useController({ control, name });
 
-  const handleClear = () => field.onChange('');
+  const handleClear = () => {
+    if (!props.disabled) {
+      field.onChange('');
+    }
+  };
 
   return (
     <FormControl fullWidth={fullWidth} variant="standard">
