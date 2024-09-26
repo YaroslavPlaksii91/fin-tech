@@ -40,6 +40,7 @@ export enum ExpressionEditorFunction {
   LEN = 'LEN',
   SUBSTRING = 'SUBSTRING',
   DATEDIFF = 'DATEDIFF',
+  TODAY = 'TODAY',
   GET_REPORT = 'GET_REPORT',
   MATCH = 'MATCH',
   STRCMP = 'STRCMP',
@@ -196,6 +197,12 @@ export const functionsConfig: FunctionConfig[] = [
     literal: ExpressionEditorFunction.DATEDIFF,
     description: 'Calculates the difference between two dates',
     domesticDescription: 'DATEDIFF(start_date, end_date, unit)',
+    category: ExpressionOperatorCategory.MISCELANEOUS
+  },
+  {
+    literal: ExpressionEditorFunction.TODAY,
+    description: 'This function returns today`s date',
+    domesticDescription: 'TODAY()',
     category: ExpressionOperatorCategory.MISCELANEOUS
   },
   {
