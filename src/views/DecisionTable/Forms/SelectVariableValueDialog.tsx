@@ -7,7 +7,8 @@ import { SelectedCell, FormFieldsProps, OPERATORS } from '../types';
 import {
   checkDataType,
   getOperatorOptions,
-  getFormattedOptions
+  getFormattedOptions,
+  getFormatedValue
 } from '../utils';
 
 import validationSchema from './validationSchema';
@@ -51,12 +52,16 @@ const SelectVariableValueDialog = ({
     clearErrors,
     setError
   } = useForm({
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(validationSchema(dataType)),
     defaultValues: {
       dataType: selectedCell.dataType,
       name: selectedCell.name,
       operator: selectedCell.operator || OPERATORS.EQUAL,
-      value: selectedCell.expression,
+      value: dataType.isWithEnum
+        ? selectedCell.expression
+          ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
+          : []
+        : selectedCell.expression,
       lowerBound: bounds.length > 0 ? +bounds[0] : undefined,
       upperBound: bounds.length > 0 ? +bounds[1] : undefined
     }
@@ -65,18 +70,7 @@ const SelectVariableValueDialog = ({
   const watchOperator = watch('operator');
 
   const onSubmit = async (data: FormFieldsProps) => {
-    let value = '';
-
-    switch (data.operator) {
-      case OPERATORS.BETWEEN:
-        value = `${data.lowerBound} and ${data.upperBound}`;
-        break;
-      case OPERATORS.ANY:
-        value = '';
-        break;
-      default:
-        value = data.value || '';
-    }
+    const value = getFormatedValue(data);
 
     try {
       if (data.operator !== OPERATORS.ANY) {
@@ -110,7 +104,8 @@ const SelectVariableValueDialog = ({
   };
 
   useEffect(() => {
-    if (watchOperator === OPERATORS.ANY) setValue('value', '');
+    if (watchOperator === OPERATORS.ANY)
+      setValue('value', dataType.isWithEnum ? [] : '');
 
     clearErrors();
   }, [watchOperator]);
@@ -159,6 +154,7 @@ const SelectVariableValueDialog = ({
           {dataType.isWithEnum || dataType.isBoolean ? (
             <Select
               name="value"
+              multiple={dataType.isWithEnum}
               control={control}
               fullWidth
               label="Value*"
