@@ -15,8 +15,6 @@ import {
 
 import { CircularProgress } from '@components/shared/Icons';
 
-type Option = { label: string; value: string | number };
-
 type AutocompleteProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>
@@ -42,22 +40,17 @@ const Autocomplete = <
   const { field, fieldState } = useController({ control, name });
 
   const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState<Option[]>([]);
+  const [options, setOptions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleOpen = async () => {
     try {
       setLoading(true);
       const data = await getOption(fieldPath);
-      const formattedOptions = data
-        .filter((item) => item)
-        .map((item) => ({
-          label: item,
-          value: item
-        }));
-      setOptions(formattedOptions);
+      const filteredOptions = data.filter((item) => item);
+      setOptions(filteredOptions);
     } catch {
-      // set something went wrong title
+      // Handle error
     } finally {
       setOpen(true);
       setLoading(false);
@@ -81,23 +74,19 @@ const Autocomplete = <
       onClose={handleClose}
       loading={loading}
       renderTags={(selected) =>
-        selected.map((option, index) => (
-          <span key={index}> {option.label}, </span>
-        ))
+        selected.map((option, index) => <span key={index}>{option}, </span>)
       }
-      renderOption={(props, option: Option) => {
-        const isSelected = (field.value || []).some(
-          (selectedOption: Option) => selectedOption.value === option.value
-        );
+      renderOption={(props, option) => {
+        const isSelected = ((field.value as string[]) || []).includes(option);
         return (
           <MenuItem
             {...props}
-            key={option.value}
-            value={option.value}
+            key={option}
+            value={option}
             sx={{ height: '36px' }}
           >
             <Checkbox style={{ marginRight: 8 }} checked={isSelected} />
-            <ListItemText sx={{ margin: 0 }} primary={option.label} />
+            <ListItemText sx={{ margin: 0 }} primary={option} />
           </MenuItem>
         );
       }}
@@ -108,7 +97,6 @@ const Autocomplete = <
           placeholder={placeholder}
           error={!!fieldState.error}
           helperText={fieldState.error?.message}
-          value={field.value || []}
           InputProps={{
             ...params.InputProps,
             endAdornment: (

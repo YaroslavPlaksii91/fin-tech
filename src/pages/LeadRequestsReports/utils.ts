@@ -118,30 +118,26 @@ export const buildOdataParams = ({
     }
   });
 
-  if (leadPrice) {
-    if (leadPrice.from) {
-      filterConditions.push(`${COLUMN_IDS.leadPrice} ge ${leadPrice.from}`);
-    }
-    if (leadPrice.to) {
-      filterConditions.push(`${COLUMN_IDS.leadPrice} le ${leadPrice.to}`);
-    }
+  if (leadPrice.from) {
+    filterConditions.push(`${COLUMN_IDS.leadPrice} ge ${leadPrice.from}`);
+  }
+  if (leadPrice.to) {
+    filterConditions.push(`${COLUMN_IDS.leadPrice} le ${leadPrice.to}`);
   }
 
-  if (requestedAmount) {
-    if (requestedAmount.from) {
-      filterConditions.push(
-        `${COLUMN_IDS.requestedAmount} ge ${requestedAmount.from}`
-      );
-    }
-    if (requestedAmount.to) {
-      filterConditions.push(
-        `${COLUMN_IDS.requestedAmount} le ${requestedAmount.to}`
-      );
-    }
+  if (requestedAmount.from) {
+    filterConditions.push(
+      `${COLUMN_IDS.requestedAmount} ge ${requestedAmount.from}`
+    );
+  }
+  if (requestedAmount.to) {
+    filterConditions.push(
+      `${COLUMN_IDS.requestedAmount} le ${requestedAmount.to}`
+    );
   }
 
   // exactMatchFields with or
-  const multiSeactFields = {
+  const multiSearchFields = {
     [COLUMN_IDS.leadProvider]: leadProvider,
     [COLUMN_IDS.leadCampaign]: leadCampaign,
     [COLUMN_IDS.stackName]: stackName,
@@ -152,11 +148,9 @@ export const buildOdataParams = ({
     [COLUMN_IDS.state]: state
   };
 
-  Object.entries(multiSeactFields).map(([key, data]) => {
+  Object.entries(multiSearchFields).map(([key, data]) => {
     if (data?.length) {
-      const conditions = data
-        .map((item) => `${key} eq '${item.value}'`)
-        .join(' or ');
+      const conditions = data.map((item) => `${key} eq '${item}'`).join(' or ');
 
       filterConditions.push(`(${conditions})`);
     }
