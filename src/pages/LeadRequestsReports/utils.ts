@@ -67,7 +67,15 @@ export const buildOdataParams = ({
     customerId,
     requestDate,
     leadPrice,
-    requestedAmount
+    requestedAmount,
+    leadProvider,
+    leadCampaign,
+    stackName,
+    loanType,
+    promoCode,
+    store,
+    decision,
+    state
   },
   includePagination = true
 }: {
@@ -132,6 +140,28 @@ export const buildOdataParams = ({
     }
   }
 
+  // exactMatchFields with or
+  const multiSeactFields = {
+    [COLUMN_IDS.leadProvider]: leadProvider,
+    [COLUMN_IDS.leadCampaign]: leadCampaign,
+    [COLUMN_IDS.stackName]: stackName,
+    [COLUMN_IDS.loanType]: loanType,
+    [COLUMN_IDS.promoCode]: promoCode,
+    [COLUMN_IDS.store]: store,
+    [COLUMN_IDS.decision]: decision,
+    [COLUMN_IDS.state]: state
+  };
+
+  Object.entries(multiSeactFields).map(([key, data]) => {
+    if (data?.length) {
+      const conditions = data
+        .map((item) => `${key} eq '${item.value}'`)
+        .join(' or ');
+
+      filterConditions.push(`(${conditions})`);
+    }
+  });
+
   const queries: OdataQueries = {
     orderBy: sort,
     filter: {
@@ -158,3 +188,12 @@ export const buildOdataParams = ({
   const params = buildQuery(queries);
   return removeSingleQuotesODataParams(params);
 };
+
+// TODO improve fieldPaths usage
+// const selectedKeys = [COLUMN_IDS.leadProvider];
+// export const fieldPaths: FIELD_PATHS = Object.entries(COLUMN_IDS)
+//   .filter(([key]) => selectedKeys.includes(COLUMN_IDS[key]))
+//   .reduce(
+//     (acc, [key, value]) => ({ ...acc, [key]: convertToPascalCase(value) }),
+//     {} as FIELD_PATHS
+//   );

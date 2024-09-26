@@ -1,10 +1,10 @@
 import {
   Autocomplete as MuiAutocomplete,
   Checkbox,
-  TextField
+  TextField,
+  MenuItem,
+  ListItemText
 } from '@mui/material';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { useState } from 'react';
 import {
   useController,
@@ -15,18 +15,7 @@ import {
 
 import { CircularProgress } from '@components/shared/Icons';
 
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
-
-type Option = { title: string };
-
-function sleep(duration: number): Promise<void> {
-  return new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, duration);
-  });
-}
+type Option = { label: string; value: string | number };
 
 type AutocompleteProps<
   TFieldValues extends FieldValues,
@@ -34,6 +23,9 @@ type AutocompleteProps<
 > = UseControllerProps<TFieldValues, TName> & {
   placeholder: string;
   label: string;
+  id: string;
+  fieldPath: string;
+  getOption: (field: string) => Promise<string[]>;
 };
 
 const Autocomplete = <
@@ -41,23 +33,35 @@ const Autocomplete = <
   TName extends FieldPath<TFieldValues>
 >({
   control,
+  id,
   name,
-  placeholder
+  placeholder,
+  getOption,
+  fieldPath
 }: AutocompleteProps<TFieldValues, TName>) => {
   const { field, fieldState } = useController({ control, name });
 
   const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState<{ title: string; year: number }[]>([]);
+  const [options, setOptions] = useState<Option[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleOpen = () => {
-    setOpen(true);
-    void (async () => {
+  const handleOpen = async () => {
+    try {
       setLoading(true);
-      await sleep(1000);
+      const data = await getOption(fieldPath);
+      const formattedOptions = data
+        .filter((item) => item)
+        .map((item) => ({
+          label: item,
+          value: item
+        }));
+      setOptions(formattedOptions);
+    } catch {
+      // set something went wrong title
+    } finally {
+      setOpen(true);
       setLoading(false);
-      setOptions([...topFilms]);
-    })();
+    }
   };
 
   const handleClose = () => {
@@ -69,33 +73,32 @@ const Autocomplete = <
     <MuiAutocomplete
       multiple
       fullWidth
-      id="checkboxes-tags-demo"
+      id={id}
       options={options}
       disableCloseOnSelect
       open={open}
       onOpen={handleOpen}
       onClose={handleClose}
       loading={loading}
-      getOptionLabel={(option: Option) => option.title}
       renderTags={(selected) =>
         selected.map((option, index) => (
-          <span key={index}>{option.title}, </span>
+          <span key={index}> {option.label}, </span>
         ))
       }
       renderOption={(props, option: Option) => {
         const isSelected = (field.value || []).some(
-          (selectedOption: Option) => selectedOption.title === option.title
+          (selectedOption: Option) => selectedOption.value === option.value
         );
         return (
-          <li {...props}>
-            <Checkbox
-              icon={icon}
-              checkedIcon={checkedIcon}
-              style={{ marginRight: 8 }}
-              checked={isSelected}
-            />
-            {option.title}
-          </li>
+          <MenuItem
+            {...props}
+            key={option.value}
+            value={option.value}
+            sx={{ height: '36px' }}
+          >
+            <Checkbox style={{ marginRight: 8 }} checked={isSelected} />
+            <ListItemText sx={{ margin: 0 }} primary={option.label} />
+          </MenuItem>
         );
       }}
       renderInput={(params) => (
@@ -105,6 +108,7 @@ const Autocomplete = <
           placeholder={placeholder}
           error={!!fieldState.error}
           helperText={fieldState.error?.message}
+          value={field.value || []}
           InputProps={{
             ...params.InputProps,
             endAdornment: (
@@ -123,15 +127,3 @@ const Autocomplete = <
 };
 
 export default Autocomplete;
-
-const topFilms = [
-  { title: 'The Shawshank Redemption', year: 1994 },
-  { title: 'The Godfather', year: 1972 },
-  { title: 'The Godfather: Part II', year: 1974 },
-  { title: 'The Dark Knight', year: 2008 },
-  { title: '12 Angry Men', year: 1957 },
-  { title: "Schindler's List", year: 1993 },
-  { title: 'Pulp Fiction', year: 1994 },
-  { title: 'Fight Club', year: 1999 },
-  { title: 'Inception', year: 2010 }
-];
