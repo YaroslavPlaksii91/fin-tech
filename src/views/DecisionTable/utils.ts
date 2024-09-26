@@ -1,7 +1,14 @@
 import { lightGreen, lightBlue } from '@mui/material/colors';
 import { mapValues, filter, cloneDeep } from 'lodash';
 
-import { CaseEntry, Entry, Operator, OPERATORS, CATEGORY } from './types';
+import {
+  CaseEntry,
+  Entry,
+  Operator,
+  OPERATORS,
+  CATEGORY,
+  FormFieldsProps
+} from './types';
 
 import {
   DATA_TYPE,
@@ -13,22 +20,42 @@ import {
   Variable
 } from '@domain/dataDictionary';
 
+export const checkDataType = (dataType: DATA_TYPE) => ({
+  isWithEnum: Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
+    dataType as DATA_TYPE_WITH_ENUM_PREFIX
+  ),
+  isBoolean: dataType === DATA_TYPE_WITHOUT_ENUM.Boolean,
+  isString: dataType === DATA_TYPE_WITHOUT_ENUM.String,
+  isInteger: dataType === DATA_TYPE_WITHOUT_ENUM.Integer,
+  isDecimal: dataType === DATA_TYPE_WITHOUT_ENUM.Decimal
+});
+
 export const getOperatorOptions = (dataType: DATA_TYPE) => {
-  const { Integer, Decimal, String } = DATA_TYPE_WITHOUT_ENUM;
+  const { isWithEnum, isString, isInteger, isDecimal } =
+    checkDataType(dataType);
   let operators: Operator[] = [];
 
-  switch (dataType) {
-    case String:
+  switch (true) {
+    case isWithEnum:
       operators = [
         OPERATORS.IN,
         OPERATORS.NOT_IN,
-        OPERATORS.CONTAINS,
         OPERATORS.EQUAL,
         OPERATORS.NOT_EQUAL
       ];
       break;
-    case Integer:
-    case Decimal:
+    case isString:
+      operators = [
+        OPERATORS.IN,
+        OPERATORS.NOT_IN,
+        OPERATORS.CONTAINS,
+        OPERATORS.DOESNOTCONTAIN,
+        OPERATORS.EQUAL,
+        OPERATORS.NOT_EQUAL
+      ];
+      break;
+    case isInteger:
+    case isDecimal:
       operators = [
         OPERATORS.EQUAL,
         OPERATORS.NOT_EQUAL,
@@ -48,14 +75,6 @@ export const getOperatorOptions = (dataType: DATA_TYPE) => {
     value: operator
   }));
 };
-
-export const checkDataType = (dataType: DATA_TYPE) => ({
-  isWithEnum: Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
-    dataType as DATA_TYPE_WITH_ENUM_PREFIX
-  ),
-  isBoolean: dataType === DATA_TYPE_WITHOUT_ENUM.Boolean,
-  isString: dataType === DATA_TYPE_WITHOUT_ENUM.String
-});
 
 export const getColumns = (
   entries: Entry[],
@@ -199,4 +218,29 @@ export const filterVariablesByUsageMode = (
   return mapValues(copyVariables, (arr) =>
     filter(arr, (item) => usageModes.includes(item.usageMode))
   );
+};
+
+export const getFormatedValue = (data: FormFieldsProps): string => {
+  let formatedValue: string = '';
+
+  switch (data.operator) {
+    case OPERATORS.EQUAL:
+    case OPERATORS.NOT_EQUAL:
+      formatedValue = Array.isArray(data.value)
+        ? data.value[0]
+        : (data.value ?? '');
+      break;
+    case OPERATORS.ANY:
+      formatedValue = '';
+      break;
+    case OPERATORS.BETWEEN:
+      formatedValue = `${data.lowerBound} and ${data.upperBound}`;
+      break;
+    default:
+      formatedValue = Array.isArray(data.value)
+        ? `[${data.value.join(',')}]`
+        : (data.value ?? '');
+  }
+
+  return formatedValue;
 };
