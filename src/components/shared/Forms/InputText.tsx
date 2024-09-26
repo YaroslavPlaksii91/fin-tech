@@ -35,6 +35,7 @@ const InputText = <
   type = 'text',
   fullWidth = false,
   clearable = false,
+  disabled = false,
   InputProps,
   ...props
 }: InputTextFormProps<TFieldValues, TName> &
@@ -42,11 +43,7 @@ const InputText = <
   TextFieldProps) => {
   const { field, fieldState } = useController({ control, name });
 
-  const handleClear = () => {
-    if (!props.disabled) {
-      field.onChange('');
-    }
-  };
+  const handleClear = () => field.onChange('');
 
   return (
     <FormControl fullWidth={fullWidth} variant="standard">
@@ -66,7 +63,7 @@ const InputText = <
             </InputAdornment>
           ) : null,
           endAdornment:
-            clearable && field.value.length > 0 ? (
+            clearable && !disabled && field.value.length > 0 ? (
               <InputAdornment position="end">
                 <IconButton
                   sx={{ mr: '7px' }}
@@ -81,6 +78,7 @@ const InputText = <
           ...InputProps
         }}
         {...field}
+        disabled={disabled}
         {...props}
       />
     </FormControl>
