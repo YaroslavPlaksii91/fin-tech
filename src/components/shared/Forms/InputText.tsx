@@ -62,7 +62,7 @@ const InputText = <
             </InputAdornment>
           ) : null,
           endAdornment:
-            clearable && field.value.length > 0 ? (
+            clearable && field.value?.length > 0 ? (
               <InputAdornment position="end">
                 <IconButton
                   sx={{ mr: '7px' }}
