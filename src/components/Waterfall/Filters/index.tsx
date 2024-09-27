@@ -38,7 +38,7 @@ const Filters = ({
 
   const getWaterfallOptionsForField = useCallback(
     async (field: string) =>
-      await reportingService.getWaterfallReportUniqueValuesByField(field),
+      await reportingService.getWaterfallReportFieldOptions(field),
     []
   );
 
