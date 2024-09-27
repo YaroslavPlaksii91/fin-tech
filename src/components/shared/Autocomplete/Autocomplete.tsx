@@ -4,9 +4,7 @@ import {
   TextField,
   MenuItem,
   ListItemText,
-  InputAdornment,
-  Divider,
-  IconButton
+  Divider
 } from '@mui/material';
 import { useCallback, useState } from 'react';
 import {
@@ -97,6 +95,7 @@ const Autocomplete = <
       loading={loading}
       noOptionsText="No options"
       clearIcon={<CloseIcon />}
+      popupIcon={<KeyboardArrowDownIcon />}
       renderTags={(selected) =>
         selected.map((option, index) => (
           <span style={{ padding: '0 2.5px' }} key={index}>
@@ -151,18 +150,8 @@ const Autocomplete = <
             ...params.InputProps,
             endAdornment: (
               <>
-                <InputAdornment
-                  sx={{ position: 'absolute', right: '8px', top: '50%' }}
-                  position="end"
-                >
-                  <IconButton disabled={loading} onClick={handleOpen}>
-                    {loading ? (
-                      <CircularProgress size={20} />
-                    ) : (
-                      <KeyboardArrowDownIcon />
-                    )}
-                  </IconButton>
-                </InputAdornment>
+                {loading ? <CircularProgress size={20} /> : null}
+                {params.InputProps.endAdornment}
               </>
             )
           }}
