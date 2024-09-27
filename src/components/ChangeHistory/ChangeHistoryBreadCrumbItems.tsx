@@ -2,15 +2,6 @@ import { Typography } from '@mui/material';
 import { Box } from '@mui/system';
 
 import { theme } from '@theme';
-import SubflowIcon from '@icons/subflow.svg';
-import FlowIcon from '@icons/flow.svg';
-
-const getPathIcon = (index: number) =>
-  index === 0 ? (
-    <FlowIcon width={18} height={18} />
-  ) : (
-    <SubflowIcon width={18} height={18} />
-  );
 
 type BreadcrumbItemProps = {
   part: { id: string; name: string };
@@ -25,7 +16,6 @@ export const FirstBreadcrumbItem = ({
   handleClick: (id: string, index: number) => void;
 }) => (
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-    {getPathIcon(index)}
     <Typography
       sx={{
         textDecoration: 'underline',
@@ -40,16 +30,8 @@ export const FirstBreadcrumbItem = ({
   </Box>
 );
 
-export const BreadcrumbItem = ({ part, index }: BreadcrumbItemProps) => (
+export const BreadcrumbItem = ({ part }: BreadcrumbItemProps) => (
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-    {getPathIcon(index)}
-    <Typography
-      sx={{
-        textDecoration: 'underline'
-      }}
-      variant="body2"
-    >
-      {part.name}
-    </Typography>
+    <Typography variant="body2">{part.name}</Typography>
   </Box>
 );
