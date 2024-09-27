@@ -12,7 +12,7 @@ export const GROUP_COLORS_NAMES = [
 
 export const EXTERNAL_SYSTEM_KEYS = [
   'looks',
-  'approved',
+  'accepted',
   'cost',
   'savings',
   'timeouts'
