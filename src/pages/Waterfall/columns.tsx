@@ -27,12 +27,12 @@ const STATIC_COLUMNS: GridColDef[] = [
   },
   {
     field: COLUMN_IDS.totalApproved,
-    headerName: 'Total Approved',
+    headerName: 'Total Accepted',
     width: 144
   },
   {
     field: COLUMN_IDS.totalApprovalRate,
-    headerName: 'Approval Rate',
+    headerName: 'Accept Rates',
     width: 168,
     valueFormatter: (value) => {
       if (!value || value === '-') return '-';
