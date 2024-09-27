@@ -184,12 +184,3 @@ export const buildOdataParams = ({
   const params = buildQuery(queries);
   return removeSingleQuotesODataParams(params);
 };
-
-// TODO improve fieldPaths usage
-// const selectedKeys = [COLUMN_IDS.leadProvider];
-// export const fieldPaths: FIELD_PATHS = Object.entries(COLUMN_IDS)
-//   .filter(([key]) => selectedKeys.includes(COLUMN_IDS[key]))
-//   .reduce(
-//     (acc, [key, value]) => ({ ...acc, [key]: convertToPascalCase(value) }),
-//     {} as FIELD_PATHS
-//   );

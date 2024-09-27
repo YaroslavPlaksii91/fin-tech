@@ -1,28 +1,26 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useCallback } from 'react';
 
 import validationSchema from './validationSchema';
 
 import Template, { TemplateProps } from '@components/shared/Filters';
 import DatePicker from '@components/shared/Forms/DatePicker';
-import { IFilters } from '@pages/Waterfall/types';
+import { COLUMN_IDS, IFilters } from '@pages/Waterfall/types';
 import Range from '@components/shared/Forms/Range';
 import { RANGE_FILTERS_GROUPS } from '@pages/Waterfall/constants';
-import Select, { Option } from '@components/shared/Forms/Select';
+import { reportingService } from '@services/reports';
+import Autocomplete from '@components/shared/Autocomplete/Autocomplete';
 
 interface FiltersProps
   extends Pick<TemplateProps, 'isOpen' | 'onClose' | 'onReset'> {
   filters: IFilters;
-  stackOptions: Option[];
-  campaignIdOptions: Option[];
   onSubmit: (data: IFilters) => void;
 }
 
 const Filters = ({
   isOpen,
   filters,
-  stackOptions,
-  campaignIdOptions,
   onClose,
   onReset,
   onSubmit
@@ -38,6 +36,12 @@ const Filters = ({
     reset();
   };
 
+  const getWaterfallOptionsForField = useCallback(
+    async (field: string) =>
+      await reportingService.getWaterfallReportUniqueValuesByField(field),
+    []
+  );
+
   return (
     <Template
       isOpen={isOpen}
@@ -45,23 +49,23 @@ const Filters = ({
       onReset={onReset}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <Select
-        multiple
-        fullWidth
-        name="stack"
+      <Autocomplete
+        id="stack-multiselect"
         label="Stack"
         placeholder="Stack"
-        options={stackOptions}
+        name="stack"
         control={control}
+        fieldPath={COLUMN_IDS.stack}
+        getOption={getWaterfallOptionsForField}
       />
-      <Select
-        multiple
-        fullWidth
-        name="campaignId"
+      <Autocomplete
+        id="campaignId-multiselect"
         label="Campaign ID"
         placeholder="Campaign ID"
-        options={campaignIdOptions}
+        name="campaignId"
         control={control}
+        fieldPath={COLUMN_IDS.campaignId}
+        getOption={getWaterfallOptionsForField}
       />
       <DatePicker name="date.from" label="Date From" control={control} />
       <DatePicker name="date.to" label="Date To" control={control} />
