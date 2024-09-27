@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridSortModel } from '@mui/x-data-grid-premium';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 
-import { COLUMN_IDS, FetchData, IFilters } from './types';
+import { FetchData, IFilters } from './types';
 import { getFormattedRows, buildParams } from './utils';
 import getDataGridColumns from './columns';
 import {
@@ -22,7 +22,6 @@ import { WaterfallReport } from '@domain/waterfallReport';
 import ExportCSVButton from '@components/shared/ExportCSVButton';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 import Filters from '@components/Waterfall/Filters';
-import { Option } from '@components/shared/Forms/Select';
 
 const Waterfall = () => {
   const [loading, setLoading] = useState(false);
@@ -30,8 +29,6 @@ const Waterfall = () => {
   const [data, setData] = useState<WaterfallReport[]>([]);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [filters, setFilters] = useState<IFilters>(INITIAL_FILTERS);
-  const [stackOptions, setStackOptions] = useState<Option[]>([]);
-  const [campaignIdOptions, setCampaignIdOptions] = useState<Option[]>([]);
 
   const columns = useMemo(() => getDataGridColumns(data), [data]);
   const rows = useMemo(() => getFormattedRows(data), [data]);
@@ -84,30 +81,9 @@ const Waterfall = () => {
     [sort, filters]
   );
 
-  const getOptions = async () => {
-    setLoading(true);
-    const [stack, campaignId] = await Promise.allSettled([
-      reportingService.getWaterfallReportFieldOptions(COLUMN_IDS.stack),
-      reportingService.getWaterfallReportFieldOptions(COLUMN_IDS.campaignId)
-    ]);
-
-    if (stack.status === 'fulfilled' && campaignId.status === 'fulfilled') {
-      setStackOptions(stack.value.map((value) => ({ value, label: value })));
-      setCampaignIdOptions(
-        campaignId.value.map((value) => ({ value, label: value }))
-      );
-    }
-
-    setLoading(false);
-  };
-
   useEffect(() => {
     void fetchData(buildParams({ sort, filters }));
   }, [sort, filters]);
-
-  useEffect(() => {
-    void getOptions();
-  }, []);
 
   return (
     <Box sx={{ padding: '16px 24px' }}>
@@ -174,8 +150,6 @@ const Waterfall = () => {
       <Filters
         isOpen={isFiltersOpen}
         filters={filters}
-        stackOptions={stackOptions}
-        campaignIdOptions={campaignIdOptions}
         onReset={handleFiltersReset}
         onSubmit={handleSubmit}
         onClose={handleFiltersClose}

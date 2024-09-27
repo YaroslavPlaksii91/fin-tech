@@ -3,17 +3,22 @@ import {
   Checkbox,
   TextField,
   MenuItem,
-  ListItemText
+  ListItemText,
+  Divider
 } from '@mui/material';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   useController,
   FieldValues,
   FieldPath,
   UseControllerProps
 } from 'react-hook-form';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
+import CloseIcon from '@icons/cross.svg';
 import { CircularProgress } from '@components/shared/Icons';
+
+const SELECT_DESELECT_ALL = 'Select/Deselect All';
 
 type AutocompleteProps<
   TFieldValues extends FieldValues,
@@ -35,6 +40,7 @@ const Autocomplete = <
   name,
   placeholder,
   getOption,
+  label,
   fieldPath
 }: AutocompleteProps<TFieldValues, TName>) => {
   const { field, fieldState } = useController({ control, name });
@@ -43,23 +49,37 @@ const Autocomplete = <
   const [options, setOptions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleOpen = async () => {
+  const handleOpen = useCallback(async () => {
+    setOpen((prev) => !prev);
+    if (options.length) return;
     try {
       setLoading(true);
       const data = await getOption(fieldPath);
       const filteredOptions = data.filter((item) => item);
-      setOptions(filteredOptions);
+      const filledOptions = filteredOptions?.length
+        ? [...filteredOptions, SELECT_DESELECT_ALL]
+        : [];
+      setOptions(filledOptions);
     } catch {
-      // Handle error
+      setOptions([]);
     } finally {
-      setOpen(true);
       setLoading(false);
     }
-  };
+  }, [options]);
 
   const handleClose = () => {
     setOpen(false);
-    setOptions([]);
+  };
+
+  const handleSelectDeselectAll = () => {
+    const isAllSelected = field.value.length === options.length - 1;
+    if (isAllSelected) {
+      field.onChange([]);
+    } else {
+      field.onChange(
+        options.filter((option) => option !== SELECT_DESELECT_ALL)
+      );
+    }
   };
 
   return (
@@ -73,21 +93,49 @@ const Autocomplete = <
       onOpen={handleOpen}
       onClose={handleClose}
       loading={loading}
+      noOptionsText="No options"
+      clearIcon={<CloseIcon />}
+      popupIcon={<KeyboardArrowDownIcon />}
       renderTags={(selected) =>
-        selected.map((option, index) => <span key={index}>{option}, </span>)
+        selected.map((option, index) => (
+          <span style={{ padding: '0 2.5px' }} key={index}>
+            {option},
+          </span>
+        ))
       }
       renderOption={(props, option) => {
         const isSelected = ((field.value as string[]) || []).includes(option);
         return (
-          <MenuItem
-            {...props}
-            key={option}
-            value={option}
-            sx={{ height: '36px' }}
-          >
-            <Checkbox style={{ marginRight: 8 }} checked={isSelected} />
-            <ListItemText sx={{ margin: 0 }} primary={option} />
-          </MenuItem>
+          <>
+            {option === SELECT_DESELECT_ALL ? (
+              <>
+                <Divider sx={{ marginTop: 0 }} />
+                <MenuItem
+                  {...props}
+                  key={option}
+                  value={option}
+                  onClick={handleSelectDeselectAll}
+                  sx={{ height: '36px' }}
+                >
+                  <Checkbox
+                    style={{ marginRight: 8 }}
+                    checked={field.value.length === options.length - 1}
+                  />
+                  <ListItemText sx={{ margin: 0 }} primary={option} />
+                </MenuItem>
+              </>
+            ) : (
+              <MenuItem
+                {...props}
+                key={option}
+                value={option}
+                sx={{ height: '36px' }}
+              >
+                <Checkbox style={{ marginRight: 8 }} checked={isSelected} />
+                <ListItemText sx={{ margin: 0 }} primary={option} />
+              </MenuItem>
+            )}
+          </>
         );
       }}
       renderInput={(params) => (
@@ -95,6 +143,7 @@ const Autocomplete = <
           {...params}
           size="small"
           placeholder={placeholder}
+          label={label}
           error={!!fieldState.error}
           helperText={fieldState.error?.message}
           InputProps={{

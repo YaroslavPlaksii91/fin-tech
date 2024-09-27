@@ -86,7 +86,3 @@ export type IFilters = {
   apiVersion: string;
   cachedConnector: string;
 };
-
-// export type FIELD_PATHS = {
-//   [K in keyof typeof COLUMN_IDS]: string;
-// };
