@@ -37,6 +37,14 @@ class ReportingService {
     return data;
   }
 
+  async getDenialReasonsReportsFieldOptions(field: string) {
+    const encodedField = encodeURIComponent(field);
+    const { data } = await reportApi.get<string[]>(
+      `/lead-request-denial-reasons/${encodedField}`
+    );
+    return data;
+  }
+
   async getDenialReasonsReportExportCSV(params: string) {
     const res = await reportOdataApi.get<DenialReasonsReportOData>(
       `/lead-request-denial-reasons/export${params}`,
@@ -55,7 +63,7 @@ class ReportingService {
     return data;
   }
 
-  async getWaterfallReportUniqueValuesByField(field: string) {
+  async getWaterfallReportFieldOptions(field: string) {
     const { data } = await reportApi.get<string[]>(
       `/waterfall-report/${field}`
     );

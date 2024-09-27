@@ -87,10 +87,8 @@ const Waterfall = () => {
   const getOptions = async () => {
     setLoading(true);
     const [stack, campaignId] = await Promise.allSettled([
-      reportingService.getWaterfallReportUniqueValuesByField(COLUMN_IDS.stack),
-      reportingService.getWaterfallReportUniqueValuesByField(
-        COLUMN_IDS.campaignId
-      )
+      reportingService.getWaterfallReportFieldOptions(COLUMN_IDS.stack),
+      reportingService.getWaterfallReportFieldOptions(COLUMN_IDS.campaignId)
     ]);
 
     if (stack.status === 'fulfilled' && campaignId.status === 'fulfilled') {

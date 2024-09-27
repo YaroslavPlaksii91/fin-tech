@@ -76,18 +76,13 @@ const LeadRequestsReports = () => {
   const handleRowSelection = (data: GridRowParams<RowData>) =>
     setSelectedRow(data.row);
 
-  const fetchList = async ({ page, sort, rowsPerPage, filters }: FetchList) => {
+  const fetchList = async (data: FetchList) => {
     setLoading(true);
 
-    const correctedParams = buildOdataParams({
-      page,
-      rowsPerPage,
-      sort,
-      filters
-    });
+    const params = buildOdataParams(data);
+
     try {
-      const data =
-        await reportingService.getLeadRequestsReports(correctedParams);
+      const data = await reportingService.getLeadRequestsReports(params);
       const rows = getFormattedRows(data.value);
 
       setRows(rows);
@@ -99,21 +94,17 @@ const LeadRequestsReports = () => {
     }
   };
 
-  const fetch = () => {
-    const params: FetchList = {
+  useEffect(() => {
+    void fetchList({
       page,
       sort,
       rowsPerPage,
       filters
-    };
-
-    void fetchList(params);
-  };
-
-  useEffect(() => fetch(), [page, rowsPerPage, sort, filters]);
+    });
+  }, [page, rowsPerPage, sort, filters]);
 
   const handleExportLeadRequestReports = useCallback(async () => {
-    const correctedParams = buildOdataParams({
+    const params = buildOdataParams({
       page,
       sort,
       rowsPerPage,
@@ -121,7 +112,7 @@ const LeadRequestsReports = () => {
       includePagination: false
     });
 
-    return reportingService.getLeadRequestsReportsExportCSV(correctedParams);
+    return reportingService.getLeadRequestsReportsExportCSV(params);
   }, [filters, rowsPerPage, sort, page]);
 
   return (
