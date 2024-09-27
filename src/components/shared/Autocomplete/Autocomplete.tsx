@@ -3,16 +3,21 @@ import {
   Checkbox,
   TextField,
   MenuItem,
-  ListItemText
+  ListItemText,
+  InputAdornment,
+  Divider,
+  IconButton
 } from '@mui/material';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   useController,
   FieldValues,
   FieldPath,
   UseControllerProps
 } from 'react-hook-form';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
+import CloseIcon from '@icons/cross.svg';
 import { CircularProgress } from '@components/shared/Icons';
 
 const SELECT_DESELECT_ALL = 'Select/Deselect All';
@@ -37,6 +42,7 @@ const Autocomplete = <
   name,
   placeholder,
   getOption,
+  label,
   fieldPath
 }: AutocompleteProps<TFieldValues, TName>) => {
   const { field, fieldState } = useController({ control, name });
@@ -45,7 +51,9 @@ const Autocomplete = <
   const [options, setOptions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleOpen = async () => {
+  const handleOpen = useCallback(async () => {
+    setOpen((prev) => !prev);
+    if (options.length) return;
     try {
       setLoading(true);
       const data = await getOption(fieldPath);
@@ -55,16 +63,14 @@ const Autocomplete = <
         : [];
       setOptions(filledOptions);
     } catch {
-      // Handle error
+      setOptions([]);
     } finally {
-      setOpen(true);
       setLoading(false);
     }
-  };
+  }, [options]);
 
   const handleClose = () => {
     setOpen(false);
-    setOptions([]);
   };
 
   const handleSelectDeselectAll = () => {
@@ -90,27 +96,35 @@ const Autocomplete = <
       onClose={handleClose}
       loading={loading}
       noOptionsText="No options"
+      clearIcon={<CloseIcon />}
       renderTags={(selected) =>
-        selected.map((option, index) => <span key={index}>{option}, </span>)
+        selected.map((option, index) => (
+          <span style={{ padding: '0 2.5px' }} key={index}>
+            {option},
+          </span>
+        ))
       }
       renderOption={(props, option) => {
         const isSelected = ((field.value as string[]) || []).includes(option);
         return (
           <>
             {option === SELECT_DESELECT_ALL ? (
-              <MenuItem
-                {...props}
-                key={option}
-                value={option}
-                onClick={handleSelectDeselectAll}
-                sx={{ height: '36px' }}
-              >
-                <Checkbox
-                  style={{ marginRight: 8 }}
-                  checked={field.value.length === options.length - 1}
-                />
-                <ListItemText sx={{ margin: 0 }} primary={option} />
-              </MenuItem>
+              <>
+                <Divider sx={{ marginTop: 0 }} />
+                <MenuItem
+                  {...props}
+                  key={option}
+                  value={option}
+                  onClick={handleSelectDeselectAll}
+                  sx={{ height: '36px' }}
+                >
+                  <Checkbox
+                    style={{ marginRight: 8 }}
+                    checked={field.value.length === options.length - 1}
+                  />
+                  <ListItemText sx={{ margin: 0 }} primary={option} />
+                </MenuItem>
+              </>
             ) : (
               <MenuItem
                 {...props}
@@ -130,14 +144,25 @@ const Autocomplete = <
           {...params}
           size="small"
           placeholder={placeholder}
+          label={label}
           error={!!fieldState.error}
           helperText={fieldState.error?.message}
           InputProps={{
             ...params.InputProps,
             endAdornment: (
               <>
-                {loading ? <CircularProgress size={20} /> : null}
-                {params.InputProps.endAdornment}
+                <InputAdornment
+                  sx={{ position: 'absolute', right: '8px', top: '50%' }}
+                  position="end"
+                >
+                  <IconButton disabled={loading} onClick={handleOpen}>
+                    {loading ? (
+                      <CircularProgress size={20} />
+                    ) : (
+                      <KeyboardArrowDownIcon />
+                    )}
+                  </IconButton>
+                </InputAdornment>
               </>
             )
           }}
