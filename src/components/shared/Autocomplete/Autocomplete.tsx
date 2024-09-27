@@ -15,6 +15,8 @@ import {
 
 import { CircularProgress } from '@components/shared/Icons';
 
+const SELECT_DESELECT_ALL = 'Select/Deselect All';
+
 type AutocompleteProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>
@@ -48,7 +50,10 @@ const Autocomplete = <
       setLoading(true);
       const data = await getOption(fieldPath);
       const filteredOptions = data.filter((item) => item);
-      setOptions(filteredOptions);
+      const filledOptions = filteredOptions?.length
+        ? [...filteredOptions, SELECT_DESELECT_ALL]
+        : [];
+      setOptions(filledOptions);
     } catch {
       // Handle error
     } finally {
@@ -62,6 +67,17 @@ const Autocomplete = <
     setOptions([]);
   };
 
+  const handleSelectDeselectAll = () => {
+    const isAllSelected = field.value.length === options.length - 1;
+    if (isAllSelected) {
+      field.onChange([]);
+    } else {
+      field.onChange(
+        options.filter((option) => option !== SELECT_DESELECT_ALL)
+      );
+    }
+  };
+
   return (
     <MuiAutocomplete
       multiple
@@ -73,21 +89,40 @@ const Autocomplete = <
       onOpen={handleOpen}
       onClose={handleClose}
       loading={loading}
+      noOptionsText="No options"
       renderTags={(selected) =>
         selected.map((option, index) => <span key={index}>{option}, </span>)
       }
       renderOption={(props, option) => {
         const isSelected = ((field.value as string[]) || []).includes(option);
         return (
-          <MenuItem
-            {...props}
-            key={option}
-            value={option}
-            sx={{ height: '36px' }}
-          >
-            <Checkbox style={{ marginRight: 8 }} checked={isSelected} />
-            <ListItemText sx={{ margin: 0 }} primary={option} />
-          </MenuItem>
+          <>
+            {option === SELECT_DESELECT_ALL ? (
+              <MenuItem
+                {...props}
+                key={option}
+                value={option}
+                onClick={handleSelectDeselectAll}
+                sx={{ height: '36px' }}
+              >
+                <Checkbox
+                  style={{ marginRight: 8 }}
+                  checked={field.value.length === options.length - 1}
+                />
+                <ListItemText sx={{ margin: 0 }} primary={option} />
+              </MenuItem>
+            ) : (
+              <MenuItem
+                {...props}
+                key={option}
+                value={option}
+                sx={{ height: '36px' }}
+              >
+                <Checkbox style={{ marginRight: 8 }} checked={isSelected} />
+                <ListItemText sx={{ margin: 0 }} primary={option} />
+              </MenuItem>
+            )}
+          </>
         );
       }}
       renderInput={(params) => (
