@@ -34,15 +34,11 @@ export type RowData = ExtractArrayElementType<
   ReturnType<typeof getFormattedRows>
 >;
 
-export type FiltersParams = {
-  startDate: Dayjs | null;
-  endDate: Dayjs | null;
-};
-
 export type FetchList = {
   page: number;
   sort: string;
-  filters: FiltersParams;
+  rowsPerPage: number;
+  filters: IFilters;
 };
 
 export type OdataQueries = {
@@ -53,7 +49,40 @@ export type OdataQueries = {
   filter?: Record<string, object>;
 };
 
-export interface IDateFilters {
+export interface IDateFilter {
   from: Dayjs | null;
   to: Dayjs | null;
 }
+
+export interface IRangeFilter {
+  from: string;
+  to: string;
+}
+
+export enum RANGE_FILTERS_KEYS {
+  leadPrice = 'leadPrice',
+  requestedAmount = 'requestedAmount'
+}
+
+export type IFilters = {
+  requestId: string;
+  loanId: string;
+  leadProvider: string[];
+  leadCampaign: string[];
+  customerId: string;
+  [RANGE_FILTERS_KEYS.leadPrice]: IRangeFilter;
+  [RANGE_FILTERS_KEYS.requestedAmount]: IRangeFilter;
+  affiliate: string;
+  requestDate: IDateFilter;
+  stackName: string[];
+  loanType: string[];
+  promoCode: string[];
+  store: string[];
+  ssn: string;
+  email: string;
+  decision: string[];
+  denialReason: string;
+  state: string[];
+  apiVersion: string;
+  cachedConnector: string;
+};

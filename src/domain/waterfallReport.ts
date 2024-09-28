@@ -27,7 +27,7 @@ export type ExternalSystemsData = {
   reportType: string;
   name: null | string;
   looks: number;
-  approved: number;
+  accepted: number;
   cost: number;
   savings: number;
   timeouts: number;

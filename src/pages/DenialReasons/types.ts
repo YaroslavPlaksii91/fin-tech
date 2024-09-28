@@ -17,15 +17,29 @@ export type RowData = ExtractArrayElementType<
 
 export type FetchList = {
   sort: string;
-  filters: {
-    startDate: Dayjs | null;
-    endDate: Dayjs | null;
-    rejectionReason?: string;
-    deniedBy?: string;
-  };
+  filters: IFilters;
 };
 
-export interface IDateFilters {
+export interface IDateFilter {
   from: Dayjs | null;
   to: Dayjs | null;
 }
+
+export interface IRangeFilter {
+  from: string;
+  to: string;
+}
+
+export enum RANGE_FILTERS_KEYS {
+  leadPrice = 'leadPrice'
+}
+
+export type IFilters = {
+  leadCampaign: string[];
+  state: string[];
+  stack: string[];
+  deniedBy: string[];
+  denialReason: string;
+  [RANGE_FILTERS_KEYS.leadPrice]: IRangeFilter;
+  requestDate: IDateFilter;
+};

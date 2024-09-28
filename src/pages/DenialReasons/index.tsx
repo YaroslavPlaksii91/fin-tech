@@ -1,18 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
-import buildQuery from 'odata-query';
 import {
   GRID_AGGREGATION_FUNCTIONS,
   GridSortModel
 } from '@mui/x-data-grid-premium';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 
-import { COLUMN_IDS, FetchList, IDateFilters, RowData } from './types';
-import { getFormattedRows } from './utils';
+import { COLUMN_IDS, FetchList, IFilters, RowData } from './types';
+import { buildOdataParams, getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
   DEFAULT_EXPORT_FILE_NAME,
   DEFAULT_SORT,
-  INITIAL_DATE_FILTERS
+  INITIAL_FILTERS
 } from './constants';
 
 import { StyledDataGridPremium } from '@components/shared/Table/styled';
@@ -22,36 +21,28 @@ import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
 import TuneIcon from '@icons/tune.svg';
 import ExportCSVButton from '@components/shared/ExportCSVButton';
-import { removeSingleQuotesODataParams } from '@utils/helpers';
-import { getDateInUTC } from '@utils/date';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
-import Filters, { IFormState } from '@components/DenialReasons/Filters';
+import Filters from '@components/DenialReasons/Filters';
 
 const DenialReasons = () => {
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [rows, setRows] = useState<RowData[]>([]);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [dateFilters, setDateFilters] =
-    useState<IDateFilters>(INITIAL_DATE_FILTERS);
-  const [denialReasons, setDenialReasons] = useState('');
-  const [deniedBy, setDeniedBy] = useState('');
+
+  const [filters, setFilters] = useState<IFilters>(INITIAL_FILTERS);
 
   const handleFiltersOpen = () => setIsFiltersOpen(true);
 
   const handleFiltersClose = () => setIsFiltersOpen(false);
 
   const handleFiltersReset = () => {
-    setDateFilters(INITIAL_DATE_FILTERS);
-    setDenialReasons('');
-    setDeniedBy('');
+    setFilters(INITIAL_FILTERS);
     handleFiltersClose();
   };
 
-  const handleSubmit = (data: IFormState) => {
-    setDateFilters(data.dateFilters);
-    setDenialReasons(data.denialReasons);
-    setDeniedBy(data.deniedBy);
+  const handleSubmit = (data: IFilters) => {
+    setFilters(data);
     handleFiltersClose();
   };
 
@@ -62,38 +53,13 @@ const DenialReasons = () => {
     setSort(sortParams);
   };
 
-  const buildOdataParams = ({
-    sort,
-    filters: { startDate, endDate, deniedBy, rejectionReason }
-  }: FetchList): string => {
-    const queries = {
-      orderBy: sort,
-      count: true,
-      filter: {
-        deniedBy: deniedBy || undefined,
-        rejectionReason: rejectionReason || undefined,
-        date: {
-          ge: startDate ? getDateInUTC(startDate).toISOString() : undefined,
-          le: endDate ? getDateInUTC(endDate).toISOString() : undefined
-        }
-      }
-    };
-
-    // We need to replace default odata $filter with entityFilter,
-    // Because this is expected on backend for this Report
-    const params = buildQuery(queries).replace('$filter', 'entityFilter');
-
-    return removeSingleQuotesODataParams(params);
-  };
-
-  const fetchList = async ({ sort, filters }: FetchList) => {
+  const fetchList = async (data: FetchList) => {
     setLoading(true);
 
-    const correctedParams = buildOdataParams({ sort, filters });
+    const params = buildOdataParams(data);
 
     try {
-      const data =
-        await reportingService.getDenialReasonsReport(correctedParams);
+      const data = await reportingService.getDenialReasonsReport(params);
       const rows = getFormattedRows(data.value);
 
       setRows(rows);
@@ -104,35 +70,14 @@ const DenialReasons = () => {
     }
   };
 
-  const fetch = () => {
-    const params: FetchList = {
-      sort,
-      filters: {
-        deniedBy,
-        startDate: dateFilters.from,
-        endDate: dateFilters.to,
-        rejectionReason: denialReasons
-      }
-    };
-
-    void fetchList(params);
-  };
-
-  useEffect(() => fetch(), [sort, dateFilters, deniedBy, denialReasons]);
+  useEffect(() => {
+    void fetchList({ sort, filters });
+  }, [sort, filters]);
 
   const handleExportDenialReasonReports = useCallback(async () => {
-    const params: FetchList = {
-      sort,
-      filters: {
-        deniedBy,
-        startDate: dateFilters.from,
-        endDate: dateFilters.to,
-        rejectionReason: denialReasons
-      }
-    };
-    const correctedParams = buildOdataParams(params);
-    return reportingService.getDenialReasonsReportExportCSV(correctedParams);
-  }, [sort, dateFilters, deniedBy, denialReasons]);
+    const params = buildOdataParams({ sort, filters });
+    return reportingService.getDenialReasonsReportExportCSV(params);
+  }, [sort, filters]);
 
   return (
     <Box sx={{ padding: '16px 24px' }}>
@@ -211,9 +156,7 @@ const DenialReasons = () => {
       </Paper>
       <Filters
         isOpen={isFiltersOpen}
-        dateFilters={dateFilters}
-        denialReasons={denialReasons}
-        deniedBy={deniedBy}
+        filters={filters}
         onReset={handleFiltersReset}
         onSubmit={handleSubmit}
         onClose={handleFiltersClose}

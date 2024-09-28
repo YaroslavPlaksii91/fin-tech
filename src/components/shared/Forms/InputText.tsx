@@ -34,7 +34,8 @@ const InputText = <
   startAdornmentSymb,
   type = 'text',
   fullWidth = false,
-  clearable = true,
+  clearable = false,
+  disabled = false,
   InputProps,
   ...props
 }: InputTextFormProps<TFieldValues, TName> &
@@ -62,7 +63,7 @@ const InputText = <
             </InputAdornment>
           ) : null,
           endAdornment:
-            clearable && field.value.length > 0 ? (
+            clearable && !disabled && field.value?.length > 0 ? (
               <InputAdornment position="end">
                 <IconButton
                   sx={{ mr: '7px' }}
@@ -77,6 +78,7 @@ const InputText = <
           ...InputProps
         }}
         {...field}
+        disabled={disabled}
         {...props}
       />
     </FormControl>

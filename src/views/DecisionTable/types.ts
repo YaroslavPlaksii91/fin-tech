@@ -37,7 +37,7 @@ export interface SelectedCell extends Entry, ColumnData {
 export type FormFieldsProps = {
   name: string;
   operator: Operator;
-  value?: string;
+  value?: string | string[];
   lowerBound?: number | null;
   upperBound?: number | null;
 };
@@ -54,6 +54,7 @@ export enum OPERATORS {
   BETWEEN = 'between',
   ANY = 'any',
   CONTAINS = 'contains',
+  DOESNOTCONTAIN = 'does not contain',
   NOT_IN = 'not in'
 }
 
