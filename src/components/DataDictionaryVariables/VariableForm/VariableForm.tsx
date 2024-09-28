@@ -203,7 +203,8 @@ export const VariableForm: React.FC<VariableFormProps> = ({
               inputMode="numeric"
             />
           )}
-          {watchDataType === DATA_TYPE_WITHOUT_ENUM.String && (
+          {(watchDataType === DATA_TYPE_WITHOUT_ENUM.String ||
+            watchDataType === DATA_TYPE_WITHOUT_ENUM.StringArray) && (
             <InputText
               fullWidth
               name="defaultValue"

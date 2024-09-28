@@ -5,7 +5,7 @@ import {
   DATA_TYPE_WITHOUT_ENUM,
   DATA_TYPE
 } from '@domain/dataDictionary';
-import { isDecimal, isInteger } from '@utils/validation';
+import { isDecimal, isInteger, isStringArray } from '@utils/validation';
 
 export const validationSchema = yup.object().shape({
   name: yup
@@ -43,7 +43,8 @@ export const validationSchema = yup.object().shape({
         DATA_TYPE_WITHOUT_ENUM.Decimal,
         DATA_TYPE_WITHOUT_ENUM.Boolean,
         DATA_TYPE_WITHOUT_ENUM.DateTime,
-        DATA_TYPE_WITHOUT_ENUM.Integer
+        DATA_TYPE_WITHOUT_ENUM.Integer,
+        DATA_TYPE_WITHOUT_ENUM.StringArray
       ].includes(val),
     then: (schema) =>
       schema
@@ -65,6 +66,16 @@ export const validationSchema = yup.object().shape({
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             return this.parent.dataType === DATA_TYPE_WITHOUT_ENUM.Integer
               ? isInteger(value)
+              : true;
+          }
+        )
+        .test(
+          'is-string-array',
+          'Default value must be an empty array or an array of strings',
+          function (value) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            return this.parent.dataType === DATA_TYPE_WITHOUT_ENUM.StringArray
+              ? isStringArray(value)
               : true;
           }
         )
