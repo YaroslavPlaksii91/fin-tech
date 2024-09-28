@@ -1,12 +1,7 @@
-import {
-  useState,
-  useMemo,
-  useEffect,
-  forwardRef,
-  useImperativeHandle
-} from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { indexOf, map } from 'lodash';
-import { TableHead, TableBody, Table } from '@mui/material';
+import { TableHead, TableBody, IconButton, Table } from '@mui/material';
+import { AddBoxOutlined } from '@mui/icons-material';
 import dayjs from 'dayjs';
 
 import { TableHeader } from '../constants';
@@ -37,6 +32,8 @@ import { FlowNode } from '@domain/flow';
 import { useAppSelector } from '@store/hooks';
 import { selectFlow } from '@store/flow/selectors';
 import TablePagination from '@components/shared/TablePagination';
+import { permissionsMap } from '@constants/permissions';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import useTablePagination from '@hooks/useTablePagination';
 import { checkIsProductionFlow } from '@utils/helpers';
 import { DATE_FORMAT } from '@constants/common';
@@ -49,196 +46,208 @@ interface TableListProps {
   flowId: string;
 }
 
-const TableList = forwardRef(
-  ({ flowNodes, tabName, headers, tableData, flowId }: TableListProps, ref) => {
-    const [selectedVariable, setSelectedVariable] = useState<
-      UserDefinedVariable & {
-        index: number;
-        variableIsUsed: boolean;
+const TableList = ({
+  flowNodes,
+  tabName,
+  headers,
+  tableData,
+  flowId
+}: TableListProps) => {
+  const [selectedVariable, setSelectedVariable] = useState<
+    UserDefinedVariable & {
+      index: number;
+      variableIsUsed: boolean;
+    }
+  >();
+
+  const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const isProductionFlow = checkIsProductionFlow();
+  const isViewMode = isProductionFlow || !hasUserPermission;
+
+  const [userDefinedUsage, setUserDefinedUsage] =
+    useState<VariableUsageParams>();
+
+  const {
+    flow: { temporaryVariables, permanentVariables }
+  } = useAppSelector(selectFlow);
+
+  const {
+    rowsPerPage,
+    page,
+    totalPages,
+    handlePageChange,
+    handlePageApply,
+    handleRowsPerPageChange
+  } = useTablePagination({ totalCount: tableData.length });
+
+  const visibleRows = useMemo(
+    () => tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [page, rowsPerPage, tableData]
+  );
+
+  // Avoid a layout jump when reaching the last page with empty rows.
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0;
+
+  const handleVariableModalClose = () => {
+    setSelectedVariable(undefined);
+    setIsVariableModalOpen(false);
+  };
+
+  const handleDeleteModalClose = () => {
+    setSelectedVariable(undefined);
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleVariable = (
+    row: UserDefinedVariable,
+    variableUsageStepIds: string[]
+  ) => {
+    let variables;
+
+    switch (row.sourceType) {
+      case VARIABLE_SOURCE_TYPE.PermanentVariable: {
+        variables = permanentVariables;
+        break;
       }
-    >();
-
-    const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const isProductionFlow = checkIsProductionFlow();
-
-    const [userDefinedUsage, setUserDefinedUsage] =
-      useState<VariableUsageParams>();
-
-    const {
-      flow: { temporaryVariables, permanentVariables }
-    } = useAppSelector(selectFlow);
-
-    const {
-      rowsPerPage,
-      page,
-      totalPages,
-      handlePageChange,
-      handlePageApply,
-      handleRowsPerPageChange
-    } = useTablePagination({ totalCount: tableData.length });
-
-    const visibleRows = useMemo(
-      () =>
-        tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-      [page, rowsPerPage, tableData]
-    );
-
-    // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows =
-      page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0;
-
-    const handleVariableModalClose = () => {
-      setSelectedVariable(undefined);
-      setIsVariableModalOpen(false);
-    };
-
-    const handleDeleteModalClose = () => {
-      setSelectedVariable(undefined);
-      setIsDeleteModalOpen(false);
-    };
-
-    const handleVariable = (
-      row: UserDefinedVariable,
-      variableUsageStepIds: string[]
-    ) => {
-      let variables;
-
-      switch (row.sourceType) {
-        case VARIABLE_SOURCE_TYPE.PermanentVariable: {
-          variables = permanentVariables;
-          break;
-        }
-        case VARIABLE_SOURCE_TYPE.TemporaryVariable: {
-          variables = temporaryVariables;
-          break;
-        }
+      case VARIABLE_SOURCE_TYPE.TemporaryVariable: {
+        variables = temporaryVariables;
+        break;
       }
+    }
 
-      const indexOfVariable = indexOf(map(variables, 'name'), row.name);
+    const indexOfVariable = indexOf(map(variables, 'name'), row.name);
 
-      setSelectedVariable({
-        index: indexOfVariable,
-        variableIsUsed: !!variableUsageStepIds.length,
-        ...row
-      });
-    };
+    setSelectedVariable({
+      index: indexOfVariable,
+      variableIsUsed: !!variableUsageStepIds.length,
+      ...row
+    });
+  };
 
-    const handleEditClick = (
-      row: UserDefinedVariable,
-      variableUsageStepIds: string[]
-    ) => {
-      handleVariable(row, variableUsageStepIds);
-      setIsVariableModalOpen(true);
-    };
+  const handleEditClick = (
+    row: UserDefinedVariable,
+    variableUsageStepIds: string[]
+  ) => {
+    handleVariable(row, variableUsageStepIds);
+    setIsVariableModalOpen(true);
+  };
 
-    const handleDeleteClick = (
-      row: UserDefinedVariable,
-      variableUsageStepIds: string[]
-    ) => {
-      handleVariable(row, variableUsageStepIds);
-      setIsDeleteModalOpen(true);
-    };
+  const handleDeleteClick = (
+    row: UserDefinedVariable,
+    variableUsageStepIds: string[]
+  ) => {
+    handleVariable(row, variableUsageStepIds);
+    setIsDeleteModalOpen(true);
+  };
 
-    useImperativeHandle(ref, () => ({
-      openVariableModal: () => {
-        setSelectedVariable(undefined);
-        setIsVariableModalOpen(true);
-      }
-    }));
+  useEffect(() => {
+    if (tabName !== 'userDefined') return;
 
-    useEffect(() => {
-      if (tabName !== 'userDefined') return;
+    const variables = map(tableData, 'name');
 
-      const variables = map(tableData, 'name');
+    isProductionFlow
+      ? void getProductionUserDefinedUsage(variables).then((data) =>
+          setUserDefinedUsage(data)
+        )
+      : void getUserDefinedUsage(flowId, variables).then((data) =>
+          setUserDefinedUsage(data)
+        );
+  }, [tabName]);
 
-      isProductionFlow
-        ? void getProductionUserDefinedUsage(variables).then((data) =>
-            setUserDefinedUsage(data)
-          )
-        : void getUserDefinedUsage(flowId, variables).then((data) =>
-            setUserDefinedUsage(data)
-          );
-    }, [tabName]);
-
-    return (
-      <StyledPaper sx={{ overflow: 'auto' }}>
-        <Table stickyHeader size="small" aria-label="sticky table">
-          <TableHead>
-            <StyledTableRow>
-              <StyledTableCell />
-              {headers.map(({ key, label }) => (
-                <StyledTableCell key={key}>{label}</StyledTableCell>
-              ))}
-              {tabName === 'userDefined' && <StyledTableCell />}
-            </StyledTableRow>
-          </TableHead>
-          <TableBody>
-            {visibleRows.map((variable, index) => (
-              <TableRow
-                key={index}
-                headers={headers}
-                row={
-                  variable.dataType === DATA_TYPE_WITHOUT_ENUM.DateTime
-                    ? {
-                        ...variable,
-                        defaultValue: dayjs(variable.defaultValue).format(
-                          DATE_FORMAT
-                        )
-                      }
-                    : variable
-                }
-                index={index}
-                tabName={tabName}
-                flowId={flowId}
-                flowNodes={flowNodes}
-                userDefinedUsageStepIds={
-                  userDefinedUsage &&
-                  getUserDefinedUsageStepIds({ userDefinedUsage, variable })
-                }
-                onEdit={handleEditClick}
-                onDelete={handleDeleteClick}
-              />
+  return (
+    <StyledPaper sx={{ overflow: 'auto' }}>
+      <Table stickyHeader size="small" aria-label="sticky table">
+        <TableHead>
+          <StyledTableRow>
+            <StyledTableCell />
+            {headers.map(({ key, label }) => (
+              <StyledTableCell key={key}>{label}</StyledTableCell>
             ))}
-            {emptyRows > 0 && (
-              <StyledTableRow style={{ height: 43 * emptyRows }}>
-                <StyledTableCell colSpan={6} />
-              </StyledTableRow>
+            {tabName === 'userDefined' && (
+              <StyledTableCell align="right">
+                {!isViewMode && (
+                  <IconButton
+                    onClick={() => {
+                      setSelectedVariable(undefined);
+                      setIsVariableModalOpen(true);
+                    }}
+                    edge="end"
+                    aria-label="add"
+                    sx={{ p: 0, mr: 0 }}
+                  >
+                    <AddBoxOutlined fontSize="small" />
+                  </IconButton>
+                )}
+              </StyledTableCell>
             )}
-          </TableBody>
-        </Table>
-        {tableData.length > 10 && (
-          <TablePagination
-            count={tableData.length}
-            totalPages={totalPages}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            onPageChange={handlePageChange}
-            onRowsPerPageChange={handleRowsPerPageChange}
-            onPageApply={handlePageApply}
-          />
-        )}
-        {isVariableModalOpen && (
-          <VariableForm
-            flowId={flowId}
-            formData={selectedVariable}
-            isOpen={isVariableModalOpen}
-            onClose={handleVariableModalClose}
-          />
-        )}
-        {isDeleteModalOpen && (
-          <DeleteVariable
-            flowId={flowId}
-            variable={selectedVariable!}
-            isOpen={isDeleteModalOpen}
-            onClose={handleDeleteModalClose}
-          />
-        )}
-      </StyledPaper>
-    );
-  }
-);
-
-TableList.displayName = 'TableList';
+          </StyledTableRow>
+        </TableHead>
+        <TableBody>
+          {visibleRows.map((variable, index) => (
+            <TableRow
+              key={index}
+              headers={headers}
+              row={
+                variable.dataType === DATA_TYPE_WITHOUT_ENUM.DateTime
+                  ? {
+                      ...variable,
+                      defaultValue: dayjs(variable.defaultValue).format(
+                        DATE_FORMAT
+                      )
+                    }
+                  : variable
+              }
+              index={index}
+              tabName={tabName}
+              flowId={flowId}
+              flowNodes={flowNodes}
+              userDefinedUsageStepIds={
+                userDefinedUsage &&
+                getUserDefinedUsageStepIds({ userDefinedUsage, variable })
+              }
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
+            />
+          ))}
+          {emptyRows > 0 && (
+            <StyledTableRow style={{ height: 43 * emptyRows }}>
+              <StyledTableCell colSpan={6} />
+            </StyledTableRow>
+          )}
+        </TableBody>
+      </Table>
+      {tableData.length > 10 && (
+        <TablePagination
+          count={tableData.length}
+          totalPages={totalPages}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handlePageChange}
+          onRowsPerPageChange={handleRowsPerPageChange}
+          onPageApply={handlePageApply}
+        />
+      )}
+      {isVariableModalOpen && (
+        <VariableForm
+          flowId={flowId}
+          formData={selectedVariable}
+          isOpen={isVariableModalOpen}
+          onClose={handleVariableModalClose}
+        />
+      )}
+      {isDeleteModalOpen && (
+        <DeleteVariable
+          flowId={flowId}
+          variable={selectedVariable!}
+          isOpen={isDeleteModalOpen}
+          onClose={handleDeleteModalClose}
+        />
+      )}
+    </StyledPaper>
+  );
+};
 
 export default TableList;

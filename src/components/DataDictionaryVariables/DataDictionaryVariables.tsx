@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { Box, Stack, Tabs, Typography, Button } from '@mui/material';
 import { omitBy } from 'lodash';
 
@@ -18,27 +18,17 @@ import { StyledTab } from './styled';
 import { TAB } from './types';
 import Filters, { IFormState } from './Filters';
 
-import { AddIcon } from '@components/shared/Icons';
 import TuneIcon from '@icons/tune.svg';
 import { theme } from '@theme';
 import { IFlow } from '@domain/flow';
 import { DATA_TYPE_WITHOUT_ENUM, Variable } from '@domain/dataDictionary';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
-import { useHasUserPermission } from '@hooks/useHasUserPermission';
-import { checkIsProductionFlow } from '@utils/helpers';
-import { permissionsMap } from '@constants/permissions';
 
 const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const [tab, setTab] = useState<TAB>('laPMSVariables');
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState(INITIAL_FILTERS);
-  const tableListRef = useRef<{
-    openVariableModal: () => void;
-  }>(null);
-  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
-  const isProductionFlow = checkIsProductionFlow();
-  const isViewMode = isProductionFlow || !hasUserPermission;
 
   const handleFiltersOpen = () => setIsFiltersOpen(true);
 
@@ -48,12 +38,6 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     setFilters(INITIAL_FILTERS);
     setSearch('');
     handleFiltersClose();
-  };
-
-  const handleOpenVariableModal = () => {
-    if (tableListRef.current) {
-      tableListRef.current.openVariableModal();
-    }
   };
 
   const handleSubmit = (data: IFormState) => {
@@ -182,32 +166,18 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
               <Typography variant="body1" color="gray">
                 {SOURCES_DESCRIPTIONS[tabName]}
               </Typography>
-              <Stack direction="row" spacing={1}>
-                <Button
-                  size="small"
-                  color="inherit"
-                  variant="outlined"
-                  sx={{ minWidth: '80px', borderRadius: '6px' }}
-                  startIcon={<TuneIcon />}
-                  onClick={handleFiltersOpen}
-                >
-                  Filters
-                </Button>
-                {tabName === 'userDefined' && !isViewMode && (
-                  <Button
-                    size="small"
-                    variant="contained"
-                    sx={{ minWidth: '140px', borderRadius: '6px' }}
-                    startIcon={<AddIcon />}
-                    onClick={handleOpenVariableModal}
-                  >
-                    Create Variable
-                  </Button>
-                )}
-              </Stack>
+              <Button
+                size="small"
+                color="inherit"
+                variant="outlined"
+                sx={{ minWidth: '80px', borderRadius: '6px' }}
+                startIcon={<TuneIcon />}
+                onClick={handleFiltersOpen}
+              >
+                Filters
+              </Button>
             </Stack>
             <TableList
-              ref={tableListRef}
               headers={headers}
               tableData={filteredBySelects}
               tabName={tabName as TAB}
