@@ -2,7 +2,6 @@ import { Box, Breadcrumbs, Typography } from '@mui/material';
 
 import { FlowNode } from '@domain/flow';
 import { theme } from '@theme';
-import { STEP_ICONS } from '@constants/common';
 import { buildPath } from '@components/StepManagment/StepDetailsHeader/utils';
 
 interface StepDetailsHeaderProps {
@@ -61,10 +60,9 @@ const createBreadcrumbs = ({
   path.slice(0, -1).forEach((node) => {
     breadcrumbs.push(
       <Box key={node.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        {STEP_ICONS[node.data.stepType]}
         <Typography
           sx={{ textDecoration: 'underline', cursor: 'pointer' }}
-          variant="body1"
+          variant="body2"
           color={theme.palette.info.main}
           onClick={() => handleClick({ subFlowId: node.id, stepId: null })}
         >
@@ -77,9 +75,8 @@ const createBreadcrumbs = ({
   const lastNode = path.pop();
   breadcrumbs.push(
     <Box key="edit-step" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      {lastNode && STEP_ICONS[lastNode?.data.stepType]}
       <Typography
-        variant="body1"
+        variant="body2"
         color={theme.palette.info.main}
         sx={{ textDecoration: 'underline', cursor: 'pointer' }}
         onClick={() => {

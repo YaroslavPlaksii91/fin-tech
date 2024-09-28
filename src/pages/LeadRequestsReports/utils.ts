@@ -1,9 +1,12 @@
 import dayjs from 'dayjs';
+import buildQuery from 'odata-query';
 
-import { COLUMN_IDS } from './types';
+import { COLUMN_IDS, IFilters, OdataQueries } from './types';
 
 import { LeadRequestsReport } from '@domain/leadRequestsReports';
 import { FULL_DATE_TIME_FORMAT } from '@constants/common';
+import { removeSingleQuotesODataParams } from '@utils/helpers';
+import { getDateInUTC } from '@utils/date';
 
 export const getFormattedRows = (data: LeadRequestsReport[]) => {
   const milliseconds = 1000;
@@ -46,4 +49,138 @@ export const getFormattedRows = (data: LeadRequestsReport[]) => {
       [COLUMN_IDS.cachedConnector]: processingMetadata?.cachedConnector ?? '-'
     };
   });
+};
+
+export const buildOdataParams = ({
+  page,
+  sort,
+  rowsPerPage,
+  filters: {
+    requestId,
+    affiliate,
+    ssn,
+    email,
+    denialReason,
+    cachedConnector,
+    apiVersion,
+    loanId,
+    customerId,
+    requestDate,
+    leadPrice,
+    requestedAmount,
+    leadProvider,
+    leadCampaign,
+    stackName,
+    loanType,
+    promoCode,
+    store,
+    decision,
+    state
+  },
+  includePagination = true
+}: {
+  page: number;
+  sort: string;
+  rowsPerPage: number;
+  filters: IFilters;
+  includePagination?: boolean;
+}): string => {
+  const filterConditions = [];
+
+  // contains condition for fields
+  const containsFields = {
+    [COLUMN_IDS.requestId]: requestId,
+    [COLUMN_IDS.affiliate]: affiliate,
+    [COLUMN_IDS.ssn]: ssn,
+    [COLUMN_IDS.email]: email,
+    [COLUMN_IDS.denialReason]: denialReason,
+    [COLUMN_IDS.cachedConnector]: cachedConnector,
+    [COLUMN_IDS.apiVersion]: apiVersion
+  };
+
+  Object.entries(containsFields).forEach(([key, value]) => {
+    if (value) {
+      filterConditions.push({
+        [key]: { contains: value }
+      });
+    }
+  });
+
+  // exact match for fields (temporarily) as loadId and customer Id are number value. Contains do not work on BE side
+  const exactMatchFields = {
+    [COLUMN_IDS.loanId]: loanId,
+    [COLUMN_IDS.customerId]: customerId
+  };
+
+  Object.entries(exactMatchFields).forEach(([key, value]) => {
+    if (value) {
+      filterConditions.push(`${key} eq ${value}`);
+    }
+  });
+
+  if (leadPrice.from) {
+    filterConditions.push(`${COLUMN_IDS.leadPrice} ge ${leadPrice.from}`);
+  }
+
+  if (leadPrice.to) {
+    filterConditions.push(`${COLUMN_IDS.leadPrice} le ${leadPrice.to}`);
+  }
+
+  if (requestedAmount.from) {
+    filterConditions.push(
+      `${COLUMN_IDS.requestedAmount} ge ${requestedAmount.from}`
+    );
+  }
+
+  if (requestedAmount.to) {
+    filterConditions.push(
+      `${COLUMN_IDS.requestedAmount} le ${requestedAmount.to}`
+    );
+  }
+
+  // exactMatchFields with or
+  const multiSearchFields = {
+    [COLUMN_IDS.leadProvider]: leadProvider,
+    [COLUMN_IDS.leadCampaign]: leadCampaign,
+    [COLUMN_IDS.stackName]: stackName,
+    [COLUMN_IDS.loanType]: loanType,
+    [COLUMN_IDS.promoCode]: promoCode,
+    [COLUMN_IDS.store]: store,
+    [COLUMN_IDS.decision]: decision,
+    [COLUMN_IDS.state]: state
+  };
+
+  Object.entries(multiSearchFields).forEach(([key, data]) => {
+    if (data?.length) {
+      const conditions = data.map((item) => `${key} eq '${item}'`).join(' or ');
+
+      filterConditions.push(`(${conditions})`);
+    }
+  });
+
+  const queries: OdataQueries = {
+    orderBy: sort,
+    filter: {
+      processingMetadata: {
+        executionEndDateTimeUtc: {
+          ge: requestDate.from
+            ? getDateInUTC(requestDate.from).toISOString()
+            : undefined,
+          le: requestDate.to
+            ? getDateInUTC(requestDate.to).toISOString()
+            : undefined
+        }
+      },
+      ...(filterConditions.length && { and: filterConditions })
+    }
+  };
+
+  if (includePagination) {
+    queries.top = rowsPerPage;
+    queries.skip = rowsPerPage * page;
+    queries.count = true;
+  }
+
+  const params = buildQuery(queries);
+  return removeSingleQuotesODataParams(params);
 };

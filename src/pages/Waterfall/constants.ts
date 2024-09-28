@@ -12,7 +12,7 @@ export const GROUP_COLORS_NAMES = [
 
 export const EXTERNAL_SYSTEM_KEYS = [
   'looks',
-  'approved',
+  'accepted',
   'cost',
   'savings',
   'timeouts'
@@ -38,7 +38,7 @@ export const RANGE_FILTERS_GROUPS = [
   },
   {
     name: RANGE_FILTERS_KEYS.totalApprovalRate,
-    title: 'Total Approval Rate'
+    title: 'Approval Rate'
   },
   {
     name: RANGE_FILTERS_KEYS.totalCost,

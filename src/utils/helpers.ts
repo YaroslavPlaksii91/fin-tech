@@ -129,3 +129,8 @@ export const parseExpressionError = (error: unknown): ExpressionError => {
     return { message: GENERAL_SERVER_ERROR, position: 0 };
   }
 };
+
+export const convertToPascalCase = (str: string): string =>
+  str
+    .replace(/(^\w|\/\w)/g, (match) => match.toUpperCase())
+    .replace(/\//g, '.');
