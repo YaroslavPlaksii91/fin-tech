@@ -9,6 +9,7 @@ import Range from '@components/shared/Forms/Range';
 import Autocomplete from '@components/shared/Autocomplete/Autocomplete';
 import { reportingService } from '@services/reports';
 import { convertToPascalCase } from '@utils/helpers';
+import { MIN_RANGE_VALUE_FILTER } from '@constants/common';
 
 interface FiltersProps
   extends Pick<TemplateProps, 'isOpen' | 'onClose' | 'onReset'> {
@@ -91,7 +92,7 @@ const Filters = ({
         startAdornmentSymb="$"
         name="leadPrice"
         control={control}
-        inputProps={{ min: 0 }}
+        inputProps={{ min: MIN_RANGE_VALUE_FILTER }}
       />
       <InputText
         fullWidth
@@ -117,7 +118,7 @@ const Filters = ({
         startAdornmentSymb="$"
         name="requestedAmount"
         control={control}
-        inputProps={{ min: 0 }}
+        inputProps={{ min: MIN_RANGE_VALUE_FILTER }}
       />
       <Autocomplete
         id="stack-name-multiselect"

@@ -68,3 +68,5 @@ export const STEP_ICONS = {
 };
 
 export const BOOLEAN_OPTIONS = ['true', 'false'];
+
+export const MIN_RANGE_VALUE_FILTER = 0;
