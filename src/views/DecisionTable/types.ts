@@ -38,8 +38,8 @@ export type FormFieldsProps = {
   name: string;
   operator: Operator;
   value?: string | string[];
-  lowerBound?: number | null;
-  upperBound?: number | null;
+  lowerBound?: string | null;
+  upperBound?: string | null;
 };
 
 export enum OPERATORS {
