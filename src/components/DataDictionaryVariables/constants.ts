@@ -73,12 +73,14 @@ export const FILTER_GROUPS = [
 export interface TableHeader {
   key: keyof Variable;
   label?: string;
+  maxWidth?: string;
   render?: (row: Variable) => void;
 }
 
 export const DEFAULT_HEADERS: TableHeader[] = [
   { key: 'name', label: 'Variable Name' },
   { key: 'dataType', label: 'Data Type' },
+  { key: 'allowedValues', label: 'Allowed Values', maxWidth: '150px' },
   { key: 'defaultValue', label: 'Default Value' },
   { key: 'description', label: 'Description' },
   { key: 'isRequired', label: 'Required' }
