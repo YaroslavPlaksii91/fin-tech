@@ -62,8 +62,8 @@ const SelectVariableValueDialog = ({
           ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
           : []
         : selectedCell.expression,
-      lowerBound: bounds.length > 0 ? +bounds[0] : undefined,
-      upperBound: bounds.length > 0 ? +bounds[1] : undefined
+      lowerBound: bounds.length > 0 ? bounds[0].trim() : undefined,
+      upperBound: bounds.length > 0 ? bounds[1].trim() : undefined
     }
   });
 
@@ -169,14 +169,12 @@ const SelectVariableValueDialog = ({
             <>
               <InputText
                 fullWidth
-                type="number"
                 name="lowerBound"
                 control={control}
                 label="Lowest Value*"
               />
               <InputText
                 fullWidth
-                type="number"
                 name="upperBound"
                 control={control}
                 label="Highest Value*"
