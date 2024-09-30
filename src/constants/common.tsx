@@ -34,7 +34,7 @@ export const NOT_FOUND = 'Not found';
 
 export const ROUTER_BLOCKED_STATE = 'blocked';
 
-export const SPECIAL_KEY_CODES = {
+export const KEY_CODES = {
   Dot: '.',
   Escape: 'Escape',
   Minus: '-'

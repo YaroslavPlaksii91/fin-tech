@@ -90,8 +90,8 @@ const Filters = ({
         title="Lead Price"
         startAdornmentSymb="$"
         name="leadPrice"
-        type="number"
         control={control}
+        inputProps={{ min: 0 }}
       />
       <InputText
         fullWidth
@@ -115,9 +115,9 @@ const Filters = ({
       <Range
         title="Requested Amount"
         startAdornmentSymb="$"
-        type="number"
         name="requestedAmount"
         control={control}
+        inputProps={{ min: 0 }}
       />
       <Autocomplete
         id="stack-name-multiselect"
