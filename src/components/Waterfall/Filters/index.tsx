@@ -73,6 +73,7 @@ const Filters = ({
           name={name}
           control={control}
           inputProps={{ min: MIN_RANGE_VALUE_FILTER }}
+          style={{ marginBottom: '8px' }}
         />
       ))}
     </Template>
