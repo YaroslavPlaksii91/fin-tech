@@ -1,8 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { useCallback } from 'react';
-
-import validationSchema from './validationSchema';
 
 import Template, { TemplateProps } from '@components/shared/Filters';
 import DatePicker from '@components/shared/Forms/DatePicker';
@@ -11,6 +8,7 @@ import Range from '@components/shared/Forms/Range';
 import { RANGE_FILTERS_GROUPS } from '@pages/Waterfall/constants';
 import { reportingService } from '@services/reports';
 import Autocomplete from '@components/shared/Autocomplete/Autocomplete';
+import { MIN_RANGE_VALUE_FILTER } from '@constants/common';
 
 interface FiltersProps
   extends Pick<TemplateProps, 'isOpen' | 'onClose' | 'onReset'> {
@@ -26,9 +24,7 @@ const Filters = ({
   onSubmit
 }: FiltersProps) => {
   const { handleSubmit, control, reset } = useForm<IFilters>({
-    values: { ...filters },
-    // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
-    resolver: yupResolver(validationSchema)
+    values: { ...filters }
   });
 
   const handleClose = () => {
@@ -76,6 +72,7 @@ const Filters = ({
           startAdornmentSymb={symb}
           name={name}
           control={control}
+          inputProps={{ min: MIN_RANGE_VALUE_FILTER }}
         />
       ))}
     </Template>
