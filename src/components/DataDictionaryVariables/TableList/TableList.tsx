@@ -92,8 +92,10 @@ const TableList = ({
         <TableHead>
           <StyledTableRow>
             <StyledTableCell />
-            {headers.map(({ key, label }) => (
-              <StyledTableCell key={key}>{label}</StyledTableCell>
+            {headers.map(({ key, label, maxWidth }) => (
+              <StyledTableCell key={key} sx={{ maxWidth }}>
+                {label}
+              </StyledTableCell>
             ))}
             {tabName === 'userDefined' && <StyledTableCell align="right" />}
           </StyledTableRow>

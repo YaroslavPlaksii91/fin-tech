@@ -192,6 +192,20 @@ export const theme = createTheme({
         input: { margin: '0 8px' },
         displayedRows: { color: 'rgba(0,0,0,0.38)', margin: 0 }
       }
+    },
+    MuiTextField: {
+      // hide spin-button for all type="number" input
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-input': {
+            '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+              WebkitAppearance: 'none',
+              appearance: 'none',
+              margin: 0
+            }
+          }
+        }
+      }
     }
   },
   typography: {
