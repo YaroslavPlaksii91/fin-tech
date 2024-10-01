@@ -41,7 +41,10 @@ import {
 
 import AngleLeftSquareIcon from '@icons/angleLeftSquare.svg';
 import { ExpandMoreIcon } from '@components/shared/Icons';
-import { fetchFlowList } from '@store/flowList/asyncThunk';
+import {
+  fetchDraftFlowList,
+  fetchProductionFlowItem
+} from '@store/flowList/asyncThunk';
 import Logger from '@utils/logger';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { getProductionFlow, getFlow } from '@store/flow/asyncThunk';
@@ -172,7 +175,7 @@ const Sidebar = () => {
       return flowListLink(flowList[0].id);
     }
 
-    if (flowProduction.id) {
+    if (flowProduction?.id) {
       return flowListLink(flowProduction.id);
     }
     return flowListLink();
@@ -182,7 +185,10 @@ const Sidebar = () => {
     const fetchData = async () => {
       try {
         startLoading();
-        await dispatch(fetchFlowList());
+        await Promise.allSettled([
+          dispatch(fetchDraftFlowList()),
+          dispatch(fetchProductionFlowItem())
+        ]);
       } catch (error) {
         Logger.error('Error fetching data:', error);
       } finally {
@@ -289,42 +295,44 @@ const Sidebar = () => {
               </StyledMainAccordionSummary>
               <StyledAccordionDetails>
                 <Label variant="body2">Flow on Production</Label>
-                <StyledAccordion
-                  expanded={
-                    expandedFlow === PRODUCTION_FLOW_ID && expandedFlow === id
-                  }
-                  onChange={handleChangeFlow(PRODUCTION_FLOW_ID)}
-                  slotProps={{ transition: { unmountOnExit: true } }}
-                >
-                  <Box
-                    sx={{
-                      position: 'relative'
-                    }}
+                {flowProduction && (
+                  <StyledAccordion
+                    expanded={
+                      expandedFlow === PRODUCTION_FLOW_ID && expandedFlow === id
+                    }
+                    onChange={handleChangeFlow(PRODUCTION_FLOW_ID)}
+                    slotProps={{ transition: { unmountOnExit: true } }}
                   >
-                    <StyledNavLink
-                      to={`${routes.underwriting.flow.list(PRODUCTION_FLOW_ID)}`}
+                    <Box
+                      sx={{
+                        position: 'relative'
+                      }}
                     >
-                      <StyledSubAccordionSummary
-                        expandIcon={<ExpandMoreIcon fontSize="small" />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
+                      <StyledNavLink
+                        to={`${routes.underwriting.flow.list(PRODUCTION_FLOW_ID)}`}
                       >
-                        <ListItemIcon>
-                          <FlowIcon />
-                        </ListItemIcon>
-                        <Typography variant="body2">
-                          {flowProduction?.name}
-                        </Typography>
-                      </StyledSubAccordionSummary>
-                    </StyledNavLink>
-                    <ListItemSecondaryAction>
-                      <ActionsMenu isProductionFlow flow={flowProduction} />
-                    </ListItemSecondaryAction>
-                  </Box>
-                  <StyledAccordionDetails>
-                    <StepList nodes={flow.nodes} isProductionFlow />
-                  </StyledAccordionDetails>
-                </StyledAccordion>
+                        <StyledSubAccordionSummary
+                          expandIcon={<ExpandMoreIcon fontSize="small" />}
+                          aria-controls="panel1a-content"
+                          id="panel1a-header"
+                        >
+                          <ListItemIcon>
+                            <FlowIcon />
+                          </ListItemIcon>
+                          <Typography variant="body2">
+                            {flowProduction?.name}
+                          </Typography>
+                        </StyledSubAccordionSummary>
+                      </StyledNavLink>
+                      <ListItemSecondaryAction>
+                        <ActionsMenu isProductionFlow flow={flowProduction} />
+                      </ListItemSecondaryAction>
+                    </Box>
+                    <StyledAccordionDetails>
+                      <StepList nodes={flow.nodes} isProductionFlow />
+                    </StyledAccordionDetails>
+                  </StyledAccordion>
+                )}
                 <Label variant="body2">Draft Flows</Label>
                 {flowList.map((flowItem) => (
                   <StyledAccordion

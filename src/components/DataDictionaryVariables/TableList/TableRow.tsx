@@ -131,8 +131,10 @@ export const TableRow = ({
             {isExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </StyledTableCell>
-        {headers.map(({ key }) => (
-          <StyledTableCell key={key}>{row[key]?.toString()}</StyledTableCell>
+        {headers.map(({ key, maxWidth }) => (
+          <StyledTableCell key={key} sx={{ maxWidth, wordWrap: 'break-word' }}>
+            {row[key]?.toString()}
+          </StyledTableCell>
         ))}
         {tabName === 'userDefined' && (
           <StyledTableCell>

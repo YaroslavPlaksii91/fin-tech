@@ -11,7 +11,7 @@ import { AddIcon, RemoveIcon } from '../Icons';
 
 import { StyledInputAdornment, StyledTextField } from './styled';
 
-import { SPECIAL_KEY_CODES } from '@constants/common';
+import { KEY_CODES } from '@constants/common';
 import { theme } from '@theme';
 
 const MIN_VALUE = 1;
@@ -45,10 +45,7 @@ const NumberRangeInput = <
       <StyledTextField
         type="number"
         onKeyDown={(event) => {
-          if (
-            event.key === SPECIAL_KEY_CODES.Dot ||
-            event.key === SPECIAL_KEY_CODES.Minus
-          ) {
+          if (event.key === KEY_CODES.Dot || event.key === KEY_CODES.Minus) {
             event.preventDefault();
           }
         }}
