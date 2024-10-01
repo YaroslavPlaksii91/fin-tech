@@ -126,12 +126,14 @@ const DecisionTable = ({
       ? caseEntries[0]?.conditions
       : [INITIAL_ENTRY],
     flatVariables,
+    dataDictionary?.enumsDataTypes || [],
     'conditions'
   );
 
   const actionsColumns = getColumns(
     caseEntries[0]?.actions || [],
     flatVariables,
+    dataDictionary?.enumsDataTypes || [],
     'actions'
   );
 

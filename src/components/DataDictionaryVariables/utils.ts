@@ -1,4 +1,13 @@
-import { Variable, VariableUsageParams } from '@domain/dataDictionary';
+import { FILTER_BY, TAB } from './types';
+import { TABS } from './constants';
+
+import {
+  DATA_TYPE_WITHOUT_ENUM,
+  INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
+  INTEGRATION_VARIABLE_SOURCE_TYPE,
+  Variable,
+  VariableUsageParams
+} from '@domain/dataDictionary';
 import { dataDictionaryService } from '@services/data-dictionary';
 import Logger from '@utils/logger';
 
@@ -50,3 +59,38 @@ export const getUserDefinedUsageStepIds = ({
 
   return stepIds;
 };
+
+export const checkDataType = (
+  dataType: DATA_TYPE_WITHOUT_ENUM,
+  enumsDataTypes: string[]
+) => ({
+  isWithEnum: enumsDataTypes.includes(dataType),
+  isBoolean: dataType === DATA_TYPE_WITHOUT_ENUM.Boolean,
+  isString: dataType === DATA_TYPE_WITHOUT_ENUM.String,
+  isInteger: dataType === DATA_TYPE_WITHOUT_ENUM.Integer,
+  isDecimal: dataType === DATA_TYPE_WITHOUT_ENUM.Decimal
+});
+
+export const getFiltersGroup = (enumsDataTypes: string[]) => [
+  {
+    filterBy: FILTER_BY.dataType,
+    text: 'By Data Type',
+    fields: [
+      ...Object.values({ ...DATA_TYPE_WITHOUT_ENUM }),
+      ...enumsDataTypes
+    ],
+    applyFor: Object.values(TABS) as TAB[]
+  },
+  {
+    filterBy: FILTER_BY.source,
+    text: 'By CRA',
+    fields: Object.values(INTEGRATION_VARIABLE_SOURCE_TYPE),
+    applyFor: [TABS.craReportVariables] as TAB[]
+  },
+  {
+    filterBy: FILTER_BY.sourceType,
+    text: 'By Report Name',
+    fields: Object.values(INTEGRATION_VARIABLE_SOURCE_SUB_TYPE),
+    applyFor: [TABS.craReportVariables] as TAB[]
+  }
+];

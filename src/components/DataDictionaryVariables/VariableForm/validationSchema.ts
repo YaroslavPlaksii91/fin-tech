@@ -2,8 +2,7 @@ import * as yup from 'yup';
 
 import {
   VARIABLE_SOURCE_TYPE,
-  DATA_TYPE_WITHOUT_ENUM,
-  DATA_TYPE
+  DATA_TYPE_WITHOUT_ENUM
 } from '@domain/dataDictionary';
 import { isDecimal, isInteger } from '@utils/validation';
 
@@ -34,7 +33,7 @@ export const validationSchema = yup.object().shape({
     .oneOf(Object.values(VARIABLE_SOURCE_TYPE))
     .required(),
   dataType: yup
-    .mixed<DATA_TYPE>()
+    .mixed<DATA_TYPE_WITHOUT_ENUM>()
     .oneOf(Object.values(DATA_TYPE_WITHOUT_ENUM))
     .required(),
   defaultValue: yup.string().when('dataType', {
