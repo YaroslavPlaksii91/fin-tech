@@ -21,13 +21,12 @@ import { highlightText } from '@utils/text.ts';
 import LoadingButton from '@components/shared/LoadingButton.tsx';
 import {
   CRA_REPORT_VARIABLES,
-  DATA_TYPE,
   DATA_TYPE_WITHOUT_ENUM,
-  DataDictionaryVariableRecord,
   Variable
 } from '@domain/dataDictionary.ts';
+import { DataDictionaryVariables } from '@contexts/DataDictionaryContext';
 
-const objectVariableTypes: DATA_TYPE[] = [
+const objectVariableTypes = [
   DATA_TYPE_WITHOUT_ENUM['Object:CraClarity'],
   DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']
 ];
@@ -76,41 +75,37 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   const filteredData = useMemo(
     () =>
       data
-        ? Object.keys(data).reduce<DataDictionaryVariableRecord>(
-            (acc, curr) => {
-              const filteredVariables = data[curr].filter((i) => {
-                const nameContainsQuery = i.name
-                  .toLowerCase()
-                  .includes(query.toLowerCase());
+        ? Object.keys(data).reduce<DataDictionaryVariables>((acc, curr) => {
+            const filteredVariables = data[curr].filter((i) => {
+              const nameContainsQuery = i.name
+                .toLowerCase()
+                .includes(query.toLowerCase());
 
-                if (objectVariableTypes.includes(i.dataType)) {
-                  const relatedIntegratedDataList =
-                    integrationData?.[
-                      objectVariablesDataSourceMap[i.dataType]
-                    ] || [];
+              if (objectVariableTypes.includes(i.dataType)) {
+                const relatedIntegratedDataList =
+                  integrationData?.[objectVariablesDataSourceMap[i.dataType]] ||
+                  [];
 
-                  return (
-                    nameContainsQuery ||
-                    relatedIntegratedDataList.some((property) =>
-                      property.name.toLowerCase().includes(query.toLowerCase())
-                    )
-                  );
-                }
-
-                return nameContainsQuery;
-              });
-
-              if (filteredVariables.length > 0) {
-                return {
-                  ...acc,
-                  [curr]: filteredVariables
-                };
+                return (
+                  nameContainsQuery ||
+                  relatedIntegratedDataList.some((property) =>
+                    property.name.toLowerCase().includes(query.toLowerCase())
+                  )
+                );
               }
 
-              return acc;
-            },
-            {}
-          )
+              return nameContainsQuery;
+            });
+
+            if (filteredVariables.length > 0) {
+              return {
+                ...acc,
+                [curr]: filteredVariables
+              };
+            }
+
+            return acc;
+          }, {})
         : {},
     [data, integrationData, query]
   );
@@ -118,7 +113,9 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   const filteredIntegrationDataList = useMemo(() => {
     const integrationDataList =
       integrationData?.[
-        objectVariablesDataSourceMap[selectedVar?.dataType as DATA_TYPE]
+        objectVariablesDataSourceMap[
+          selectedVar?.dataType as DATA_TYPE_WITHOUT_ENUM
+        ]
       ];
 
     if (!integrationDataList) {
@@ -140,7 +137,9 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   // Need to set user-defined variables with data types Object:CraClarity and Object:CraFactorTrust without attributes for saving the result of the GET REPORT function
   const selectVarIsObjectType =
     showAttributes &&
-    objectVariableTypes.includes(selectedVar?.dataType as DATA_TYPE);
+    objectVariableTypes.includes(
+      selectedVar?.dataType as DATA_TYPE_WITHOUT_ENUM
+    );
 
   const handleConfirmClick = () => {
     const value = selectVarIsObjectType
@@ -312,8 +311,8 @@ interface DataDictionaryDialogProps {
   showAttributes?: boolean;
   onClose: () => void;
   onConfirm: (variable: Variable) => void;
-  data?: DataDictionaryVariableRecord;
-  integrationData?: DataDictionaryVariableRecord;
+  data?: DataDictionaryVariables;
+  integrationData?: DataDictionaryVariables;
   setSelectedObjectPropertyFunction?: (
     object: Variable,
     property: Variable

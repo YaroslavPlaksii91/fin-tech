@@ -11,28 +11,20 @@ import {
 } from './types';
 
 import {
-  DATA_TYPE,
   DATA_TYPE_WITHOUT_ENUM,
-  DATA_TYPE_WITH_ENUM_PREFIX,
   INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
   VARIABLE_SOURCE_TYPE,
   VARIABLE_USAGE_MODE,
   Variable
 } from '@domain/dataDictionary';
+import { checkDataType } from '@components/DataDictionaryVariables/utils';
 
-export const checkDataType = (dataType: DATA_TYPE) => ({
-  isWithEnum: Object.values(DATA_TYPE_WITH_ENUM_PREFIX).includes(
-    dataType as DATA_TYPE_WITH_ENUM_PREFIX
-  ),
-  isBoolean: dataType === DATA_TYPE_WITHOUT_ENUM.Boolean,
-  isString: dataType === DATA_TYPE_WITHOUT_ENUM.String,
-  isInteger: dataType === DATA_TYPE_WITHOUT_ENUM.Integer,
-  isDecimal: dataType === DATA_TYPE_WITHOUT_ENUM.Decimal
-});
-
-export const getOperatorOptions = (dataType: DATA_TYPE) => {
-  const { isWithEnum, isString, isInteger, isDecimal } =
-    checkDataType(dataType);
+export const getOperatorOptions = ({
+  isWithEnum,
+  isString,
+  isInteger,
+  isDecimal
+}: ReturnType<typeof checkDataType>) => {
   let operators: Operator[] = [];
 
   switch (true) {
@@ -79,6 +71,7 @@ export const getOperatorOptions = (dataType: DATA_TYPE) => {
 export const getColumns = (
   entries: Entry[],
   variables: Variable[],
+  enumsDataTypes: string[],
   category: CATEGORY
 ) =>
   entries.map((el, index) => {
@@ -86,7 +79,8 @@ export const getColumns = (
 
     // if variable enum type we have additional prop with allowedValues
     const allowedValues =
-      variable?.dataType && checkDataType(variable.dataType).isWithEnum
+      variable?.dataType &&
+      checkDataType(variable.dataType, enumsDataTypes).isWithEnum
         ? variable?.allowedValues
         : undefined;
 

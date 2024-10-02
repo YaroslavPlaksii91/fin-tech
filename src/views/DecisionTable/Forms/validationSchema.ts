@@ -2,25 +2,12 @@ import * as yup from 'yup';
 
 import { Operator, OPERATORS } from '../types';
 
-import {
-  DATA_TYPE,
-  DATA_TYPE_WITHOUT_ENUM,
-  DATA_TYPE_WITH_ENUM_PREFIX
-} from '@domain/dataDictionary';
 import { isDecimal, isInteger } from '@utils/validation';
-import { checkDataType } from '@views/DecisionTable/utils.ts';
+import { checkDataType } from '@components/DataDictionaryVariables/utils';
 
 export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
   yup.object().shape({
     name: yup.string().required(),
-    dataType: yup
-      .mixed<DATA_TYPE>()
-      .oneOf([
-        ...Object.values(DATA_TYPE_WITHOUT_ENUM),
-        ...Object.values(DATA_TYPE_WITH_ENUM_PREFIX)
-      ])
-      .notRequired()
-      .nullable(),
     operator: yup
       .mixed<Operator | ''>()
       .oneOf(Object.values(OPERATORS), 'Operator is required')

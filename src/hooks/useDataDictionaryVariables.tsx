@@ -1,23 +1,45 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 
 import { dataDictionaryService } from '@services/data-dictionary';
 import {
   CRA_REPORT_VARIABLES,
   DATA_DICTIONARY_GROUP,
-  DataDictionaryVariableRecord,
   VARIABLE_SOURCE_TYPE,
   VARIABLE_USAGE_MODE
 } from '@domain/dataDictionary';
 import { IFlow } from '@domain/flow';
 import { integrationsService } from '@services/integrations';
+import { typeSafeObjectEntries } from '@utils/object';
+import { REGEX } from '@utils/validation';
+import { DataDictionaryVariables } from '@contexts/DataDictionaryContext';
 
+// TODO: rewrite with redux and call getVariables globally once
 const useDataDictionaryVariables = (flow: IFlow) => {
-  const [variables, setVariables] = useState<DataDictionaryVariableRecord>();
+  const [variables, setVariables] = useState<
+    DataDictionaryVariables | undefined
+  >();
   const [integrationVariables, setIntegrationVariables] =
-    useState<DataDictionaryVariableRecord>({
+    useState<DataDictionaryVariables>({
       [CRA_REPORT_VARIABLES.craClarityReportVariables]: [],
       [CRA_REPORT_VARIABLES.craFactorTrustReportVariables]: []
     });
+
+  const enumsDataTypes = useMemo(() => {
+    const allVariables = typeSafeObjectEntries({
+      ...variables,
+      ...integrationVariables
+    });
+
+    return allVariables.reduce(
+      (acc, [, variables]) => [
+        ...acc,
+        ...variables
+          .filter((variable) => REGEX.ENUM_DATA_TYPE.test(variable.dataType))
+          .map(({ dataType }) => dataType)
+      ],
+      [] as string[]
+    );
+  }, [variables, integrationVariables]);
 
   const getVariables = useCallback(async () => {
     const [dataDictionaryVariables, integrationVariables] =
@@ -44,7 +66,7 @@ const useDataDictionaryVariables = (flow: IFlow) => {
         destinationType: VARIABLE_SOURCE_TYPE.PermanentVariable
       })) ?? [];
 
-    const extendedVariables: DataDictionaryVariableRecord = {};
+    const extendedVariables: DataDictionaryVariables = {};
 
     if (dataDictionaryVariables.status === 'fulfilled') {
       Object.assign(extendedVariables, dataDictionaryVariables.value);
@@ -78,7 +100,7 @@ const useDataDictionaryVariables = (flow: IFlow) => {
     void getVariables();
   }, [getVariables]);
 
-  return { variables, integrationVariables };
+  return { variables, integrationVariables, enumsDataTypes };
 };
 
 export default useDataDictionaryVariables;

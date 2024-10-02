@@ -6,7 +6,6 @@ import {
   TABS,
   TABS_LABELS,
   SOURCES_DESCRIPTIONS,
-  FILTER_GROUPS,
   INITIAL_FILTERS,
   CRA_REPORTS_HEADERS,
   DEFAULT_HEADERS,
@@ -18,6 +17,7 @@ import { StyledTab } from './styled';
 import { TAB } from './types';
 import Filters, { IFormState } from './Filters';
 import FlowSelect from './FlowSelect';
+import { getFiltersGroup } from './utils';
 import { VariableForm } from './VariableForm/VariableForm';
 import { DeleteVariable } from './DeleteVariable/DeleteVariable';
 
@@ -76,10 +76,12 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     handleFiltersClose();
   };
 
-  const { variables, integrationVariables } = useDataDictionaryVariables(flow);
+  const { variables, integrationVariables, enumsDataTypes } =
+    useDataDictionaryVariables(flow);
 
   const tableData = useMemo(() => {
     if (!variables) return [];
+
     if (tab === 'craReportVariables') {
       return Object.values(integrationVariables).flat();
     }
@@ -91,7 +93,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     }
 
     return variables[tab];
-  }, [tab, variables]);
+  }, [tab, variables, integrationVariables]);
 
   const headers: TableHeader[] = useMemo(() => {
     if (tab === 'craReportVariables') {
@@ -110,12 +112,14 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
   const filterGroups = useMemo(
     () =>
-      FILTER_GROUPS.map((filter) =>
-        tab === 'userDefined'
-          ? { ...filter, fields: Object.values(DATA_TYPE_WITHOUT_ENUM) }
-          : filter
-      ).filter(({ applyFor }) => applyFor.includes(tab)),
-    [tab]
+      getFiltersGroup(enumsDataTypes)
+        .map((filter) =>
+          tab === 'userDefined'
+            ? { ...filter, fields: Object.values(DATA_TYPE_WITHOUT_ENUM) }
+            : filter
+        )
+        .filter(({ applyFor }) => applyFor.includes(tab)),
+    [tab, enumsDataTypes]
   );
 
   const filteredBySearch = useMemo(() => {
