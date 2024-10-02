@@ -1,25 +1,5 @@
 import { Operator } from '@views/DecisionTable/types';
 
-export enum DATA_TYPE_WITH_ENUM_PREFIX {
-  Gender = 'Enum:Gender',
-  ContactTime = 'Enum:ContactTime',
-  ResidenceType = 'Enum:ResidenceType',
-  IncomeType = 'Enum:IncomeType',
-  PaymentType = 'Enum:PaymentType',
-  EmploymentType = 'Enum:EmploymentType',
-  WorkShift = 'Enum:WorkShift',
-  PayFrequency = 'Enum:PayFrequency',
-  BankAccountType = 'Enum:BankAccountType',
-  ReferenceRelationship = 'Enum:ReferenceRelationship',
-  LeadResponseResult = 'Enum:LeadResponseResult',
-  RequestType = 'Enum:RequestType',
-  StoreType = 'Enum:StoreType',
-  /*for mocked data*/
-  Store = 'Enum:Store',
-  LoyaltyTier = 'Enum:LoyaltyTier',
-  Promocode = 'Enum:Promocode'
-}
-
 export enum DATA_TYPE_WITHOUT_ENUM {
   Integer = 'Integer',
   Decimal = 'Decimal',
@@ -30,8 +10,6 @@ export enum DATA_TYPE_WITHOUT_ENUM {
   'Object:CraClarity' = 'Object:CraClarity',
   'Object:CraFactorTrust' = 'Object:CraFactorTrust'
 }
-
-export type DATA_TYPE = DATA_TYPE_WITHOUT_ENUM | DATA_TYPE_WITH_ENUM_PREFIX;
 
 export enum VARIABLE_DESTINATION_TYPE {
   PermanentVariable = 'PermanentVariable',
@@ -73,7 +51,7 @@ export interface DataDictionaryVariable {
   source: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_TYPE;
   destinationType: string;
   sourceType: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
-  dataType: DATA_TYPE;
+  dataType: DATA_TYPE_WITHOUT_ENUM;
   defaultValue?: string;
   isRequired?: boolean;
   usageMode: VARIABLE_USAGE_MODE;
@@ -87,7 +65,7 @@ export interface DataDictionaryIntegrationVariable
 
 export type UserDefinedVariable = {
   name: string;
-  dataType: DATA_TYPE;
+  dataType: DATA_TYPE_WITHOUT_ENUM;
   defaultValue?: string;
   description?: string;
   destinationType: string;
@@ -103,11 +81,10 @@ export type Variable =
   | UserDefinedVariable
   | DataDictionaryIntegrationVariable;
 
-export interface DataDictionaryVariableRecord {
-  [key: string]: Variable[];
-}
-
-export type ExpressionValidateParams = { name: string; dataType: DATA_TYPE }[];
+export type ExpressionValidateParams = {
+  name: string;
+  dataType: DATA_TYPE_WITHOUT_ENUM;
+}[];
 
 export type Condition = {
   name: string;

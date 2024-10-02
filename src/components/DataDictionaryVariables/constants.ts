@@ -1,13 +1,6 @@
-import { TAB, FILTER_BY } from './types';
+import { FILTER_BY } from './types';
 
-import {
-  DATA_TYPE_WITHOUT_ENUM,
-  DATA_TYPE_WITH_ENUM_PREFIX,
-  INTEGRATION_VARIABLE_SOURCE_TYPE,
-  INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
-  Variable,
-  DATA_DICTIONARY_GROUP
-} from '@domain/dataDictionary';
+import { Variable, DATA_DICTIONARY_GROUP } from '@domain/dataDictionary';
 
 export const SOURCES_DESCRIPTIONS: { [key: string]: string } = {
   laPMSVariables:
@@ -46,39 +39,17 @@ export const INITIAL_FILTERS = {
   [FILTER_BY.source]: []
 };
 
-export const FILTER_GROUPS = [
-  {
-    filterBy: FILTER_BY.dataType,
-    text: 'By Data Type',
-    fields: Object.values({
-      ...DATA_TYPE_WITHOUT_ENUM,
-      ...DATA_TYPE_WITH_ENUM_PREFIX
-    }),
-    applyFor: Object.values(TABS) as TAB[]
-  },
-  {
-    filterBy: FILTER_BY.source,
-    text: 'By CRA',
-    fields: Object.values(INTEGRATION_VARIABLE_SOURCE_TYPE),
-    applyFor: [TABS.craReportVariables] as TAB[]
-  },
-  {
-    filterBy: FILTER_BY.sourceType,
-    text: 'By Report Name',
-    fields: Object.values(INTEGRATION_VARIABLE_SOURCE_SUB_TYPE),
-    applyFor: [TABS.craReportVariables] as TAB[]
-  }
-];
-
 export interface TableHeader {
   key: keyof Variable;
   label?: string;
+  maxWidth?: string;
   render?: (row: Variable) => void;
 }
 
 export const DEFAULT_HEADERS: TableHeader[] = [
   { key: 'name', label: 'Variable Name' },
   { key: 'dataType', label: 'Data Type' },
+  { key: 'allowedValues', label: 'Allowed Values', maxWidth: '150px' },
   { key: 'defaultValue', label: 'Default Value' },
   { key: 'description', label: 'Description' },
   { key: 'isRequired', label: 'Required' }

@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { Button, Stack, InputAdornment, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { SelectedCell, FormFieldsProps, OPERATORS } from '../types';
 import {
-  checkDataType,
   getOperatorOptions,
   getFormattedOptions,
   getFormatedValue
@@ -20,6 +19,8 @@ import Select from '@components/shared/Forms/Select';
 import { BOOLEAN_OPTIONS } from '@constants/common';
 import { flowService } from '@services/flow-service';
 import { parseExpressionError } from '@utils/helpers';
+import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
+import { checkDataType } from '@components/DataDictionaryVariables/utils';
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
@@ -36,12 +37,17 @@ const SelectVariableValueDialog = ({
   handleClose,
   handleSubmitForm
 }: SelectVariableValueDialogProps) => {
+  const dataDictionary = useContext(DataDictionaryContext);
+
   const bounds =
     selectedCell.operator === OPERATORS.BETWEEN
       ? selectedCell.expression.split('and')
       : [];
 
-  const dataType = checkDataType(selectedCell.dataType);
+  const dataType = checkDataType(
+    selectedCell.dataType,
+    dataDictionary?.enumsDataTypes || []
+  );
 
   const {
     handleSubmit,
@@ -54,7 +60,6 @@ const SelectVariableValueDialog = ({
   } = useForm({
     resolver: yupResolver(validationSchema(dataType)),
     defaultValues: {
-      dataType: selectedCell.dataType,
       name: selectedCell.name,
       operator: selectedCell.operator || OPERATORS.EQUAL,
       value: dataType.isWithEnum
@@ -62,8 +67,8 @@ const SelectVariableValueDialog = ({
           ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
           : []
         : selectedCell.expression,
-      lowerBound: bounds.length > 0 ? +bounds[0] : undefined,
-      upperBound: bounds.length > 0 ? +bounds[1] : undefined
+      lowerBound: bounds.length > 0 ? bounds[0].trim() : undefined,
+      upperBound: bounds.length > 0 ? bounds[1].trim() : undefined
     }
   });
 
@@ -94,7 +99,7 @@ const SelectVariableValueDialog = ({
         }
       }
 
-      handleSubmitForm({ ...data, value });
+      handleSubmitForm({ ...data, value, dataType: selectedCell.dataType });
     } catch (error) {
       const dataError = parseExpressionError(error);
       setError('value', {
@@ -149,7 +154,7 @@ const SelectVariableValueDialog = ({
               minWidth: '140px'
             }}
             label="Operator*"
-            options={getOperatorOptions(selectedCell.dataType)}
+            options={getOperatorOptions(dataType)}
           />
           {dataType.isWithEnum || dataType.isBoolean ? (
             <Select
@@ -169,14 +174,12 @@ const SelectVariableValueDialog = ({
             <>
               <InputText
                 fullWidth
-                type="number"
                 name="lowerBound"
                 control={control}
                 label="Lowest Value*"
               />
               <InputText
                 fullWidth
-                type="number"
                 name="upperBound"
                 control={control}
                 label="Highest Value*"

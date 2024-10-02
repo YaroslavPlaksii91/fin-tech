@@ -1,5 +1,5 @@
 import {
-  DATA_TYPE,
+  DATA_TYPE_WITHOUT_ENUM,
   INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
   VARIABLE_SOURCE_TYPE
 } from '@domain/dataDictionary';
@@ -9,7 +9,7 @@ export type Entry = {
   operator: Operator;
   expression: string;
   destinationType?: string;
-  dataType?: DATA_TYPE;
+  dataType?: DATA_TYPE_WITHOUT_ENUM;
   sourceType?: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
   sourceName?: string;
 };
@@ -23,14 +23,14 @@ export type CaseEntry = {
 export type ColumnData = {
   category: CATEGORY;
   name: string;
-  dataType: DATA_TYPE;
+  dataType: DATA_TYPE_WITHOUT_ENUM;
   allowedValues?: string | string[];
   index: number;
 };
 
 export interface SelectedCell extends Entry, ColumnData {
   rowIndex: number;
-  dataType: DATA_TYPE;
+  dataType: DATA_TYPE_WITHOUT_ENUM;
   columnIndex: number;
 }
 
@@ -38,8 +38,9 @@ export type FormFieldsProps = {
   name: string;
   operator: Operator;
   value?: string | string[];
-  lowerBound?: number | null;
-  upperBound?: number | null;
+  lowerBound?: string | null;
+  upperBound?: string | null;
+  dataType?: string;
 };
 
 export enum OPERATORS {

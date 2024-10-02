@@ -1,12 +1,11 @@
 import { useState, useMemo } from 'react';
 import { Box, Stack, Tabs, Typography, Button } from '@mui/material';
-import { omitBy } from 'lodash';
+import { omitBy, indexOf, map } from 'lodash';
 
 import {
   TABS,
   TABS_LABELS,
   SOURCES_DESCRIPTIONS,
-  FILTER_GROUPS,
   INITIAL_FILTERS,
   CRA_REPORTS_HEADERS,
   DEFAULT_HEADERS,
@@ -17,18 +16,47 @@ import TabPanel from './Tabs/TabPanel';
 import { StyledTab } from './styled';
 import { TAB } from './types';
 import Filters, { IFormState } from './Filters';
+import { getFiltersGroup } from './utils';
+import { VariableForm } from './VariableForm/VariableForm';
+import { DeleteVariable } from './DeleteVariable/DeleteVariable';
 
+import { AddIcon } from '@components/shared/Icons';
 import TuneIcon from '@icons/tune.svg';
 import { theme } from '@theme';
 import { IFlow } from '@domain/flow';
-import { DATA_TYPE_WITHOUT_ENUM, Variable } from '@domain/dataDictionary';
+import {
+  DATA_TYPE_WITHOUT_ENUM,
+  Variable,
+  UserDefinedVariable,
+  VARIABLE_SOURCE_TYPE
+} from '@domain/dataDictionary';
 import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
+import { checkIsProductionFlow } from '@utils/helpers';
+import { permissionsMap } from '@constants/permissions';
+import { useAppSelector } from '@store/hooks';
+import { selectFlow } from '@store/flow/selectors';
 
 const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const [tab, setTab] = useState<TAB>('laPMSVariables');
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState(INITIAL_FILTERS);
+  const [selectedVariable, setSelectedVariable] = useState<
+    UserDefinedVariable & {
+      index: number;
+      variableIsUsed: boolean;
+    }
+  >();
+  const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const {
+    flow: { temporaryVariables, permanentVariables }
+  } = useAppSelector(selectFlow);
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
+  const isProductionFlow = checkIsProductionFlow();
+  const isViewMode = isProductionFlow || !hasUserPermission;
 
   const handleFiltersOpen = () => setIsFiltersOpen(true);
 
@@ -47,10 +75,12 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     handleFiltersClose();
   };
 
-  const { variables, integrationVariables } = useDataDictionaryVariables(flow);
+  const { variables, integrationVariables, enumsDataTypes } =
+    useDataDictionaryVariables(flow);
 
   const tableData = useMemo(() => {
     if (!variables) return [];
+
     if (tab === 'craReportVariables') {
       return Object.values(integrationVariables).flat();
     }
@@ -62,7 +92,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     }
 
     return variables[tab];
-  }, [tab, variables]);
+  }, [tab, variables, integrationVariables]);
 
   const headers: TableHeader[] = useMemo(() => {
     if (tab === 'craReportVariables') {
@@ -81,12 +111,14 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
   const filterGroups = useMemo(
     () =>
-      FILTER_GROUPS.map((filter) =>
-        tab === 'userDefined'
-          ? { ...filter, fields: Object.values(DATA_TYPE_WITHOUT_ENUM) }
-          : filter
-      ).filter(({ applyFor }) => applyFor.includes(tab)),
-    [tab]
+      getFiltersGroup(enumsDataTypes)
+        .map((filter) =>
+          tab === 'userDefined'
+            ? { ...filter, fields: Object.values(DATA_TYPE_WITHOUT_ENUM) }
+            : filter
+        )
+        .filter(({ applyFor }) => applyFor.includes(tab)),
+    [tab, enumsDataTypes]
   );
 
   const filteredBySearch = useMemo(() => {
@@ -129,6 +161,63 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
   if (!variables) return null;
 
+  const handleVariableModalClose = () => {
+    setSelectedVariable(undefined);
+    setIsVariableModalOpen(false);
+  };
+
+  const handleDeleteModalClose = () => {
+    setSelectedVariable(undefined);
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleVariable = (
+    row: UserDefinedVariable,
+    variableUsageStepIds: string[]
+  ) => {
+    let variables;
+
+    switch (row.sourceType) {
+      case VARIABLE_SOURCE_TYPE.PermanentVariable: {
+        variables = permanentVariables;
+        break;
+      }
+      case VARIABLE_SOURCE_TYPE.TemporaryVariable: {
+        variables = temporaryVariables;
+        break;
+      }
+    }
+
+    const indexOfVariable = indexOf(map(variables, 'name'), row.name);
+
+    setSelectedVariable({
+      index: indexOfVariable,
+      variableIsUsed: !!variableUsageStepIds.length,
+      ...row
+    });
+  };
+
+  const handleEditClick = (
+    row: UserDefinedVariable,
+    variableUsageStepIds: string[]
+  ) => {
+    handleVariable(row, variableUsageStepIds);
+    setIsVariableModalOpen(true);
+  };
+
+  const handleDeleteClick = (
+    row: UserDefinedVariable,
+    variableUsageStepIds: string[]
+  ) => {
+    handleVariable(row, variableUsageStepIds);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCreateClick = () => {
+    setSelectedVariable(undefined);
+    setIsVariableModalOpen(true);
+  };
+
   return (
     <Stack>
       <Typography variant="h4" pt={1} pb={1} color={theme.palette.text.primary}>
@@ -166,16 +255,29 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
               <Typography variant="body1" color="gray">
                 {SOURCES_DESCRIPTIONS[tabName]}
               </Typography>
-              <Button
-                size="small"
-                color="inherit"
-                variant="outlined"
-                sx={{ minWidth: '80px', borderRadius: '6px' }}
-                startIcon={<TuneIcon />}
-                onClick={handleFiltersOpen}
-              >
-                Filters
-              </Button>
+              <Stack direction="row" spacing={1}>
+                <Button
+                  size="small"
+                  color="inherit"
+                  variant="outlined"
+                  sx={{ minWidth: '80px', borderRadius: '6px' }}
+                  startIcon={<TuneIcon />}
+                  onClick={handleFiltersOpen}
+                >
+                  Filters
+                </Button>
+                {tabName === 'userDefined' && !isViewMode && (
+                  <Button
+                    size="small"
+                    variant="contained"
+                    sx={{ minWidth: '140px', borderRadius: '6px' }}
+                    startIcon={<AddIcon />}
+                    onClick={handleCreateClick}
+                  >
+                    Create Variable
+                  </Button>
+                )}
+              </Stack>
             </Stack>
             <TableList
               headers={headers}
@@ -183,6 +285,8 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
               tabName={tabName as TAB}
               flowNodes={flow.nodes}
               flowId={flow.id}
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
             />
           </>
         </TabPanel>
@@ -196,6 +300,22 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
         onSubmit={handleSubmit}
         onClose={handleFiltersClose}
       />
+      {isVariableModalOpen && (
+        <VariableForm
+          flowId={flow.id}
+          formData={selectedVariable}
+          isOpen={isVariableModalOpen}
+          onClose={handleVariableModalClose}
+        />
+      )}
+      {isDeleteModalOpen && (
+        <DeleteVariable
+          flowId={flow.id}
+          variable={selectedVariable!}
+          isOpen={isDeleteModalOpen}
+          onClose={handleDeleteModalClose}
+        />
+      )}
     </Stack>
   );
 };

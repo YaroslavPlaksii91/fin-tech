@@ -8,6 +8,7 @@ import InputText from '@components/shared/Forms/InputText';
 import Autocomplete from '@components/shared/Autocomplete/Autocomplete';
 import Range from '@components/shared/Forms/Range';
 import { reportingService } from '@services/reports';
+import { MIN_RANGE_VALUE_FILTER } from '@constants/common';
 
 interface FiltersProps
   extends Pick<TemplateProps, 'isOpen' | 'onClose' | 'onReset'> {
@@ -95,6 +96,7 @@ const Filters = ({
         name="leadPrice"
         type="number"
         control={control}
+        inputProps={{ min: MIN_RANGE_VALUE_FILTER }}
       />
     </Template>
   );

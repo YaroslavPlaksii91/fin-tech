@@ -52,7 +52,7 @@ const getDataGridColumns = ({
     renderCell: (row) => {
       let color;
       switch (row.value) {
-        case 'Approved':
+        case 'Accepted':
           color = theme.palette.success.main;
           break;
         case 'Denied':

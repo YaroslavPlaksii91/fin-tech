@@ -25,10 +25,10 @@ const Template = ({
   onClose
 }: TemplateProps) => (
   <Drawer anchor="right" open={isOpen} onClose={onClose}>
-    <form onSubmit={onSubmit} onReset={onReset}>
-      <Box sx={{ width: '384px', padding: '8px' }}>
-        <Stack spacing={1} alignItems="center" sx={{ padding: '8px 16px' }}>
-          <Stack spacing={1} direction="row" alignItems="center" width="100%">
+    <Box sx={{ padding: '16px 24px', width: '384px', boxSizing: 'border-box' }}>
+      <form onSubmit={onSubmit} onReset={onReset}>
+        <Stack spacing={1}>
+          <Stack spacing={1} direction="row">
             <IconButton sx={{ padding: '2px' }} onClick={onClose}>
               <ChevronRightIcon sx={{ fontSize: '28px' }} />
             </IconButton>
@@ -41,7 +41,12 @@ const Template = ({
                 gap: '8px'
               }}
             >
-              <Button size="small" variant="contained" type="submit">
+              <Button
+                size="small"
+                variant="contained"
+                type="submit"
+                sx={{ width: '56px', height: '30px' }}
+              >
                 Apply
               </Button>
               <Button
@@ -49,17 +54,18 @@ const Template = ({
                 color="inherit"
                 variant="outlined"
                 type="reset"
+                sx={{ width: '56px', height: '30px' }}
               >
                 Reset
               </Button>
             </Box>
           </Stack>
-          <Stack sx={{ width: '100%' }} direction="column" spacing={1}>
+          <Stack direction="column" spacing={1}>
             {children}
           </Stack>
         </Stack>
-      </Box>
-    </form>
+      </form>
+    </Box>
   </Drawer>
 );
 

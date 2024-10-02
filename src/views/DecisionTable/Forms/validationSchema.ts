@@ -2,25 +2,12 @@ import * as yup from 'yup';
 
 import { Operator, OPERATORS } from '../types';
 
-import {
-  DATA_TYPE,
-  DATA_TYPE_WITHOUT_ENUM,
-  DATA_TYPE_WITH_ENUM_PREFIX
-} from '@domain/dataDictionary';
 import { isDecimal, isInteger } from '@utils/validation';
-import { checkDataType } from '@views/DecisionTable/utils.ts';
+import { checkDataType } from '@components/DataDictionaryVariables/utils';
 
 export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
   yup.object().shape({
     name: yup.string().required(),
-    dataType: yup
-      .mixed<DATA_TYPE>()
-      .oneOf([
-        ...Object.values(DATA_TYPE_WITHOUT_ENUM),
-        ...Object.values(DATA_TYPE_WITH_ENUM_PREFIX)
-      ])
-      .notRequired()
-      .nullable(),
     operator: yup
       .mixed<Operator | ''>()
       .oneOf(Object.values(OPERATORS), 'Operator is required')
@@ -61,7 +48,7 @@ export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
               dataType.isInteger ? isInteger(value) : true
             );
         }),
-    lowerBound: yup.number().when(['operator'], ([operator], schema) =>
+    lowerBound: yup.string().when(['operator'], ([operator], schema) =>
       operator === OPERATORS.BETWEEN
         ? schema
             .required('Lowest value is required')
@@ -77,22 +64,29 @@ export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
             )
         : schema.notRequired().nullable()
     ),
-    upperBound: yup.number().when(['operator'], ([operator], schema) =>
-      operator === OPERATORS.BETWEEN
-        ? schema
-            .required('Highest value is required')
-            .test(
-              'is-decimal',
-              'Lowest value must be a valid decimal',
-              (value) => (dataType.isDecimal ? isDecimal(value) : true)
-            )
-            .test(
-              'is-integer',
-              'Lowest value must be a valid integer',
-              (value) => (dataType.isInteger ? isInteger(value) : true)
-            )
-        : schema.notRequired().nullable()
-    )
+    upperBound: yup
+      .string()
+      .when(['operator', 'lowerBound'], ([operator, lowerBound], schema) =>
+        operator === OPERATORS.BETWEEN
+          ? schema
+              .required('Highest value is required')
+              .test(
+                'is-decimal',
+                'Lowest value must be a valid decimal',
+                (value) => (dataType.isDecimal ? isDecimal(value) : true)
+              )
+              .test(
+                'is-integer',
+                'Lowest value must be a valid integer',
+                (value) => (dataType.isInteger ? isInteger(value) : true)
+              )
+              .test(
+                'is-greater-than-lowerBound',
+                'Highest value must be greater than the lowest value',
+                (upperBound) => +upperBound > +lowerBound
+              )
+          : schema.notRequired().nullable()
+      )
   });
 
 export default validationSchema;

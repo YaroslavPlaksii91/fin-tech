@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import {
-  fetchFlowList,
+  fetchDraftFlowList,
+  fetchProductionFlowItem,
   renameFlow,
   deleteFlow,
   createFlow,
@@ -12,19 +13,12 @@ import { IFlowListItem } from '@domain/flow';
 
 interface initialStateInterface {
   flowList: IFlowListItem[];
-  flowProduction: IFlowListItem;
+  flowProduction: IFlowListItem | null;
 }
 
 const initialState: initialStateInterface = {
   flowList: [],
-  flowProduction: {
-    id: '',
-    createdBy: '',
-    createdOn: '',
-    editedBy: '',
-    editedOn: '',
-    name: ''
-  }
+  flowProduction: null
 };
 
 export const flowListSlicer = createSlice({
@@ -42,9 +36,17 @@ export const flowListSlicer = createSlice({
     }
   },
   extraReducers(builder) {
-    builder.addCase(fetchFlowList.fulfilled, (state, action) => {
+    builder.addCase(fetchDraftFlowList.fulfilled, (state, action) => {
       state.flowList = action.payload.flowItemsData;
+    });
+    builder.addCase(fetchProductionFlowItem.fulfilled, (state, action) => {
       state.flowProduction = action.payload.productionFlowItemData;
+    });
+    builder.addCase(fetchDraftFlowList.rejected, (state) => {
+      state.flowList = [];
+    });
+    builder.addCase(fetchProductionFlowItem.rejected, (state) => {
+      state.flowProduction = null;
     });
     builder.addCase(renameFlow.fulfilled, (state, action) => {
       const { id, data } = action.payload;

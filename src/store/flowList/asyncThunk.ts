@@ -4,11 +4,21 @@ import { flowService } from '@services/flow-service';
 import { JSONPatchOperation } from '@domain/entity';
 import { IFlow, IFlowDataCreate } from '@domain/flow';
 
-export const fetchFlowList = createAsyncThunk('get/flow-list', async () => {
-  const flowItemsData = await flowService.getFlows();
-  const productionFlowItemData = await flowService.getProductionFlow();
-  return { flowItemsData, productionFlowItemData };
-});
+export const fetchDraftFlowList = createAsyncThunk(
+  'get/flow-list',
+  async () => {
+    const flowItemsData = await flowService.getFlows();
+    return { flowItemsData };
+  }
+);
+
+export const fetchProductionFlowItem = createAsyncThunk(
+  'get/flow-production-list-item',
+  async () => {
+    const productionFlowItemData = await flowService.getProductionFlow();
+    return { productionFlowItemData };
+  }
+);
 
 export const renameFlow = createAsyncThunk(
   'patch/rename-flow',
