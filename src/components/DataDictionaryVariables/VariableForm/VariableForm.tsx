@@ -6,6 +6,8 @@ import { useDispatch } from 'react-redux/es/hooks/useDispatch';
 import { DatePicker } from '@mui/x-date-pickers-pro';
 import dayjs from 'dayjs';
 
+import { STRING_ARRAY_HINT } from '../constants';
+
 import { validationSchema } from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
@@ -203,13 +205,21 @@ export const VariableForm: React.FC<VariableFormProps> = ({
               inputMode="numeric"
             />
           )}
-          {(watchDataType === DATA_TYPE_WITHOUT_ENUM.String ||
-            watchDataType === DATA_TYPE_WITHOUT_ENUM.StringArray) && (
+          {watchDataType === DATA_TYPE_WITHOUT_ENUM.String && (
             <InputText
               fullWidth
               name="defaultValue"
               label="Default Value"
               control={control}
+            />
+          )}
+          {watchDataType === DATA_TYPE_WITHOUT_ENUM.StringArray && (
+            <InputText
+              fullWidth
+              name="defaultValue"
+              label="Default Value"
+              control={control}
+              hint={STRING_ARRAY_HINT}
             />
           )}
           {watchDataType === DATA_TYPE_WITHOUT_ENUM.Boolean && (
