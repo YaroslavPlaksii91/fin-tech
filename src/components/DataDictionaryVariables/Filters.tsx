@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 
-import { FILTER_GROUPS, INITIAL_FILTERS } from './constants';
+import { INITIAL_FILTERS } from './constants';
+import { getFiltersGroup } from './utils';
 
 import Template, { TemplateProps } from '@components/shared/Filters';
 import InputText from '@components/shared/Forms/InputText';
@@ -14,7 +15,7 @@ export interface IFormState {
 interface FiltersProps
   extends Pick<TemplateProps, 'isOpen' | 'onClose' | 'onReset'>,
     IFormState {
-  filterGroups: typeof FILTER_GROUPS;
+  filterGroups: ReturnType<typeof getFiltersGroup>;
   onSubmit: (data: IFormState) => void;
 }
 

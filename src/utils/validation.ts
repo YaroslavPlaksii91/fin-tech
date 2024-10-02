@@ -1,6 +1,7 @@
 export const REGEX = {
   INTEGER: /^(0|[1-9]\d*)$/,
-  DECIMAL: /^(0|[1-9]\d*)(\.\d+)?$/
+  DECIMAL: /^(0|[1-9]\d*)(\.\d+)?$/,
+  ENUM_DATA_TYPE: /^Enum:.+/
 };
 
 export const isInteger = (value?: string | number | null) => {
