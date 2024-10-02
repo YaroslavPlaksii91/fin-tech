@@ -12,12 +12,7 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiOutlinedInput-input': {
     ...theme.typography.body2,
     padding: '2.5px 2px',
-    textAlign: 'center',
-    '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
-      WebkitAppearance: 'none',
-      appearance: '',
-      margin: 0
-    }
+    textAlign: 'center'
   },
   '& .MuiButtonBase-root': {
     padding: '3px'
