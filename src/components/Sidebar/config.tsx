@@ -43,11 +43,7 @@ export const pages = [
     icon: <DataDictionaryIcon />,
     text: 'Data Dictionary',
     to: routes.underwriting.flow.dataDictionary(PRODUCTION_FLOW_ID),
-    permission: permissionsMap.canViewFlow,
-    activeUrl: routes.underwriting.flow
-      .dataDictionary(PRODUCTION_FLOW_ID)
-      .split('/')
-      .pop()
+    permission: permissionsMap.canViewFlow
   },
   {
     icon: <ChangesHistoryIcon />,
