@@ -2,7 +2,7 @@ import { Stack, Typography } from '@mui/material';
 
 import StepBreadcrumbs from './StepBreadcrumbs';
 
-import { FlowNode } from '@domain/flow.ts';
+import { FlowNode } from '@domain/flow';
 
 interface StepDetailsHeaderProps {
   step: FlowNode;

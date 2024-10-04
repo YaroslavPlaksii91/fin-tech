@@ -1,11 +1,11 @@
 import { Auth } from '@eloanwarehouse/frontend-core';
 
-import { router } from '../routes.tsx';
+import { router } from '../routes';
 
-import { CLIENT_ID, SCOPES_LIST } from '@constants/common.tsx';
-import { api, integrationApi, reportApi, reportOdataApi } from '@utils/api.ts';
-import { authApiBaseUrl } from '@constants/api-urls.ts';
-import routes from '@constants/routes.ts';
+import { CLIENT_ID, SCOPES_LIST } from '@constants/common';
+import { api, integrationApi, reportApi, reportOdataApi } from '@utils/api';
+import { authApiBaseUrl } from '@constants/api-urls';
+import routes from '@constants/routes';
 
 export const authService = new Auth.IAMAuthService({
   clientId: CLIENT_ID,

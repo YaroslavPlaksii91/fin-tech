@@ -20,7 +20,7 @@ export const SOURCES_DESCRIPTIONS: { [key: string]: string } = {
 export const TAB_ALL = 'all';
 export const TABS = {
   ...DATA_DICTIONARY_GROUP,
-  all: TAB_ALL as typeof TAB_ALL
+  all: TAB_ALL
 };
 
 export const TABS_LABELS: { [key: string]: string } = {

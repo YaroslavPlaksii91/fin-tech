@@ -75,7 +75,7 @@ export const getFiltersGroup = (enumDataTypes: string[]) => [
   {
     filterBy: FILTER_BY.dataType,
     text: 'By Data Type',
-    fields: [...Object.values({ ...DATA_TYPE_WITHOUT_ENUM }), ...enumDataTypes],
+    fields: [...Object.values(DATA_TYPE_WITHOUT_ENUM), ...enumDataTypes],
     applyFor: Object.values(TABS) as TAB[]
   },
   {

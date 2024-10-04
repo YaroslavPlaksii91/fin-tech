@@ -1,7 +1,4 @@
-import {
-  ChangeHistoryDifference,
-  ChangeTypeEnum
-} from '@domain/changeHistory.ts';
+import { ChangeHistoryDifference, ChangeTypeEnum } from '@domain/changeHistory';
 
 export const getActionType = (row: ChangeHistoryDifference) => {
   const changeType = ChangeTypeEnum[row.changeType];

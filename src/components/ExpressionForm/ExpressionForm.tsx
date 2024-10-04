@@ -32,7 +32,7 @@ import { mapVariablesToParamsAndSources } from './utils';
 
 import LoadingButton from '@components/shared/LoadingButton';
 import { Expression } from '@views/Calculation/types';
-import ExpressionOperatorsList from '@components/ExpressionForm/ExpressionOperatorsList/ExpressionOperatorsList.tsx';
+import ExpressionOperatorsList from '@components/ExpressionForm/ExpressionOperatorsList/ExpressionOperatorsList';
 import {
   DATA_DICTIONARY_GROUP,
   DataDictionaryVariable,
@@ -40,13 +40,13 @@ import {
 } from '@domain/dataDictionary';
 import ExpressionEditor, {
   ExpressionEditorAPI
-} from '@components/ExpressionEditor/ExpressionEditor.tsx';
+} from '@components/ExpressionEditor/ExpressionEditor';
 import {
   functionsConfig,
   functionsLiterals,
   operatorsConfig
-} from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
-import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog.tsx';
+} from '@components/ExpressionEditor/ExpressionEditor.constants';
+import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog';
 import { StepContentWrapper } from '@views/styled';
 import { customBoxShadows } from '@theme';
 import { flowService } from '@services/flow-service';

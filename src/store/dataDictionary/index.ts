@@ -1,25 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { fetchVariables, fetchIntegrationVariables } from './asyncThunk';
+import {
+  fetchVariables,
+  fetchIntegrationVariables,
+  fetchControlFiles
+} from './asyncThunk';
 import { getEnumDataTypes, getUserDefinedVariables } from './utils';
 
 import {
   CRA_REPORT_VARIABLES,
   DataDictionaryVariables
 } from '@domain/dataDictionary';
-import { getFlow, getProductionFlow } from '@store/flow/asyncThunk';
+import { getFlow, getProductionFlow, updateFlow } from '@store/flow/asyncThunk';
 
 const initialState: {
   variables: DataDictionaryVariables;
   integrationVariables: DataDictionaryVariables;
   enumDataTypes: string[];
+  controlFiles: string[];
 } = {
   variables: {},
   integrationVariables: {
     [CRA_REPORT_VARIABLES.craClarityReportVariables]: [],
     [CRA_REPORT_VARIABLES.craFactorTrustReportVariables]: []
   },
-  enumDataTypes: []
+  enumDataTypes: [],
+  controlFiles: []
 };
 
 const dataDictionarySlice = createSlice({
@@ -31,13 +37,22 @@ const dataDictionarySlice = createSlice({
     })
   }),
   extraReducers: (builder) => {
+    // @TODO: Find the way do not mix userDefinedVariables with dataDictionary
     builder.addCase(getFlow.fulfilled, (state, { payload }) => {
       state.variables = {
         ...state.variables,
         ...getUserDefinedVariables(payload)
       };
     });
+    // @TODO: Find the way do not mix userDefinedVariables with dataDictionary
     builder.addCase(getProductionFlow.fulfilled, (state, { payload }) => {
+      state.variables = {
+        ...state.variables,
+        ...getUserDefinedVariables(payload)
+      };
+    });
+    // @TODO: Find the way do not mix userDefinedVariables with dataDictionary
+    builder.addCase(updateFlow.fulfilled, (state, { payload }) => {
       state.variables = {
         ...state.variables,
         ...getUserDefinedVariables(payload)
@@ -53,6 +68,9 @@ const dataDictionarySlice = createSlice({
         state.integrationVariables = integrationVariables;
       }
     );
+    builder.addCase(fetchControlFiles.fulfilled, (state, { payload }) => {
+      state.controlFiles = payload;
+    });
   }
 });
 

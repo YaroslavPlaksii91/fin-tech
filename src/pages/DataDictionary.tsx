@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Typography, Breadcrumbs, Stack, Link } from '@mui/material';
 
 import { theme } from '@theme';
-import DataDictionaryVariables from '@components/DataDictionaryVariables/DataDictionaryVariables.tsx';
+import DataDictionaryVariables from '@components/DataDictionaryVariables/DataDictionaryVariables';
 import { useLoading } from '@contexts/LoadingContext';
 import routes from '@constants/routes';
 import Logger from '@utils/logger';

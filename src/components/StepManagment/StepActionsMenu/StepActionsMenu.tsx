@@ -23,10 +23,10 @@ import {
   getOptions,
   getProductionFlowOptions
 } from '@components/StepManagment/StepActionsMenu/types';
-import { FlowNode } from '@domain/flow.ts';
-import routes from '@constants/routes.ts';
+import { FlowNode } from '@domain/flow';
+import routes from '@constants/routes';
 import MoreHorizontalIcon from '@icons/moreHorizontal.svg';
-import { asyncConfirmDialog } from '@components/shared/Confirmation/AsyncConfirmDialog.tsx';
+import { asyncConfirmDialog } from '@components/shared/Confirmation/AsyncConfirmDialog';
 import { useAppDispatch } from '@store/hooks';
 import { deleteNodes, updateNodeData, addNode } from '@store/flow';
 import { ActiveStep } from '@contexts/StepContext';

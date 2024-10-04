@@ -1,7 +1,7 @@
 import React, {
   ForwardRefRenderFunction,
   MutableRefObject,
-  useContext,
+  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -20,13 +20,15 @@ import {
   regExpHelpers,
   highlightChunks,
   filterFunctionsSuggestList
-} from '@components/ExpressionEditor/ExpressionEditor.utils.ts';
-import { functionsLiterals } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
-import FunctionArgumentsTooltip from '@components/ExpressionEditor/components/FunctionArgumentsTooltip.tsx';
+} from '@components/ExpressionEditor/ExpressionEditor.utils';
+import { functionsLiterals } from '@components/ExpressionEditor/ExpressionEditor.constants';
+import FunctionArgumentsTooltip from '@components/ExpressionEditor/components/FunctionArgumentsTooltip';
 import FunctionsAutosuggestion, {
   FunctionsAutosuggestionAPI
-} from '@components/ExpressionEditor/components/FunctionsAutosuggestion.tsx';
-import { CRAClarityControlFilesContext } from '@contexts/CRAClarityControlFilesContext';
+} from '@components/ExpressionEditor/components/FunctionsAutosuggestion';
+import { selectDataDictionary } from '@store/dataDictionary/selectors';
+import { fetchControlFiles } from '@store/dataDictionary/asyncThunk';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
 
 export interface ExpressionEditorAPI {
   focus: (payload: { selectionStart: number }) => void;
@@ -47,7 +49,8 @@ const ExpressionEditor: ForwardRefRenderFunction<
   },
   ref
 ) => {
-  const controlFiles = useContext(CRAClarityControlFilesContext) ?? [];
+  const dispatch = useAppDispatch();
+  const { controlFiles } = useAppSelector(selectDataDictionary);
 
   const textareaRef: MutableRefObject<HTMLTextAreaElement | null> =
     useRef(null);
@@ -132,6 +135,10 @@ const ExpressionEditor: ForwardRefRenderFunction<
       setCaretPosition(e.currentTarget.selectionStart);
     onChange && onChange(e);
   };
+
+  useEffect(() => {
+    void dispatch(fetchControlFiles());
+  }, []);
 
   return (
     <div className={styles.root}>

@@ -43,6 +43,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const {
     flow: { temporaryVariables, permanentVariables }
   } = useAppSelector(selectFlow);
+
   const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const [tab, setTab] = useState<TAB>('laPMSVariables');

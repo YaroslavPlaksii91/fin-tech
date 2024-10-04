@@ -17,8 +17,8 @@ import { StyledListItemButton } from './styled';
 import List from './List';
 
 import { palette } from '@theme';
-import { highlightText } from '@utils/text.ts';
-import LoadingButton from '@components/shared/LoadingButton.tsx';
+import { highlightText } from '@utils/text';
+import LoadingButton from '@components/shared/LoadingButton';
 import {
   CRA_REPORT_VARIABLES,
   DATA_TYPE_WITHOUT_ENUM,

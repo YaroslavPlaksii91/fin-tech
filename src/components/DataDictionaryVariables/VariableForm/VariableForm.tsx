@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Stack } from '@mui/material';
-import { useDispatch } from 'react-redux/es/hooks/useDispatch';
 import { DatePicker } from '@mui/x-date-pickers-pro';
 import dayjs from 'dayjs';
 
@@ -20,13 +19,13 @@ import {
   Variable
 } from '@domain/dataDictionary';
 import { JSONPatchOperation } from '@domain/entity';
-import { flowService } from '@services/flow-service';
 import Logger from '@utils/logger';
 import { modifyFirstLetter } from '@utils/text';
-import { updateFlow } from '@store/flow';
 import CalendarIcon from '@icons/calendar.svg';
 import { BOOLEAN_OPTIONS, DATE_FORMAT } from '@constants/common';
 import { parseErrorMessages } from '@utils/helpers';
+import { useAppDispatch } from '@store/hooks';
+import { updateFlow } from '@store/flow/asyncThunk';
 
 type VariableFormProps = {
   flowId: string;
@@ -68,7 +67,8 @@ export const VariableForm: React.FC<VariableFormProps> = ({
   onClose,
   formData
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+
   const [dataTypeOptions, setDataTypeOptions] = useState(ALL_DATA_TYPES);
 
   const {
@@ -92,7 +92,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     }
   });
 
-  const onSubmit = async (
+  const onSubmit = (
     data: Pick<
       UserDefinedVariable,
       'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
@@ -116,10 +116,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     ];
 
     try {
-      const newFlowData =
-        flowId && (await flowService.updateFlow(flowId, operations));
-
-      newFlowData && dispatch(updateFlow(newFlowData));
+      void dispatch(updateFlow({ operations, id: flowId }));
       onClose();
     } catch (error) {
       const dataErrors = parseErrorMessages(error);

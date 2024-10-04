@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { Typography } from '@mui/material';
-import { useDispatch } from 'react-redux/es/hooks/useDispatch';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import Logger from '@utils/logger';
 import { JSONPatchOperation } from '@domain/entity';
-import { flowService } from '@services/flow-service';
 import { modifyFirstLetter } from '@utils/text';
 import { Variable } from '@domain/dataDictionary';
-import { updateFlow } from '@store/flow';
+import { updateFlow } from '@store/flow/asyncThunk';
+import { useAppDispatch } from '@store/hooks';
 
 interface DeleteVariableProps {
   flowId: string;
@@ -24,9 +23,9 @@ export const DeleteVariable = ({
   onClose
 }: DeleteVariableProps) => {
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const handleDeleteVariable = async () => {
+  const handleDeleteVariable = () => {
     try {
       const operations: JSONPatchOperation[] = [
         {
@@ -36,9 +35,8 @@ export const DeleteVariable = ({
       ];
 
       setConfirmLoading(true);
-      const newFlowData = await flowService.updateFlow(flowId, operations);
 
-      newFlowData && dispatch(updateFlow(newFlowData));
+      void dispatch(updateFlow({ operations, id: flowId }));
       onClose();
     } catch (error) {
       Logger.error(error);

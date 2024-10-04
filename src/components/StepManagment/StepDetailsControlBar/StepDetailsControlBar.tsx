@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Box, Button, Divider, Paper, Stack, Typography } from '@mui/material';
 
-import LoadingButton from '@components/shared/LoadingButton.tsx';
+import LoadingButton from '@components/shared/LoadingButton';
 import Dialog from '@components/shared/Modals/Dialog';
 
 const StepDetailsControlBar: React.FC<StepDetailsControlBarProps> = ({

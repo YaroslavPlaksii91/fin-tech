@@ -49,7 +49,7 @@ import {
 import { AutoLayoutButton } from '../AutoLayoutButton';
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
 
-import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
+import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog';
 import { FlowNode, IFlow } from '@domain/flow';
 import { useActiveStep } from '@contexts/StepContext';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';

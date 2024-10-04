@@ -1,10 +1,9 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-
 import { flowService } from '@services/flow-service';
 import { JSONPatchOperation } from '@domain/entity';
 import { IFlow, IFlowDataCreate } from '@domain/flow';
+import { createAppAsyncThunk } from '@store/utils';
 
-export const fetchDraftFlowList = createAsyncThunk(
+export const fetchDraftFlowList = createAppAsyncThunk(
   'flowList/fetchDraft',
   async () => {
     const flowItemsData = await flowService.getFlows();
@@ -12,7 +11,7 @@ export const fetchDraftFlowList = createAsyncThunk(
   }
 );
 
-export const fetchProductionFlowItem = createAsyncThunk(
+export const fetchProductionFlowItem = createAppAsyncThunk(
   'flowList/fetchProductionItem',
   async () => {
     const productionFlowItemData = await flowService.getProductionFlow();
@@ -20,7 +19,7 @@ export const fetchProductionFlowItem = createAsyncThunk(
   }
 );
 
-export const renameFlow = createAsyncThunk(
+export const renameFlow = createAppAsyncThunk(
   'flowList/rename',
   async (
     {
@@ -41,7 +40,7 @@ export const renameFlow = createAsyncThunk(
   }
 );
 
-export const deleteFlow = createAsyncThunk(
+export const deleteFlow = createAppAsyncThunk(
   'flowList/delete',
   async (id: string, { rejectWithValue }) => {
     try {
@@ -53,7 +52,7 @@ export const deleteFlow = createAsyncThunk(
   }
 );
 
-export const createFlow = createAsyncThunk(
+export const createFlow = createAppAsyncThunk(
   'flowList/create',
   async (data: IFlowDataCreate, { rejectWithValue }) => {
     try {
@@ -65,7 +64,7 @@ export const createFlow = createAsyncThunk(
   }
 );
 
-export const pushProductionFlow = createAsyncThunk(
+export const pushProductionFlow = createAppAsyncThunk(
   'flowList/push',
   async (
     data: { flow: IFlow; params: { pushedBy: string; note: string } },

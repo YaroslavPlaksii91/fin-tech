@@ -2,7 +2,7 @@ import { BilingReport, GetBilingReport } from '@domain/billingReport';
 import { DenialReasonsReportOData } from '@domain/denielReasonsReports';
 import { LeadRequestsReportsOData } from '@domain/leadRequestsReports';
 import { GetWaterfallReport, WaterfallReport } from '@domain/waterfallReport';
-import { reportApi, reportOdataApi } from '@utils/api.ts';
+import { reportApi, reportOdataApi } from '@utils/api';
 
 class ReportingService {
   async getLeadRequestsReports(params: string) {

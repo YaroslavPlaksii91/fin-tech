@@ -1,9 +1,8 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-
 import { authService } from '@services/auth';
+import { createAppAsyncThunk } from '@store/utils';
 import Logger from '@utils/logger';
 
-export const fetchUserInfo = createAsyncThunk(
+export const fetchUserInfo = createAppAsyncThunk(
   'auth/fetchUserInfo',
   async () => {
     try {
