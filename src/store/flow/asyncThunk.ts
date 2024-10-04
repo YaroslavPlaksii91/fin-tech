@@ -4,7 +4,7 @@ import { IFlow } from '@domain/flow';
 import { flowService } from '@services/flow-service';
 
 export const getFlow = createAsyncThunk(
-  'get/flow',
+  'flow/getFlow',
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await flowService.getFlow(id);
@@ -16,7 +16,7 @@ export const getFlow = createAsyncThunk(
 );
 
 export const getProductionFlow = createAsyncThunk(
-  'get/production-flow/details',
+  'flow/getProductionFlowDetails',
   async (_, { rejectWithValue }) => {
     try {
       const response = await flowService.getProductionFlowDetails();
@@ -28,7 +28,7 @@ export const getProductionFlow = createAsyncThunk(
 );
 
 export const saveFlow = createAsyncThunk(
-  'put/flow',
+  'flow/save',
   async (data: IFlow, { rejectWithValue }) => {
     try {
       const response = await flowService.saveFlow(data);

@@ -71,7 +71,7 @@ export const getOperatorOptions = ({
 export const getColumns = (
   entries: Entry[],
   variables: Variable[],
-  enumsDataTypes: string[],
+  enumDataTypes: string[],
   category: CATEGORY
 ) =>
   entries.map((el, index) => {
@@ -80,7 +80,7 @@ export const getColumns = (
     // if variable enum type we have additional prop with allowedValues
     const allowedValues =
       variable?.dataType &&
-      checkDataType(variable.dataType, enumsDataTypes).isWithEnum
+      checkDataType(variable.dataType, enumDataTypes).isWithEnum
         ? variable?.allowedValues
         : undefined;
 
@@ -222,7 +222,7 @@ export const getFormatedValue = (data: FormFieldsProps): string => {
     case OPERATORS.NOT_EQUAL:
       formatedValue = Array.isArray(data.value)
         ? data.value[0]
-        : data.value ?? '';
+        : (data.value ?? '');
       break;
     case OPERATORS.ANY:
       formatedValue = '';
@@ -233,7 +233,7 @@ export const getFormatedValue = (data: FormFieldsProps): string => {
     default:
       formatedValue = Array.isArray(data.value)
         ? `[${data.value.join(',')}]`
-        : data.value ?? '';
+        : (data.value ?? '');
   }
 
   return formatedValue;

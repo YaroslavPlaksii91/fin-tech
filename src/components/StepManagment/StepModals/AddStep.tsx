@@ -16,7 +16,7 @@ import {
   StepType
 } from '@components/FlowManagment/FlowChart/types';
 import { FlowNode } from '@domain/flow';
-import { addNode } from '@store/flow/flow';
+import { addNode } from '@store/flow/';
 
 const defaultValue = {
   [StepType.CHAMPION_CHALLENGER]: 'Champion Challenger',

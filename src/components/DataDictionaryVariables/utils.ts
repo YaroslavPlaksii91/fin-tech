@@ -62,23 +62,20 @@ export const getUserDefinedUsageStepIds = ({
 
 export const checkDataType = (
   dataType: DATA_TYPE_WITHOUT_ENUM,
-  enumsDataTypes: string[]
+  enumDataTypes: string[]
 ) => ({
-  isWithEnum: enumsDataTypes.includes(dataType),
+  isWithEnum: enumDataTypes.includes(dataType),
   isBoolean: dataType === DATA_TYPE_WITHOUT_ENUM.Boolean,
   isString: dataType === DATA_TYPE_WITHOUT_ENUM.String,
   isInteger: dataType === DATA_TYPE_WITHOUT_ENUM.Integer,
   isDecimal: dataType === DATA_TYPE_WITHOUT_ENUM.Decimal
 });
 
-export const getFiltersGroup = (enumsDataTypes: string[]) => [
+export const getFiltersGroup = (enumDataTypes: string[]) => [
   {
     filterBy: FILTER_BY.dataType,
     text: 'By Data Type',
-    fields: [
-      ...Object.values({ ...DATA_TYPE_WITHOUT_ENUM }),
-      ...enumsDataTypes
-    ],
+    fields: [...Object.values({ ...DATA_TYPE_WITHOUT_ENUM }), ...enumDataTypes],
     applyFor: Object.values(TABS) as TAB[]
   },
   {

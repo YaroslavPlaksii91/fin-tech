@@ -23,7 +23,7 @@ import { JSONPatchOperation } from '@domain/entity';
 import { flowService } from '@services/flow-service';
 import Logger from '@utils/logger';
 import { modifyFirstLetter } from '@utils/text';
-import { updateFlow } from '@store/flow/flow';
+import { updateFlow } from '@store/flow';
 import CalendarIcon from '@icons/calendar.svg';
 import { BOOLEAN_OPTIONS, DATE_FORMAT } from '@constants/common';
 import { parseErrorMessages } from '@utils/helpers';

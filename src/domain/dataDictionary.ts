@@ -80,6 +80,8 @@ export type Variable =
   | UserDefinedVariable
   | DataDictionaryIntegrationVariable;
 
+export type DataDictionaryVariables = Record<string, Variable[]>;
+
 export type ExpressionValidateParams = {
   name: string;
   dataType: DATA_TYPE_WITHOUT_ENUM;

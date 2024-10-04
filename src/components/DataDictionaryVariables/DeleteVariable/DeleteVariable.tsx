@@ -8,7 +8,7 @@ import { JSONPatchOperation } from '@domain/entity';
 import { flowService } from '@services/flow-service';
 import { modifyFirstLetter } from '@utils/text';
 import { Variable } from '@domain/dataDictionary';
-import { updateFlow } from '@store/flow/flow';
+import { updateFlow } from '@store/flow';
 
 interface DeleteVariableProps {
   flowId: string;

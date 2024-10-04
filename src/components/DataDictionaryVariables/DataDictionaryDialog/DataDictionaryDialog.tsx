@@ -22,9 +22,9 @@ import LoadingButton from '@components/shared/LoadingButton.tsx';
 import {
   CRA_REPORT_VARIABLES,
   DATA_TYPE_WITHOUT_ENUM,
-  Variable
-} from '@domain/dataDictionary.ts';
-import { DataDictionaryVariables } from '@contexts/DataDictionaryContext';
+  Variable,
+  DataDictionaryVariables
+} from '@domain/dataDictionary';
 
 const objectVariableTypes = [
   DATA_TYPE_WITHOUT_ENUM['Object:CraClarity'],

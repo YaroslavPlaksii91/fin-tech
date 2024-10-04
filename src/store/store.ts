@@ -1,20 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import flowList from './flowList/flowList';
-import flow from './flow/flow';
-
-import { authReducer } from '@store/auth/auth.ts';
+import auth from './auth';
+import flowList from './flowList';
+import flow from './flow';
+import dataDictionary from './dataDictionary';
 
 export const store = configureStore({
   reducer: {
-    auth: authReducer,
+    auth,
     flow,
-    flowList
+    flowList,
+    dataDictionary
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false
-    })
+    getDefaultMiddleware({ serializableCheck: false })
 });
 
 export type RootState = ReturnType<typeof store.getState>;

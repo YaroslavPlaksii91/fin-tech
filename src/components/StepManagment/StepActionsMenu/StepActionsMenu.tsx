@@ -28,7 +28,7 @@ import routes from '@constants/routes.ts';
 import MoreHorizontalIcon from '@icons/moreHorizontal.svg';
 import { asyncConfirmDialog } from '@components/shared/Confirmation/AsyncConfirmDialog.tsx';
 import { useAppDispatch } from '@store/hooks';
-import { deleteNodes, updateNodeData, addNode } from '@store/flow/flow';
+import { deleteNodes, updateNodeData, addNode } from '@store/flow';
 import { ActiveStep } from '@contexts/StepContext';
 import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';

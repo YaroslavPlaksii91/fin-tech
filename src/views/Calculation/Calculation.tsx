@@ -36,7 +36,7 @@ import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
-import { selectUserInfo } from '@store/auth/auth';
+import { selectUserInfo } from '@store/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
 import { customBoxShadows, theme } from '@theme';

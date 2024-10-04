@@ -4,8 +4,6 @@ import { cloneDeep } from 'lodash';
 import { selectFlow } from '@store/flow/selectors';
 import { useAppSelector } from '@store/hooks';
 import { IFlow } from '@domain/flow';
-import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
-import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 import MainFlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEditor/MainFlowChartEditor';
 import Logger from '@utils/logger';
 import { integrationsService } from '@services/integrations';
@@ -14,7 +12,6 @@ import { IsDirtyProvider } from '@contexts/IsDirtyContext';
 
 const FlowEdit = () => {
   const { flow } = useAppSelector(selectFlow);
-  const dataDictionaryContextValue = useDataDictionaryVariables(flow);
 
   const [copyFlow, setCopyFlow] = useState<IFlow>();
   const [craClarityControlFiles, setCRAClarityControlFiles] = useState<
@@ -40,19 +37,17 @@ const FlowEdit = () => {
   }, []);
 
   return (
-    <DataDictionaryContext.Provider value={dataDictionaryContextValue}>
-      <CRAClarityControlFilesContext.Provider value={craClarityControlFiles}>
-        <IsDirtyProvider>
-          {copyFlow && (
-            <MainFlowChartEditor
-              isViewMode={false}
-              flow={copyFlow}
-              setCopyFlow={setCopyFlow}
-            />
-          )}
-        </IsDirtyProvider>
-      </CRAClarityControlFilesContext.Provider>
-    </DataDictionaryContext.Provider>
+    <CRAClarityControlFilesContext.Provider value={craClarityControlFiles}>
+      <IsDirtyProvider>
+        {copyFlow && (
+          <MainFlowChartEditor
+            isViewMode={false}
+            flow={copyFlow}
+            setCopyFlow={setCopyFlow}
+          />
+        )}
+      </IsDirtyProvider>
+    </CRAClarityControlFilesContext.Provider>
   );
 };
 

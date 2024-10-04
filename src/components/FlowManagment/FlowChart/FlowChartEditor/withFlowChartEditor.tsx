@@ -55,9 +55,9 @@ import { useActiveStep } from '@contexts/StepContext';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
-import { selectUserInfo } from '@store/auth/auth';
+import { selectUserInfo } from '@store/auth';
 import { getFullUserName } from '@utils/helpers';
-import { deleteNodes } from '@store/flow/flow';
+import { deleteNodes } from '@store/flow';
 import { useIsDirty } from '@contexts/IsDirtyContext';
 
 type FlowChartEditorProps = {

@@ -30,14 +30,21 @@ import {
   UserDefinedVariable,
   VARIABLE_SOURCE_TYPE
 } from '@domain/dataDictionary';
-import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { checkIsProductionFlow } from '@utils/helpers';
 import { permissionsMap } from '@constants/permissions';
 import { useAppSelector } from '@store/hooks';
 import { selectFlow } from '@store/flow/selectors';
+import { selectDataDictionary } from '@store/dataDictionary/selectors';
 
 const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
+  const { integrationVariables, variables, enumDataTypes } =
+    useAppSelector(selectDataDictionary);
+  const {
+    flow: { temporaryVariables, permanentVariables }
+  } = useAppSelector(selectFlow);
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
+
   const [tab, setTab] = useState<TAB>('laPMSVariables');
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -51,10 +58,6 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const {
-    flow: { temporaryVariables, permanentVariables }
-  } = useAppSelector(selectFlow);
-  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
   const isProductionFlow = checkIsProductionFlow();
   const isViewMode = isProductionFlow || !hasUserPermission;
 
@@ -75,12 +78,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     handleFiltersClose();
   };
 
-  const { variables, integrationVariables, enumsDataTypes } =
-    useDataDictionaryVariables(flow);
-
   const tableData = useMemo(() => {
-    if (!variables) return [];
-
     if (tab === 'craReportVariables') {
       return Object.values(integrationVariables).flat();
     }
@@ -91,7 +89,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       ];
     }
 
-    return variables[tab];
+    return variables[tab] || [];
   }, [tab, variables, integrationVariables]);
 
   const headers: TableHeader[] = useMemo(() => {
@@ -111,14 +109,14 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
   const filterGroups = useMemo(
     () =>
-      getFiltersGroup(enumsDataTypes)
+      getFiltersGroup(enumDataTypes)
         .map((filter) =>
           tab === 'userDefined'
             ? { ...filter, fields: Object.values(DATA_TYPE_WITHOUT_ENUM) }
             : filter
         )
         .filter(({ applyFor }) => applyFor.includes(tab)),
-    [tab, enumsDataTypes]
+    [tab, enumDataTypes]
   );
 
   const filteredBySearch = useMemo(() => {

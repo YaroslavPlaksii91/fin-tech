@@ -10,7 +10,7 @@ import Logger from '@utils/logger';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { getFlow, getProductionFlow } from '@store/flow/asyncThunk';
-import { setInitialFlow } from '@store/flow/flow';
+import { setInitialFlow } from '@store/flow';
 import { selectFlow } from '@store/flow/selectors';
 
 const DataDictionary = () => {

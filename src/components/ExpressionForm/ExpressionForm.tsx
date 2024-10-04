@@ -17,7 +17,6 @@ import React, {
   MutableRefObject,
   ReactElement,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -47,12 +46,13 @@ import {
   functionsLiterals,
   operatorsConfig
 } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
-import { DataDictionaryContext } from '@contexts/DataDictionaryContext.tsx';
 import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog.tsx';
 import { StepContentWrapper } from '@views/styled';
 import { customBoxShadows } from '@theme';
 import { flowService } from '@services/flow-service';
 import { parseExpressionError } from '@utils/helpers';
+import { useAppSelector } from '@store/hooks';
+import { selectDataDictionary } from '@store/dataDictionary/selectors';
 
 const operatorsList = [
   ...Object.values(groupBy(operatorsConfig, 'category')),
@@ -83,8 +83,8 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   onCancelClick,
   renderTitle
 }) => {
-  const dataDictionary = useContext(DataDictionaryContext);
-  const variables = dataDictionary?.variables || {};
+  const { variables, integrationVariables } =
+    useAppSelector(selectDataDictionary);
 
   const [dataDictMode, setDataDictMode] = useState<DataDictMode | null>(null);
 
@@ -305,7 +305,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         integrationData={
           dataDictMode === DataDictMode.Variable
             ? undefined
-            : dataDictionary?.integrationVariables
+            : integrationVariables
         }
         title={
           dataDictMode === DataDictMode.Variable

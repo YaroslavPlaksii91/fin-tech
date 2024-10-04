@@ -5,7 +5,7 @@ import { JSONPatchOperation } from '@domain/entity';
 import { IFlow, IFlowDataCreate } from '@domain/flow';
 
 export const fetchDraftFlowList = createAsyncThunk(
-  'get/flow-list',
+  'flowList/fetchDraft',
   async () => {
     const flowItemsData = await flowService.getFlows();
     return { flowItemsData };
@@ -13,7 +13,7 @@ export const fetchDraftFlowList = createAsyncThunk(
 );
 
 export const fetchProductionFlowItem = createAsyncThunk(
-  'get/flow-production-list-item',
+  'flowList/fetchProductionItem',
   async () => {
     const productionFlowItemData = await flowService.getProductionFlow();
     return { productionFlowItemData };
@@ -21,7 +21,7 @@ export const fetchProductionFlowItem = createAsyncThunk(
 );
 
 export const renameFlow = createAsyncThunk(
-  'patch/rename-flow',
+  'flowList/rename',
   async (
     {
       id,
@@ -42,7 +42,7 @@ export const renameFlow = createAsyncThunk(
 );
 
 export const deleteFlow = createAsyncThunk(
-  'delete/flow',
+  'flowList/delete',
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await flowService.deleteFlow(id);
@@ -54,7 +54,7 @@ export const deleteFlow = createAsyncThunk(
 );
 
 export const createFlow = createAsyncThunk(
-  'create/flow',
+  'flowList/create',
   async (data: IFlowDataCreate, { rejectWithValue }) => {
     try {
       const response = await flowService.createFlow(data);
@@ -66,7 +66,7 @@ export const createFlow = createAsyncThunk(
 );
 
 export const pushProductionFlow = createAsyncThunk(
-  'push/flow',
+  'flowList/push',
   async (
     data: { flow: IFlow; params: { pushedBy: string; note: string } },
     { rejectWithValue }

@@ -23,7 +23,7 @@ import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
 import { SNACK_TYPE } from '@constants/common';
 import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
-import { selectUserInfo } from '@store/auth/auth';
+import { selectUserInfo } from '@store/auth';
 import { getFullUserName } from '@utils/helpers';
 import NewFlowIcon from '@icons/new-flow.svg';
 
