@@ -1,6 +1,6 @@
 import {
   DATA_TYPE_WITHOUT_ENUM,
-  INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
+  CONTROL_FILES,
   VARIABLE_SOURCE_TYPE
 } from '@domain/dataDictionary';
 
@@ -10,7 +10,7 @@ export type Entry = {
   expression: string;
   destinationType?: string;
   dataType?: DATA_TYPE_WITHOUT_ENUM;
-  sourceType?: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
+  sourceType?: VARIABLE_SOURCE_TYPE | CONTROL_FILES;
   sourceName?: string;
 };
 

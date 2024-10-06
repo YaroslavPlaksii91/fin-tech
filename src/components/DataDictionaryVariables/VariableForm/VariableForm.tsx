@@ -92,7 +92,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     }
   });
 
-  const onSubmit = (
+  const onSubmit = async (
     data: Pick<
       UserDefinedVariable,
       'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
@@ -116,7 +116,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     ];
 
     try {
-      void dispatch(updateFlow({ operations, id: flowId }));
+      await dispatch(updateFlow({ operations, id: flowId }));
       onClose();
     } catch (error) {
       const dataErrors = parseErrorMessages(error);

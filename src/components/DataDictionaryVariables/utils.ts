@@ -3,7 +3,7 @@ import { TABS } from './constants';
 
 import {
   DATA_TYPE_WITHOUT_ENUM,
-  INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
+  CONTROL_FILES,
   INTEGRATION_VARIABLE_SOURCE_TYPE,
   Variable,
   VariableUsageParams
@@ -87,7 +87,7 @@ export const getFiltersGroup = (enumDataTypes: string[]) => [
   {
     filterBy: FILTER_BY.sourceType,
     text: 'By Report Name',
-    fields: Object.values(INTEGRATION_VARIABLE_SOURCE_SUB_TYPE),
+    fields: Object.values(CONTROL_FILES),
     applyFor: [TABS.craReportVariables] as TAB[]
   }
 ];

@@ -12,7 +12,7 @@ import {
 
 import {
   DATA_TYPE_WITHOUT_ENUM,
-  INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
+  CONTROL_FILES,
   VARIABLE_SOURCE_TYPE,
   VARIABLE_USAGE_MODE,
   Variable
@@ -122,7 +122,7 @@ export const getVariableSources = (entries: Entry[], variables: Variable[]) =>
     },
     [] as {
       name: string;
-      sourceType: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
+      sourceType: VARIABLE_SOURCE_TYPE | CONTROL_FILES;
     }[]
   );
 

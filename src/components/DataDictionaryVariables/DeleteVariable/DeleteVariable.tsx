@@ -25,7 +25,7 @@ export const DeleteVariable = ({
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
-  const handleDeleteVariable = () => {
+  const handleDeleteVariable = async () => {
     try {
       const operations: JSONPatchOperation[] = [
         {
@@ -36,7 +36,7 @@ export const DeleteVariable = ({
 
       setConfirmLoading(true);
 
-      void dispatch(updateFlow({ operations, id: flowId }));
+      await dispatch(updateFlow({ operations, id: flowId }));
       onClose();
     } catch (error) {
       Logger.error(error);

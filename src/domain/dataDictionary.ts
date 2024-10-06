@@ -34,22 +34,18 @@ export enum INTEGRATION_VARIABLE_SOURCE_TYPE {
   CraFactorTrust = 'CraFactorTrust'
 }
 
-export enum INTEGRATION_VARIABLE_SOURCE_SUB_TYPE {
+export enum CONTROL_FILES {
   OFAC = 'OFAC',
   ClearCreditRisk = 'ClearCreditRisk',
   ClearFraudInsight = 'ClearFraudInsight',
   ClearRecentHistory = 'ClearRecentHistory'
 }
 
-export type INTEGRATION_VARIABLE_DATA_TYPE =
-  | INTEGRATION_VARIABLE_SOURCE_TYPE
-  | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
-
 export interface DataDictionaryVariable {
   name: string;
   source: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_TYPE;
   destinationType: string;
-  sourceType: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
+  sourceType: VARIABLE_SOURCE_TYPE | CONTROL_FILES;
   dataType: DATA_TYPE_WITHOUT_ENUM;
   defaultValue?: string;
   isRequired?: boolean;
@@ -58,9 +54,6 @@ export interface DataDictionaryVariable {
   description?: string;
   sourceName?: string;
 }
-
-export interface DataDictionaryIntegrationVariable
-  extends DataDictionaryVariable {}
 
 export type UserDefinedVariable = {
   name: string;
@@ -75,10 +68,7 @@ export type UserDefinedVariable = {
   isRequired?: boolean;
 };
 
-export type Variable =
-  | DataDictionaryVariable
-  | UserDefinedVariable
-  | DataDictionaryIntegrationVariable;
+export type Variable = DataDictionaryVariable | UserDefinedVariable;
 
 export type DataDictionaryVariables = Record<string, Variable[]>;
 
