@@ -16,7 +16,7 @@ export const getFlow = createAppAsyncThunk(
 );
 
 export const getProductionFlow = createAppAsyncThunk(
-  'flow/getProductionFlowDetails',
+  'flow/getProductionFlow',
   async (_, { rejectWithValue }) => {
     try {
       const response = await flowService.getProductionFlowDetails();
@@ -28,7 +28,7 @@ export const getProductionFlow = createAppAsyncThunk(
 );
 
 export const saveFlow = createAppAsyncThunk(
-  'flow/save',
+  'flow/saveFlow',
   async (data: IFlow, { rejectWithValue }) => {
     try {
       const response = await flowService.saveFlow(data);
@@ -40,7 +40,7 @@ export const saveFlow = createAppAsyncThunk(
 );
 
 export const updateFlow = createAppAsyncThunk(
-  'flow/update',
+  'flow/updateFlow',
   async (
     {
       id,

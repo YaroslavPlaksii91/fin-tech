@@ -4,7 +4,7 @@ import { IFlow, IFlowDataCreate } from '@domain/flow';
 import { createAppAsyncThunk } from '@store/utils';
 
 export const fetchDraftFlowList = createAppAsyncThunk(
-  'flowList/fetchDraft',
+  'flowList/fetchDraftFlowList',
   async () => {
     const flowItemsData = await flowService.getFlows();
     return { flowItemsData };
@@ -12,7 +12,7 @@ export const fetchDraftFlowList = createAppAsyncThunk(
 );
 
 export const fetchProductionFlowItem = createAppAsyncThunk(
-  'flowList/fetchProductionItem',
+  'flowList/fetchProductionFlowItem',
   async () => {
     const productionFlowItemData = await flowService.getProductionFlow();
     return { productionFlowItemData };
@@ -20,7 +20,7 @@ export const fetchProductionFlowItem = createAppAsyncThunk(
 );
 
 export const renameFlow = createAppAsyncThunk(
-  'flowList/rename',
+  'flowList/renameFlow',
   async (
     {
       id,
@@ -41,7 +41,7 @@ export const renameFlow = createAppAsyncThunk(
 );
 
 export const deleteFlow = createAppAsyncThunk(
-  'flowList/delete',
+  'flowList/deleteFlow',
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await flowService.deleteFlow(id);
@@ -53,7 +53,7 @@ export const deleteFlow = createAppAsyncThunk(
 );
 
 export const createFlow = createAppAsyncThunk(
-  'flowList/create',
+  'flowList/createFlow',
   async (data: IFlowDataCreate, { rejectWithValue }) => {
     try {
       const response = await flowService.createFlow(data);
@@ -65,7 +65,7 @@ export const createFlow = createAppAsyncThunk(
 );
 
 export const pushProductionFlow = createAppAsyncThunk(
-  'flowList/push',
+  'flowList/pushProductionFlow',
   async (
     data: { flow: IFlow; params: { pushedBy: string; note: string } },
     { rejectWithValue }
