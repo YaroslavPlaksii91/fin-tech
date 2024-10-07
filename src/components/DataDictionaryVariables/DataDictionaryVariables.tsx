@@ -77,7 +77,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
         ...Object.values(integrationVariables).flat()
       ];
 
-    return allVariables[tab];
+    return allVariables[tab] || [];
   }, [tab, allVariables, integrationVariables]);
 
   const headers: TableHeader[] = useMemo(() => {

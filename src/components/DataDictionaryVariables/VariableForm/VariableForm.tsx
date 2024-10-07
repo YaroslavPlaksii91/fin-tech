@@ -4,6 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Stack } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers-pro';
 import dayjs from 'dayjs';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 import { validationSchema } from './validationSchema';
 
@@ -116,7 +117,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     ];
 
     try {
-      await dispatch(updateFlow({ operations, id: flowId }));
+      unwrapResult(await dispatch(updateFlow({ operations, id: flowId })));
       onClose();
     } catch (error) {
       const dataErrors = parseErrorMessages(error);

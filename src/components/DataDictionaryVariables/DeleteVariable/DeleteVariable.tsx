@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Typography } from '@mui/material';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import Logger from '@utils/logger';
@@ -36,7 +37,7 @@ export const DeleteVariable = ({
 
       setConfirmLoading(true);
 
-      await dispatch(updateFlow({ operations, id: flowId }));
+      unwrapResult(await dispatch(updateFlow({ operations, id: flowId })));
       onClose();
     } catch (error) {
       Logger.error(error);
