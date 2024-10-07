@@ -11,7 +11,7 @@ import {
   DateTimePickerProps as MuiDateTimePickerProps,
   DatePickerProps as MuiDatePickerProps
 } from '@mui/x-date-pickers-pro';
-import { FormControl, FormControlProps } from '@mui/material';
+import { FormControlProps } from '@mui/material';
 
 import { StyledError } from './styled';
 
@@ -43,21 +43,22 @@ const DatePicker = <
   const { field, fieldState } = useController({ control, name });
 
   return (
-    <FormControl error={!!fieldState?.error} {...props}>
+    <>
       <Picker
         label={label}
         slots={{ openPickerIcon: CalendarIcon }}
         slotProps={{
-          textField: { size: 'small' },
+          textField: { size: 'small', error: !!fieldState?.error },
           openPickerIcon: { color: 'black' },
           actionBar: { actions: ['cancel', 'accept'] }
         }}
         {...field}
+        {...props}
       />
       {fieldState?.error && (
         <StyledError variant="caption">{fieldState.error.message}</StyledError>
       )}
-    </FormControl>
+    </>
   );
 };
 

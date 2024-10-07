@@ -1,5 +1,8 @@
 import { useForm } from 'react-hook-form';
 import { useCallback } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+import validationSchema from './validationSchema';
 
 import Template, { TemplateProps } from '@components/shared/Filters';
 import DatePicker from '@components/shared/Forms/DatePicker';
@@ -24,6 +27,8 @@ const Filters = ({
   onSubmit
 }: FiltersProps) => {
   const { handleSubmit, control, reset } = useForm<IFilters>({
+    // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
+    resolver: yupResolver(validationSchema),
     values: { ...filters }
   });
 

@@ -14,6 +14,7 @@ import { customBoxShadows, theme } from '@theme';
 
 export interface TemplateProps {
   isOpen: boolean;
+  isSubmitDisabled?: boolean;
   children: ReactNode;
   onReset: () => void;
   onSubmit: () => void;
@@ -23,6 +24,7 @@ export interface TemplateProps {
 const Template = ({
   isOpen,
   children,
+  isSubmitDisabled,
   onReset,
   onSubmit,
   onClose
@@ -69,6 +71,7 @@ const Template = ({
                 size="small"
                 variant="contained"
                 type="submit"
+                disabled={isSubmitDisabled}
                 sx={{ width: '56px', height: '30px' }}
               >
                 Apply
