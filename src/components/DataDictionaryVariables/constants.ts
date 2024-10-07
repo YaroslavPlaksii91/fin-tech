@@ -60,3 +60,6 @@ export const CRA_REPORTS_HEADERS: TableHeader[] = [
   { key: 'sourceType', label: 'ReportName' },
   ...DEFAULT_HEADERS
 ];
+
+export const STRING_ARRAY_HINT =
+  'A string Array is a collection or list of string values, where each element in the array holds a string - ["value1", "value2", "value"...”N”].<br/><br/>Example: ["SSN1", "SSN2", "SSN3"]';

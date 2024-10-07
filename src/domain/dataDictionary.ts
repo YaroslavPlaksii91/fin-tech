@@ -4,6 +4,7 @@ export enum VARIABLE_DATA_TYPE {
   Integer = 'Integer',
   Decimal = 'Decimal',
   String = 'String',
+  StringArray = 'StringArray',
   Boolean = 'Boolean',
   DateTime = 'DateTime',
   'Object:CraClarity' = 'Object:CraClarity',

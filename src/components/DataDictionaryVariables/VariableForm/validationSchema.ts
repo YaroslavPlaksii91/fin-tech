@@ -4,7 +4,7 @@ import {
   VARIABLE_SOURCE_TYPE,
   VARIABLE_DATA_TYPE
 } from '@domain/dataDictionary';
-import { isDecimal, isInteger } from '@utils/validation';
+import { isDecimal, isInteger, isStringArray } from '@utils/validation';
 
 export const validationSchema = yup.object().shape({
   name: yup
@@ -42,7 +42,8 @@ export const validationSchema = yup.object().shape({
         VARIABLE_DATA_TYPE.Decimal,
         VARIABLE_DATA_TYPE.Boolean,
         VARIABLE_DATA_TYPE.DateTime,
-        VARIABLE_DATA_TYPE.Integer
+        VARIABLE_DATA_TYPE.Integer,
+        VARIABLE_DATA_TYPE.StringArray
       ].includes(val),
     then: (schema) =>
       schema
@@ -64,6 +65,16 @@ export const validationSchema = yup.object().shape({
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             return this.parent.dataType === VARIABLE_DATA_TYPE.Integer
               ? isInteger(value)
+              : true;
+          }
+        )
+        .test(
+          'is-string-array',
+          'Default value must be an empty array or an array of strings',
+          function (value) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            return this.parent.dataType === VARIABLE_DATA_TYPE.StringArray
+              ? isStringArray(value)
               : true;
           }
         )

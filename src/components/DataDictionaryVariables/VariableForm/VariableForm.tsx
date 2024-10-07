@@ -6,6 +6,8 @@ import { DatePicker } from '@mui/x-date-pickers-pro';
 import dayjs from 'dayjs';
 import { unwrapResult } from '@reduxjs/toolkit';
 
+import { STRING_ARRAY_HINT } from '../constants';
+
 import { validationSchema } from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
@@ -207,6 +209,15 @@ export const VariableForm: React.FC<VariableFormProps> = ({
               name="defaultValue"
               label="Default Value"
               control={control}
+            />
+          )}
+          {watchDataType === VARIABLE_DATA_TYPE.StringArray && (
+            <InputText
+              fullWidth
+              name="defaultValue"
+              label="Default Value"
+              control={control}
+              hint={STRING_ARRAY_HINT}
             />
           )}
           {watchDataType === VARIABLE_DATA_TYPE.Boolean && (
