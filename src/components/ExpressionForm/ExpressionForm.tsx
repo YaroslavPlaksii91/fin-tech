@@ -53,6 +53,7 @@ import { flowService } from '@services/flow-service';
 import { parseExpressionError } from '@utils/helpers';
 import { useAppSelector } from '@store/hooks';
 import { selectDataDictionary } from '@store/dataDictionary/selectors';
+import { selectUserDefinedVariables } from '@store/flow/selectors';
 
 const operatorsList = [
   ...Object.values(groupBy(operatorsConfig, 'category')),
@@ -85,6 +86,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
 }) => {
   const { variables, integrationVariables } =
     useAppSelector(selectDataDictionary);
+  const userDefinedVariables = useAppSelector(selectUserDefinedVariables);
 
   const [dataDictMode, setDataDictMode] = useState<DataDictMode | null>(null);
 
@@ -146,19 +148,27 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     }
   };
 
+  const allVariables = useMemo(
+    () => ({
+      ...variables,
+      ...userDefinedVariables
+    }),
+    [variables, userDefinedVariables]
+  );
+
   const variableFieldDataDict = useMemo(
     () =>
-      pick(variables, [
+      pick(allVariables, [
         DATA_DICTIONARY_GROUP.userDefined,
         DATA_DICTIONARY_GROUP.outputVariables
       ]),
-    [variables]
+    [allVariables]
   );
 
   useEffect(() => {
     const initialData = { variable: undefined, expressionString: '' };
     if (initialValues) {
-      const variable = Object.values(variables)
+      const variable = Object.values(allVariables)
         .flat()
         .find((o) => o.name === initialValues.outputName);
 
@@ -171,7 +181,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     } else {
       reset(initialData);
     }
-  }, [initialValues, variables]);
+  }, [initialValues, allVariables]);
 
   const onExpressionOperatorsListClick = useCallback(
     (literal: string) => {
@@ -300,7 +310,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         data={
           dataDictMode === DataDictMode.Variable
             ? variableFieldDataDict
-            : variables
+            : allVariables
         }
         integrationData={
           dataDictMode === DataDictMode.Variable

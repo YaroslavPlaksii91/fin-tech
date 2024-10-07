@@ -21,20 +21,20 @@ import { highlightText } from '@utils/text';
 import LoadingButton from '@components/shared/LoadingButton';
 import {
   CRA_REPORT_VARIABLES,
-  DATA_TYPE_WITHOUT_ENUM,
+  VARIABLE_DATA_TYPE,
   Variable,
   DataDictionaryVariables
 } from '@domain/dataDictionary';
 
 const objectVariableTypes = [
-  DATA_TYPE_WITHOUT_ENUM['Object:CraClarity'],
-  DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']
+  VARIABLE_DATA_TYPE['Object:CraClarity'],
+  VARIABLE_DATA_TYPE['Object:CraFactorTrust']
 ];
 
 const objectVariablesDataSourceMap: Record<string, string> = {
-  [DATA_TYPE_WITHOUT_ENUM['Object:CraClarity']]:
+  [VARIABLE_DATA_TYPE['Object:CraClarity']]:
     CRA_REPORT_VARIABLES.craClarityReportVariables,
-  [DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']]:
+  [VARIABLE_DATA_TYPE['Object:CraFactorTrust']]:
     CRA_REPORT_VARIABLES.craFactorTrustReportVariables
 };
 
@@ -114,7 +114,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
     const integrationDataList =
       integrationData?.[
         objectVariablesDataSourceMap[
-          selectedVar?.dataType as DATA_TYPE_WITHOUT_ENUM
+          selectedVar?.dataType as VARIABLE_DATA_TYPE
         ]
       ];
 
@@ -137,9 +137,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   // Need to set user-defined variables with data types Object:CraClarity and Object:CraFactorTrust without attributes for saving the result of the GET REPORT function
   const selectVarIsObjectType =
     showAttributes &&
-    objectVariableTypes.includes(
-      selectedVar?.dataType as DATA_TYPE_WITHOUT_ENUM
-    );
+    objectVariableTypes.includes(selectedVar?.dataType as VARIABLE_DATA_TYPE);
 
   const handleConfirmClick = () => {
     const value = selectVarIsObjectType

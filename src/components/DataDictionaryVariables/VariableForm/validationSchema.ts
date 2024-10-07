@@ -2,7 +2,7 @@ import * as yup from 'yup';
 
 import {
   VARIABLE_SOURCE_TYPE,
-  DATA_TYPE_WITHOUT_ENUM
+  VARIABLE_DATA_TYPE
 } from '@domain/dataDictionary';
 import { isDecimal, isInteger } from '@utils/validation';
 
@@ -33,16 +33,16 @@ export const validationSchema = yup.object().shape({
     .oneOf(Object.values(VARIABLE_SOURCE_TYPE))
     .required(),
   dataType: yup
-    .mixed<DATA_TYPE_WITHOUT_ENUM>()
-    .oneOf(Object.values(DATA_TYPE_WITHOUT_ENUM))
+    .mixed<VARIABLE_DATA_TYPE>()
+    .oneOf(Object.values(VARIABLE_DATA_TYPE))
     .required(),
   defaultValue: yup.string().when('dataType', {
-    is: (val: DATA_TYPE_WITHOUT_ENUM) =>
+    is: (val: VARIABLE_DATA_TYPE) =>
       [
-        DATA_TYPE_WITHOUT_ENUM.Decimal,
-        DATA_TYPE_WITHOUT_ENUM.Boolean,
-        DATA_TYPE_WITHOUT_ENUM.DateTime,
-        DATA_TYPE_WITHOUT_ENUM.Integer
+        VARIABLE_DATA_TYPE.Decimal,
+        VARIABLE_DATA_TYPE.Boolean,
+        VARIABLE_DATA_TYPE.DateTime,
+        VARIABLE_DATA_TYPE.Integer
       ].includes(val),
     then: (schema) =>
       schema
@@ -52,7 +52,7 @@ export const validationSchema = yup.object().shape({
           'Default value must be a valid decimal',
           function (value) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            return this.parent.dataType === DATA_TYPE_WITHOUT_ENUM.Decimal
+            return this.parent.dataType === VARIABLE_DATA_TYPE.Decimal
               ? isDecimal(value)
               : true;
           }
@@ -62,7 +62,7 @@ export const validationSchema = yup.object().shape({
           'Default value must be a valid integer',
           function (value) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            return this.parent.dataType === DATA_TYPE_WITHOUT_ENUM.Integer
+            return this.parent.dataType === VARIABLE_DATA_TYPE.Integer
               ? isInteger(value)
               : true;
           }

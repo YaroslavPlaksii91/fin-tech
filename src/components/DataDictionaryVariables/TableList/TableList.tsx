@@ -21,7 +21,7 @@ import {
 import {
   Variable,
   VariableUsageParams,
-  DATA_TYPE_WITHOUT_ENUM,
+  VARIABLE_DATA_TYPE,
   UserDefinedVariable
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
@@ -106,7 +106,7 @@ const TableList = ({
               key={index}
               headers={headers}
               row={
-                variable.dataType === DATA_TYPE_WITHOUT_ENUM.DateTime
+                variable.dataType === VARIABLE_DATA_TYPE.DateTime
                   ? {
                       ...variable,
                       defaultValue: dayjs(variable.defaultValue).format(

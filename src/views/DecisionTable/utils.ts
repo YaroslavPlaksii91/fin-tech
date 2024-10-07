@@ -11,7 +11,7 @@ import {
 } from './types';
 
 import {
-  DATA_TYPE_WITHOUT_ENUM,
+  VARIABLE_DATA_TYPE,
   CONTROL_FILES,
   VARIABLE_SOURCE_TYPE,
   VARIABLE_USAGE_MODE,
@@ -86,7 +86,7 @@ export const getColumns = (
 
     // pass data type directly to prevent issues with the object properties
     const dataType =
-      el.dataType || variable?.dataType || DATA_TYPE_WITHOUT_ENUM.String;
+      el.dataType || variable?.dataType || VARIABLE_DATA_TYPE.String;
 
     return {
       index,
@@ -198,9 +198,8 @@ export const filterVariablesByUsageMode = (
       // User-defined variables with the data types Object:CraClarity and Object:CraFactorTrust should be excluded from Actions.
       const filteredUserDefinedVariables = copyVariables['userDefined'].filter(
         (variable) =>
-          variable.dataType !==
-            DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust'] &&
-          variable.dataType !== DATA_TYPE_WITHOUT_ENUM['Object:CraClarity']
+          variable.dataType !== VARIABLE_DATA_TYPE['Object:CraFactorTrust'] &&
+          variable.dataType !== VARIABLE_DATA_TYPE['Object:CraClarity']
       );
 
       usageModes = [VARIABLE_USAGE_MODE.ReadWrite];

@@ -2,7 +2,7 @@ import { FILTER_BY, TAB } from './types';
 import { TABS } from './constants';
 
 import {
-  DATA_TYPE_WITHOUT_ENUM,
+  VARIABLE_DATA_TYPE,
   CONTROL_FILES,
   INTEGRATION_VARIABLE_SOURCE_TYPE,
   Variable,
@@ -61,21 +61,21 @@ export const getUserDefinedUsageStepIds = ({
 };
 
 export const checkDataType = (
-  dataType: DATA_TYPE_WITHOUT_ENUM,
+  dataType: VARIABLE_DATA_TYPE,
   enumDataTypes: string[]
 ) => ({
   isWithEnum: enumDataTypes.includes(dataType),
-  isBoolean: dataType === DATA_TYPE_WITHOUT_ENUM.Boolean,
-  isString: dataType === DATA_TYPE_WITHOUT_ENUM.String,
-  isInteger: dataType === DATA_TYPE_WITHOUT_ENUM.Integer,
-  isDecimal: dataType === DATA_TYPE_WITHOUT_ENUM.Decimal
+  isBoolean: dataType === VARIABLE_DATA_TYPE.Boolean,
+  isString: dataType === VARIABLE_DATA_TYPE.String,
+  isInteger: dataType === VARIABLE_DATA_TYPE.Integer,
+  isDecimal: dataType === VARIABLE_DATA_TYPE.Decimal
 });
 
 export const getFiltersGroup = (enumDataTypes: string[]) => [
   {
     filterBy: FILTER_BY.dataType,
     text: 'By Data Type',
-    fields: [...Object.values(DATA_TYPE_WITHOUT_ENUM), ...enumDataTypes],
+    fields: [...Object.values(VARIABLE_DATA_TYPE), ...enumDataTypes],
     applyFor: Object.values(TABS) as TAB[]
   },
   {

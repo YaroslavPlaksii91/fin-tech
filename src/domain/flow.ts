@@ -2,7 +2,7 @@ import { Edge, Node, Viewport } from '@reactflow/core';
 
 import { IEntity } from './entity';
 import {
-  DATA_TYPE_WITHOUT_ENUM,
+  VARIABLE_DATA_TYPE,
   CONTROL_FILES,
   UserDefinedVariable,
   VARIABLE_SOURCE_TYPE
@@ -58,7 +58,7 @@ export type Expression = {
   outputName: string;
   expressionString: string;
   destinationType: string;
-  destinationDataType: DATA_TYPE_WITHOUT_ENUM;
+  destinationDataType: VARIABLE_DATA_TYPE;
   variableSources: ExpressionVariableSources;
 };
 

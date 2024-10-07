@@ -44,7 +44,7 @@ import {
 } from '@components/shared/Snackbar/SnackbarMessage';
 import { SNACK_TYPE } from '@constants/common';
 import {
-  DATA_TYPE_WITHOUT_ENUM,
+  VARIABLE_DATA_TYPE,
   DataDictionaryVariable
 } from '@domain/dataDictionary';
 import { StepContentWrapper } from '@views/styled';
@@ -57,6 +57,7 @@ import { useIsDirty } from '@contexts/IsDirtyContext';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import InputText from '@components/shared/Forms/InputText';
 import { selectDataDictionary } from '@store/dataDictionary/selectors';
+import { selectUserDefinedVariables } from '@store/flow/selectors';
 
 type DecisionTableStepProps = {
   flow: IFlow;
@@ -89,6 +90,7 @@ const DecisionTable = ({
   const user = useAppSelector(selectUserInfo);
   const { integrationVariables, variables, enumDataTypes } =
     useAppSelector(selectDataDictionary);
+  const userDefinedVariables = useAppSelector(selectUserDefinedVariables);
 
   const [caseEntries, setCaseEntries] = useState<CaseEntry[]>([]);
 
@@ -112,7 +114,15 @@ const DecisionTable = ({
   const nodes: FlowNode[] = getNodes();
   const edges = getEdges();
 
-  const flatVariables = useMemo(() => flatMap(variables), [variables]);
+  const allVariables = useMemo(
+    () => ({
+      ...variables,
+      ...userDefinedVariables
+    }),
+    [variables, userDefinedVariables]
+  );
+
+  const flatVariables = useMemo(() => flatMap(allVariables), [allVariables]);
 
   const stepIds = caseEntries.map(({ edgeId }) => edgeId);
 
@@ -137,7 +147,7 @@ const DecisionTable = ({
 
   const stepColumn = {
     name: STEP,
-    dataType: DATA_TYPE_WITHOUT_ENUM.String,
+    dataType: VARIABLE_DATA_TYPE.String,
     category: CATEGORIES.Actions,
     index: actionsColumns.length
   };
@@ -431,7 +441,7 @@ const DecisionTable = ({
             stepIds={stepIds}
             columns={columns}
             rows={caseEntries}
-            variables={variables}
+            variables={allVariables}
             integrationData={integrationVariables}
             stepOptions={stepOptions}
             handleChangeStep={handleChangeStep}

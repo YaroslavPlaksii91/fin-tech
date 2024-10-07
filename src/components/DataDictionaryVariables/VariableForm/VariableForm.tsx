@@ -14,7 +14,7 @@ import { Textarea } from '@components/shared/Forms/Textarea';
 import Select from '@components/shared/Forms/Select';
 import {
   VARIABLE_SOURCE_TYPE,
-  DATA_TYPE_WITHOUT_ENUM,
+  VARIABLE_DATA_TYPE,
   UserDefinedVariable,
   Variable
 } from '@domain/dataDictionary';
@@ -49,16 +49,16 @@ const VARIABLE_SOURCE_TYPE_OPTIONS = [
   }
 ];
 
-const ALL_DATA_TYPES = Object.keys(DATA_TYPE_WITHOUT_ENUM) as Array<
-  keyof typeof DATA_TYPE_WITHOUT_ENUM
+const ALL_DATA_TYPES = Object.keys(VARIABLE_DATA_TYPE) as Array<
+  keyof typeof VARIABLE_DATA_TYPE
 >;
 
 const DATA_TYPES_OF_PERMANENT_VARIABLE = ALL_DATA_TYPES.filter(
   (type) =>
     ![
-      DATA_TYPE_WITHOUT_ENUM['Object:CraClarity'],
-      DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust']
-    ].includes(type as DATA_TYPE_WITHOUT_ENUM)
+      VARIABLE_DATA_TYPE['Object:CraClarity'],
+      VARIABLE_DATA_TYPE['Object:CraFactorTrust']
+    ].includes(type as VARIABLE_DATA_TYPE)
 );
 
 export const VariableForm: React.FC<VariableFormProps> = ({
@@ -86,7 +86,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
       sourceType: formData
         ? formData.sourceType
         : VARIABLE_SOURCE_TYPE_OPTIONS[0].value,
-      dataType: formData ? formData.dataType : DATA_TYPE_WITHOUT_ENUM.String,
+      dataType: formData ? formData.dataType : VARIABLE_DATA_TYPE.String,
       defaultValue: formData ? formData.defaultValue : '',
       description: formData ? formData.description : ''
     }
@@ -101,7 +101,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     const formattedData = {
       ...data,
       defaultValue:
-        data.dataType === DATA_TYPE_WITHOUT_ENUM.DateTime && data.defaultValue
+        data.dataType === VARIABLE_DATA_TYPE.DateTime && data.defaultValue
           ? new Date(data.defaultValue).toISOString()
           : data.defaultValue
     };
@@ -134,7 +134,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
 
   useEffect(() => {
     const initialDefaultValue =
-      watchDataType === DATA_TYPE_WITHOUT_ENUM.Boolean ? 'true' : '';
+      watchDataType === VARIABLE_DATA_TYPE.Boolean ? 'true' : '';
     resetField('defaultValue', { defaultValue: initialDefaultValue });
   }, [watchDataType, resetField]);
 
@@ -189,8 +189,8 @@ export const VariableForm: React.FC<VariableFormProps> = ({
             }))}
             disabled={formData && formData.variableIsUsed}
           />
-          {(watchDataType === DATA_TYPE_WITHOUT_ENUM.Decimal ||
-            watchDataType === DATA_TYPE_WITHOUT_ENUM.Integer) && (
+          {(watchDataType === VARIABLE_DATA_TYPE.Decimal ||
+            watchDataType === VARIABLE_DATA_TYPE.Integer) && (
             <InputText
               fullWidth
               type="number"
@@ -200,7 +200,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
               inputMode="numeric"
             />
           )}
-          {watchDataType === DATA_TYPE_WITHOUT_ENUM.String && (
+          {watchDataType === VARIABLE_DATA_TYPE.String && (
             <InputText
               fullWidth
               name="defaultValue"
@@ -208,7 +208,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
               control={control}
             />
           )}
-          {watchDataType === DATA_TYPE_WITHOUT_ENUM.Boolean && (
+          {watchDataType === VARIABLE_DATA_TYPE.Boolean && (
             <Select
               fullWidth
               variant="outlined"
@@ -220,7 +220,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
               }))}
             />
           )}
-          {watchDataType === DATA_TYPE_WITHOUT_ENUM.DateTime && (
+          {watchDataType === VARIABLE_DATA_TYPE.DateTime && (
             <Controller
               control={control}
               name="defaultValue"

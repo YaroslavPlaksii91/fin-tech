@@ -1,6 +1,6 @@
 import { Operator } from '@views/DecisionTable/types';
 
-export enum DATA_TYPE_WITHOUT_ENUM {
+export enum VARIABLE_DATA_TYPE {
   Integer = 'Integer',
   Decimal = 'Decimal',
   String = 'String',
@@ -46,7 +46,7 @@ export interface DataDictionaryVariable {
   source: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_TYPE;
   destinationType: string;
   sourceType: VARIABLE_SOURCE_TYPE | CONTROL_FILES;
-  dataType: DATA_TYPE_WITHOUT_ENUM;
+  dataType: VARIABLE_DATA_TYPE;
   defaultValue?: string;
   isRequired?: boolean;
   usageMode: VARIABLE_USAGE_MODE;
@@ -57,7 +57,7 @@ export interface DataDictionaryVariable {
 
 export type UserDefinedVariable = {
   name: string;
-  dataType: DATA_TYPE_WITHOUT_ENUM;
+  dataType: VARIABLE_DATA_TYPE;
   defaultValue?: string;
   description?: string;
   destinationType: string;
@@ -74,7 +74,7 @@ export type DataDictionaryVariables = Record<string, Variable[]>;
 
 export type ExpressionValidateParams = {
   name: string;
-  dataType: DATA_TYPE_WITHOUT_ENUM;
+  dataType: VARIABLE_DATA_TYPE;
 }[];
 
 export type Condition = {
