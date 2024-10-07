@@ -44,27 +44,33 @@ const CrossPlatformDrawer: React.FC = () => {
             </StyledListItemButton>
           </Tooltip>
         </ListItem>
-        {allowedApplications?.map(({ name, url }) => {
-          const application = applications.find((item) => item.key === name);
-          if (!application) return null;
-          return (
-            <ListItem key={name} disablePadding>
-              <Tooltip
-                title={application.name}
-                placement="right-start"
-                followCursor
-              >
-                <StyledListItemButton
-                  onClick={() => handleRedirect(url)}
-                  isSelected={url === window.location.origin + '/'}
-                  className={application?.className}
-                >
-                  <img src={application.iconSrc} />
-                </StyledListItemButton>
-              </Tooltip>
-            </ListItem>
-          );
-        })}
+        {!!allowedApplications?.length &&
+          applications?.map((item) => {
+            const application = allowedApplications?.find(
+              (i) => i.name === item.key
+            );
+            if (!application) {
+              return null;
+            }
+            const app = {
+              ...application,
+              ...item
+            };
+
+            return (
+              <ListItem key={app.name} disablePadding>
+                <Tooltip title={app.name} placement="right-start" followCursor>
+                  <StyledListItemButton
+                    onClick={() => handleRedirect(app.url)}
+                    isSelected={app.url === window.location.origin + '/'}
+                    className={app?.className}
+                  >
+                    <img src={app.iconSrc} />
+                  </StyledListItemButton>
+                </Tooltip>
+              </ListItem>
+            );
+          })}
       </StyledList>
     </StyledDrawer>
   );
