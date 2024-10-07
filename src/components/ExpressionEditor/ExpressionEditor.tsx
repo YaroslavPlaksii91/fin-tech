@@ -10,7 +10,7 @@ import React, {
 import {
   Button,
   InputAdornment,
-  InputBaseComponentProps,
+  InputBaseProps,
   TextField
 } from '@mui/material';
 
@@ -43,7 +43,7 @@ const ExpressionEditor: ForwardRefRenderFunction<
     name,
     value,
     onChange,
-    error,
+    errorMessage,
     onAddVariableClick,
     placeholder = 'Expression'
   },
@@ -129,7 +129,7 @@ const ExpressionEditor: ForwardRefRenderFunction<
   };
 
   const handleOnChange = (
-    e: React.FormEvent<HTMLTextAreaElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     e.currentTarget.selectionStart &&
       setCaretPosition(e.currentTarget.selectionStart);
@@ -149,8 +149,8 @@ const ExpressionEditor: ForwardRefRenderFunction<
         multiline
         minRows={5}
         maxRows={10}
-        error={error as boolean | undefined}
-        helperText={error && error}
+        error={Boolean(errorMessage)}
+        helperText={errorMessage}
         inputProps={{
           onKeyDown: handleTextareaKeyDown,
           onClick: (e) => {
@@ -190,10 +190,10 @@ const ExpressionEditor: ForwardRefRenderFunction<
   );
 };
 
-interface ExpressionEditorProps extends InputBaseComponentProps {
+interface ExpressionEditorProps extends InputBaseProps {
   name: string;
   value: string;
-  error?: string;
+  errorMessage?: string;
   onAddVariableClick: () => void;
   placeholder?: string;
 }

@@ -289,7 +289,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
                       onChange={onChange}
                       name="expressionString"
                       ref={expressionEditorRef}
-                      error={fieldState?.error?.message}
+                      errorMessage={fieldState?.error?.message}
                       onAddVariableClick={() => {
                         setDataDictMode(DataDictMode.Expression);
                       }}
