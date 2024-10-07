@@ -1,9 +1,14 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button, Stack, InputAdornment, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { SelectedCell, FormFieldsProps, OPERATORS } from '../types';
+import {
+  SelectedCell,
+  FormFieldsProps,
+  OPERATORS,
+  VALUE_TYPES
+} from '../types';
 import {
   getOperatorOptions,
   getFormattedOptions,
@@ -21,6 +26,8 @@ import { flowService } from '@services/flow-service';
 import { parseExpressionError } from '@utils/helpers';
 import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 import { checkDataType } from '@components/DataDictionaryVariables/utils';
+import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog';
+import { Variable } from '@domain/dataDictionary';
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
@@ -28,6 +35,8 @@ type SelectVariableValueDialogProps = {
   selectedCell: SelectedCell;
   handleClose: () => void;
   handleSubmitForm: (data: FormFieldsProps) => void;
+  variables: Record<string, Variable[]>;
+  integrationData: Record<string, Variable[]>;
 };
 
 const SelectVariableValueDialog = ({
@@ -35,9 +44,14 @@ const SelectVariableValueDialog = ({
   isCondition,
   selectedCell,
   handleClose,
-  handleSubmitForm
+  handleSubmitForm,
+  variables,
+  integrationData
 }: SelectVariableValueDialogProps) => {
   const dataDictionary = useContext(DataDictionaryContext);
+  const [selectedVariable, setSelectedVariable] = useState<Variable | null>(
+    null
+  );
 
   const bounds =
     selectedCell.operator === OPERATORS.BETWEEN
@@ -58,10 +72,11 @@ const SelectVariableValueDialog = ({
     clearErrors,
     setError
   } = useForm({
-    resolver: yupResolver(validationSchema(dataType)),
+    resolver: yupResolver(validationSchema(dataType, selectedVariable)),
     defaultValues: {
       name: selectedCell.name,
       operator: selectedCell.operator || OPERATORS.EQUAL,
+      type: VALUE_TYPES.Value,
       value: dataType.isWithEnum
         ? selectedCell.expression
           ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
@@ -73,9 +88,15 @@ const SelectVariableValueDialog = ({
   });
 
   const watchOperator = watch('operator');
+  const watchType = watch('type');
+  const isVariableType = watchType === VALUE_TYPES.Variable;
+  const defaultVariableValue = 'Select Variable lower';
 
   const onSubmit = async (data: FormFieldsProps) => {
-    const value = getFormatedValue(data);
+    const formattedValue = getFormatedValue(data);
+    const value = selectedVariable
+      ? selectedVariable.defaultValue!
+      : formattedValue;
 
     try {
       if (data.operator !== OPERATORS.ANY) {
@@ -108,12 +129,42 @@ const SelectVariableValueDialog = ({
     }
   };
 
+  const handleSelectVariable = (variable: Variable | null) => {
+    setValue(
+      'value',
+      dataType.isWithEnum
+        ? [variable?.name || defaultVariableValue]
+        : variable?.name || defaultVariableValue
+    );
+    setSelectedVariable(variable);
+  };
+
   useEffect(() => {
     if (watchOperator === OPERATORS.ANY)
       setValue('value', dataType.isWithEnum ? [] : '');
 
     clearErrors();
   }, [watchOperator]);
+
+  useEffect(() => {
+    if (watchType === VALUE_TYPES.Variable) {
+      setValue(
+        'value',
+        dataType.isWithEnum ? [defaultVariableValue] : defaultVariableValue
+      );
+    } else {
+      setValue(
+        'value',
+        dataType.isWithEnum
+          ? selectedCell.expression
+            ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
+            : []
+          : selectedCell.expression
+      );
+      setSelectedVariable(null);
+    }
+    clearErrors();
+  }, [watchType]);
 
   return (
     <Dialog
@@ -128,6 +179,7 @@ const SelectVariableValueDialog = ({
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           spacing={{ xs: 1, sm: 2, md: 2 }}
+          sx={{ mb: '20px' }}
         >
           <InputText
             fullWidth
@@ -156,7 +208,17 @@ const SelectVariableValueDialog = ({
             label="Operator*"
             options={getOperatorOptions(dataType)}
           />
-          {dataType.isWithEnum || dataType.isBoolean ? (
+          <Select
+            name="type"
+            control={control}
+            sx={{
+              width: '280px',
+              minWidth: '158px'
+            }}
+            label="Type*"
+            options={getFormattedOptions(Object.values(VALUE_TYPES))}
+          />
+          {(dataType.isWithEnum || dataType.isBoolean) && !isVariableType ? (
             <Select
               name="value"
               multiple={dataType.isWithEnum}
@@ -190,15 +252,29 @@ const SelectVariableValueDialog = ({
               fullWidth
               name="value"
               control={control}
-              label="Value*"
-              disabled={watchOperator === OPERATORS.ANY}
+              label={!isVariableType ? 'Value*' : 'Variable*'}
+              disabled={watchOperator === OPERATORS.ANY || isVariableType}
             />
           )}
         </Stack>
-        <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
+        {isVariableType && (
+          <DataDictionaryDialog
+            title="Select Variable"
+            data={variables}
+            integrationData={integrationData}
+            setSelectedObjectPropertyFunction={(object, property) => ({
+              ...property,
+              sourceName: object.name,
+              sourceType: object.sourceType
+            })}
+            mode="withoutModal"
+            handleSelectVariable={handleSelectVariable}
+          />
+        )}
+        <Stack pt={1} spacing={1} direction="row" justifyContent="flex-end">
           <LoadingButton
             loading={isSubmitting}
-            disabled={isSubmitting}
+            disabled={isSubmitting || (isVariableType && !selectedVariable)}
             variant="text"
             color="primary"
             type="submit"

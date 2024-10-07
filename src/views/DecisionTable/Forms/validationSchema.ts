@@ -1,16 +1,24 @@
 import * as yup from 'yup';
 
-import { Operator, OPERATORS } from '../types';
+import { Operator, OPERATORS, VALUE_TYPES, ValueType } from '../types';
 
 import { isDecimal, isInteger } from '@utils/validation';
 import { checkDataType } from '@components/DataDictionaryVariables/utils';
+import { Variable } from '@domain/dataDictionary';
 
-export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
+export const validationSchema = (
+  dataType: ReturnType<typeof checkDataType>,
+  selectedVariable: Variable | null
+) =>
   yup.object().shape({
     name: yup.string().required(),
     operator: yup
       .mixed<Operator | ''>()
       .oneOf(Object.values(OPERATORS), 'Operator is required')
+      .required(),
+    type: yup
+      .mixed<ValueType>()
+      .oneOf(Object.values(VALUE_TYPES), 'Type is required')
       .required(),
     value: dataType.isWithEnum
       ? yup.array().when(['operator'], ([operator], schema) => {
@@ -42,10 +50,14 @@ export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
           return schema
             .required('Value is required')
             .test('is-decimal', 'Value must be a valid decimal', (value) =>
-              dataType.isDecimal ? isDecimal(value) : true
+              dataType.isDecimal
+                ? isDecimal(selectedVariable?.defaultValue || value)
+                : true
             )
             .test('is-integer', 'Value must be a valid integer', (value) =>
-              dataType.isInteger ? isInteger(value) : true
+              dataType.isInteger
+                ? isInteger(selectedVariable?.defaultValue || value)
+                : true
             );
         }),
     lowerBound: yup.string().when(['operator'], ([operator], schema) =>

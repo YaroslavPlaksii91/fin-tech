@@ -64,5 +64,11 @@ export enum CATEGORIES {
   Actions = 'actions'
 }
 
+export enum VALUE_TYPES {
+  Value = 'Value',
+  Variable = 'Variable'
+}
+
 export type CATEGORY = `${CATEGORIES}`;
 export type Operator = `${OPERATORS}`;
+export type ValueType = `${VALUE_TYPES}`;
