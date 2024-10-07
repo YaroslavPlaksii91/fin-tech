@@ -15,34 +15,28 @@ export const applications = [
     className: 'iam'
   },
   {
-    key: 'Communication Platform',
-    name: 'Communication Platform',
-    iconSrc: communicationIcon,
-    className: 'communication'
-  },
-  {
     key: 'ElwAdmin',
     name: 'Admin Panel',
     iconSrc: adminPanelIcon,
     className: 'admin'
   },
   {
-    key: 'LMS',
-    name: 'Loan Management System',
-    iconSrc: lmsIcon,
-    className: 'lms'
-  },
-  {
-    key: 'Underwriting',
-    name: 'Underwriting',
-    iconSrc: underwritingIcon,
-    className: 'underwriting'
+    key: 'Communication Platform',
+    name: 'Communication Platform',
+    iconSrc: communicationIcon,
+    className: 'communication'
   },
   {
     key: 'Lead Management',
     name: 'Lead Management',
     iconSrc: leadManagementIcon,
     className: 'leads'
+  },
+  {
+    key: 'LMS',
+    name: 'Loan Management System',
+    iconSrc: lmsIcon,
+    className: 'lms'
   },
   {
     key: 'Payment Platform',
@@ -55,5 +49,11 @@ export const applications = [
     name: 'Reporting',
     iconSrc: reportsIcon,
     className: 'reports'
+  },
+  {
+    key: 'Underwriting',
+    name: 'Underwriting',
+    iconSrc: underwritingIcon,
+    className: 'underwriting'
   }
 ];
