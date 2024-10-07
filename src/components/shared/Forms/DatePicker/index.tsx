@@ -13,7 +13,7 @@ import {
 } from '@mui/x-date-pickers-pro';
 import { FormControlProps } from '@mui/material';
 
-import { StyledError } from './styled';
+import { StyledError } from '../styled';
 
 import CalendarIcon from '@icons/calendar.svg';
 

@@ -1,14 +1,15 @@
 import * as yup from 'yup';
 import dayjs, { Dayjs } from 'dayjs';
 
-import rangeValidationSchema from '@components/shared/Forms/Range/validationSchema';
+type DateRange = {
+  from: Dayjs | null;
+  to: Dayjs | null;
+};
 
-const validationSchema = yup.object().shape({
-  leadPrice: rangeValidationSchema,
-  requestedAmount: rangeValidationSchema,
+const rangeDateValidationSchema = yup.object().shape({
   requestDate: yup.object().shape({
     from: yup
-      .mixed<Dayjs | null>()
+      .mixed<Dayjs>()
       .nullable()
       .test(
         'is-dayjs',
@@ -16,7 +17,7 @@ const validationSchema = yup.object().shape({
         (value) => value === null || dayjs.isDayjs(value)
       ),
     to: yup
-      .mixed<Dayjs | null>()
+      .mixed<Dayjs>()
       .nullable()
       .test(
         'is-dayjs',
@@ -27,13 +28,11 @@ const validationSchema = yup.object().shape({
         'is-greater',
         'Date To must be greater than Date From',
         function (value) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          const { from } = this.parent;
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          const { from } = this.parent as DateRange;
           return !from || !value || dayjs(value).isAfter(dayjs(from));
         }
       )
   })
 });
 
-export default validationSchema;
+export default rangeDateValidationSchema;
