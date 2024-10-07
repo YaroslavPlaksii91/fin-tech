@@ -1,5 +1,6 @@
 import { TextareaAutosize, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import InfoIcon from '@mui/icons-material/Info';
 
 export const StyledTextarea = styled(TextareaAutosize)(({ theme }) => ({
   fontFamily: 'Inter, sans-serif',
@@ -23,4 +24,13 @@ export const StyledTextarea = styled(TextareaAutosize)(({ theme }) => ({
 export const StyledError = styled(Typography)(({ theme }) => ({
   color: theme.palette.error.main,
   margin: '4px 14px 0 14px'
+}));
+
+export const StyledInfoIcon = styled(InfoIcon)(({ theme }) => ({
+  color: theme.palette.action.active,
+
+  '&:hover': {
+    color: theme.palette.info.main,
+    cursor: 'pointer'
+  }
 }));
