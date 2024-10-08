@@ -4,6 +4,7 @@ export enum DATA_TYPE_WITHOUT_ENUM {
   Integer = 'Integer',
   Decimal = 'Decimal',
   String = 'String',
+  StringArray = 'StringArray',
   Boolean = 'Boolean',
   DateTime = 'DateTime',
   'Object:CraClarity' = 'Object:CraClarity',

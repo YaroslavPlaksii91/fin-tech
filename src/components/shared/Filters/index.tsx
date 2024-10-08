@@ -9,8 +9,12 @@ import {
 } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
+import { HEADER_HEIGHT } from '@constants/themeConstants';
+import { customBoxShadows, theme } from '@theme';
+
 export interface TemplateProps {
   isOpen: boolean;
+  isSubmitDisabled?: boolean;
   children: ReactNode;
   onReset: () => void;
   onSubmit: () => void;
@@ -20,12 +24,34 @@ export interface TemplateProps {
 const Template = ({
   isOpen,
   children,
+  isSubmitDisabled,
   onReset,
   onSubmit,
   onClose
 }: TemplateProps) => (
-  <Drawer anchor="right" open={isOpen} onClose={onClose}>
-    <Box sx={{ padding: '16px 24px', width: '384px', boxSizing: 'border-box' }}>
+  <Drawer
+    anchor="right"
+    open={isOpen}
+    onClose={onClose}
+    elevation={0}
+    ModalProps={{
+      BackdropProps: {
+        style: { opacity: 0 }
+      }
+    }}
+    sx={{
+      '& .MuiDrawer-paper': {
+        boxSizing: 'border-box',
+        width: '384px',
+        borderRadius: 0,
+        boxShadow: customBoxShadows.elevation1,
+        borderLeft: theme.palette.divider,
+        top: HEADER_HEIGHT,
+        height: `calc(100% - ${HEADER_HEIGHT}px)`
+      }
+    }}
+  >
+    <Box sx={{ padding: '16px 24px' }}>
       <form onSubmit={onSubmit} onReset={onReset}>
         <Stack spacing={1}>
           <Stack spacing={1} direction="row">
@@ -45,6 +71,7 @@ const Template = ({
                 size="small"
                 variant="contained"
                 type="submit"
+                disabled={isSubmitDisabled}
                 sx={{ width: '56px', height: '30px' }}
               >
                 Apply
