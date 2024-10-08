@@ -11,7 +11,6 @@ export const isInteger = (value?: string | number | null) => {
 
 export const isDecimal = (value?: string | number | null) => {
   if (value === null || value === undefined) return false;
-  if (value.toString().includes(',')) return false;
   return REGEX.DECIMAL.test(value.toString());
 };
 

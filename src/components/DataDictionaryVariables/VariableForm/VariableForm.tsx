@@ -195,17 +195,8 @@ export const VariableForm: React.FC<VariableFormProps> = ({
             disabled={formData && formData.variableIsUsed}
           />
           {(watchDataType === DATA_TYPE_WITHOUT_ENUM.Decimal ||
-            watchDataType === DATA_TYPE_WITHOUT_ENUM.Integer) && (
-            <InputText
-              fullWidth
-              type="number"
-              name="defaultValue"
-              label="Default Value"
-              control={control}
-              inputMode="numeric"
-            />
-          )}
-          {watchDataType === DATA_TYPE_WITHOUT_ENUM.String && (
+            watchDataType === DATA_TYPE_WITHOUT_ENUM.Integer ||
+            watchDataType === DATA_TYPE_WITHOUT_ENUM.String) && (
             <InputText
               fullWidth
               name="defaultValue"
