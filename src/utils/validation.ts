@@ -16,8 +16,7 @@ export const isDecimal = (value?: string | number | null) => {
 
 export const isStringArray = (value: string) => {
   try {
-    const normalizedValue = value.replace(/'/g, '"');
-    const parsedValue: unknown = JSON.parse(normalizedValue);
+    const parsedValue: unknown = JSON.parse(value);
     if (Array.isArray(parsedValue)) {
       return parsedValue.every((item) => typeof item === 'string');
     }
