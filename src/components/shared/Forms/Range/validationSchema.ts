@@ -8,7 +8,7 @@ const getMinValueValidation = () =>
     )
     .test(
       'is-greater-than-to',
-      "Min value can't be greater than Max value",
+      "From value can't be greater than To value",
       (value, { parent }: { parent: { to?: string } }) =>
         !value || !parent.to ? true : Number(value) <= Number(parent.to)
     );
@@ -21,7 +21,7 @@ const getMaxValueValidation = () =>
     )
     .test(
       'is-less-than-from',
-      "Max value can't be less than Min value",
+      "To value can't be less than From value",
       (value, { parent }: { parent: { from?: string } }) =>
         !value || !parent.from ? true : Number(value) >= Number(parent.from)
     );

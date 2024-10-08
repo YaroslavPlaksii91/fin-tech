@@ -45,7 +45,7 @@ const BillingReport = () => {
         spacing={2}
         pb={2}
       >
-        <Typography variant="h4">Biling Report</Typography>
+        <Typography variant="h4">Billing Report</Typography>
       </Stack>
       <Paper
         elevation={1}

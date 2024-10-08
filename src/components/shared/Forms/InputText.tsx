@@ -5,7 +5,14 @@ import {
   useController
 } from 'react-hook-form';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
-import { FormControl, InputAdornment, IconButton } from '@mui/material';
+import {
+  FormControl,
+  InputAdornment,
+  IconButton,
+  Tooltip
+} from '@mui/material';
+
+import { StyledInfoIcon } from './styled';
 
 import CloseIcon from '@icons/cross.svg';
 
@@ -21,6 +28,7 @@ export interface InputTextBasicProps {
   fullWidth?: boolean;
   type?: string;
   startAdornmentSymb?: string;
+  hint?: string;
 }
 
 const InputText = <
@@ -36,6 +44,7 @@ const InputText = <
   fullWidth = false,
   clearable = false,
   disabled = false,
+  hint,
   InputProps,
   ...props
 }: InputTextFormProps<TFieldValues, TName> &
@@ -62,19 +71,52 @@ const InputText = <
               {startAdornmentSymb}
             </InputAdornment>
           ) : null,
-          endAdornment:
-            clearable && !disabled && field.value?.length > 0 ? (
-              <InputAdornment position="end">
-                <IconButton
-                  sx={{ mr: '7px' }}
-                  size="small"
-                  aria-label="clear-options"
-                  onClick={handleClear}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </InputAdornment>
-            ) : null,
+          endAdornment: (
+            <>
+              {clearable && !disabled && field.value?.length > 0 && (
+                <InputAdornment position="end">
+                  <IconButton
+                    sx={{ mr: '7px' }}
+                    size="small"
+                    aria-label="clear-options"
+                    onClick={handleClear}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </InputAdornment>
+              )}
+              {hint && (
+                <InputAdornment position="start">
+                  <Tooltip
+                    title={<span dangerouslySetInnerHTML={{ __html: hint }} />}
+                    placement="bottom-end"
+                    sx={{ cursor: 'pointer' }}
+                    slotProps={{
+                      popper: {
+                        modifiers: [
+                          {
+                            name: 'offset',
+                            options: {
+                              offset: [0, -10]
+                            }
+                          }
+                        ]
+                      }
+                    }}
+                    componentsProps={{
+                      tooltip: {
+                        sx: {
+                          width: '200px'
+                        }
+                      }
+                    }}
+                  >
+                    <StyledInfoIcon />
+                  </Tooltip>
+                </InputAdornment>
+              )}
+            </>
+          ),
           ...InputProps
         }}
         {...field}

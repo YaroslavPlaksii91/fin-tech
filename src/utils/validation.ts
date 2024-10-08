@@ -14,3 +14,15 @@ export const isDecimal = (value?: string | number | null) => {
   if (value.toString().includes(',')) return false;
   return REGEX.DECIMAL.test(value.toString());
 };
+
+export const isStringArray = (value: string) => {
+  try {
+    const parsedValue: unknown = JSON.parse(value);
+    if (Array.isArray(parsedValue)) {
+      return parsedValue.every((item) => typeof item === 'string');
+    }
+    return false;
+  } catch {
+    return false;
+  }
+};

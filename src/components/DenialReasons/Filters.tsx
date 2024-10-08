@@ -1,5 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { useCallback } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import isEmpty from 'lodash/isEmpty';
+
+import validationSchema from './validationSchema';
 
 import { IFilters } from '@pages/DenialReasons/types';
 import Template, { TemplateProps } from '@components/shared/Filters';
@@ -23,7 +27,14 @@ const Filters = ({
   onReset,
   onSubmit
 }: FiltersProps) => {
-  const { handleSubmit, control, reset } = useForm<IFilters>({
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors }
+  } = useForm<IFilters>({
+    // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
+    resolver: yupResolver(validationSchema),
     values: { ...filters }
   });
 
@@ -40,6 +51,7 @@ const Filters = ({
 
   return (
     <Template
+      isSubmitDisabled={!isEmpty(errors)}
       isOpen={isOpen}
       onClose={handleClose}
       onReset={onReset}
@@ -88,8 +100,18 @@ const Filters = ({
         placeholder="Denial Reason"
         control={control}
       />
-      <DatePicker name="requestDate.from" label="Date From" control={control} />
-      <DatePicker name="requestDate.to" label="Date To" control={control} />
+      <DatePicker
+        name="requestDate.from"
+        label="Date From"
+        control={control}
+        disableFuture
+      />
+      <DatePicker
+        name="requestDate.to"
+        label="Date To"
+        control={control}
+        disableFuture
+      />
       <Range
         title="Lead Price"
         startAdornmentSymb="$"
