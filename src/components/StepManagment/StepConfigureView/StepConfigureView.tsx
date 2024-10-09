@@ -7,6 +7,7 @@ import {
 } from '@components/FlowManagment/FlowChart/types';
 import Calculation from '@views/Calculation/Calculation';
 import { StepContainer } from '@views/styled';
+import { useDeselectNodes } from '@hooks/useDeselectNodes';
 
 interface StepConfigureViewProps {
   flow: IFlow;
@@ -29,6 +30,9 @@ const StepConfigureView: React.FC<StepConfigureViewProps> = ({
 }) => {
   const currentNode = rfInstance.getNode(activeStepId);
   const step = currentNode;
+
+  // Need to deselect all nodes to prevent deleting a node when pressing Backspace
+  useDeselectNodes();
 
   return (
     <StepContainer>

@@ -38,6 +38,7 @@ import {
   elementsOverlap,
   getUpdatedChampionChallengerNodes,
   getUpdatedDecisionTableNodes,
+  isTargetNode,
   updateEdges
 } from '../utils/workflowElementsUtils';
 import {
@@ -56,7 +57,7 @@ import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { selectUserInfo } from '@store/auth';
-import { getFullUserName } from '@utils/helpers';
+import { getFullUserName, isDeleteKeyCodes } from '@utils/helpers';
 import { deleteNodes } from '@store/flow';
 import { useIsDirty } from '@contexts/IsDirtyContext';
 
@@ -506,6 +507,19 @@ const withFlowChartEditor =
       setEdges(layouted.edges);
     }, [nodes, edges]);
 
+    const handleKeyDown = useCallback(
+      (event: React.KeyboardEvent) => {
+        const { key, target } = event;
+
+        if (!isDeleteKeyCodes(key)) return;
+
+        if (rfInstance && isTargetNode(target, rfInstance)) {
+          event.stopPropagation();
+        }
+      },
+      [rfInstance]
+    );
+
     return (
       <>
         <ReactFlow
@@ -514,6 +528,7 @@ const withFlowChartEditor =
           nodes={nodes}
           edges={edges}
           autoPanOnNodeDrag
+          onKeyDown={handleKeyDown}
           onNodesDelete={isViewMode ? undefined : onNodesDelete}
           onNodesChange={isViewMode ? undefined : onNodesChange}
           onEdgesChange={isViewMode ? undefined : onEdgesChange}

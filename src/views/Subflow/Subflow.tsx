@@ -17,6 +17,7 @@ import { selectUserInfo } from '@store/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
 import { updateNodes } from '@store/flow/utils';
+import { useDeselectNodes } from '@hooks/useDeselectNodes';
 
 interface SubFlowProps {
   mainFlow: IFlow;
@@ -37,6 +38,9 @@ const SubFlow: React.FC<SubFlowProps> = ({
   const user = useAppSelector(selectUserInfo);
   const username = getFullUserName(user);
   const mainFlowNodes: FlowNode[] = getNodes();
+
+  // Need to deselect all nodes to prevent deleting a node when pressing Backspace
+  useDeselectNodes();
 
   const subFlow = useMemo(() => {
     const subFlowNode = cloneDeep(findSubFlow(activeStepId, mainFlowNodes));
