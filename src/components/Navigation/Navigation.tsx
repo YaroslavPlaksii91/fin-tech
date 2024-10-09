@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import Link from '@mui/material/Link';
+import { Divider, Typography } from '@mui/material';
 
 import {
   StyledAppBar,
@@ -38,13 +39,17 @@ function Navigation() {
           alignItems="center"
           gap={2}
         >
-          <Link
-            component={RouterLink}
-            to={routes.index}
-            sx={{ display: 'flex' }}
-          >
-            <LogoIcon height={40} color={palette.white} />
-          </Link>
+          <Stack direction="row" gap="16px" alignItems="center">
+            <Link
+              component={RouterLink}
+              to={routes.index}
+              sx={{ display: 'flex' }}
+            >
+              <LogoIcon height={40} color={palette.white} />
+            </Link>
+            <Divider variant="middle" orientation="vertical" flexItem />
+            <Typography>Underwriting System</Typography>
+          </Stack>
           <Stack direction="row" alignItems="center" gap={1}>
             <StyledHeaderButton
               startIcon={<UserIcon width={18} height={18} />}

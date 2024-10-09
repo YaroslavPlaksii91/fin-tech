@@ -41,7 +41,8 @@ export const palette = {
   amber: '#FFF8E1',
   sidebarBackground: '#E7E8EB',
   sidebarItemHover: '#dedfe2',
-  green: '#e8f5e9ff'
+  green: '#e8f5e9ff',
+  whiteOutlinedBorder: 'rgba(255, 255, 255, 0.50)'
 };
 
 declare module '@mui/material/styles' {
@@ -93,6 +94,20 @@ export const theme = createTheme({
     }
   },
   components: {
+    MuiDivider: {
+      variants: [
+        {
+          props: { variant: 'middle', orientation: 'vertical', flexItem: true },
+          style: {
+            borderColor: palette.whiteOutlinedBorder,
+            height: 30,
+            margin: 0,
+            alignSelf: 'center',
+            opacity: 0.4
+          }
+        }
+      ]
+    },
     MuiAppBar: {
       styleOverrides: {
         root: {
