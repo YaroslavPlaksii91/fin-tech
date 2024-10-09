@@ -15,7 +15,7 @@ import {
   MenuItem,
   Typography
 } from '@mui/material';
-import { NavLink, useParams } from 'react-router-dom';
+import { NavLink, useParams, useMatch } from 'react-router-dom';
 
 import {
   Label,
@@ -75,6 +75,7 @@ const Sidebar = () => {
   const { flowList, flowProduction } = useAppSelector(selectFlowList);
   const { flow } = useAppSelector(selectFlow);
   const user = useAppSelector(selectUserInfo);
+  const match = useMatch(routes.underwriting.flow.dataDictionary(id!));
 
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [isResizing, setIsResizing] = useState(false);
@@ -395,6 +396,7 @@ const Sidebar = () => {
                 component={NavLink}
                 to={item.to}
                 expanded={expanded ? 1 : 0}
+                className={match && index === 0 ? 'active' : ''}
               >
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 {expanded && (
