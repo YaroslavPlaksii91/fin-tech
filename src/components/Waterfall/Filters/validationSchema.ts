@@ -14,7 +14,7 @@ const validationSchema = yup.object().shape({
   [RANGE_FILTERS_KEYS.totalDataCost]: rangeValidationSchema,
   [RANGE_FILTERS_KEYS.totalTimeouts]: rangeValidationSchema,
   [RANGE_FILTERS_KEYS.totalCostSavings]: rangeValidationSchema,
-  [RANGE_FILTERS_KEYS.totalCachedLeads]: rangeValidationSchema,
+  [RANGE_FILTERS_KEYS.totalCachedLead]: rangeValidationSchema,
   ...rangeDateValidationSchema('date').fields
 });
 

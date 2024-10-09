@@ -70,8 +70,8 @@ export const RANGE_FILTERS_GROUPS = [
     symb: '$'
   },
   {
-    name: RANGE_FILTERS_KEYS.totalCachedLeads,
-    title: 'Total Cached Leads'
+    name: RANGE_FILTERS_KEYS.totalCachedLead,
+    title: 'Total Cached Lead'
   }
 ];
 

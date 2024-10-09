@@ -30,7 +30,7 @@ export enum RANGE_FILTERS_KEYS {
   totalDataCost = 'totalDataCost',
   totalTimeouts = 'totalTimeouts',
   totalCostSavings = 'totalCostSavings',
-  totalCachedLeads = 'totalCachedLeads'
+  totalCachedLead = 'totalCachedLead'
 }
 
 export type RangeFiltersKey = `${RANGE_FILTERS_KEYS}`;
@@ -64,5 +64,5 @@ export interface IFilters {
   [RANGE_FILTERS_KEYS.totalDataCost]: IRangeFilter;
   [RANGE_FILTERS_KEYS.totalTimeouts]: IRangeFilter;
   [RANGE_FILTERS_KEYS.totalCostSavings]: IRangeFilter;
-  [RANGE_FILTERS_KEYS.totalCachedLeads]: IRangeFilter;
+  [RANGE_FILTERS_KEYS.totalCachedLead]: IRangeFilter;
 }
