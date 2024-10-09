@@ -11,14 +11,14 @@ import Accordion from './Accordion';
 import AccordionContent from './AccordionContent';
 import Scores from './Scores';
 
-import { LeadRequestsReport } from '@domain/leadRequestsReports';
+import { LeadRequestReport } from '@domain/leadRequestsReports';
 import Dialog from '@components/shared/Modals/Dialog';
 interface DetailsProps {
-  data: LeadRequestsReport;
-  handleClose: () => void;
+  data: LeadRequestReport;
+  onClose: () => void;
 }
 
-const Details = ({ data, handleClose }: DetailsProps) => {
+const Details = ({ data, onClose }: DetailsProps) => {
   const [selectedRow, setSelectedRow] = useState<RowData | null>(null);
   const [expandedAccordion, setExpandedAccordion] = useState<string | null>(
     null
@@ -84,7 +84,7 @@ const Details = ({ data, handleClose }: DetailsProps) => {
         }}
       >
         <IconButton
-          onClick={handleClose}
+          onClick={onClose}
           sx={{ marginRight: '8px', padding: '2px' }}
         >
           <ChevronRightIcon sx={{ fontSize: '28px' }} />

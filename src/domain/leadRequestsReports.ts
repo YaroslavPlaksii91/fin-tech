@@ -1,10 +1,21 @@
-export interface LeadRequestsReportsOData {
-  '@odata.context': string;
-  '@odata.count': number;
-  value: LeadRequestsReport[];
+export interface GetLeadRequestReport {
+  params: {
+    sort?: string;
+    pageSize?: number;
+    pageNumber?: number;
+    filter?: string;
+  };
 }
 
-export interface LeadRequestsReport {
+export interface LeadRequestReportResponse {
+  pageNumber: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  items: LeadRequestReport[];
+}
+
+export interface LeadRequestReport {
   id: null | string;
   correlationId: string;
   leadResponse: LeadResponse;

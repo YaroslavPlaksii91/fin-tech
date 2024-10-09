@@ -1,6 +1,6 @@
 import { COLUMN_IDS, FormattedData } from './types';
 
-import { LeadRequestsReport } from '@domain/leadRequestsReports';
+import { LeadRequestReport } from '@domain/leadRequestsReports';
 
 export const getFormattedRows = (data: FormattedData[]) =>
   data.map((row) => {
@@ -20,7 +20,7 @@ export const getFormattedRows = (data: FormattedData[]) =>
     };
   });
 
-export const getFormattedData = (data: LeadRequestsReport) => {
+export const getFormattedData = (data: LeadRequestReport) => {
   const leadRequest = {
     id: data.id,
     api: 'Input',

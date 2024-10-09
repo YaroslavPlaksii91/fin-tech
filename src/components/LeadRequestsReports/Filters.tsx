@@ -12,7 +12,7 @@ import { COLUMN_IDS, IFilters } from '@pages/LeadRequestsReports/types';
 import Range from '@components/shared/Forms/Range';
 import Autocomplete from '@components/shared/Autocomplete/Autocomplete';
 import { reportingService } from '@services/reports';
-import { convertToPascalCase } from '@utils/helpers';
+import { convertToPascalCase } from '@utils/text';
 import { MIN_RANGE_VALUE_FILTER } from '@constants/common';
 
 interface FiltersProps
