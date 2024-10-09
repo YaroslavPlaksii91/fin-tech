@@ -12,12 +12,13 @@ import {
 import LogoutIcon from '@icons/log-out.svg';
 import LogoIcon from '@icons/eloanLogo.svg';
 import UserIcon from '@icons/user.svg';
-import { authService } from '@services/auth.ts';
+import { authService } from '@services/auth';
 import { palette } from '@theme';
 import routes from '@constants/routes';
 import Dialog from '@components/shared/Modals/Dialog';
-import { fetchUserInfo, selectUserInfo } from '@store/auth/auth.ts';
-import { useAppDispatch, useAppSelector } from '@store/hooks.ts';
+import { selectUserInfo } from '@store/auth';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { fetchUserInfo } from '@store/auth/asyncThunk';
 
 function Navigation() {
   const [openModal, setOpenModal] = useState<boolean>(false);

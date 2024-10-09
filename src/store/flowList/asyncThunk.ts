@@ -1,27 +1,26 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-
 import { flowService } from '@services/flow-service';
 import { JSONPatchOperation } from '@domain/entity';
 import { IFlow, IFlowDataCreate } from '@domain/flow';
+import { createAppAsyncThunk } from '@store/utils';
 
-export const fetchDraftFlowList = createAsyncThunk(
-  'get/flow-list',
+export const fetchDraftFlowList = createAppAsyncThunk(
+  'flowList/fetchDraftFlowList',
   async () => {
     const flowItemsData = await flowService.getFlows();
     return { flowItemsData };
   }
 );
 
-export const fetchProductionFlowItem = createAsyncThunk(
-  'get/flow-production-list-item',
+export const fetchProductionFlowItem = createAppAsyncThunk(
+  'flowList/fetchProductionFlowItem',
   async () => {
     const productionFlowItemData = await flowService.getProductionFlow();
     return { productionFlowItemData };
   }
 );
 
-export const renameFlow = createAsyncThunk(
-  'patch/rename-flow',
+export const renameFlow = createAppAsyncThunk(
+  'flowList/renameFlow',
   async (
     {
       id,
@@ -41,8 +40,8 @@ export const renameFlow = createAsyncThunk(
   }
 );
 
-export const deleteFlow = createAsyncThunk(
-  'delete/flow',
+export const deleteFlow = createAppAsyncThunk(
+  'flowList/deleteFlow',
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await flowService.deleteFlow(id);
@@ -53,8 +52,8 @@ export const deleteFlow = createAsyncThunk(
   }
 );
 
-export const createFlow = createAsyncThunk(
-  'create/flow',
+export const createFlow = createAppAsyncThunk(
+  'flowList/createFlow',
   async (data: IFlowDataCreate, { rejectWithValue }) => {
     try {
       const response = await flowService.createFlow(data);
@@ -65,8 +64,8 @@ export const createFlow = createAsyncThunk(
   }
 );
 
-export const pushProductionFlow = createAsyncThunk(
-  'push/flow',
+export const pushProductionFlow = createAppAsyncThunk(
+  'flowList/pushProductionFlow',
   async (
     data: { flow: IFlow; params: { pushedBy: string; note: string } },
     { rejectWithValue }

@@ -18,8 +18,8 @@ import ChangeHistoryDetailedView from './ChangeHistoryDetailedView';
 import CheckCircleDoneIcon from '@icons/checkCircleDone.svg';
 import CheckDuotoneIcon from '@icons/checkDuotone.svg';
 import { customBoxShadows, palette, theme } from '@theme';
-import { ChangeHistoryRecord } from '@domain/changeHistory.ts';
-import { FULL_DATE_TIME_FORMAT } from '@constants/common.tsx';
+import { ChangeHistoryRecord } from '@domain/changeHistory';
+import { FULL_DATE_TIME_FORMAT } from '@constants/common';
 import {
   StyledTableCell,
   StyledTableRow

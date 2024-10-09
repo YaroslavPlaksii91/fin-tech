@@ -26,19 +26,25 @@ import TuneIcon from '@icons/tune.svg';
 import { theme } from '@theme';
 import { IFlow } from '@domain/flow';
 import {
-  DATA_TYPE_WITHOUT_ENUM,
+  VARIABLE_DATA_TYPE,
   Variable,
   UserDefinedVariable,
-  VARIABLE_SOURCE_TYPE
+  DATA_DICTIONARY_GROUP
 } from '@domain/dataDictionary';
-import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { checkIsProductionFlow } from '@utils/helpers';
 import { permissionsMap } from '@constants/permissions';
 import { useAppSelector } from '@store/hooks';
-import { selectFlow } from '@store/flow/selectors';
+import { selectUserDefinedVariables } from '@store/flow/selectors';
+import { selectDataDictionary } from '@store/dataDictionary/selectors';
 
 const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
+  const { integrationVariables, variables, enumDataTypes } =
+    useAppSelector(selectDataDictionary);
+  const userDefinedVariables = useAppSelector(selectUserDefinedVariables);
+
+  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
+
   const [tab, setTab] = useState<TAB>('laPMSVariables');
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -52,48 +58,28 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const {
-    flow: { temporaryVariables, permanentVariables }
-  } = useAppSelector(selectFlow);
-  const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
   const isProductionFlow = checkIsProductionFlow();
   const isViewMode = isProductionFlow || !hasUserPermission;
-
-  const handleFiltersOpen = () => setIsFiltersOpen(true);
-
-  const handleFiltersClose = () => setIsFiltersOpen(false);
-
-  const handleFiltersReset = () => {
-    setFilters(INITIAL_FILTERS);
-    setSearch('');
-    handleFiltersClose();
-  };
-
-  const handleSubmit = (data: IFormState) => {
-    setFilters(data.filters);
-    setSearch(data.search);
-
-    handleFiltersClose();
-  };
-
-  const { variables, integrationVariables, enumsDataTypes } =
-    useDataDictionaryVariables(flow);
+  const allVariables = useMemo(
+    () => ({
+      ...variables,
+      ...userDefinedVariables
+    }),
+    [variables, userDefinedVariables]
+  );
 
   const tableData = useMemo(() => {
-    if (!variables) return [];
-
-    if (tab === 'craReportVariables') {
+    if (tab === 'craReportVariables')
       return Object.values(integrationVariables).flat();
-    }
-    if (tab === 'all') {
+
+    if (tab === 'all')
       return [
-        ...Object.values(variables).flat(),
+        ...Object.values(allVariables).flat(),
         ...Object.values(integrationVariables).flat()
       ];
-    }
 
-    return variables[tab];
-  }, [tab, variables, integrationVariables]);
+    return allVariables[tab] || [];
+  }, [tab, allVariables, integrationVariables]);
 
   const headers: TableHeader[] = useMemo(() => {
     if (tab === 'craReportVariables') {
@@ -112,14 +98,14 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
   const filterGroups = useMemo(
     () =>
-      getFiltersGroup(enumsDataTypes)
+      getFiltersGroup(enumDataTypes)
         .map((filter) =>
           tab === 'userDefined'
-            ? { ...filter, fields: Object.values(DATA_TYPE_WITHOUT_ENUM) }
+            ? { ...filter, fields: Object.values(VARIABLE_DATA_TYPE) }
             : filter
         )
         .filter(({ applyFor }) => applyFor.includes(tab)),
-    [tab, enumsDataTypes]
+    [tab, enumDataTypes]
   );
 
   const filteredBySearch = useMemo(() => {
@@ -156,11 +142,26 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     return filteredData;
   }, [filteredBySearch, filters]);
 
+  const handleFiltersOpen = () => setIsFiltersOpen(true);
+
+  const handleFiltersClose = () => setIsFiltersOpen(false);
+
+  const handleFiltersReset = () => {
+    setFilters(INITIAL_FILTERS);
+    setSearch('');
+    handleFiltersClose();
+  };
+
+  const handleSubmit = (data: IFormState) => {
+    setFilters(data.filters);
+    setSearch(data.search);
+
+    handleFiltersClose();
+  };
+
   const handleChange = (_event: React.SyntheticEvent, newValue: TAB) => {
     setTab(newValue);
   };
-
-  if (!variables) return null;
 
   const handleVariableModalClose = () => {
     setSelectedVariable(undefined);
@@ -176,20 +177,14 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     row: UserDefinedVariable,
     variableUsageStepIds: string[]
   ) => {
-    let variables;
+    const userDefinedVariablesGroup = userDefinedVariables[
+      DATA_DICTIONARY_GROUP.userDefined
+    ].filter(({ sourceType }) => sourceType === row.sourceType);
 
-    switch (row.sourceType) {
-      case VARIABLE_SOURCE_TYPE.PermanentVariable: {
-        variables = permanentVariables;
-        break;
-      }
-      case VARIABLE_SOURCE_TYPE.TemporaryVariable: {
-        variables = temporaryVariables;
-        break;
-      }
-    }
-
-    const indexOfVariable = indexOf(map(variables, 'name'), row.name);
+    const indexOfVariable = indexOf(
+      map(userDefinedVariablesGroup, 'name'),
+      row.name
+    );
 
     setSelectedVariable({
       index: indexOfVariable,

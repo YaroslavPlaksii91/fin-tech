@@ -48,7 +48,7 @@ import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
 import { useAppSelector } from '@store/hooks';
-import { selectUserInfo } from '@store/auth/auth';
+import { selectUserInfo } from '@store/auth';
 import { getFullUserName } from '@utils/helpers';
 import { useIsDirty } from '@contexts/IsDirtyContext';
 

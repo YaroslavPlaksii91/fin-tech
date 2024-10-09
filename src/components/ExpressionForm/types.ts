@@ -1,9 +1,4 @@
-import {
-  DataDictionaryVariable,
-  UserDefinedVariable
-} from '@domain/dataDictionary';
-
-type Variable = DataDictionaryVariable | UserDefinedVariable;
+import { Variable } from '@domain/dataDictionary';
 
 export type FieldValues = {
   variable: Variable;

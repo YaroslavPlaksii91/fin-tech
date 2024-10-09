@@ -17,7 +17,6 @@ import React, {
   MutableRefObject,
   ReactElement,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -33,7 +32,7 @@ import { mapVariablesToParamsAndSources } from './utils';
 
 import LoadingButton from '@components/shared/LoadingButton';
 import { Expression } from '@views/Calculation/types';
-import ExpressionOperatorsList from '@components/ExpressionForm/ExpressionOperatorsList/ExpressionOperatorsList.tsx';
+import ExpressionOperatorsList from '@components/ExpressionForm/ExpressionOperatorsList/ExpressionOperatorsList';
 import {
   DATA_DICTIONARY_GROUP,
   DataDictionaryVariable,
@@ -41,18 +40,20 @@ import {
 } from '@domain/dataDictionary';
 import ExpressionEditor, {
   ExpressionEditorAPI
-} from '@components/ExpressionEditor/ExpressionEditor.tsx';
+} from '@components/ExpressionEditor/ExpressionEditor';
 import {
   functionsConfig,
   functionsLiterals,
   operatorsConfig
-} from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
-import { DataDictionaryContext } from '@contexts/DataDictionaryContext.tsx';
-import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog.tsx';
+} from '@components/ExpressionEditor/ExpressionEditor.constants';
+import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog';
 import { StepContentWrapper } from '@views/styled';
 import { customBoxShadows } from '@theme';
 import { flowService } from '@services/flow-service';
 import { parseExpressionError } from '@utils/helpers';
+import { useAppSelector } from '@store/hooks';
+import { selectDataDictionary } from '@store/dataDictionary/selectors';
+import { selectUserDefinedVariables } from '@store/flow/selectors';
 
 const operatorsList = [
   ...Object.values(groupBy(operatorsConfig, 'category')),
@@ -83,8 +84,9 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   onCancelClick,
   renderTitle
 }) => {
-  const dataDictionary = useContext(DataDictionaryContext);
-  const variables = dataDictionary?.variables || {};
+  const { variables, integrationVariables } =
+    useAppSelector(selectDataDictionary);
+  const userDefinedVariables = useAppSelector(selectUserDefinedVariables);
 
   const [dataDictMode, setDataDictMode] = useState<DataDictMode | null>(null);
 
@@ -146,19 +148,27 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     }
   };
 
+  const allVariables = useMemo(
+    () => ({
+      ...variables,
+      ...userDefinedVariables
+    }),
+    [variables, userDefinedVariables]
+  );
+
   const variableFieldDataDict = useMemo(
     () =>
-      pick(variables, [
+      pick(allVariables, [
         DATA_DICTIONARY_GROUP.userDefined,
         DATA_DICTIONARY_GROUP.outputVariables
       ]),
-    [variables]
+    [allVariables]
   );
 
   useEffect(() => {
     const initialData = { variable: undefined, expressionString: '' };
     if (initialValues) {
-      const variable = Object.values(variables)
+      const variable = Object.values(allVariables)
         .flat()
         .find((o) => o.name === initialValues.outputName);
 
@@ -171,7 +181,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     } else {
       reset(initialData);
     }
-  }, [initialValues, variables]);
+  }, [initialValues, allVariables]);
 
   const onExpressionOperatorsListClick = useCallback(
     (literal: string) => {
@@ -279,7 +289,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
                       onChange={onChange}
                       name="expressionString"
                       ref={expressionEditorRef}
-                      error={fieldState?.error?.message}
+                      errorMessage={fieldState?.error?.message}
                       onAddVariableClick={() => {
                         setDataDictMode(DataDictMode.Expression);
                       }}
@@ -300,12 +310,12 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
         data={
           dataDictMode === DataDictMode.Variable
             ? variableFieldDataDict
-            : variables
+            : allVariables
         }
         integrationData={
           dataDictMode === DataDictMode.Variable
             ? undefined
-            : dataDictionary?.integrationVariables
+            : integrationVariables
         }
         title={
           dataDictMode === DataDictMode.Variable

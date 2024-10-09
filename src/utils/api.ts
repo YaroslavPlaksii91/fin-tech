@@ -6,7 +6,7 @@ import {
   apiIntegrationBaseUrl,
   apiReportOdataBaseUrl
 } from '@constants/api-urls';
-import { authService } from '@services/auth.ts';
+import { authService } from '@services/auth';
 
 // API Client factory
 const createAPIClient = ({ baseURL }: { baseURL: string }) => {

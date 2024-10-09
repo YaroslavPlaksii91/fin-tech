@@ -1,7 +1,7 @@
 import React, {
   ForwardRefRenderFunction,
   MutableRefObject,
-  useContext,
+  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -10,7 +10,7 @@ import React, {
 import {
   Button,
   InputAdornment,
-  InputBaseComponentProps,
+  InputBaseProps,
   TextField
 } from '@mui/material';
 
@@ -20,13 +20,15 @@ import {
   regExpHelpers,
   highlightChunks,
   filterFunctionsSuggestList
-} from '@components/ExpressionEditor/ExpressionEditor.utils.ts';
-import { functionsLiterals } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
-import FunctionArgumentsTooltip from '@components/ExpressionEditor/components/FunctionArgumentsTooltip.tsx';
+} from '@components/ExpressionEditor/ExpressionEditor.utils';
+import { functionsLiterals } from '@components/ExpressionEditor/ExpressionEditor.constants';
+import FunctionArgumentsTooltip from '@components/ExpressionEditor/components/FunctionArgumentsTooltip';
 import FunctionsAutosuggestion, {
   FunctionsAutosuggestionAPI
-} from '@components/ExpressionEditor/components/FunctionsAutosuggestion.tsx';
-import { CRAClarityControlFilesContext } from '@contexts/CRAClarityControlFilesContext';
+} from '@components/ExpressionEditor/components/FunctionsAutosuggestion';
+import { selectDataDictionary } from '@store/dataDictionary/selectors';
+import { fetchControlFiles } from '@store/dataDictionary/asyncThunk';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
 
 export interface ExpressionEditorAPI {
   focus: (payload: { selectionStart: number }) => void;
@@ -41,13 +43,14 @@ const ExpressionEditor: ForwardRefRenderFunction<
     name,
     value,
     onChange,
-    error,
+    errorMessage,
     onAddVariableClick,
     placeholder = 'Expression'
   },
   ref
 ) => {
-  const controlFiles = useContext(CRAClarityControlFilesContext) ?? [];
+  const dispatch = useAppDispatch();
+  const { controlFiles } = useAppSelector(selectDataDictionary);
 
   const textareaRef: MutableRefObject<HTMLTextAreaElement | null> =
     useRef(null);
@@ -126,12 +129,16 @@ const ExpressionEditor: ForwardRefRenderFunction<
   };
 
   const handleOnChange = (
-    e: React.FormEvent<HTMLTextAreaElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     e.currentTarget.selectionStart &&
       setCaretPosition(e.currentTarget.selectionStart);
     onChange && onChange(e);
   };
+
+  useEffect(() => {
+    void dispatch(fetchControlFiles());
+  }, []);
 
   return (
     <div className={styles.root}>
@@ -142,8 +149,8 @@ const ExpressionEditor: ForwardRefRenderFunction<
         multiline
         minRows={5}
         maxRows={10}
-        error={error as boolean | undefined}
-        helperText={error && error}
+        error={Boolean(errorMessage)}
+        helperText={errorMessage}
         inputProps={{
           onKeyDown: handleTextareaKeyDown,
           onClick: (e) => {
@@ -183,10 +190,10 @@ const ExpressionEditor: ForwardRefRenderFunction<
   );
 };
 
-interface ExpressionEditorProps extends InputBaseComponentProps {
+interface ExpressionEditorProps extends InputBaseProps {
   name: string;
   value: string;
-  error?: string;
+  errorMessage?: string;
   onAddVariableClick: () => void;
   placeholder?: string;
 }
