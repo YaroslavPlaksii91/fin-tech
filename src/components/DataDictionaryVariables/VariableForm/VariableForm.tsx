@@ -193,17 +193,8 @@ export const VariableForm: React.FC<VariableFormProps> = ({
             disabled={formData && formData.variableIsUsed}
           />
           {(watchDataType === VARIABLE_DATA_TYPE.Decimal ||
-            watchDataType === VARIABLE_DATA_TYPE.Integer) && (
-            <InputText
-              fullWidth
-              type="number"
-              name="defaultValue"
-              label="Default Value"
-              control={control}
-              inputMode="numeric"
-            />
-          )}
-          {watchDataType === VARIABLE_DATA_TYPE.String && (
+            watchDataType === VARIABLE_DATA_TYPE.Integer ||
+            watchDataType === VARIABLE_DATA_TYPE.String) && (
             <InputText
               fullWidth
               name="defaultValue"

@@ -44,7 +44,7 @@ export const getFormattedRows = (data: WaterfallReport[]) =>
       [COLUMN_IDS.campaignId]: row.campaignId || '-',
       [COLUMN_IDS.totalLooks]: row.totalLooks || '-',
       [COLUMN_IDS.totalApproved]: row.totalApproved || '-',
-      [COLUMN_IDS.totalApprovalRate]: row.totalApprovalRate || '-',
+      [COLUMN_IDS.totalApprovalRate]: Number(row.totalApprovalRate) || '-',
       [COLUMN_IDS.totalCost]: row.totalCost || '-',
       [COLUMN_IDS.totalCpa]: row.totalCpa || '-',
       [COLUMN_IDS.totalLeadCost]: row.totalLeadCost || '-',

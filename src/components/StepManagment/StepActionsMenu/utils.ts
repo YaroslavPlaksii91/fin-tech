@@ -38,6 +38,7 @@ export const getDuplicatedNode = (node: FlowNode, nodeName: string) => {
   const duplicatedNode = {
     ...node,
     id,
+    selected: false,
     position: { x: 0, y: 0 },
     data: { ...data, stepId: id, name: nodeName }
   };

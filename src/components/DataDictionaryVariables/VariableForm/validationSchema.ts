@@ -70,7 +70,7 @@ export const validationSchema = yup.object().shape({
         )
         .test(
           'is-string-array',
-          'Default value must be an empty array or an array of strings',
+          'Default value must be an empty array or an array of strings, each wrapped in double quotes',
           function (value) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             return this.parent.dataType === VARIABLE_DATA_TYPE.StringArray
