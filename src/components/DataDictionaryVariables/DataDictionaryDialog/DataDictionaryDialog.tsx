@@ -51,7 +51,8 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   setSelectedObjectPropertyFunction,
   handleSelectVariable,
   mode = 'withModal',
-  activeVar
+  activeVar,
+  activeProperty
 }) => {
   const [querySource, setQuerySource] = React.useState<string>('');
   const [queryVariable, setQueryVariable] = React.useState<string>('');
@@ -65,10 +66,6 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
     setSelectedVar(null);
     setSelectedObjectProperty(null);
   }, [querySource]);
-
-  useEffect(() => {
-    setSelectedObjectProperty(null);
-  }, [selectedDict, selectedVar]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -85,6 +82,9 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
     if (activeVar) {
       setSelectedDict(getVariableSource(activeVar.sourceType));
       setSelectedVar(activeVar);
+    }
+    if (activeProperty) {
+      setSelectedObjectProperty(activeProperty);
     }
   }, []);
 
@@ -380,6 +380,7 @@ interface DataDictionaryDialogProps {
   handleSelectVariable?: (variable: Variable | null) => void;
   mode?: 'withModal' | 'withoutModal';
   activeVar?: Variable;
+  activeProperty?: Variable;
 }
 
 export default DataDictionaryDialog;

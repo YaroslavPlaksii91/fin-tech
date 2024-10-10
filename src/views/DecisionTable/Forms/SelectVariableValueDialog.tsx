@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, Stack, InputAdornment, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -91,9 +91,25 @@ const SelectVariableValueDialog = ({
   const isVariableType = watchType === VALUE_TYPES.Variable;
   const defaultVariableValue = 'Select Variable lower';
 
-  const activeVar = Object.values(variables)
-    .flat()
-    .find((variable) => variable.name === selectedCell.expression);
+  const expressionParts = selectedCell.expression.split('.');
+
+  const activeVar = useMemo(
+    () =>
+      Object.values(variables)
+        .flat()
+        .find((variable) => variable.name === expressionParts[0]),
+    [variables, expressionParts]
+  );
+
+  const activeProperty = useMemo(
+    () =>
+      expressionParts[1]
+        ? Object.values(integrationData)
+            .flat()
+            .find((variable) => variable.name === expressionParts[1])
+        : undefined,
+    [integrationData, expressionParts]
+  );
 
   const onSubmit = async (data: FormFieldsProps) => {
     const formattedValue = getFormatedValue(data);
@@ -308,6 +324,7 @@ const SelectVariableValueDialog = ({
             mode="withoutModal"
             handleSelectVariable={handleSelectVariable}
             activeVar={activeVar}
+            activeProperty={activeProperty}
           />
         )}
         <Stack pt={1} spacing={1} direction="row" justifyContent="flex-end">
