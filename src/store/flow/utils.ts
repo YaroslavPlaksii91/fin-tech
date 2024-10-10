@@ -1,4 +1,10 @@
-import { FlowNode } from '@domain/flow';
+import {
+  DATA_DICTIONARY_GROUP,
+  DataDictionaryVariables,
+  VARIABLE_SOURCE_TYPE,
+  VARIABLE_USAGE_MODE
+} from '@domain/dataDictionary';
+import { FlowNode, IFlow } from '@domain/flow';
 
 export function addNodeToSubflow(
   nodes: FlowNode[],
@@ -82,3 +88,25 @@ export function updateNodes(
 
   return update(nodes);
 }
+
+export const getExtendedUserDefinedVariables = ({
+  temporaryVariables,
+  permanentVariables
+}: IFlow): DataDictionaryVariables => ({
+  [DATA_DICTIONARY_GROUP.userDefined]: [
+    ...temporaryVariables.map((variable) => ({
+      ...variable,
+      source: VARIABLE_SOURCE_TYPE.TemporaryVariable,
+      usageMode: VARIABLE_USAGE_MODE.ReadWrite,
+      sourceType: VARIABLE_SOURCE_TYPE.TemporaryVariable,
+      destinationType: VARIABLE_SOURCE_TYPE.TemporaryVariable
+    })),
+    ...permanentVariables.map((variable) => ({
+      ...variable,
+      source: VARIABLE_SOURCE_TYPE.PermanentVariable,
+      usageMode: VARIABLE_USAGE_MODE.ReadWrite,
+      sourceType: VARIABLE_SOURCE_TYPE.PermanentVariable,
+      destinationType: VARIABLE_SOURCE_TYPE.PermanentVariable
+    }))
+  ]
+});

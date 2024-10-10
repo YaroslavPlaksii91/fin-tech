@@ -6,7 +6,7 @@ import {
   functionsConfig,
   functionsConfigDict,
   sortedFunctionsConfig
-} from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
+} from '@components/ExpressionEditor/ExpressionEditor.constants';
 
 export function filterFunctionsSuggestList(
   value: string,

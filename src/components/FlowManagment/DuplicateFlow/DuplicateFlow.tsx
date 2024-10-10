@@ -17,7 +17,7 @@ import {
 import { SNACK_TYPE } from '@constants/common';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { createFlow } from '@store/flowList/asyncThunk';
-import { selectUserInfo } from '@store/auth/auth';
+import { selectUserInfo } from '@store/auth';
 import { getFullUserName } from '@utils/helpers';
 import LoadingButton from '@components/shared/LoadingButton';
 import InputText from '@components/shared/Forms/InputText';

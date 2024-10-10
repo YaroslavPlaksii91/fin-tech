@@ -5,11 +5,11 @@ import Highlighter from 'react-highlight-words';
 import {
   ExpressionEditorFunction,
   functionsConfigDict
-} from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
+} from '@components/ExpressionEditor/ExpressionEditor.constants';
 import {
   getDomesticDescriptionForGetReportFunction,
   regExpHelpers
-} from '@components/ExpressionEditor/ExpressionEditor.utils.ts';
+} from '@components/ExpressionEditor/ExpressionEditor.utils';
 import styles from '@components/ExpressionEditor/ExpressionEditor.module.scss';
 
 // @TODO: Based on the cursor position in post-MVP?

@@ -2,7 +2,7 @@ import { Breadcrumbs } from '@mui/material';
 
 import { createBreadcrumbs } from './utils';
 
-import { useActiveStep } from '@contexts/StepContext.tsx';
+import { useActiveStep } from '@contexts/StepContext';
 import { useAppSelector } from '@store/hooks';
 import { selectFlow } from '@store/flow/selectors';
 

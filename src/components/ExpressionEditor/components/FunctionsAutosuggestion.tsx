@@ -7,7 +7,7 @@ import React, {
 import { ListItemText, MenuItem, MenuList, Paper } from '@mui/material';
 
 import styles from '@components/ExpressionEditor/ExpressionEditor.module.scss';
-import { FunctionConfig } from '@components/ExpressionEditor/ExpressionEditor.constants.ts';
+import { FunctionConfig } from '@components/ExpressionEditor/ExpressionEditor.constants';
 
 export interface FunctionsAutosuggestionAPI {
   focus: () => void;

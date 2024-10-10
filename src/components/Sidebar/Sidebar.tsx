@@ -15,7 +15,7 @@ import {
   MenuItem,
   Typography
 } from '@mui/material';
-import { NavLink, useParams } from 'react-router-dom';
+import { NavLink, useParams, useMatch } from 'react-router-dom';
 
 import {
   Label,
@@ -49,7 +49,7 @@ import Logger from '@utils/logger';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { getProductionFlow, getFlow } from '@store/flow/asyncThunk';
 import { selectFlowList } from '@store/flowList/selectors';
-import { setInitialFlow } from '@store/flow/flow';
+import { setInitialFlow } from '@store/flow';
 import { selectFlow } from '@store/flow/selectors';
 import ActionsMenu from '@components/FlowManagment/ActionsMenu/ActionMenu';
 import routes from '@constants/routes';
@@ -60,7 +60,7 @@ import StepList from '@components/StepManagment/StepList/StepList';
 import { useActiveStep } from '@contexts/StepContext';
 import { palette, theme } from '@theme';
 import { hasPermission } from '@utils/helpers';
-import { selectUserInfo } from '@store/auth/auth';
+import { selectUserInfo } from '@store/auth';
 import { useThrottle } from '@hooks/useThrottle';
 import { CROSS_PLATFORM_DRAWER_WIDTH } from '@constants/themeConstants';
 import FlowListIcon from '@icons/flow-list.svg';
@@ -75,6 +75,7 @@ const Sidebar = () => {
   const { flowList, flowProduction } = useAppSelector(selectFlowList);
   const { flow } = useAppSelector(selectFlow);
   const user = useAppSelector(selectUserInfo);
+  const match = useMatch(routes.underwriting.flow.dataDictionary(id!));
 
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [isResizing, setIsResizing] = useState(false);
@@ -395,6 +396,7 @@ const Sidebar = () => {
                 component={NavLink}
                 to={item.to}
                 expanded={expanded ? 1 : 0}
+                className={match && index === 0 ? 'active' : ''}
               >
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 {expanded && (

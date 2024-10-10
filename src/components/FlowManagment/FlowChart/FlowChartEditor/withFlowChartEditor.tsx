@@ -49,15 +49,15 @@ import {
 import { AutoLayoutButton } from '../AutoLayoutButton';
 import { getLayoutedElements } from '../utils/workflowLayoutUtils';
 
-import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog.tsx';
+import LeavePageConfirmationDialog from '@components/shared/Confirmation/LeavePageConfirmationDialog';
 import { FlowNode, IFlow } from '@domain/flow';
 import { useActiveStep } from '@contexts/StepContext';
 import useFlowChartContextMenu from '@hooks/useFlowChartContextMenu';
 import StepActionsMenu from '@components/StepManagment/StepActionsMenu/StepActionsMenu';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
-import { selectUserInfo } from '@store/auth/auth';
+import { selectUserInfo } from '@store/auth';
 import { getFullUserName } from '@utils/helpers';
-import { deleteNodes } from '@store/flow/flow';
+import { deleteNodes } from '@store/flow';
 import { useIsDirty } from '@contexts/IsDirtyContext';
 
 type FlowChartEditorProps = {

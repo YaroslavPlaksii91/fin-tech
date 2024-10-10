@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 
-import Login from '@pages/auth/Login.tsx';
+import Login from '@pages/auth/Login';
 import Home from '@pages/Home';
 import FlowEdit from '@pages/FlowEdit';
 import DataDictionary from '@pages/DataDictionary';

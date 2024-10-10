@@ -13,7 +13,7 @@ import { FlowNode, IFlow } from '@domain/flow';
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
 import { StepContainer } from '@views/styled';
 import SubFlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEditor/SubFlowChartEditor';
-import { selectUserInfo } from '@store/auth/auth';
+import { selectUserInfo } from '@store/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
 import { updateNodes } from '@store/flow/utils';

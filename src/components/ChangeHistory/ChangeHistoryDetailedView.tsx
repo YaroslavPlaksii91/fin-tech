@@ -20,7 +20,7 @@ import {
   oldVersionDiffStyles
 } from './utils';
 
-import { ChangeHistoryRecord, ChangeTypeEnum } from '@domain/changeHistory.ts';
+import { ChangeHistoryRecord, ChangeTypeEnum } from '@domain/changeHistory';
 import { customBoxShadows, theme } from '@theme';
 import { FULL_DATE_TIME_FORMAT } from '@constants/common';
 import AngleLeftIcon from '@icons/angleLeft.svg';

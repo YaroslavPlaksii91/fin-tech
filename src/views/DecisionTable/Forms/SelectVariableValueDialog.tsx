@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Stack, InputAdornment, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -25,10 +25,11 @@ import Select from '@components/shared/Forms/Select';
 import { BOOLEAN_OPTIONS } from '@constants/common';
 import { flowService } from '@services/flow-service';
 import { parseExpressionError } from '@utils/helpers';
-import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 import { checkDataType } from '@components/DataDictionaryVariables/utils';
 import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog';
 import { Variable } from '@domain/dataDictionary';
+import { useAppSelector } from '@store/hooks';
+import { selectDataDictionary } from '@store/dataDictionary/selectors';
 
 type SelectVariableValueDialogProps = {
   modalOpen: boolean;
@@ -49,20 +50,17 @@ const SelectVariableValueDialog = ({
   variables,
   integrationData
 }: SelectVariableValueDialogProps) => {
-  const dataDictionary = useContext(DataDictionaryContext);
   const [selectedVariable, setSelectedVariable] = useState<Variable | null>(
     null
   );
+  const { enumDataTypes } = useAppSelector(selectDataDictionary);
 
   const bounds =
     selectedCell.operator === OPERATORS.BETWEEN
       ? selectedCell.expression.split('and')
       : [];
 
-  const dataType = checkDataType(
-    selectedCell.dataType,
-    dataDictionary?.enumsDataTypes || []
-  );
+  const dataType = checkDataType(selectedCell.dataType, enumDataTypes);
 
   const {
     handleSubmit,

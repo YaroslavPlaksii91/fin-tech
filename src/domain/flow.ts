@@ -2,8 +2,8 @@ import { Edge, Node, Viewport } from '@reactflow/core';
 
 import { IEntity } from './entity';
 import {
-  DATA_TYPE_WITHOUT_ENUM,
-  INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
+  VARIABLE_DATA_TYPE,
+  CONTROL_FILES,
   UserDefinedVariable,
   VARIABLE_SOURCE_TYPE
 } from './dataDictionary';
@@ -44,21 +44,21 @@ export type DecisionTableData = {
   defaultActions?: Entry[];
   variableSources?: {
     name: string;
-    sourceType: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
+    sourceType: VARIABLE_SOURCE_TYPE | CONTROL_FILES;
   }[];
   defaultEdgeId?: string | null;
 };
 
 export type ExpressionVariableSources = {
   name: string;
-  sourceType: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
+  sourceType: VARIABLE_SOURCE_TYPE | CONTROL_FILES;
 }[];
 
 export type Expression = {
   outputName: string;
   expressionString: string;
   destinationType: string;
-  destinationDataType: DATA_TYPE_WITHOUT_ENUM;
+  destinationDataType: VARIABLE_DATA_TYPE;
   variableSources: ExpressionVariableSources;
 };
 

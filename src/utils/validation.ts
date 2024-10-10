@@ -1,6 +1,6 @@
 export const REGEX = {
   INTEGER: /^(0|[1-9]\d*)$/,
-  DECIMAL: /^(0|[1-9]\d*)(\.\d+)?$/,
+  DECIMAL: /^(0|[1-9]\d*)(\.\d+)$/,
   ENUM_DATA_TYPE: /^Enum:.+/
 };
 
@@ -16,8 +16,7 @@ export const isDecimal = (value?: string | number | null) => {
 
 export const isStringArray = (value: string) => {
   try {
-    const normalizedValue = value.replace(/'/g, '"');
-    const parsedValue: unknown = JSON.parse(normalizedValue);
+    const parsedValue: unknown = JSON.parse(value);
     if (Array.isArray(parsedValue)) {
       return parsedValue.every((item) => typeof item === 'string');
     }

@@ -3,14 +3,14 @@ import { useParams } from 'react-router-dom';
 import { Typography, Breadcrumbs, Stack, Link } from '@mui/material';
 
 import { theme } from '@theme';
-import DataDictionaryVariables from '@components/DataDictionaryVariables/DataDictionaryVariables.tsx';
+import DataDictionaryVariables from '@components/DataDictionaryVariables/DataDictionaryVariables';
 import { useLoading } from '@contexts/LoadingContext';
 import routes from '@constants/routes';
 import Logger from '@utils/logger';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { getFlow, getProductionFlow } from '@store/flow/asyncThunk';
-import { setInitialFlow } from '@store/flow/flow';
+import { setInitialFlow } from '@store/flow';
 import { selectFlow } from '@store/flow/selectors';
 
 const DataDictionary = () => {

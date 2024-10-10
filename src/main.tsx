@@ -9,13 +9,13 @@ import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
 import { SnackbarProvider } from 'notistack';
 import { Provider } from 'react-redux';
 
-import App from './App.tsx';
-import { store } from './store/store.ts';
-import { LoadingProvider } from './contexts/LoadingContext.tsx';
+import App from './App';
+import { store } from './store/store';
+import { LoadingProvider } from './contexts/LoadingContext';
 import './main.css';
 
 import { theme } from '@theme';
-import { StyledSnackbar } from '@components/shared/Snackbar/styled.ts';
+import { StyledSnackbar } from '@components/shared/Snackbar/styled';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <Provider store={store}>

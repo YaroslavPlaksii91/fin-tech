@@ -2,8 +2,8 @@ import { FILTER_BY, TAB } from './types';
 import { TABS } from './constants';
 
 import {
-  DATA_TYPE_WITHOUT_ENUM,
-  INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
+  VARIABLE_DATA_TYPE,
+  CONTROL_FILES,
   INTEGRATION_VARIABLE_SOURCE_TYPE,
   Variable,
   VariableUsageParams
@@ -61,24 +61,21 @@ export const getUserDefinedUsageStepIds = ({
 };
 
 export const checkDataType = (
-  dataType: DATA_TYPE_WITHOUT_ENUM,
-  enumsDataTypes: string[]
+  dataType: VARIABLE_DATA_TYPE,
+  enumDataTypes: string[]
 ) => ({
-  isWithEnum: enumsDataTypes.includes(dataType),
-  isBoolean: dataType === DATA_TYPE_WITHOUT_ENUM.Boolean,
-  isString: dataType === DATA_TYPE_WITHOUT_ENUM.String,
-  isInteger: dataType === DATA_TYPE_WITHOUT_ENUM.Integer,
-  isDecimal: dataType === DATA_TYPE_WITHOUT_ENUM.Decimal
+  isWithEnum: enumDataTypes.includes(dataType),
+  isBoolean: dataType === VARIABLE_DATA_TYPE.Boolean,
+  isString: dataType === VARIABLE_DATA_TYPE.String,
+  isInteger: dataType === VARIABLE_DATA_TYPE.Integer,
+  isDecimal: dataType === VARIABLE_DATA_TYPE.Decimal
 });
 
-export const getFiltersGroup = (enumsDataTypes: string[]) => [
+export const getFiltersGroup = (enumDataTypes: string[]) => [
   {
     filterBy: FILTER_BY.dataType,
     text: 'By Data Type',
-    fields: [
-      ...Object.values({ ...DATA_TYPE_WITHOUT_ENUM }),
-      ...enumsDataTypes
-    ],
+    fields: [...Object.values(VARIABLE_DATA_TYPE), ...enumDataTypes],
     applyFor: Object.values(TABS) as TAB[]
   },
   {
@@ -90,7 +87,7 @@ export const getFiltersGroup = (enumsDataTypes: string[]) => [
   {
     filterBy: FILTER_BY.sourceType,
     text: 'By Report Name',
-    fields: Object.values(INTEGRATION_VARIABLE_SOURCE_SUB_TYPE),
+    fields: Object.values(CONTROL_FILES),
     applyFor: [TABS.craReportVariables] as TAB[]
   }
 ];
