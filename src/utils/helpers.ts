@@ -131,10 +131,5 @@ export const parseExpressionError = (error: unknown): ExpressionError => {
   }
 };
 
-export const convertToPascalCase = (str: string): string =>
-  str
-    .replace(/(^\w|\/\w)/g, (match) => match.toUpperCase())
-    .replace(/\//g, '.');
-
 export const isDeleteKeyCodes = (key: string) =>
   key === KEY_CODES.Backspace || key === KEY_CODES.Delete;
