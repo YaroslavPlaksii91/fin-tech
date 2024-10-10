@@ -5,6 +5,7 @@ import { UserInfoModel } from '@eloanwarehouse/frontend-core';
 
 import {
   GENERAL_SERVER_ERROR,
+  KEY_CODES,
   NOT_FOUND,
   PRODUCTION_FLOW_ID
 } from '@constants/common';
@@ -134,3 +135,6 @@ export const convertToPascalCase = (str: string): string =>
   str
     .replace(/(^\w|\/\w)/g, (match) => match.toUpperCase())
     .replace(/\//g, '.');
+
+export const isDeleteKeyCodes = (key: string) =>
+  key === KEY_CODES.Backspace || key === KEY_CODES.Delete;
