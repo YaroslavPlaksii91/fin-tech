@@ -1,6 +1,6 @@
 import {
-  DATA_TYPE_WITHOUT_ENUM,
-  INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
+  VARIABLE_DATA_TYPE,
+  CONTROL_FILES,
   VARIABLE_SOURCE_TYPE
 } from '@domain/dataDictionary';
 
@@ -9,8 +9,8 @@ export type Entry = {
   operator: Operator;
   expression: string;
   destinationType?: string;
-  dataType?: DATA_TYPE_WITHOUT_ENUM;
-  sourceType?: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
+  dataType?: VARIABLE_DATA_TYPE;
+  sourceType?: VARIABLE_SOURCE_TYPE | CONTROL_FILES;
   sourceName?: string;
 };
 
@@ -23,14 +23,14 @@ export type CaseEntry = {
 export type ColumnData = {
   category: CATEGORY;
   name: string;
-  dataType: DATA_TYPE_WITHOUT_ENUM;
+  dataType: VARIABLE_DATA_TYPE;
   allowedValues?: string | string[];
   index: number;
 };
 
 export interface SelectedCell extends Entry, ColumnData {
   rowIndex: number;
-  dataType: DATA_TYPE_WITHOUT_ENUM;
+  dataType: VARIABLE_DATA_TYPE;
   columnIndex: number;
 }
 

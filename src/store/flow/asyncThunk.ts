@@ -1,10 +1,10 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-
+import { JSONPatchOperation } from '@domain/entity';
 import { IFlow } from '@domain/flow';
 import { flowService } from '@services/flow-service';
+import { createAppAsyncThunk } from '@store/utils';
 
-export const getFlow = createAsyncThunk(
-  'get/flow',
+export const getFlow = createAppAsyncThunk(
+  'flow/getFlow',
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await flowService.getFlow(id);
@@ -15,8 +15,8 @@ export const getFlow = createAsyncThunk(
   }
 );
 
-export const getProductionFlow = createAsyncThunk(
-  'get/production-flow/details',
+export const getProductionFlow = createAppAsyncThunk(
+  'flow/getProductionFlow',
   async (_, { rejectWithValue }) => {
     try {
       const response = await flowService.getProductionFlowDetails();
@@ -27,11 +27,32 @@ export const getProductionFlow = createAsyncThunk(
   }
 );
 
-export const saveFlow = createAsyncThunk(
-  'put/flow',
+export const saveFlow = createAppAsyncThunk(
+  'flow/saveFlow',
   async (data: IFlow, { rejectWithValue }) => {
     try {
       const response = await flowService.saveFlow(data);
+      return response;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const updateFlow = createAppAsyncThunk(
+  'flow/updateFlow',
+  async (
+    {
+      id,
+      operations
+    }: {
+      id: string;
+      operations: JSONPatchOperation[];
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await flowService.updateFlow(id, operations);
       return response;
     } catch (err) {
       return rejectWithValue(err);

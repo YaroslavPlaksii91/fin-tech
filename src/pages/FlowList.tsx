@@ -6,12 +6,10 @@ import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
 import { useLoading } from '@contexts/LoadingContext';
 import { getFlow } from '@store/flow/asyncThunk';
-import { setInitialFlow } from '@store/flow/flow';
+import { setInitialFlow } from '@store/flow';
 import { useActiveStep } from '@contexts/StepContext';
 import Logger from '@utils/logger';
 import MainFlowChartEditor from '@components/FlowManagment/FlowChart/FlowChartEditor/MainFlowChartEditor';
-import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
-import useDataDictionaryVariables from '@hooks/useDataDictionaryVariables';
 import { IsDirtyProvider } from '@contexts/IsDirtyContext';
 
 const FlowList = () => {
@@ -20,7 +18,6 @@ const FlowList = () => {
   const dispatch = useAppDispatch();
   const { resetActive } = useActiveStep();
   const { startLoading, stopLoading } = useLoading();
-  const dataDictionaryContextValue = useDataDictionaryVariables(flow);
 
   useEffect(() => {
     const fetchFlow = async (flowId: string) => {
@@ -45,17 +42,15 @@ const FlowList = () => {
   }, []);
 
   return (
-    <DataDictionaryContext.Provider value={dataDictionaryContextValue}>
-      <IsDirtyProvider>
-        {flow && (
-          <MainFlowChartEditor
-            isViewMode={true}
-            flow={flow}
-            setCopyFlow={() => undefined}
-          />
-        )}
-      </IsDirtyProvider>
-    </DataDictionaryContext.Provider>
+    <IsDirtyProvider>
+      {flow && (
+        <MainFlowChartEditor
+          isViewMode={true}
+          flow={flow}
+          setCopyFlow={() => undefined}
+        />
+      )}
+    </IsDirtyProvider>
   );
 };
 

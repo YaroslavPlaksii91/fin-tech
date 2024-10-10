@@ -2,8 +2,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Stack, Typography } from '@mui/material';
 
-import { authService } from '@services/auth.ts';
-import routes from '@constants/routes.ts';
+import { authService } from '@services/auth';
+import routes from '@constants/routes';
 import Loader from '@components/shared/Loader';
 
 const AccessVerificationPage = () => {

@@ -5,7 +5,7 @@ import {
   LeadRequestReportResponse
 } from '@domain/leadRequestsReports';
 import { GetWaterfallReport, WaterfallReport } from '@domain/waterfallReport';
-import { reportApi, reportOdataApi } from '@utils/api.ts';
+import { reportApi, reportOdataApi } from '@utils/api';
 
 class ReportingService {
   async getLeadRequestsReports(params: GetLeadRequestReport) {

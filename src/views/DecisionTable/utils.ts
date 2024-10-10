@@ -11,8 +11,8 @@ import {
 } from './types';
 
 import {
-  DATA_TYPE_WITHOUT_ENUM,
-  INTEGRATION_VARIABLE_SOURCE_SUB_TYPE,
+  VARIABLE_DATA_TYPE,
+  CONTROL_FILES,
   VARIABLE_SOURCE_TYPE,
   VARIABLE_USAGE_MODE,
   Variable
@@ -71,7 +71,7 @@ export const getOperatorOptions = ({
 export const getColumns = (
   entries: Entry[],
   variables: Variable[],
-  enumsDataTypes: string[],
+  enumDataTypes: string[],
   category: CATEGORY
 ) =>
   entries.map((el, index) => {
@@ -80,13 +80,13 @@ export const getColumns = (
     // if variable enum type we have additional prop with allowedValues
     const allowedValues =
       variable?.dataType &&
-      checkDataType(variable.dataType, enumsDataTypes).isWithEnum
+      checkDataType(variable.dataType, enumDataTypes).isWithEnum
         ? variable?.allowedValues
         : undefined;
 
     // pass data type directly to prevent issues with the object properties
     const dataType =
-      el.dataType || variable?.dataType || DATA_TYPE_WITHOUT_ENUM.String;
+      el.dataType || variable?.dataType || VARIABLE_DATA_TYPE.String;
 
     return {
       index,
@@ -122,7 +122,7 @@ export const getVariableSources = (entries: Entry[], variables: Variable[]) =>
     },
     [] as {
       name: string;
-      sourceType: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
+      sourceType: VARIABLE_SOURCE_TYPE | CONTROL_FILES;
     }[]
   );
 
@@ -198,9 +198,8 @@ export const filterVariablesByUsageMode = (
       // User-defined variables with the data types Object:CraClarity and Object:CraFactorTrust should be excluded from Actions.
       const filteredUserDefinedVariables = copyVariables['userDefined'].filter(
         (variable) =>
-          variable.dataType !==
-            DATA_TYPE_WITHOUT_ENUM['Object:CraFactorTrust'] &&
-          variable.dataType !== DATA_TYPE_WITHOUT_ENUM['Object:CraClarity']
+          variable.dataType !== VARIABLE_DATA_TYPE['Object:CraFactorTrust'] &&
+          variable.dataType !== VARIABLE_DATA_TYPE['Object:CraClarity']
       );
 
       usageModes = [VARIABLE_USAGE_MODE.ReadWrite];

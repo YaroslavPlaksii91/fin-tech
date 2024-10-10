@@ -22,10 +22,10 @@ import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { saveFlow } from '@store/flow/asyncThunk';
 import { pushProductionFlow } from '@store/flowList/asyncThunk';
 import { selectFlowData } from '@store/flow/selectors';
-import { selectUserInfo } from '@store/auth/auth';
+import { selectUserInfo } from '@store/auth';
 import { permissionsMap } from '@constants/permissions';
 import { checkIsProductionFlow, getFullUserName } from '@utils/helpers';
-import { updateFlowListItem } from '@store/flowList/flowList';
+import { updateFlowListItem } from '@store/flowList';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import routes from '@constants/routes';
 

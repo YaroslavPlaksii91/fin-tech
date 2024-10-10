@@ -2,7 +2,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { Edge, Node, XYPosition } from 'reactflow';
 import pick from 'lodash/pick';
 
-import { ADD_BUTTON_ON_EDGE, StepType } from '../types';
+import {
+  ADD_BUTTON_ON_EDGE,
+  CustomReactFlowInstance,
+  StepType
+} from '../types';
 
 import { FlowNode } from '@domain/flow';
 import { createInitialFlow } from '@components/FlowManagment/AddFlow/initialFlowUtils';
@@ -220,4 +224,13 @@ export const getUpdatedDecisionTableNodes = ({
   });
 
   return updatedNodes;
+};
+
+export const isTargetNode = (
+  target: EventTarget,
+  rfInstance: CustomReactFlowInstance
+) => {
+  if (!(target instanceof HTMLElement)) return false;
+  const nodeId = target.dataset.id;
+  return !!nodeId && !!rfInstance.getNode(nodeId);
 };

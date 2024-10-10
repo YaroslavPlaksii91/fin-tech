@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import routes from '@constants/routes';
-import { authService } from '@services/auth.ts';
+import { authService } from '@services/auth';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 
 const PrivateRoutes = (props: {

@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { Button, Paper } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { debounce, flatMap, isEmpty } from 'lodash';
@@ -29,7 +29,6 @@ import {
   CustomReactFlowInstance
 } from '@components/FlowManagment/FlowChart/types';
 import { FlowNode, IFlow } from '@domain/flow';
-import { DataDictionaryContext } from '@contexts/DataDictionaryContext';
 import {
   formatFlowDataForValidation,
   getConnectableNodes
@@ -45,18 +44,20 @@ import {
 } from '@components/shared/Snackbar/SnackbarMessage';
 import { SNACK_TYPE } from '@constants/common';
 import {
-  DATA_TYPE_WITHOUT_ENUM,
+  VARIABLE_DATA_TYPE,
   DataDictionaryVariable
 } from '@domain/dataDictionary';
 import { StepContentWrapper } from '@views/styled';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
-import { selectUserInfo } from '@store/auth/auth';
+import { selectUserInfo } from '@store/auth';
 import { useAppSelector } from '@store/hooks';
 import { getFullUserName } from '@utils/helpers';
 import { useIsDirty } from '@contexts/IsDirtyContext';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import InputText from '@components/shared/Forms/InputText';
+import { selectDataDictionary } from '@store/dataDictionary/selectors';
+import { selectUserDefinedVariables } from '@store/flow/selectors';
 
 type DecisionTableStepProps = {
   flow: IFlow;
@@ -85,9 +86,11 @@ const DecisionTable = ({
   }
 }: DecisionTableStepProps) => {
   const { isDirty, setIsDirty } = useIsDirty();
-  const dataDictionary = useContext(DataDictionaryContext);
   const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
   const user = useAppSelector(selectUserInfo);
+  const { integrationVariables, variables, enumDataTypes } =
+    useAppSelector(selectDataDictionary);
+  const userDefinedVariables = useAppSelector(selectUserDefinedVariables);
 
   const [caseEntries, setCaseEntries] = useState<CaseEntry[]>([]);
 
@@ -108,13 +111,18 @@ const DecisionTable = ({
   const watchNote = watch('note');
   const isPreview = isViewMode || !canUpdateFlow;
   const username = getFullUserName(user);
-  const integrationVariables = dataDictionary?.integrationVariables || {};
   const nodes: FlowNode[] = getNodes();
   const edges = getEdges();
 
-  const variables = dataDictionary?.variables || {};
+  const allVariables = useMemo(
+    () => ({
+      ...variables,
+      ...userDefinedVariables
+    }),
+    [variables, userDefinedVariables]
+  );
 
-  const flatVariables = useMemo(() => flatMap(variables), [variables]);
+  const flatVariables = useMemo(() => flatMap(allVariables), [allVariables]);
 
   const stepIds = caseEntries.map(({ edgeId }) => edgeId);
 
@@ -126,20 +134,20 @@ const DecisionTable = ({
       ? caseEntries[0]?.conditions
       : [INITIAL_ENTRY],
     flatVariables,
-    dataDictionary?.enumsDataTypes || [],
+    enumDataTypes,
     'conditions'
   );
 
   const actionsColumns = getColumns(
     caseEntries[0]?.actions || [],
     flatVariables,
-    dataDictionary?.enumsDataTypes || [],
+    enumDataTypes,
     'actions'
   );
 
   const stepColumn = {
     name: STEP,
-    dataType: DATA_TYPE_WITHOUT_ENUM.String,
+    dataType: VARIABLE_DATA_TYPE.String,
     category: CATEGORIES.Actions,
     index: actionsColumns.length
   };
@@ -433,7 +441,7 @@ const DecisionTable = ({
             stepIds={stepIds}
             columns={columns}
             rows={caseEntries}
-            variables={variables}
+            variables={allVariables}
             integrationData={integrationVariables}
             stepOptions={stepOptions}
             handleChangeStep={handleChangeStep}

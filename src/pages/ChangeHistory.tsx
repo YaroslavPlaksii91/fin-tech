@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Grid, Stack, Typography, Box } from '@mui/material';
 
-import Logger from '@utils/logger.ts';
-import { ChangeHistoryRecord } from '@domain/changeHistory.ts';
-import { useLoading } from '@contexts/LoadingContext.tsx';
-import LoadingButton from '@components/shared/LoadingButton.tsx';
-import ChangeHistoryItem from '@components/ChangeHistory/ChangeHistoryItem.tsx';
+import Logger from '@utils/logger';
+import { ChangeHistoryRecord } from '@domain/changeHistory';
+import { useLoading } from '@contexts/LoadingContext';
+import LoadingButton from '@components/shared/LoadingButton';
+import ChangeHistoryItem from '@components/ChangeHistory/ChangeHistoryItem';
 import { flowService } from '@services/flow-service';
 
 const PAGE_SIZE = 10;

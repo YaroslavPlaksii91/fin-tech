@@ -1,6 +1,6 @@
 import { Operator } from '@views/DecisionTable/types';
 
-export enum DATA_TYPE_WITHOUT_ENUM {
+export enum VARIABLE_DATA_TYPE {
   Integer = 'Integer',
   Decimal = 'Decimal',
   String = 'String',
@@ -35,23 +35,19 @@ export enum INTEGRATION_VARIABLE_SOURCE_TYPE {
   CraFactorTrust = 'CraFactorTrust'
 }
 
-export enum INTEGRATION_VARIABLE_SOURCE_SUB_TYPE {
+export enum CONTROL_FILES {
   OFAC = 'OFAC',
   ClearCreditRisk = 'ClearCreditRisk',
   ClearFraudInsight = 'ClearFraudInsight',
   ClearRecentHistory = 'ClearRecentHistory'
 }
 
-export type INTEGRATION_VARIABLE_DATA_TYPE =
-  | INTEGRATION_VARIABLE_SOURCE_TYPE
-  | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
-
 export interface DataDictionaryVariable {
   name: string;
   source: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_TYPE;
   destinationType: string;
-  sourceType: VARIABLE_SOURCE_TYPE | INTEGRATION_VARIABLE_SOURCE_SUB_TYPE;
-  dataType: DATA_TYPE_WITHOUT_ENUM;
+  sourceType: VARIABLE_SOURCE_TYPE | CONTROL_FILES;
+  dataType: VARIABLE_DATA_TYPE;
   defaultValue?: string;
   isRequired?: boolean;
   usageMode: VARIABLE_USAGE_MODE;
@@ -60,12 +56,9 @@ export interface DataDictionaryVariable {
   sourceName?: string;
 }
 
-export interface DataDictionaryIntegrationVariable
-  extends DataDictionaryVariable {}
-
 export type UserDefinedVariable = {
   name: string;
-  dataType: DATA_TYPE_WITHOUT_ENUM;
+  dataType: VARIABLE_DATA_TYPE;
   defaultValue?: string;
   description?: string;
   destinationType: string;
@@ -76,14 +69,13 @@ export type UserDefinedVariable = {
   isRequired?: boolean;
 };
 
-export type Variable =
-  | DataDictionaryVariable
-  | UserDefinedVariable
-  | DataDictionaryIntegrationVariable;
+export type Variable = DataDictionaryVariable | UserDefinedVariable;
+
+export type DataDictionaryVariables = Record<string, Variable[]>;
 
 export type ExpressionValidateParams = {
   name: string;
-  dataType: DATA_TYPE_WITHOUT_ENUM;
+  dataType: VARIABLE_DATA_TYPE;
 }[];
 
 export type Condition = {
