@@ -4,7 +4,7 @@ import { COLUMN_IDS, IFilters } from './types';
 
 import { LeadRequestReport } from '@domain/leadRequestsReports';
 import { FULL_DATE_TIME_FORMAT } from '@constants/common';
-// import { getDateInUTC } from '@utils/date';
+import { getDateInUTC } from '@utils/date';
 import { buildDynamicLINQFilterQuery } from '@utils/filters';
 
 export const getFormattedRows = (data: LeadRequestReport[]) => {
@@ -60,18 +60,20 @@ export const buildParams = ({
   filters: IFilters;
   rowsPerPage?: number;
   page?: number;
-}) => ({
-  sort,
-  filter: buildDynamicLINQFilterQuery(filters, COLUMN_IDS) || undefined,
-  // filter: 'leadResponse.loanId >= 4',
-  // filter: 'leadResponse.loanId.Contains("19")',
-  // filter: 'leadRequest.requestId.Contains("-1682617118")',
-  pageSize: rowsPerPage,
-  pageNumber: page
-  // startTime: filters.requestDate.from
-  //   ? getDateInUTC(filters.requestDate.from).toISOString()
-  //   : undefined,
-  // endTime: filters.requestDate.to
-  //   ? getDateInUTC(filters.requestDate.to).toISOString()
-  //   : undefined
-});
+}) => {
+  const requestDate = {
+    from: filters.requestDate.from
+      ? getDateInUTC(filters.requestDate.from).toISOString()
+      : undefined,
+    to: filters.requestDate.to
+      ? getDateInUTC(filters.requestDate.to).toISOString()
+      : undefined
+  };
+
+  return {
+    sort,
+    pageSize: rowsPerPage,
+    pageNumber: page,
+    filter: buildDynamicLINQFilterQuery({ ...filters, requestDate }, COLUMN_IDS)
+  };
+};
