@@ -46,6 +46,9 @@ const SelectVariableValueDialog = ({
       : [];
 
   const dataType = checkDataType(selectedCell.dataType, enumDataTypes);
+  const defaultOperator = dataType.isStringArray
+    ? OPERATORS.ANY
+    : OPERATORS.EQUAL;
 
   const {
     handleSubmit,
@@ -59,7 +62,7 @@ const SelectVariableValueDialog = ({
     resolver: yupResolver(validationSchema(dataType)),
     defaultValues: {
       name: selectedCell.name,
-      operator: selectedCell.operator || OPERATORS.EQUAL,
+      operator: selectedCell.operator || defaultOperator,
       value: dataType.isWithEnum
         ? selectedCell.expression
           ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
