@@ -18,7 +18,8 @@ import {
   CaseEntry,
   CATEGORIES,
   CATEGORY,
-  SelectedCell
+  SelectedCell,
+  Entry
 } from './types';
 import { getColumns, getVariableSources, updateCaseEntry } from './utils';
 import Table from './Table/Table';
@@ -90,6 +91,7 @@ const DecisionTable = ({
   const user = useAppSelector(selectUserInfo);
 
   const [caseEntries, setCaseEntries] = useState<CaseEntry[]>([]);
+  const [selectedVars, setSelectedVars] = useState<Entry[]>([]);
 
   const {
     handleSubmit,
@@ -276,6 +278,24 @@ const DecisionTable = ({
     data: FormFieldsProps,
     { category, rowIndex, columnIndex }: SelectedCell
   ) => {
+    const value =
+      data.value && typeof data.value === 'string'
+        ? data.value.split('.')[0]
+        : data.value;
+    const matchingVariable = flatVariables.find(
+      (variable) => variable.name === value
+    );
+    if (matchingVariable) {
+      setSelectedVars([
+        ...selectedVars,
+        {
+          ...matchingVariable,
+          operator: '',
+          expression: ''
+        }
+      ]);
+    }
+
     setCaseEntries((prev) =>
       prev.map((row, currentRowIndex) => {
         if (currentRowIndex !== rowIndex) return row;
@@ -342,7 +362,8 @@ const DecisionTable = ({
         const updatedVariableSources = getVariableSources(
           [
             ...(caseEntries[0]?.actions || []),
-            ...(caseEntries[0]?.conditions || [])
+            ...(caseEntries[0]?.conditions || []),
+            ...selectedVars
           ],
           flatVariables
         );

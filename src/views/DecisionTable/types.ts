@@ -41,6 +41,7 @@ export type FormFieldsProps = {
   lowerBound?: string | null;
   upperBound?: string | null;
   dataType?: string;
+  type: ValueType;
 };
 
 export enum OPERATORS {

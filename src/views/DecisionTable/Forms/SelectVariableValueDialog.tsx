@@ -12,7 +12,8 @@ import {
 import {
   getOperatorOptions,
   getFormattedOptions,
-  getFormatedValue
+  getFormatedValue,
+  filterVariablesByUsageMode
 } from '../utils';
 
 import validationSchema from './validationSchema';
@@ -92,11 +93,24 @@ const SelectVariableValueDialog = ({
   const isVariableType = watchType === VALUE_TYPES.Variable;
   const defaultVariableValue = 'Select Variable lower';
 
+  const activeVar = Object.values(variables)
+    .flat()
+    .find((variable) => variable.name === selectedCell.expression);
+
   const onSubmit = async (data: FormFieldsProps) => {
     const formattedValue = getFormatedValue(data);
-    const value = selectedVariable
-      ? selectedVariable.defaultValue!
-      : formattedValue;
+    const value = selectedVariable ? selectedVariable.name : formattedValue;
+
+    const params = [
+      { name: selectedCell.name, dataType: selectedCell.dataType }
+    ];
+
+    if (selectedVariable) {
+      params.push({
+        name: selectedVariable.name,
+        dataType: selectedVariable.dataType
+      });
+    }
 
     try {
       if (data.operator !== OPERATORS.ANY) {
@@ -107,15 +121,20 @@ const SelectVariableValueDialog = ({
               operator: data.operator,
               expression: value
             },
-            params: [
-              { name: selectedCell.name, dataType: selectedCell.dataType }
-            ]
+            params
           });
         } else {
           await flowService.validateExpression({
             expression: value,
             targetDataType: selectedCell.dataType,
-            params: []
+            params: selectedVariable
+              ? [
+                  {
+                    name: selectedVariable.name,
+                    dataType: selectedVariable.dataType
+                  }
+                ]
+              : []
           });
         }
       }
@@ -147,20 +166,39 @@ const SelectVariableValueDialog = ({
   }, [watchOperator]);
 
   useEffect(() => {
+    if (activeVar) {
+      setValue('type', VALUE_TYPES.Variable);
+    }
+  }, []);
+
+  useEffect(() => {
     if (watchType === VALUE_TYPES.Variable) {
-      setValue(
-        'value',
-        dataType.isWithEnum ? [defaultVariableValue] : defaultVariableValue
-      );
+      if (!activeVar) {
+        setValue(
+          'value',
+          dataType.isWithEnum ? [defaultVariableValue] : defaultVariableValue
+        );
+      } else {
+        setValue(
+          'value',
+          dataType.isWithEnum
+            ? [selectedCell.expression]
+            : selectedCell.expression
+        );
+      }
     } else {
-      setValue(
-        'value',
-        dataType.isWithEnum
-          ? selectedCell.expression
-            ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
-            : []
-          : selectedCell.expression
-      );
+      if (activeVar) {
+        setValue('value', dataType.isWithEnum ? [] : '');
+      } else {
+        setValue(
+          'value',
+          dataType.isWithEnum
+            ? selectedCell.expression
+              ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
+              : []
+            : selectedCell.expression
+        );
+      }
       setSelectedVariable(null);
     }
     clearErrors();
@@ -260,8 +298,10 @@ const SelectVariableValueDialog = ({
         {isVariableType && (
           <DataDictionaryDialog
             title="Select Variable"
-            data={variables}
-            integrationData={integrationData}
+            data={filterVariablesByUsageMode(variables, selectedCell.category)}
+            integrationData={
+              selectedCell.category === 'actions' ? undefined : integrationData
+            }
             setSelectedObjectPropertyFunction={(object, property) => ({
               ...property,
               sourceName: object.name,
@@ -269,6 +309,7 @@ const SelectVariableValueDialog = ({
             })}
             mode="withoutModal"
             handleSelectVariable={handleSelectVariable}
+            activeVar={activeVar}
           />
         )}
         <Stack pt={1} spacing={1} direction="row" justifyContent="flex-end">

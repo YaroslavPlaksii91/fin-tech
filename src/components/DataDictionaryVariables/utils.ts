@@ -94,3 +94,20 @@ export const getFiltersGroup = (enumsDataTypes: string[]) => [
     applyFor: [TABS.craReportVariables] as TAB[]
   }
 ];
+
+export const getVariableSource = (sourceType: string) => {
+  switch (sourceType) {
+    case 'HistoricDataInput':
+      return 'historicDataVariables';
+    case 'Input':
+      return 'laPMSVariables';
+    case 'LmsDataInput':
+      return 'lmsInputVariables';
+    case 'Output':
+      return 'outputVariables';
+    case 'TemporaryVariable':
+      return 'userDefined';
+    default:
+      return sourceType;
+  }
+};

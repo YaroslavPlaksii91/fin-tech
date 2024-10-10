@@ -13,6 +13,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 
+import { getVariableSource } from '../utils';
+
 import { StyledListItemButton } from './styled';
 import List from './List';
 
@@ -48,7 +50,8 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   onConfirm,
   setSelectedObjectPropertyFunction,
   handleSelectVariable,
-  mode = 'withModal'
+  mode = 'withModal',
+  activeVar
 }) => {
   const [querySource, setQuerySource] = React.useState<string>('');
   const [queryVariable, setQueryVariable] = React.useState<string>('');
@@ -77,6 +80,13 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
       setSelectedObjectProperty(null);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (activeVar) {
+      setSelectedDict(getVariableSource(activeVar.sourceType));
+      setSelectedVar(activeVar);
+    }
+  }, []);
 
   const filteredSource = useMemo(() => {
     if (!data) {
@@ -183,7 +193,10 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
       setSelectedObjectProperty(property);
     }
     if (handleSelectVariable) {
-      handleSelectVariable(property);
+      handleSelectVariable({
+        ...property,
+        name: [selectedVar?.name, property.name].join('.')
+      });
     }
   };
 
@@ -368,6 +381,7 @@ interface DataDictionaryDialogProps {
   ) => Variable;
   handleSelectVariable?: (variable: Variable | null) => void;
   mode?: 'withModal' | 'withoutModal';
+  activeVar?: Variable;
 }
 
 export default DataDictionaryDialog;
