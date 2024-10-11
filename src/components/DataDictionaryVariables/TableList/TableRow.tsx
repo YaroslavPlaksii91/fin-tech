@@ -106,7 +106,7 @@ export const TableRow = ({
         });
       }
     },
-    [hasUserPermission, isProductionFlow]
+    [hasUserPermission, isProductionFlow, flowId]
   );
 
   return (
