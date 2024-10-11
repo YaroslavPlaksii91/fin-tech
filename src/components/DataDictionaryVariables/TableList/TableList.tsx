@@ -84,7 +84,7 @@ const TableList = ({
       : void getUserDefinedUsage(flowId, variables).then((data) =>
           setUserDefinedUsage(data)
         );
-  }, [tabName]);
+  }, [tabName, flowId]);
 
   return (
     <StyledPaper sx={{ overflow: 'auto' }}>
