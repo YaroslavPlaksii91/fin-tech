@@ -3,6 +3,7 @@ import { Box, Paper, Stack, Typography } from '@mui/material';
 
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
+import { TOTAL_ROW_NAME } from './constants';
 
 import { StyledDataGridPremium } from '@components/shared/Table/styled';
 import { theme } from '@theme';
@@ -17,6 +18,11 @@ const BillingReport = () => {
   const [data, setData] = useState<BilingReport>({ item1: 1, item2: [] });
 
   const rows = useMemo(() => getFormattedRows(data.item2), [data.item2]);
+
+  const totalRow = useMemo(
+    () => rows.filter((row) => row.month === TOTAL_ROW_NAME),
+    [rows]
+  );
 
   const fetchList = async () => {
     setLoading(true);
@@ -66,6 +72,7 @@ const BillingReport = () => {
           // We have border bottom 1px for each row, to include it in rowHeight calculation need also add spacing here
           getRowSpacing={() => ({ bottom: 1 })}
           rowSpacingType="border"
+          pinnedRows={{ bottom: totalRow }}
           rows={rows}
           columns={getDataGridColumns()}
           loading={loading}
