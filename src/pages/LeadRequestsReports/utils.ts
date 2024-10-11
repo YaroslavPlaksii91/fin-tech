@@ -22,7 +22,7 @@ export const getFormattedRows = (data: LeadRequestReport[]) => {
       [COLUMN_IDS.leadProvider]: leadRequest.leadProviderId ?? '-',
       [COLUMN_IDS.leadCampaign]: leadRequest.campaignId ?? '-',
       [COLUMN_IDS.customerId]: leadResponse?.customerId ?? '-',
-      [COLUMN_IDS.leadPrice]: leadResponse?.leadPrice ?? '-',
+      [COLUMN_IDS.leadPrice]: leadRequest?.leadPrice ?? '-',
       [COLUMN_IDS.affiliate]: leadRequest.affiliateId ?? '-',
       [COLUMN_IDS.requestDate]: processingMetadata?.executionEndDateTimeUtc
         ? dayjs(processingMetadata.executionEndDateTimeUtc).format(

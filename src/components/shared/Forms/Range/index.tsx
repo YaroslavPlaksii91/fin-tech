@@ -37,7 +37,6 @@ const Range = <
       <Stack sx={{ display: 'flex', flexDirection: 'row', gap: '8px' }}>
         <InputText
           fullWidth
-          type="number"
           control={control}
           name={`${name}.from` as TName}
           startAdornmentSymb={startAdornmentSymb}
@@ -48,7 +47,6 @@ const Range = <
         />
         <InputText
           fullWidth
-          type="number"
           control={control}
           name={`${name}.to` as TName}
           startAdornmentSymb={startAdornmentSymb}
