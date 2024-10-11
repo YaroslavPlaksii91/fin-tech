@@ -34,11 +34,11 @@ export const RANGE_FILTERS_GROUPS = [
   },
   {
     name: RANGE_FILTERS_KEYS.totalApproved,
-    title: 'Total Approved'
+    title: 'Total Accepted'
   },
   {
     name: RANGE_FILTERS_KEYS.totalApprovalRate,
-    title: 'Approval Rate'
+    title: 'Accept Rates'
   },
   {
     name: RANGE_FILTERS_KEYS.totalCost,
