@@ -20,6 +20,11 @@ export type FormattedData = {
   responseJson: null | string;
 };
 
+export const callTypeCRA = {
+  factorTrustCallHistory: 'CraFactorTrust',
+  clarityCallHistory: 'CraClarity'
+};
+
 export type RowData = ExtractArrayElementType<
   ReturnType<typeof getFormattedRows>
 >;

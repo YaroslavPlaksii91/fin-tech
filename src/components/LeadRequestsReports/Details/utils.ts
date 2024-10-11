@@ -1,6 +1,9 @@
-import { COLUMN_IDS, FormattedData } from './types';
+import { callTypeCRA, COLUMN_IDS, FormattedData } from './types';
 
-import { LeadRequestReport } from '@domain/leadRequestsReports';
+import {
+  ExternalCallItem,
+  LeadRequestReport
+} from '@domain/leadRequestsReports';
 
 export const getFormattedRows = (data: FormattedData[]) =>
   data.map((row) => {
@@ -38,18 +41,36 @@ export const getFormattedData = (data: LeadRequestReport) => {
       : null
   };
 
-  const externalCalls = (data.executionHistory?.externalCalls || []).map(
-    (externalCall) => ({
-      id: externalCall.callType,
-      api: externalCall.callType,
-      time:
-        externalCall.executionTimeSpan && externalCall.executionTimeSpan / 1000,
-      result: externalCall.result,
-      scores: externalCall.detailedResults,
-      requestJson: externalCall.requestJson,
-      responseJson: externalCall.responseJson
-    })
-  );
+  const externalCalls: ExternalCallItem[] = [];
 
-  return [leadRequest, ...externalCalls];
+  if (data.executionHistory?.externalCalls?.lmsCallHistory.length) {
+    externalCalls.push(...data.executionHistory.externalCalls.lmsCallHistory);
+  }
+
+  if (data.executionHistory?.externalCalls?.clarityCallHistory) {
+    externalCalls.push({
+      ...data.executionHistory.externalCalls.clarityCallHistory,
+      callType: callTypeCRA.clarityCallHistory
+    });
+  }
+
+  if (data.executionHistory?.externalCalls?.factorTrustCallHistory) {
+    externalCalls.push({
+      ...data.executionHistory.externalCalls.factorTrustCallHistory,
+      callType: callTypeCRA.factorTrustCallHistory
+    });
+  }
+
+  const mappedExternalCalls = externalCalls.map((externalCall) => ({
+    id: externalCall.callType,
+    api: externalCall.callType,
+    time:
+      externalCall.executionTimeSpan && externalCall.executionTimeSpan / 1000,
+    result: externalCall.result,
+    scores: externalCall.detailedResults,
+    requestJson: externalCall.requestJson,
+    responseJson: externalCall.responseJson
+  }));
+
+  return [leadRequest, ...mappedExternalCalls];
 };
