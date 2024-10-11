@@ -12,8 +12,8 @@ import { IFlow, IFlowListItem } from '@domain/flow';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { renameFlow } from '@store/flowList/asyncThunk';
 import LoadingButton from '@components/shared/LoadingButton';
-import { updateFlowData } from '@store/flow/flow';
-import { selectUserInfo } from '@store/auth/auth';
+import { updateFlowData } from '@store/flow';
+import { selectUserInfo } from '@store/auth';
 import { getFullUserName } from '@utils/helpers';
 
 type FormData = {

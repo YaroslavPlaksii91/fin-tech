@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useReactFlow } from 'reactflow';
 
-import { FlowNode } from '@domain/flow.ts';
+import { FlowNode } from '@domain/flow';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 
 const NODE_MENU_OPEN_CLASS = 'node-menu-open';

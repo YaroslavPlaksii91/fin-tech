@@ -1,4 +1,6 @@
-import { IRangeFilter, RANGE_FILTERS_KEYS, RangeFiltersKey } from './types';
+import { RANGE_FILTERS_KEYS, RangeFiltersKey } from './types';
+
+import { RangeFilter } from '@utils/filters';
 
 export const DEFAULT_SORT = 'totalLooks asc';
 export const TOTAL_ROW_NAME = 'Total';
@@ -81,6 +83,6 @@ export const INITIAL_FILTERS = {
   date: INITIAL_DATE_FILTER,
   ...RANGE_FILTERS_GROUPS.reduce(
     (acc, { name }) => ({ ...acc, [name]: INITIAL_RANGE_FILTER }),
-    {} as Record<RangeFiltersKey, IRangeFilter>
+    {} as Record<RangeFiltersKey, RangeFilter>
   )
 };

@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDispatch } from 'react-redux/es/hooks/useDispatch';
 import { cloneDeep } from 'lodash';
 import { XYPosition } from 'reactflow';
 
@@ -16,7 +15,8 @@ import {
   StepType
 } from '@components/FlowManagment/FlowChart/types';
 import { FlowNode } from '@domain/flow';
-import { addNode } from '@store/flow/flow';
+import { addNode } from '@store/flow/';
+import { useAppDispatch } from '@store/hooks';
 
 const defaultValue = {
   [StepType.CHAMPION_CHALLENGER]: 'Champion Challenger',
@@ -57,7 +57,7 @@ export const AddStep: React.FC<AddStepProps> = ({
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema)
   });
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const onSubmit: SubmitHandler<FormData> = ({ name }) => {
     const { newNode, subFlowId } = onAddNodeBetweenEdges(

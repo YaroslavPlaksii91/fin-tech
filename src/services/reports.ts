@@ -1,14 +1,17 @@
 import { BilingReport, GetBilingReport } from '@domain/billingReport';
 import { DenialReasonsReportOData } from '@domain/denielReasonsReports';
-import { LeadRequestsReportsOData } from '@domain/leadRequestsReports';
+import {
+  GetLeadRequestReport,
+  LeadRequestReportResponse
+} from '@domain/leadRequestsReports';
 import { GetWaterfallReport, WaterfallReport } from '@domain/waterfallReport';
-import { reportApi, reportOdataApi } from '@utils/api.ts';
+import { reportApi, reportOdataApi } from '@utils/api';
 
 class ReportingService {
-  async getLeadRequestsReports(params: string) {
-    const { data } = await reportOdataApi.get<LeadRequestsReportsOData>(
-      `/lead-request-processing-history${params}`,
-      {}
+  async getLeadRequestsReports(params: GetLeadRequestReport) {
+    const { data } = await reportApi.get<LeadRequestReportResponse>(
+      '/lead-request-processing-history',
+      params
     );
     return data;
   }
@@ -21,11 +24,11 @@ class ReportingService {
     return data;
   }
 
-  async getLeadRequestsReportsExportCSV(params: string) {
-    const res = await reportOdataApi.get(
-      `/lead-request-processing-history/export${params}`,
-      { responseType: 'blob' }
-    );
+  async getLeadRequestsReportsExportCSV({ params }: GetLeadRequestReport) {
+    const res = await reportApi.get('/lead-request-processing-history/export', {
+      params,
+      responseType: 'blob'
+    });
     return res;
   }
 
@@ -53,12 +56,10 @@ class ReportingService {
     return res;
   }
 
-  async getWaterfallReport({ params }: GetWaterfallReport) {
+  async getWaterfallReport(params: GetWaterfallReport) {
     const { data } = await reportApi.get<WaterfallReport[]>(
       `/waterfall-report`,
-      {
-        params
-      }
+      params
     );
     return data;
   }
@@ -71,7 +72,7 @@ class ReportingService {
   }
 
   async getWaterfallReportExportCSV({ params }: GetWaterfallReport) {
-    const res = await reportApi.get(`/waterfall-report/export`, {
+    const res = await reportApi.get('/waterfall-report/export', {
       params,
       responseType: 'blob'
     });

@@ -1,4 +1,4 @@
-import { selectUserInfo } from '@store/auth/auth';
+import { selectUserInfo } from '@store/auth';
 import { useAppSelector } from '@store/hooks';
 import { hasPermission } from '@utils/helpers';
 

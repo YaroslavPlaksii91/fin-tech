@@ -4,7 +4,7 @@ import { Link as RRLink } from 'react-router-dom';
 import { StepBreadcrumbsLink } from './styled';
 
 import { theme } from '@theme';
-import routes from '@constants/routes.ts';
+import routes from '@constants/routes';
 import { FlowNode, IFlow } from '@domain/flow';
 
 type CreateBreadcrumbsParams = {
