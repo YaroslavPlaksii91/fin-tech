@@ -1,4 +1,5 @@
-import { callTypeCRA, COLUMN_IDS, FormattedData } from './types';
+import { CALL_TYPE_CRA } from './constants';
+import { COLUMN_IDS, FormattedData } from './types';
 
 import {
   ExternalCallItem,
@@ -47,17 +48,17 @@ export const getFormattedData = (data: LeadRequestReport) => {
     externalCalls.push(...data.executionHistory.externalCalls.lmsCallHistory);
   }
 
-  if (data.executionHistory?.externalCalls?.clarityCallHistory) {
-    externalCalls.push({
-      ...data.executionHistory.externalCalls.clarityCallHistory,
-      callType: callTypeCRA.clarityCallHistory
-    });
-  }
-
   if (data.executionHistory?.externalCalls?.factorTrustCallHistory) {
     externalCalls.push({
       ...data.executionHistory.externalCalls.factorTrustCallHistory,
-      callType: callTypeCRA.factorTrustCallHistory
+      callType: CALL_TYPE_CRA.factorTrustCallHistory
+    });
+  }
+
+  if (data.executionHistory?.externalCalls?.clarityCallHistory) {
+    externalCalls.push({
+      ...data.executionHistory.externalCalls.clarityCallHistory,
+      callType: CALL_TYPE_CRA.clarityCallHistory
     });
   }
 

@@ -25,3 +25,8 @@ export const jsonViewTheme = {
   base0E: primary,
   base0F: primary
 };
+
+export const CALL_TYPE_CRA = {
+  factorTrustCallHistory: 'CraFactorTrust',
+  clarityCallHistory: 'CraClarity'
+};
