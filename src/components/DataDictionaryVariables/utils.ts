@@ -68,7 +68,8 @@ export const checkDataType = (
   isBoolean: dataType === VARIABLE_DATA_TYPE.Boolean,
   isString: dataType === VARIABLE_DATA_TYPE.String,
   isInteger: dataType === VARIABLE_DATA_TYPE.Integer,
-  isDecimal: dataType === VARIABLE_DATA_TYPE.Decimal
+  isDecimal: dataType === VARIABLE_DATA_TYPE.Decimal,
+  isStringArray: dataType === VARIABLE_DATA_TYPE.StringArray
 });
 
 export const getFiltersGroup = (enumDataTypes: string[]) => [

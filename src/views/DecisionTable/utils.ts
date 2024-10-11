@@ -23,7 +23,8 @@ export const getOperatorOptions = ({
   isWithEnum,
   isString,
   isInteger,
-  isDecimal
+  isDecimal,
+  isStringArray
 }: ReturnType<typeof checkDataType>) => {
   let operators: Operator[] = [];
 
@@ -57,6 +58,9 @@ export const getOperatorOptions = ({
         OPERATORS.LESS_AND_EQUAL,
         OPERATORS.BETWEEN
       ];
+      break;
+    case isStringArray:
+      operators = [];
       break;
     default:
       operators = [OPERATORS.EQUAL, OPERATORS.NOT_EQUAL];
