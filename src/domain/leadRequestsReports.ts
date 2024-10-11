@@ -29,11 +29,17 @@ export interface LeadRequestReport {
 }
 
 type ExecutionHistory = {
-  externalCalls: null | ExternalCall[];
+  externalCalls: null | ExternalCalls;
   steps: null | Step[];
 };
 
-type ExternalCall = {
+type ExternalCalls = {
+  clarityCallHistory: ExternalCallItem | null;
+  factorTrustCallHistory: ExternalCallItem | null;
+  lmsCallHistory: ExternalCallItem[];
+};
+
+export type ExternalCallItem = {
   callType: null | string;
   controlFile: null | string;
   executionTimeSpan: null | number;
