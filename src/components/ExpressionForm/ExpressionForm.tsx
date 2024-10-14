@@ -111,8 +111,16 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     resolver: yupResolver(validationSchema)
   });
 
+  const allVariables = useMemo(
+    () => ({
+      ...variables,
+      ...userDefinedVariables
+    }),
+    [variables, userDefinedVariables]
+  );
+
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    const arrayOfVariables = Object.values(variables).flat();
+    const arrayOfVariables = Object.values(allVariables).flat();
     const usageVariables = arrayOfVariables.filter((items) => {
       const regex = new RegExp(`\\b${items.name}\\b`);
       return regex.test(data.expressionString);
@@ -147,14 +155,6 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
       }
     }
   };
-
-  const allVariables = useMemo(
-    () => ({
-      ...variables,
-      ...userDefinedVariables
-    }),
-    [variables, userDefinedVariables]
-  );
 
   const variableFieldDataDict = useMemo(
     () =>
