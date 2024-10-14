@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
-import { Box, Button, Drawer, Paper, Stack, Typography } from '@mui/material';
+import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 
 import { COLUMN_IDS, FetchList, RowData, IFilters } from './types';
 import { buildParams, getFormattedRows } from './utils';
@@ -23,6 +23,7 @@ import TuneIcon from '@icons/tune.svg';
 import ExportCSVButton from '@components/shared/ExportCSVButton';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 import Filters from '@components/LeadRequestsReports/Filters';
+import { Drawer } from '@components/shared/Drawer';
 
 const LeadRequestsReports = () => {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -189,7 +190,16 @@ const LeadRequestsReports = () => {
         onSubmit={handleSubmit}
         onClose={handleFiltersClose}
       />
-      <Drawer anchor="right" open={isDetailsOpen} onClose={handleDetailsClose}>
+      <Drawer
+        anchor="right"
+        open={isDetailsOpen}
+        onClose={handleDetailsClose}
+        ModalProps={{
+          BackdropProps: {
+            style: { opacity: 0 }
+          }
+        }}
+      >
         {selectedRow ? (
           <Details onClose={handleDetailsClose} data={selectedRow.data} />
         ) : null}
