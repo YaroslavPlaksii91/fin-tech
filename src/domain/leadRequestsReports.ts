@@ -162,6 +162,7 @@ type ProcessingMetadata = {
   cachedConnector: null | string;
   executionStartDateTimeUtc: string;
   executionEndDateTimeUtc: string;
+  craScore: null | number;
 };
 
 type CustomFields = {

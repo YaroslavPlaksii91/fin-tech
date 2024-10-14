@@ -18,6 +18,11 @@ const getDataGridColumns = ({
     width: 168
   },
   {
+    field: COLUMN_IDS.craScore,
+    headerName: 'CRA score',
+    width: 168
+  },
+  {
     field: COLUMN_IDS.requestId,
     headerName: 'Request ID',
     width: 280
