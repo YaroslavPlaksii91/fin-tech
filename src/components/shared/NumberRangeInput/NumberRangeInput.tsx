@@ -11,7 +11,6 @@ import { AddIcon, RemoveIcon } from '../Icons';
 
 import { StyledInputAdornment, StyledTextField } from './styled';
 
-import { KEY_CODES } from '@constants/common';
 import { theme } from '@theme';
 
 const MIN_VALUE = 1;
@@ -44,11 +43,6 @@ const NumberRangeInput = <
     render={({ field: { onChange, value } }) => (
       <StyledTextField
         type="number"
-        onKeyDown={(event) => {
-          if (event.key === KEY_CODES.Dot || event.key === KEY_CODES.Minus) {
-            event.preventDefault();
-          }
-        }}
         value={value}
         inputProps={{
           min: MIN_VALUE,
@@ -56,9 +50,11 @@ const NumberRangeInput = <
           step: 1
         }}
         onChange={(event) => {
-          let inputValue: string | number = parseInt(event.target.value, 10);
-          if (isNaN(inputValue)) {
-            inputValue = '';
+          let inputValue: string | number = event.target.value;
+          const [integerPart, decimalPart] = inputValue.split('.');
+
+          if (decimalPart && decimalPart.length > 2) {
+            inputValue = `${integerPart}.${decimalPart.slice(0, 2)}`;
           }
 
           onChange(inputValue);
