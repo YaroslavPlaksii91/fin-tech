@@ -3,7 +3,7 @@ import { Auth } from '@eloanwarehouse/frontend-core';
 import { router } from '../routes';
 
 import { CLIENT_ID, SCOPES_LIST } from '@constants/common';
-import { api, integrationApi, reportApi, reportOdataApi } from '@utils/api';
+import { api, integrationApi, reportApi } from '@utils/api';
 import { authApiBaseUrl } from '@constants/api-urls';
 import routes from '@constants/routes';
 
@@ -16,12 +16,10 @@ export const authService = new Auth.IAMAuthService({
     if (token) {
       api.defaults.headers.Authorization = `Bearer ${token}`;
       reportApi.defaults.headers.Authorization = `Bearer ${token}`;
-      reportOdataApi.defaults.headers.Authorization = `Bearer ${token}`;
       integrationApi.defaults.headers.Authorization = `Bearer ${token}`;
     } else {
       delete api.defaults.headers.Authorization;
       delete reportApi.defaults.headers.Authorization;
-      delete reportOdataApi.defaults.headers.Authorization;
       delete integrationApi.defaults.headers.Authorization;
     }
   },

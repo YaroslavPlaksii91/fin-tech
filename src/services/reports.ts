@@ -8,7 +8,7 @@ import {
   LeadRequestReportResponse
 } from '@domain/leadRequestsReports';
 import { GetWaterfallReport, WaterfallReport } from '@domain/waterfallReport';
-import { reportApi, reportOdataApi } from '@utils/api';
+import { reportApi } from '@utils/api';
 
 class ReportingService {
   async getLeadRequestsReports(params: GetLeadRequestReport) {
@@ -51,11 +51,11 @@ class ReportingService {
     return data;
   }
 
-  async getDenialReasonsReportExportCSV(params: DenialReasonsReportParams) {
-    const res = await reportOdataApi.get(
-      `/lead-request-denial-reasons/export`,
-      { params, responseType: 'blob' }
-    );
+  async getDenialReasonsReportExportCSV({ params }: DenialReasonsReportParams) {
+    const res = await reportApi.get(`/lead-request-denial-reasons/export`, {
+      params,
+      responseType: 'blob'
+    });
     return res;
   }
 
