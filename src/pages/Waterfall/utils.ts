@@ -1,9 +1,9 @@
 import { EXTERNAL_SYSTEM_KEYS } from './constants';
 import { COLUMN_IDS, IFilters } from './types';
 
-import { typeSafeObjectEntries } from '@utils/object';
 import { WaterfallReport } from '@domain/waterfallReport';
 import { getDateInUTC } from '@utils/date';
+import { buildDynamicLINQFilterQuery } from '@utils/filters';
 
 export const getExternalSystemsColumns = (data: WaterfallReport[]) => {
   const setOfExternalSystemNames = new Set<string>();
@@ -55,45 +55,6 @@ export const getFormattedRows = (data: WaterfallReport[]) =>
       ...extractedExternalSystemsData
     };
   });
-
-const buildDynamicLINQFilterQuery = (filters: Omit<IFilters, 'date'>) =>
-  typeSafeObjectEntries(filters).reduce((acc, [key, value]) => {
-    let query: string | undefined;
-    const isRange = 'from' in value && 'to' in value;
-    const isMultiSelection = Array.isArray(value);
-
-    if (
-      (isRange && !value.from && !value.to) ||
-      (isMultiSelection && !value.length)
-    )
-      return acc;
-
-    if (isRange) {
-      const toQuery = `${key} <= ${value.to}`;
-      const fromQuery = `${key} >= ${value.from}`;
-
-      switch (true) {
-        case Boolean(value.to && value.from):
-          query = `${fromQuery} and ${toQuery}`;
-          break;
-        case Boolean(value.to):
-          query = toQuery;
-          break;
-        case Boolean(value.from):
-          query = fromQuery;
-          break;
-        default:
-          break;
-      }
-    }
-
-    if (isMultiSelection)
-      query = `${key} in (${value.map((el) => `"${el}"`).join(', ')})`;
-
-    if (!acc.length) return query || acc;
-
-    return query ? `${acc} && ${query}` : acc;
-  }, '');
 
 export const buildParams = ({
   sort,

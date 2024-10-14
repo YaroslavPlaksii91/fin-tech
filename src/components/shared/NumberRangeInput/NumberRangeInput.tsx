@@ -73,7 +73,7 @@ const NumberRangeInput = <
               >
                 <IconButton
                   aria-label="Decrement"
-                  disabled={+value <= rangeMin}
+                  disabled={+value <= rangeMin || disabled}
                   onClick={() => {
                     onChange(+value - 1);
                     onChangeCb?.();
@@ -94,7 +94,7 @@ const NumberRangeInput = <
               >
                 <IconButton
                   aria-label="Increment"
-                  disabled={!(+value < rangeMax)}
+                  disabled={!(+value < rangeMax) || disabled}
                   onClick={() => {
                     onChange(+value + 1);
                     onChangeCb?.();

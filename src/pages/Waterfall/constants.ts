@@ -1,4 +1,6 @@
-import { IRangeFilter, RANGE_FILTERS_KEYS, RangeFiltersKey } from './types';
+import { RANGE_FILTERS_KEYS, RangeFiltersKey } from './types';
+
+import { RangeFilter } from '@utils/filters';
 
 export const DEFAULT_SORT = 'totalLooks asc';
 export const TOTAL_ROW_NAME = 'Total';
@@ -34,11 +36,11 @@ export const RANGE_FILTERS_GROUPS = [
   },
   {
     name: RANGE_FILTERS_KEYS.totalApproved,
-    title: 'Total Approved'
+    title: 'Total Accepted'
   },
   {
     name: RANGE_FILTERS_KEYS.totalApprovalRate,
-    title: 'Approval Rate'
+    title: 'Accept Rates'
   },
   {
     name: RANGE_FILTERS_KEYS.totalCost,
@@ -70,8 +72,8 @@ export const RANGE_FILTERS_GROUPS = [
     symb: '$'
   },
   {
-    name: RANGE_FILTERS_KEYS.totalCachedLeads,
-    title: 'Total Cached Leads'
+    name: RANGE_FILTERS_KEYS.totalCachedLead,
+    title: 'Total Cached Lead'
   }
 ];
 
@@ -81,6 +83,6 @@ export const INITIAL_FILTERS = {
   date: INITIAL_DATE_FILTER,
   ...RANGE_FILTERS_GROUPS.reduce(
     (acc, { name }) => ({ ...acc, [name]: INITIAL_RANGE_FILTER }),
-    {} as Record<RangeFiltersKey, IRangeFilter>
+    {} as Record<RangeFiltersKey, RangeFilter>
   )
 };

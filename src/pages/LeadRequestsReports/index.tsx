@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
 import { Box, Button, Drawer, Paper, Stack, Typography } from '@mui/material';
 
 import { COLUMN_IDS, FetchList, RowData, IFilters } from './types';
-import { buildOdataParams, getFormattedRows } from './utils';
+import { buildParams, getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
   DEFAULT_EXPORT_FILE_NAME,
@@ -44,6 +44,12 @@ const LeadRequestsReports = () => {
     handleRowsPerPageChange
   } = useTablePagination({ totalCount });
 
+  const handleDetailsOpen = () => setIsDetailsOpen(true);
+
+  const handleDetailsClose = () => setIsDetailsOpen(false);
+
+  const columns = getDataGridColumns({ handleDetails: handleDetailsOpen });
+
   const handleFiltersOpen = () => setIsFiltersOpen(true);
 
   const handleFiltersClose = () => setIsFiltersOpen(false);
@@ -58,15 +64,6 @@ const LeadRequestsReports = () => {
     handleFiltersClose();
   };
 
-  const handleDetailsOpen = () => setIsDetailsOpen(true);
-
-  const handleDetailsClose = () => setIsDetailsOpen(false);
-
-  const columns = useMemo(
-    () => getDataGridColumns({ handleDetails: handleDetailsOpen }),
-    [handleDetailsOpen]
-  );
-
   const handleSortModelChange = (model: GridSortModel) => {
     if (!model.length) return;
     const sortParams = `${model[0].field} ${model[0].sort}`;
@@ -76,17 +73,23 @@ const LeadRequestsReports = () => {
   const handleRowSelection = (data: GridRowParams<RowData>) =>
     setSelectedRow(data.row);
 
+  const handleExport = useCallback(async () => {
+    const params = buildParams({ sort, filters });
+
+    return reportingService.getLeadRequestsReportsExportCSV({ params });
+  }, [filters, sort]);
+
   const fetchList = async (data: FetchList) => {
     setLoading(true);
 
-    const params = buildOdataParams(data);
+    const params = buildParams(data);
 
     try {
-      const data = await reportingService.getLeadRequestsReports(params);
-      const rows = getFormattedRows(data.value);
+      const data = await reportingService.getLeadRequestsReports({ params });
+      const rows = getFormattedRows(data.items);
 
       setRows(rows);
-      setTotalCount(data['@odata.count']);
+      setTotalCount(data.totalItems);
     } catch (e) {
       Logger.error(e);
     } finally {
@@ -96,24 +99,13 @@ const LeadRequestsReports = () => {
 
   useEffect(() => {
     void fetchList({
-      page,
+      // We have zero based pagination on FE
+      page: page + 1,
       sort,
       rowsPerPage,
       filters
     });
   }, [page, rowsPerPage, sort, filters]);
-
-  const handleExportLeadRequestReports = useCallback(async () => {
-    const params = buildOdataParams({
-      page,
-      sort,
-      rowsPerPage,
-      filters,
-      includePagination: false
-    });
-
-    return reportingService.getLeadRequestsReportsExportCSV(params);
-  }, [filters, rowsPerPage, sort, page]);
 
   return (
     <Box sx={{ padding: '16px 24px' }}>
@@ -133,7 +125,7 @@ const LeadRequestsReports = () => {
         >
           <ExportCSVButton
             defaultFileName={DEFAULT_EXPORT_FILE_NAME}
-            exportFile={handleExportLeadRequestReports}
+            exportFile={handleExport}
           />
           <Button
             size="small"
@@ -199,7 +191,7 @@ const LeadRequestsReports = () => {
       />
       <Drawer anchor="right" open={isDetailsOpen} onClose={handleDetailsClose}>
         {selectedRow ? (
-          <Details handleClose={handleDetailsClose} data={selectedRow.data} />
+          <Details onClose={handleDetailsClose} data={selectedRow.data} />
         ) : null}
       </Drawer>
     </Box>

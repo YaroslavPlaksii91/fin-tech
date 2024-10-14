@@ -1,6 +1,10 @@
+import { CALL_TYPE_CRA } from './constants';
 import { COLUMN_IDS, FormattedData } from './types';
 
-import { LeadRequestsReport } from '@domain/leadRequestsReports';
+import {
+  ExternalCallItem,
+  LeadRequestReport
+} from '@domain/leadRequestsReports';
 
 export const getFormattedRows = (data: FormattedData[]) =>
   data.map((row) => {
@@ -20,7 +24,7 @@ export const getFormattedRows = (data: FormattedData[]) =>
     };
   });
 
-export const getFormattedData = (data: LeadRequestsReport) => {
+export const getFormattedData = (data: LeadRequestReport) => {
   const leadRequest = {
     id: data.id,
     api: 'Input',
@@ -38,18 +42,36 @@ export const getFormattedData = (data: LeadRequestsReport) => {
       : null
   };
 
-  const externalCalls = (data.executionHistory?.externalCalls || []).map(
-    (externalCall) => ({
-      id: externalCall.callType,
-      api: externalCall.callType,
-      time:
-        externalCall.executionTimeSpan && externalCall.executionTimeSpan / 1000,
-      result: externalCall.result,
-      scores: externalCall.detailedResults,
-      requestJson: externalCall.requestJson,
-      responseJson: externalCall.responseJson
-    })
-  );
+  const externalCalls: ExternalCallItem[] = [];
 
-  return [leadRequest, ...externalCalls];
+  if (data.executionHistory?.externalCalls?.lmsCallHistory.length) {
+    externalCalls.push(...data.executionHistory.externalCalls.lmsCallHistory);
+  }
+
+  if (data.executionHistory?.externalCalls?.factorTrustCallHistory) {
+    externalCalls.push({
+      ...data.executionHistory.externalCalls.factorTrustCallHistory,
+      callType: CALL_TYPE_CRA.factorTrustCallHistory
+    });
+  }
+
+  if (data.executionHistory?.externalCalls?.clarityCallHistory) {
+    externalCalls.push({
+      ...data.executionHistory.externalCalls.clarityCallHistory,
+      callType: CALL_TYPE_CRA.clarityCallHistory
+    });
+  }
+
+  const mappedExternalCalls = externalCalls.map((externalCall) => ({
+    id: externalCall.callType,
+    api: externalCall.callType,
+    time:
+      externalCall.executionTimeSpan && externalCall.executionTimeSpan / 1000,
+    result: externalCall.result,
+    scores: externalCall.detailedResults,
+    requestJson: externalCall.requestJson,
+    responseJson: externalCall.responseJson
+  }));
+
+  return [leadRequest, ...mappedExternalCalls];
 };

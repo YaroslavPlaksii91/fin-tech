@@ -1,10 +1,21 @@
-export interface LeadRequestsReportsOData {
-  '@odata.context': string;
-  '@odata.count': number;
-  value: LeadRequestsReport[];
+export interface GetLeadRequestReport {
+  params: {
+    sort?: string;
+    pageSize?: number;
+    pageNumber?: number;
+    filter?: string;
+  };
 }
 
-export interface LeadRequestsReport {
+export interface LeadRequestReportResponse {
+  pageNumber: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  items: LeadRequestReport[];
+}
+
+export interface LeadRequestReport {
   id: null | string;
   correlationId: string;
   leadResponse: LeadResponse;
@@ -18,11 +29,17 @@ export interface LeadRequestsReport {
 }
 
 type ExecutionHistory = {
-  externalCalls: null | ExternalCall[];
+  externalCalls: null | ExternalCalls;
   steps: null | Step[];
 };
 
-type ExternalCall = {
+type ExternalCalls = {
+  clarityCallHistory: ExternalCallItem | null;
+  factorTrustCallHistory: ExternalCallItem | null;
+  lmsCallHistory: ExternalCallItem[];
+};
+
+export type ExternalCallItem = {
   callType: null | string;
   controlFile: null | string;
   executionTimeSpan: null | number;

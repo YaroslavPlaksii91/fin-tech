@@ -41,3 +41,8 @@ export const modifyFirstLetter = (
       return string;
   }
 };
+
+export const convertToPascalCase = (str: string, delimiter: string = '.') =>
+  str.replace(new RegExp(`(^\\w|\\${delimiter}\\w)`, 'g'), (match) =>
+    match.toUpperCase()
+  );

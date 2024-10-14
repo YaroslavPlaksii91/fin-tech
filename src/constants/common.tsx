@@ -37,7 +37,9 @@ export const ROUTER_BLOCKED_STATE = 'blocked';
 export const KEY_CODES = {
   Dot: '.',
   Escape: 'Escape',
-  Minus: '-'
+  Minus: '-',
+  Backspace: 'Backspace',
+  Delete: 'Delete'
 };
 
 export const RULES_LIMIT = 10;
