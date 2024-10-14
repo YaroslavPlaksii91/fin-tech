@@ -1,17 +1,20 @@
-import { BilingReport, GetBilingReport } from '@domain/billingReport';
+import { BillingReport, BillingReportParams } from '@domain/billingReport';
 import {
   DenialReasonsReport,
   DenialReasonsReportParams
 } from '@domain/denielReasonsReports';
 import {
-  GetLeadRequestReport,
+  LeadRequestReportParams,
   LeadRequestReportResponse
 } from '@domain/leadRequestsReports';
-import { GetWaterfallReport, WaterfallReport } from '@domain/waterfallReport';
+import {
+  WaterfallReport,
+  WaterfallReportParams
+} from '@domain/waterfallReport';
 import { reportApi } from '@utils/api';
 
 class ReportingService {
-  async getLeadRequestsReports(params: GetLeadRequestReport) {
+  async getLeadRequestsReports(params: LeadRequestReportParams) {
     const { data } = await reportApi.get<LeadRequestReportResponse>(
       '/lead-request-processing-history',
       params
@@ -27,7 +30,7 @@ class ReportingService {
     return data;
   }
 
-  async getLeadRequestsReportsExportCSV({ params }: GetLeadRequestReport) {
+  async getLeadRequestsReportsExportCSV({ params }: LeadRequestReportParams) {
     const res = await reportApi.get('/lead-request-processing-history/export', {
       params,
       responseType: 'blob'
@@ -59,7 +62,7 @@ class ReportingService {
     return res;
   }
 
-  async getWaterfallReport(params: GetWaterfallReport) {
+  async getWaterfallReport(params: WaterfallReportParams) {
     const { data } = await reportApi.get<WaterfallReport[]>(
       `/waterfall-report`,
       params
@@ -74,7 +77,7 @@ class ReportingService {
     return data;
   }
 
-  async getWaterfallReportExportCSV({ params }: GetWaterfallReport) {
+  async getWaterfallReportExportCSV({ params }: WaterfallReportParams) {
     const res = await reportApi.get('/waterfall-report/export', {
       params,
       responseType: 'blob'
@@ -82,8 +85,8 @@ class ReportingService {
     return res;
   }
 
-  async getBillingReport({ params }: GetBilingReport) {
-    const { data } = await reportApi.get<BilingReport>(`/billing-report`, {
+  async getBillingReport({ params }: BillingReportParams) {
+    const { data } = await reportApi.get<BillingReport>(`/billing-report`, {
       params
     });
     return data;

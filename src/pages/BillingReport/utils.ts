@@ -1,8 +1,8 @@
 import { COLUMN_IDS } from './types';
 
-import { BilingReport } from '@domain/billingReport';
+import { BillingReport } from '@domain/billingReport';
 
-export const getFormattedRows = (data: BilingReport['item2']) =>
+export const getFormattedRows = (data: BillingReport['item2']) =>
   data.map((row, index) => ({
     id: index,
     data: row,
