@@ -6,7 +6,7 @@ import {
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 
 import { COLUMN_IDS, FetchList, IFilters, RowData } from './types';
-import { buildOdataParams, getFormattedRows } from './utils';
+import { buildParams, getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
   DEFAULT_EXPORT_FILE_NAME,
@@ -56,11 +56,11 @@ const DenialReasons = () => {
   const fetchList = async (data: FetchList) => {
     setLoading(true);
 
-    const params = buildOdataParams(data);
+    const params = buildParams(data);
 
     try {
-      const data = await reportingService.getDenialReasonsReport(params);
-      const rows = getFormattedRows(data.value);
+      const data = await reportingService.getDenialReasonsReport({ params });
+      const rows = getFormattedRows(data);
 
       setRows(rows);
     } catch (e) {
@@ -75,8 +75,8 @@ const DenialReasons = () => {
   }, [sort, filters]);
 
   const handleExportDenialReasonReports = useCallback(async () => {
-    const params = buildOdataParams({ sort, filters });
-    return reportingService.getDenialReasonsReportExportCSV(params);
+    const params = buildParams({ sort, filters });
+    return reportingService.getDenialReasonsReportExportCSV({ params });
   }, [sort, filters]);
 
   return (

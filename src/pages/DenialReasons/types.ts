@@ -39,7 +39,7 @@ export type IFilters = {
   state: string[];
   stack: string[];
   deniedBy: string[];
-  denialReason: string;
+  rejectionReason: string;
   [RANGE_FILTERS_KEYS.leadPrice]: IRangeFilter;
-  requestDate: IDateFilter;
+  date: IDateFilter;
 };

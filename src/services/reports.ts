@@ -1,5 +1,8 @@
 import { BilingReport, GetBilingReport } from '@domain/billingReport';
-import { DenialReasonsReportOData } from '@domain/denielReasonsReports';
+import {
+  DenialReasonsReport,
+  DenialReasonsReportParams
+} from '@domain/denielReasonsReports';
 import {
   GetLeadRequestReport,
   LeadRequestReportResponse
@@ -32,10 +35,10 @@ class ReportingService {
     return res;
   }
 
-  async getDenialReasonsReport(params: string) {
-    const { data } = await reportOdataApi.get<DenialReasonsReportOData>(
-      `/lead-request-denial-reasons${params}`,
-      {}
+  async getDenialReasonsReport(params: DenialReasonsReportParams) {
+    const { data } = await reportApi.get<DenialReasonsReport[]>(
+      `/lead-request-denial-reasons`,
+      params
     );
     return data;
   }
@@ -48,10 +51,10 @@ class ReportingService {
     return data;
   }
 
-  async getDenialReasonsReportExportCSV(params: string) {
-    const res = await reportOdataApi.get<DenialReasonsReportOData>(
-      `/lead-request-denial-reasons/export${params}`,
-      { responseType: 'blob' }
+  async getDenialReasonsReportExportCSV(params: DenialReasonsReportParams) {
+    const res = await reportOdataApi.get(
+      `/lead-request-denial-reasons/export`,
+      { params, responseType: 'blob' }
     );
     return res;
   }

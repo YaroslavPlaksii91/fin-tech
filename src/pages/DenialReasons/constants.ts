@@ -16,7 +16,7 @@ export const INITIAL_FILTERS: IFilters = {
   state: [],
   stack: [],
   deniedBy: [],
-  denialReason: '',
+  rejectionReason: '',
   [RANGE_FILTERS_KEYS.leadPrice]: INITIAL_RANGE_FILTER,
-  requestDate: INITIAL_DATE_FILTERS
+  date: INITIAL_DATE_FILTERS
 };
