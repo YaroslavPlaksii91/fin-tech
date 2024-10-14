@@ -1,16 +1,8 @@
 import { ReactNode } from 'react';
-import {
-  Box,
-  Stack,
-  Typography,
-  Drawer,
-  Button,
-  IconButton
-} from '@mui/material';
+import { Box, Stack, Typography, Button, IconButton } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-import { HEADER_HEIGHT } from '@constants/themeConstants';
-import { customBoxShadows, theme } from '@theme';
+import { Drawer } from '../Drawer';
 
 export interface TemplateProps {
   isOpen: boolean;
@@ -41,13 +33,7 @@ const Template = ({
     }}
     sx={{
       '& .MuiDrawer-paper': {
-        boxSizing: 'border-box',
-        width: '384px',
-        borderRadius: 0,
-        boxShadow: customBoxShadows.elevation1,
-        borderLeft: theme.palette.divider,
-        top: HEADER_HEIGHT,
-        height: `calc(100% - ${HEADER_HEIGHT}px)`
+        width: '384px'
       }
     }}
   >

@@ -103,6 +103,7 @@ const Details = ({ data, onClose }: DetailsProps) => {
         columns={columns}
         rows={rows}
         onRowClick={handleRowSelection}
+        sx={{ width: '100%' }}
       />
       <Dialog
         title="Request/Response Details"

@@ -14,18 +14,21 @@ const getColumns = ({
 }: GetDataGridColumnsProps): GridColDef[] => [
   {
     field: COLUMN_IDS.api,
-    headerName: 'API'
+    headerName: 'API',
+    minWidth: 148
   },
-  { field: COLUMN_IDS.time, headerName: 'Time (sec)' },
+  { field: COLUMN_IDS.time, headerName: 'Time (sec)', minWidth: 143 },
   {
     field: COLUMN_IDS.result,
-    headerName: 'Result'
+    headerName: 'Result',
+    minWidth: 143
   },
   {
     field: COLUMN_IDS.scores,
     headerName: 'Scores',
     align: 'left',
     resizable: false,
+    minWidth: 143,
     renderCell: (data: GridRenderCellParams<RowData>) =>
       data.row.scores ? (
         <Button
@@ -46,6 +49,7 @@ const getColumns = ({
     align: 'left',
     flex: 1,
     resizable: false,
+    minWidth: 143,
     renderCell: ({
       row: { requestResponse }
     }: GridRenderCellParams<RowData>) =>
