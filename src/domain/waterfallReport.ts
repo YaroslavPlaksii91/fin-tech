@@ -1,4 +1,4 @@
-export interface GetWaterfallReport {
+export interface WaterfallReportParams {
   params: {
     sort?: string;
     startTime?: string;

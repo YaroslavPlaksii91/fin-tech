@@ -1,14 +1,20 @@
-import { BilingReport, GetBilingReport } from '@domain/billingReport';
-import { DenialReasonsReportOData } from '@domain/denielReasonsReports';
+import { BillingReport, BillingReportParams } from '@domain/billingReport';
 import {
-  GetLeadRequestReport,
+  DenialReasonsReport,
+  DenialReasonsReportParams
+} from '@domain/denielReasonsReports';
+import {
+  LeadRequestReportParams,
   LeadRequestReportResponse
 } from '@domain/leadRequestsReports';
-import { GetWaterfallReport, WaterfallReport } from '@domain/waterfallReport';
-import { reportApi, reportOdataApi } from '@utils/api';
+import {
+  WaterfallReport,
+  WaterfallReportParams
+} from '@domain/waterfallReport';
+import { reportApi } from '@utils/api';
 
 class ReportingService {
-  async getLeadRequestsReports(params: GetLeadRequestReport) {
+  async getLeadRequestsReports(params: LeadRequestReportParams) {
     const { data } = await reportApi.get<LeadRequestReportResponse>(
       '/lead-request-processing-history',
       params
@@ -24,7 +30,7 @@ class ReportingService {
     return data;
   }
 
-  async getLeadRequestsReportsExportCSV({ params }: GetLeadRequestReport) {
+  async getLeadRequestsReportsExportCSV({ params }: LeadRequestReportParams) {
     const res = await reportApi.get('/lead-request-processing-history/export', {
       params,
       responseType: 'blob'
@@ -32,10 +38,10 @@ class ReportingService {
     return res;
   }
 
-  async getDenialReasonsReport(params: string) {
-    const { data } = await reportOdataApi.get<DenialReasonsReportOData>(
-      `/lead-request-denial-reasons${params}`,
-      {}
+  async getDenialReasonsReport(params: DenialReasonsReportParams) {
+    const { data } = await reportApi.get<DenialReasonsReport[]>(
+      `/lead-request-denial-reasons`,
+      params
     );
     return data;
   }
@@ -48,15 +54,15 @@ class ReportingService {
     return data;
   }
 
-  async getDenialReasonsReportExportCSV(params: string) {
-    const res = await reportOdataApi.get<DenialReasonsReportOData>(
-      `/lead-request-denial-reasons/export${params}`,
-      { responseType: 'blob' }
-    );
+  async getDenialReasonsReportExportCSV({ params }: DenialReasonsReportParams) {
+    const res = await reportApi.get(`/lead-request-denial-reasons/export`, {
+      params,
+      responseType: 'blob'
+    });
     return res;
   }
 
-  async getWaterfallReport(params: GetWaterfallReport) {
+  async getWaterfallReport(params: WaterfallReportParams) {
     const { data } = await reportApi.get<WaterfallReport[]>(
       `/waterfall-report`,
       params
@@ -71,7 +77,7 @@ class ReportingService {
     return data;
   }
 
-  async getWaterfallReportExportCSV({ params }: GetWaterfallReport) {
+  async getWaterfallReportExportCSV({ params }: WaterfallReportParams) {
     const res = await reportApi.get('/waterfall-report/export', {
       params,
       responseType: 'blob'
@@ -79,8 +85,8 @@ class ReportingService {
     return res;
   }
 
-  async getBillingReport({ params }: GetBilingReport) {
-    const { data } = await reportApi.get<BilingReport>(`/billing-report`, {
+  async getBillingReport({ params }: BillingReportParams) {
+    const { data } = await reportApi.get<BillingReport>(`/billing-report`, {
       params
     });
     return data;

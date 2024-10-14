@@ -1,6 +1,6 @@
 import { getFormattedRows } from './utils';
 
-import { GetWaterfallReport } from '@domain/waterfallReport';
+import { WaterfallReportParams } from '@domain/waterfallReport';
 import { ExtractArrayElementType } from '@utils/types';
 import { DateFilter, RangeFilter } from '@utils/filters';
 
@@ -38,7 +38,7 @@ export type RowData = ExtractArrayElementType<
   ReturnType<typeof getFormattedRows>
 >;
 
-export type FetchData = GetWaterfallReport['params'];
+export type FetchData = WaterfallReportParams['params'];
 
 export interface IFilters {
   stack: string[];

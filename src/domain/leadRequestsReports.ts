@@ -1,4 +1,4 @@
-export interface GetLeadRequestReport {
+export interface LeadRequestReportParams {
   params: {
     sort?: string;
     pageSize?: number;
