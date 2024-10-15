@@ -26,7 +26,8 @@ export enum COLUMN_IDS {
   apiVersion = 'processingMetadata.apiVersion',
   totalTime = 'processingMetadata.executionTimeSpan',
   cachedConnector = 'processingMetadata.cachedConnector',
-  details = 'details'
+  details = 'details',
+  craScore = 'processingMetadata.craScore'
 }
 
 export type RowData = ExtractArrayElementType<

@@ -1,5 +1,6 @@
 import { RANGE_FILTERS_KEYS, RangeFiltersKey } from './types';
 
+import { INITIAL_RANGE_FILTER, INITIAL_DATE_FILTERS } from '@constants/filters';
 import { RangeFilter } from '@utils/filters';
 
 export const DEFAULT_SORT = 'totalLooks asc';
@@ -21,13 +22,6 @@ export const EXTERNAL_SYSTEM_KEYS = [
 ] as const;
 
 export const DEFAULT_EXPORT_FILE_NAME = 'waterfall-reports';
-
-export const INITIAL_DATE_FILTER = {
-  from: null,
-  to: null
-};
-
-export const INITIAL_RANGE_FILTER = { from: '', to: '' };
 
 export const RANGE_FILTERS_GROUPS = [
   {
@@ -80,7 +74,7 @@ export const RANGE_FILTERS_GROUPS = [
 export const INITIAL_FILTERS = {
   stack: [],
   campaignId: [],
-  date: INITIAL_DATE_FILTER,
+  date: INITIAL_DATE_FILTERS,
   ...RANGE_FILTERS_GROUPS.reduce(
     (acc, { name }) => ({ ...acc, [name]: INITIAL_RANGE_FILTER }),
     {} as Record<RangeFiltersKey, RangeFilter>

@@ -10,12 +10,12 @@ import { theme } from '@theme';
 import { reportingService } from '@services/reports';
 import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
-import { BilingReport } from '@domain/billingReport';
+import { BillingReport } from '@domain/billingReport';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 
-const BillingReport = () => {
+const BillingReports = () => {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<BilingReport>({ item1: 1, item2: [] });
+  const [data, setData] = useState<BillingReport>({ item1: 1, item2: [] });
 
   const rows = useMemo(() => getFormattedRows(data.item2), [data.item2]);
 
@@ -88,4 +88,4 @@ const BillingReport = () => {
   );
 };
 
-export default BillingReport;
+export default BillingReports;

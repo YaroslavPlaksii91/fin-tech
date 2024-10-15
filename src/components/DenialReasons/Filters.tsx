@@ -95,19 +95,19 @@ const Filters = ({
       />
       <InputText
         fullWidth
-        name="denialReason"
+        name="rejectionReason"
         label="Denial Reason"
         placeholder="Denial Reason"
         control={control}
       />
       <DatePicker
-        name="requestDate.from"
+        name="date.from"
         label="Date From"
         control={control}
         disableFuture
       />
       <DatePicker
-        name="requestDate.to"
+        name="date.to"
         label="Date To"
         control={control}
         disableFuture

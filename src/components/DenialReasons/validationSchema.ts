@@ -5,7 +5,7 @@ import rangeDateValidationSchema from '@components/shared/Forms/DatePicker/valid
 
 const validationSchema = yup.object().shape({
   leadPrice: rangeValidationSchema,
-  ...rangeDateValidationSchema('requestDate').fields
+  ...rangeDateValidationSchema('date').fields
 });
 
 export default validationSchema;

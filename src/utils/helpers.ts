@@ -100,9 +100,6 @@ export const hasPermission = (
 export const getFullUserName = (user: UserInfoModel | null) =>
   user ? user.userId : '';
 
-export const removeSingleQuotesODataParams = (odataParams: string) =>
-  odataParams.replace(/'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z)'/g, '$1');
-
 export const downloadFile = (data: BlobPart, filename: string) => {
   const href = URL.createObjectURL(new Blob([data]));
   const link = document.createElement('a');

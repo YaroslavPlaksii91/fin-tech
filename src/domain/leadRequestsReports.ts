@@ -1,4 +1,4 @@
-export interface GetLeadRequestReport {
+export interface LeadRequestReportParams {
   params: {
     sort?: string;
     pageSize?: number;
@@ -162,6 +162,7 @@ type ProcessingMetadata = {
   cachedConnector: null | string;
   executionStartDateTimeUtc: string;
   executionEndDateTimeUtc: string;
+  craScore: null | number;
 };
 
 type CustomFields = {
