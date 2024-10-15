@@ -7,7 +7,8 @@ import {
   Operator,
   OPERATORS,
   CATEGORY,
-  FormFieldsProps
+  FormFieldsProps,
+  VALUE_TYPES
 } from './types';
 
 import {
@@ -103,7 +104,7 @@ export const getColumns = (
 
 export const getVariableSources = (entries: Entry[], variables: Variable[]) =>
   entries.reduce(
-    (acc, { name, sourceName, sourceType }) => {
+    (acc, { name, sourceName, sourceType, type, expression }) => {
       const isAdded = Boolean(
         acc.find(
           (variableSource) =>
@@ -116,13 +117,25 @@ export const getVariableSources = (entries: Entry[], variables: Variable[]) =>
 
       if (!name.length || isAdded || !variableSourceType) return acc;
 
-      return [
-        ...acc,
-        {
-          name: sourceName || name,
-          sourceType: sourceType || variableSourceType
+      acc.push({
+        name: sourceName || name,
+        sourceType: sourceType || variableSourceType
+      });
+
+      if (type === VALUE_TYPES.Variable) {
+        const expressionSourceType = variables.find(
+          (variable) => variable.name === expression
+        )?.sourceType;
+
+        if (expressionSourceType) {
+          acc.push({
+            name: expression,
+            sourceType: expressionSourceType
+          });
         }
-      ];
+      }
+
+      return acc;
     },
     [] as {
       name: string;

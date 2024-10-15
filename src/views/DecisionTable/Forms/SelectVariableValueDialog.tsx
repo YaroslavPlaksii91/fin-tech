@@ -89,7 +89,6 @@ const SelectVariableValueDialog = ({
   const watchType = watch('type');
   const value = watch('value');
   const isVariableType = watchType === VALUE_TYPES.Variable;
-  // const defaultVariableValue = 'Select Variable lower';
 
   const activeVariable = useMemo(
     () =>
