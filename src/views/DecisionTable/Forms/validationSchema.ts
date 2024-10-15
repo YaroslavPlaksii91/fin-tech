@@ -4,12 +4,7 @@ import { Operator, OPERATORS, VALUE_TYPES, ValueType } from '../types';
 
 import { isDecimal, isInteger } from '@utils/validation';
 import { checkDataType } from '@components/DataDictionaryVariables/utils';
-import { Variable } from '@domain/dataDictionary';
-
-export const validationSchema = (
-  dataType: ReturnType<typeof checkDataType>,
-  selectedVariable: Variable | null
-) =>
+export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
   yup.object().shape({
     name: yup.string().required(),
     operator: yup
@@ -21,8 +16,8 @@ export const validationSchema = (
       .oneOf(Object.values(VALUE_TYPES), 'Type is required')
       .required(),
     value: dataType.isWithEnum
-      ? yup.array().when(['operator'], ([operator], schema) => {
-          if (operator === OPERATORS.ANY)
+      ? yup.array().when(['operator'], ([operator, type], schema) => {
+          if (operator === OPERATORS.ANY || type === VALUE_TYPES.Variable)
             return schema.notRequired().nullable();
 
           return schema
@@ -43,21 +38,21 @@ export const validationSchema = (
               (value) => value.length !== 0
             );
         })
-      : yup.string().when(['operator'], ([operator], schema) => {
-          if (operator === OPERATORS.ANY || operator === OPERATORS.BETWEEN)
+      : yup.string().when(['operator'], ([operator, type], schema) => {
+          if (
+            operator === OPERATORS.ANY ||
+            operator === OPERATORS.BETWEEN ||
+            type === VALUE_TYPES.Variable
+          )
             return schema.notRequired().nullable();
 
           return schema
             .required('Value is required')
             .test('is-decimal', 'Value must be a valid decimal', (value) =>
-              dataType.isDecimal
-                ? isDecimal(selectedVariable?.defaultValue || value)
-                : true
+              dataType.isDecimal ? isDecimal(value) : true
             )
             .test('is-integer', 'Value must be a valid integer', (value) =>
-              dataType.isInteger
-                ? isInteger(selectedVariable?.defaultValue || value)
-                : true
+              dataType.isInteger ? isInteger(value) : true
             );
         }),
     lowerBound: yup.string().when(['operator'], ([operator], schema) =>

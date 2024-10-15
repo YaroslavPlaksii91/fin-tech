@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Button, Stack } from '@mui/material';
+import { useEffect, useMemo } from 'react';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -26,7 +26,7 @@ import { flowService } from '@services/flow-service';
 import { parseExpressionError } from '@utils/helpers';
 import { checkDataType } from '@components/DataDictionaryVariables/utils';
 import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog';
-import { Variable } from '@domain/dataDictionary';
+import { Variable, VARIABLE_DATA_TYPE } from '@domain/dataDictionary';
 import { useAppSelector } from '@store/hooks';
 import { selectDataDictionary } from '@store/dataDictionary/selectors';
 
@@ -49,9 +49,6 @@ const SelectVariableValueDialog = ({
   variables,
   integrationData
 }: SelectVariableValueDialogProps) => {
-  const [selectedVariable, setSelectedVariable] = useState<Variable | null>(
-    null
-  );
   const { enumDataTypes } = useAppSelector(selectDataDictionary);
 
   const bounds =
@@ -73,11 +70,11 @@ const SelectVariableValueDialog = ({
     clearErrors,
     setError
   } = useForm<FormFieldsProps>({
-    resolver: yupResolver(validationSchema(dataType, selectedVariable)),
+    resolver: yupResolver(validationSchema(dataType)),
     defaultValues: {
       name: selectedCell.name,
       operator: selectedCell.operator || defaultOperator,
-      type: VALUE_TYPES.Value,
+      type: selectedCell.type || VALUE_TYPES.Value,
       value: dataType.isWithEnum
         ? selectedCell.expression
           ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
@@ -90,69 +87,76 @@ const SelectVariableValueDialog = ({
 
   const watchOperator = watch('operator');
   const watchType = watch('type');
+  const value = watch('value');
   const isVariableType = watchType === VALUE_TYPES.Variable;
-  const defaultVariableValue = 'Select Variable lower';
+  // const defaultVariableValue = 'Select Variable lower';
 
-  const expressionParts = selectedCell.expression.split('.');
-
-  const activeVar = useMemo(
+  const activeVariable = useMemo(
     () =>
       Object.values(variables)
         .flat()
-        .find((variable) => variable.name === expressionParts[0]),
-    [variables, expressionParts]
+        .find((variable) =>
+          typeof value === 'string'
+            ? variable.name === value?.split(/\.(.+)/)[0]
+            : false
+        ),
+    [variables, value]
   );
 
   const activeProperty = useMemo(
     () =>
-      expressionParts[1]
-        ? Object.values(integrationData)
-            .flat()
-            .find((variable) => variable.name === expressionParts[1])
-        : undefined,
-    [integrationData, expressionParts]
+      Object.values(integrationData)
+        .flat()
+        .find((variable) =>
+          typeof value === 'string'
+            ? variable.name === value?.split(/\.(.+)/)[1]
+            : false
+        ),
+    [integrationData, value]
   );
 
-  const onSubmit = async (data: FormFieldsProps) => {
-    const formattedValue = getFormatedValue(data);
-    const value = selectedVariable ? selectedVariable.name : formattedValue;
+  const onSubmit = async (
+    data: FormFieldsProps,
+    selectedVariable?: Variable
+  ) => {
+    if (data.operator === OPERATORS.ANY) {
+      handleSubmitForm({ ...data, dataType: selectedCell.dataType });
+      return;
+    }
+
+    const value = selectedVariable
+      ? selectedVariable.name
+      : getFormatedValue(data);
 
     const params = [
       { name: selectedCell.name, dataType: selectedCell.dataType }
     ];
 
+    const expressionVariableParam = {
+      name: selectedVariable?.name || '',
+      dataType: selectedVariable?.dataType || VARIABLE_DATA_TYPE.String
+    };
+
     if (selectedVariable) {
-      params.push({
-        name: selectedVariable.name,
-        dataType: selectedVariable.dataType
-      });
+      params.push(expressionVariableParam);
     }
 
     try {
-      if (data.operator !== OPERATORS.ANY) {
-        if (isCondition) {
-          await flowService.validateCondition({
-            condition: {
-              name: selectedCell.name,
-              operator: data.operator,
-              expression: value
-            },
-            params
-          });
-        } else {
-          await flowService.validateExpression({
-            expression: value,
-            targetDataType: selectedCell.dataType,
-            params: selectedVariable
-              ? [
-                  {
-                    name: selectedVariable.name,
-                    dataType: selectedVariable.dataType
-                  }
-                ]
-              : []
-          });
-        }
+      if (isCondition) {
+        await flowService.validateCondition({
+          condition: {
+            name: selectedCell.name,
+            operator: data.operator,
+            expression: value
+          },
+          params
+        });
+      } else {
+        await flowService.validateExpression({
+          expression: value,
+          targetDataType: selectedCell.dataType,
+          params: selectedVariable ? [expressionVariableParam] : []
+        });
       }
 
       handleSubmitForm({ ...data, value, dataType: selectedCell.dataType });
@@ -165,13 +169,8 @@ const SelectVariableValueDialog = ({
   };
 
   const handleSelectVariable = (variable: Variable | null) => {
-    setValue(
-      'value',
-      dataType.isWithEnum
-        ? [variable?.name || defaultVariableValue]
-        : variable?.name || defaultVariableValue
-    );
-    setSelectedVariable(variable);
+    setValue('value', variable?.name);
+    clearErrors();
   };
 
   useEffect(() => {
@@ -181,55 +180,31 @@ const SelectVariableValueDialog = ({
     clearErrors();
   }, [watchOperator]);
 
-  useEffect(() => {
-    if (activeVar) {
-      setValue('type', VALUE_TYPES.Variable);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (watchType === VALUE_TYPES.Variable) {
-      if (!activeVar) {
-        setValue(
-          'value',
-          dataType.isWithEnum ? [defaultVariableValue] : defaultVariableValue
-        );
-      } else {
-        setValue(
-          'value',
-          dataType.isWithEnum
-            ? [selectedCell.expression]
-            : selectedCell.expression
-        );
+  return isVariableType ? (
+    <DataDictionaryDialog
+      title="Select Variable"
+      isOpen={modalOpen}
+      onClose={handleClose}
+      data={filterVariablesByUsageMode(variables, selectedCell.category)}
+      integrationData={
+        selectedCell.category === 'actions' ? undefined : integrationData
       }
-    } else {
-      if (activeVar) {
-        setValue('value', dataType.isWithEnum ? [] : '');
-      } else {
-        setValue(
-          'value',
-          dataType.isWithEnum
-            ? selectedCell.expression
-              ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
-              : []
-            : selectedCell.expression
-        );
-      }
-      setSelectedVariable(null);
-    }
-    clearErrors();
-  }, [watchType]);
-
-  return (
-    <Dialog
-      title={isCondition ? 'Enter condition' : 'Enter output'}
-      open={modalOpen}
-      displayConfirmBtn={false}
-      displayedCancelBtn={false}
-      fullWidth={true}
-      maxWidth="lg"
+      setSelectedObjectPropertyFunction={(object, property) => ({
+        ...property,
+        sourceName: object.name,
+        sourceType: object.sourceType
+      })}
+      onSelect={handleSelectVariable}
+      activeVariable={activeVariable}
+      activeProperty={activeProperty}
+      onConfirm={async (selectedVariable) => {
+        await handleSubmit((data) => onSubmit(data, selectedVariable))();
+      }}
     >
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <Box p="16px 24px 0">
+        <Typography variant="h6" color="text.primary" mb={2}>
+          {isCondition ? 'Enter condition' : 'Enter output'}
+        </Typography>
         <Content
           control={control}
           isOperatorDisabled={!isCondition}
@@ -250,28 +225,42 @@ const SelectVariableValueDialog = ({
           )}
           valueLabel={!isVariableType ? 'Value*' : 'Variable*'}
         />
-        {isVariableType && (
-          <DataDictionaryDialog
-            title="Select Variable"
-            data={filterVariablesByUsageMode(variables, selectedCell.category)}
-            integrationData={
-              selectedCell.category === 'actions' ? undefined : integrationData
-            }
-            setSelectedObjectPropertyFunction={(object, property) => ({
-              ...property,
-              sourceName: object.name,
-              sourceType: object.sourceType
-            })}
-            mode="withoutModal"
-            handleSelectVariable={handleSelectVariable}
-            activeVar={activeVar}
-            activeProperty={activeProperty}
-          />
-        )}
+      </Box>
+    </DataDictionaryDialog>
+  ) : (
+    <Dialog
+      title={isCondition ? 'Enter condition' : 'Enter output'}
+      open={modalOpen}
+      displayConfirmBtn={false}
+      displayedCancelBtn={false}
+      fullWidth={true}
+      maxWidth="lg"
+    >
+      <form onSubmit={handleSubmit((data) => onSubmit(data))}>
+        <Content
+          control={control}
+          isOperatorDisabled={!isCondition}
+          isValueSelectMultiple={dataType.isWithEnum}
+          isValueSelectDisabled={watchOperator === OPERATORS.ANY}
+          isValueInputDisabled={
+            watchOperator === OPERATORS.ANY || isVariableType
+          }
+          hasBounds={watchOperator === OPERATORS.BETWEEN}
+          hasValueAsSelect={
+            (dataType.isWithEnum || dataType.isBoolean) && !isVariableType
+          }
+          operatorOptions={getOperatorOptions(dataType)}
+          valueOptions={getFormattedOptions(
+            dataType.isBoolean
+              ? BOOLEAN_OPTIONS
+              : selectedCell.allowedValues || []
+          )}
+          valueLabel={!isVariableType ? 'Value*' : 'Variable*'}
+        />
         <Stack pt={1} spacing={1} direction="row" justifyContent="flex-end">
           <LoadingButton
             loading={isSubmitting}
-            disabled={isSubmitting || (isVariableType && !selectedVariable)}
+            disabled={isSubmitting}
             variant="text"
             color="primary"
             type="submit"

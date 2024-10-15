@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, ReactNode } from 'react';
 import {
   Box,
   Dialog,
@@ -12,8 +12,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
-
-import { getVariableSource } from '../utils';
 
 import { StyledListItemButton } from './styled';
 import List from './List';
@@ -49,21 +47,23 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   onClose,
   onConfirm,
   setSelectedObjectPropertyFunction,
-  handleSelectVariable,
-  mode = 'withModal',
-  activeVar,
-  activeProperty
+  onSelect,
+  activeVariable,
+  activeProperty,
+  children
 }) => {
   const [querySource, setQuerySource] = useState('');
   const [queryVariable, setQueryVariable] = useState('');
   const [queryAttribute, setQueryAttribute] = useState('');
   const [selectedDict, setSelectedDict] = useState<null | string>(null);
-  const [selectedVar, setSelectedVar] = useState<null | Variable>(null);
+  const [selectedVariable, setSelectedVariable] = useState<null | Variable>(
+    null
+  );
   const [selectedObjectProperty, setSelectedObjectProperty] =
     useState<null | Variable>(null);
 
   useEffect(() => {
-    setSelectedVar(null);
+    setSelectedVariable(null);
     setSelectedObjectProperty(null);
   }, [querySource]);
 
@@ -73,20 +73,26 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
       setQueryVariable('');
       setQueryAttribute('');
       setSelectedDict(null);
-      setSelectedVar(null);
+      setSelectedVariable(null);
       setSelectedObjectProperty(null);
     }
   }, [isOpen]);
 
   useEffect(() => {
-    if (activeVar) {
-      setSelectedDict(getVariableSource(activeVar.sourceType));
-      setSelectedVar(activeVar);
+    if (data) {
+      const activeDict =
+        Object.keys(data).find((key) =>
+          data[key].find((i) => i.sourceType === activeVariable?.sourceType)
+        ) || null;
+      setSelectedDict(activeDict);
     }
-    if (activeProperty) {
-      setSelectedObjectProperty(activeProperty);
-    }
+    setSelectedVariable(activeVariable || null);
+    setSelectedObjectProperty(activeProperty || null);
   }, []);
+
+  useEffect(() => {
+    if (onSelect) onSelect(getVariable() as Variable);
+  }, [selectedVariable, selectedObjectProperty]);
 
   const filteredSource = useMemo(() => {
     if (!data) {
@@ -129,7 +135,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
     const integrationDataList =
       integrationData?.[
         objectVariablesDataSourceMap[
-          selectedVar?.dataType as VARIABLE_DATA_TYPE
+          selectedVariable?.dataType as VARIABLE_DATA_TYPE
         ]
       ];
 
@@ -144,7 +150,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
     return integrationDataList.filter((property) =>
       property.name.toLowerCase().includes(queryAttribute.toLowerCase())
     );
-  }, [integrationData, selectedVar, queryAttribute]);
+  }, [integrationData, selectedVariable, queryAttribute]);
 
   const dictsEmptyState = filteredSource.length === 0;
   const variablesEmptyState = !selectedDict || !filteredData[selectedDict];
@@ -152,54 +158,46 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   // Need to set user-defined variables with data types Object:CraClarity and Object:CraFactorTrust without attributes for saving the result of the GET REPORT function
   const selectVarIsObjectType =
     showAttributes &&
-    objectVariableTypes.includes(selectedVar?.dataType as VARIABLE_DATA_TYPE);
+    objectVariableTypes.includes(
+      selectedVariable?.dataType as VARIABLE_DATA_TYPE
+    );
 
-  const handleConfirmClick = () => {
-    const value = selectVarIsObjectType
+  const getVariable = () =>
+    selectVarIsObjectType
       ? {
           ...selectedObjectProperty,
-          name: [selectedVar?.name, selectedObjectProperty?.name].join('.')
+          name: [selectedVariable?.name, selectedObjectProperty?.name].join('.')
         }
-      : selectedVar;
-    onConfirm && onConfirm(value! as Variable);
-    onClose && onClose();
+      : selectedVariable;
+
+  const handleConfirmClick = () => {
+    onConfirm(getVariable() as Variable);
+    onClose();
   };
 
   const handleSourceChange = (key: string) => {
     setSelectedDict(key);
     setQueryVariable('');
-    setSelectedVar(null);
-    if (handleSelectVariable) {
-      handleSelectVariable(null);
-    }
+    setSelectedVariable(null);
   };
 
   const handleVariableChange = (variable: Variable) => {
-    const objType = objectVariableTypes.includes(variable.dataType);
-    setSelectedVar(variable);
-    if (handleSelectVariable) {
-      handleSelectVariable(objType ? null : variable);
-    }
+    setSelectedVariable(variable);
   };
 
   const handleAttributeChange = (property: Variable) => {
-    if (setSelectedObjectPropertyFunction && selectedVar) {
+    if (setSelectedObjectPropertyFunction && selectedVariable) {
       setSelectedObjectProperty(
-        setSelectedObjectPropertyFunction(selectedVar, property)
+        setSelectedObjectPropertyFunction(selectedVariable, property)
       );
     } else {
       setSelectedObjectProperty(property);
     }
-    if (handleSelectVariable) {
-      handleSelectVariable({
-        ...property,
-        name: [selectedVar?.name, property.name].join('.')
-      });
-    }
   };
 
-  const content = (
-    <Box m={mode === 'withModal' ? 0 : '0 -24px'}>
+  return (
+    <Dialog fullWidth maxWidth="md" open={isOpen} onClose={onClose}>
+      {children}
       <DialogTitle>{title}</DialogTitle>
       <Typography
         variant="body1"
@@ -265,7 +263,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                     <StyledListItemButton
                       key={variable.name}
                       dense
-                      selected={selectedVar?.name === variable.name}
+                      selected={selectedVariable?.name === variable.name}
                       onClick={() => handleVariableChange(variable)}
                     >
                       <ListItemText
@@ -337,16 +335,11 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
       <Box>
         <Divider />
       </Box>
-    </Box>
-  );
-
-  return mode === 'withModal' ? (
-    <Dialog fullWidth maxWidth="md" open={Boolean(isOpen)} onClose={onClose}>
-      {content}
       <DialogActions sx={{ padding: '8px 16px' }}>
         <LoadingButton
           disabled={
-            !selectedVar || (selectVarIsObjectType && !selectedObjectProperty)
+            !selectedVariable ||
+            (selectVarIsObjectType && !selectedObjectProperty)
           }
           loading={false}
           variant="text"
@@ -360,27 +353,25 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
         </Button>
       </DialogActions>
     </Dialog>
-  ) : (
-    content
   );
 };
 
 interface DataDictionaryDialogProps {
   title?: string;
-  isOpen?: boolean;
+  isOpen: boolean;
   showAttributes?: boolean;
-  onClose?: () => void;
-  onConfirm?: (variable: Variable) => void;
+  onClose: () => void;
+  onConfirm: (variable: Variable) => void;
   data?: DataDictionaryVariables;
   integrationData?: DataDictionaryVariables;
   setSelectedObjectPropertyFunction?: (
     object: Variable,
     property: Variable
   ) => Variable;
-  handleSelectVariable?: (variable: Variable | null) => void;
-  mode?: 'withModal' | 'withoutModal';
-  activeVar?: Variable;
+  onSelect?: (variable: Variable | null) => void;
+  activeVariable?: Variable;
   activeProperty?: Variable;
+  children?: ReactNode;
 }
 
 export default DataDictionaryDialog;
