@@ -43,9 +43,8 @@ const NumberRangeInput = <
     name={name}
     render={({ field: { onChange, value } }) => (
       <StyledTextField
-        type="number"
         onKeyDown={(event) => {
-          if (event.key === KEY_CODES.Minus) {
+          if (event.key === KEY_CODES.Minus || event.key === KEY_CODES.Comma) {
             event.preventDefault();
           }
         }}
@@ -56,7 +55,7 @@ const NumberRangeInput = <
           step: 1
         }}
         onChange={(event) => {
-          let inputValue: string | number = event.target.value;
+          let inputValue = event.target.value;
           const [integerPart, decimalPart] = inputValue.split('.');
 
           if (decimalPart && decimalPart.length > 2) {
