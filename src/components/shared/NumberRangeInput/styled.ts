@@ -3,6 +3,7 @@ import { InputAdornment, TextField } from '@mui/material';
 
 export const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-root': {
+    width: '126px',
     borderRadius: '6px',
     padding: '0'
   },

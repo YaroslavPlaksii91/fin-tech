@@ -39,7 +39,8 @@ export const KEY_CODES = {
   Escape: 'Escape',
   Minus: '-',
   Backspace: 'Backspace',
-  Delete: 'Delete'
+  Delete: 'Delete',
+  Comma: ','
 };
 
 export const RULES_LIMIT = 10;
