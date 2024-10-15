@@ -38,8 +38,8 @@ export type FormFieldsProps = {
   name: string;
   operator: Operator;
   value?: string | string[];
-  lowerBound?: string | null;
-  upperBound?: string | null;
+  lowerBound?: string;
+  upperBound?: string;
   dataType?: string;
   type: ValueType;
 };

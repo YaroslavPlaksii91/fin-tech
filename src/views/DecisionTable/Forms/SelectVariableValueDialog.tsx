@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Button, Stack, InputAdornment, Typography } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -17,11 +17,10 @@ import {
 } from '../utils';
 
 import validationSchema from './validationSchema';
+import Content from './Content';
 
 import Dialog from '@components/shared/Modals/Dialog';
 import LoadingButton from '@components/shared/LoadingButton';
-import InputText from '@components/shared/Forms/InputText';
-import Select from '@components/shared/Forms/Select';
 import { BOOLEAN_OPTIONS } from '@constants/common';
 import { flowService } from '@services/flow-service';
 import { parseExpressionError } from '@utils/helpers';
@@ -73,7 +72,7 @@ const SelectVariableValueDialog = ({
     setValue,
     clearErrors,
     setError
-  } = useForm({
+  } = useForm<FormFieldsProps>({
     resolver: yupResolver(validationSchema(dataType, selectedVariable)),
     defaultValues: {
       name: selectedCell.name,
@@ -231,87 +230,26 @@ const SelectVariableValueDialog = ({
       maxWidth="lg"
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          spacing={{ xs: 1, sm: 2, md: 2 }}
-          sx={{ mb: '20px' }}
-        >
-          <InputText
-            fullWidth
-            disabled
-            label="Variable*"
-            name="name"
-            control={control}
-            InputProps={{
-              startAdornment: isCondition && (
-                <InputAdornment position="start">
-                  <Typography variant="body1" sx={{ padding: '0 8x 0 0' }}>
-                    IF
-                  </Typography>
-                </InputAdornment>
-              )
-            }}
-          />
-          <Select
-            name="operator"
-            control={control}
-            disabled={!isCondition}
-            sx={{
-              width: '280px',
-              minWidth: '140px'
-            }}
-            label="Operator*"
-            options={getOperatorOptions(dataType)}
-          />
-          <Select
-            name="type"
-            control={control}
-            sx={{
-              width: '280px',
-              minWidth: '158px'
-            }}
-            label="Type*"
-            options={getFormattedOptions(Object.values(VALUE_TYPES))}
-          />
-          {(dataType.isWithEnum || dataType.isBoolean) && !isVariableType ? (
-            <Select
-              name="value"
-              multiple={dataType.isWithEnum}
-              control={control}
-              fullWidth
-              label="Value*"
-              disabled={watchOperator === OPERATORS.ANY}
-              options={getFormattedOptions(
-                dataType.isBoolean
-                  ? BOOLEAN_OPTIONS
-                  : selectedCell.allowedValues || []
-              )}
-            />
-          ) : watchOperator === OPERATORS.BETWEEN ? (
-            <>
-              <InputText
-                fullWidth
-                name="lowerBound"
-                control={control}
-                label="Lowest Value*"
-              />
-              <InputText
-                fullWidth
-                name="upperBound"
-                control={control}
-                label="Highest Value*"
-              />
-            </>
-          ) : (
-            <InputText
-              fullWidth
-              name="value"
-              control={control}
-              label={!isVariableType ? 'Value*' : 'Variable*'}
-              disabled={watchOperator === OPERATORS.ANY || isVariableType}
-            />
+        <Content
+          control={control}
+          isOperatorDisabled={!isCondition}
+          isValueSelectMultiple={dataType.isWithEnum}
+          isValueSelectDisabled={watchOperator === OPERATORS.ANY}
+          isValueInputDisabled={
+            watchOperator === OPERATORS.ANY || isVariableType
+          }
+          hasBounds={watchOperator === OPERATORS.BETWEEN}
+          hasValueAsSelect={
+            (dataType.isWithEnum || dataType.isBoolean) && !isVariableType
+          }
+          operatorOptions={getOperatorOptions(dataType)}
+          valueOptions={getFormattedOptions(
+            dataType.isBoolean
+              ? BOOLEAN_OPTIONS
+              : selectedCell.allowedValues || []
           )}
-        </Stack>
+          valueLabel={!isVariableType ? 'Value*' : 'Variable*'}
+        />
         {isVariableType && (
           <DataDictionaryDialog
             title="Select Variable"

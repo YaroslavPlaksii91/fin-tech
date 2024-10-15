@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Dialog,
@@ -54,13 +54,13 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   activeVar,
   activeProperty
 }) => {
-  const [querySource, setQuerySource] = React.useState<string>('');
-  const [queryVariable, setQueryVariable] = React.useState<string>('');
-  const [queryAttribute, setQueryAttribute] = React.useState<string>('');
-  const [selectedDict, setSelectedDict] = React.useState<null | string>(null);
-  const [selectedVar, setSelectedVar] = React.useState<null | Variable>(null);
+  const [querySource, setQuerySource] = useState('');
+  const [queryVariable, setQueryVariable] = useState('');
+  const [queryAttribute, setQueryAttribute] = useState('');
+  const [selectedDict, setSelectedDict] = useState<null | string>(null);
+  const [selectedVar, setSelectedVar] = useState<null | Variable>(null);
   const [selectedObjectProperty, setSelectedObjectProperty] =
-    React.useState<null | Variable>(null);
+    useState<null | Variable>(null);
 
   useEffect(() => {
     setSelectedVar(null);
