@@ -66,8 +66,9 @@ export const buildDynamicLINQFilterQuery = <
     if (isMultiSelection)
       query = `${String(currentKey)} in (${value.map((el) => `"${el}"`).join(', ')})`;
 
+    // Search is case insensitive because we call ToLower() function here
     if (isSearch)
-      query = `${String(currentKey)}.ToString().Contains("${value}")`;
+      query = `${String(currentKey)}.ToString().ToLower().Contains("${value}".ToLower())`;
 
     if (!acc.length) return query || acc;
 
