@@ -12,7 +12,7 @@ export type Entry = {
   dataType?: VARIABLE_DATA_TYPE;
   sourceType?: VARIABLE_SOURCE_TYPE | CONTROL_FILES;
   sourceName?: string;
-  type?: ValueType;
+  isDataDictionaryExpression?: boolean;
 };
 
 export type CaseEntry = {

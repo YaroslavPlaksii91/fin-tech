@@ -74,7 +74,9 @@ const SelectVariableValueDialog = ({
     defaultValues: {
       name: selectedCell.name,
       operator: selectedCell.operator || defaultOperator,
-      type: selectedCell.type || VALUE_TYPES.Value,
+      type: selectedCell.isDataDictionaryExpression
+        ? VALUE_TYPES.Variable
+        : VALUE_TYPES.Value,
       value: dataType.isWithEnum
         ? selectedCell.expression
           ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
