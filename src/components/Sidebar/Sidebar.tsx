@@ -36,7 +36,8 @@ import {
   MIN_SIDEBAR_WIDTH,
   animationStyles,
   pages,
-  reportPages
+  reportPages,
+  applicationsPage
 } from './config';
 
 import AngleLeftSquareIcon from '@icons/angleLeftSquare.svg';
@@ -269,6 +270,21 @@ const Sidebar = () => {
       />
       <StyledWrapper ref={scrollableRef} component="nav">
         <StyledList>
+          {hasPermission(user?.policies, applicationsPage) ? (
+            <StyledListItemButton
+              component={NavLink}
+              to={applicationsPage.to}
+              expanded={expanded ? 1 : 0}
+            >
+              <ListItemIcon>{applicationsPage.icon}</ListItemIcon>
+              {expanded && (
+                <ListItemText
+                  primary={applicationsPage.text}
+                  sx={animationStyles(expanded)}
+                />
+              )}
+            </StyledListItemButton>
+          ) : null}
           {expanded ? (
             <StyledAccordion
               expanded={expandedFlowList}
