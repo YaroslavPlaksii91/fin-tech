@@ -64,12 +64,12 @@ type Step = {
 type LeadResponse = {
   id: null | string;
   result: string;
-  redirectUrl: null | string;
+  redirect_url: null | string;
   loanId: null | number;
   customerId: null | number;
-  leadPrice: null | number;
-  rejectionReason: null | string;
-  deniedBy: null | string;
+  lead_price: null | number;
+  rejection_reason: null | string;
+  denied_by: null | string;
 };
 
 type LeadRequest = {
