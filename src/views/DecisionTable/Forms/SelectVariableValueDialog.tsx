@@ -172,6 +172,25 @@ const SelectVariableValueDialog = ({
     clearErrors();
   };
 
+  const DialogContent = () => (
+    <Content
+      control={control}
+      isOperatorDisabled={!isCondition}
+      isValueSelectMultiple={dataType.isWithEnum}
+      isValueSelectDisabled={watchOperator === OPERATORS.ANY}
+      isValueInputDisabled={watchOperator === OPERATORS.ANY || isVariableType}
+      hasBounds={watchOperator === OPERATORS.BETWEEN}
+      hasValueAsSelect={
+        (dataType.isWithEnum || dataType.isBoolean) && !isVariableType
+      }
+      operatorOptions={getOperatorOptions(dataType)}
+      valueOptions={getFormattedOptions(
+        dataType.isBoolean ? BOOLEAN_OPTIONS : selectedCell.allowedValues || []
+      )}
+      valueLabel={!isVariableType ? 'Value*' : 'Variable*'}
+    />
+  );
+
   useEffect(() => {
     if (watchOperator === OPERATORS.ANY)
       setValue('value', dataType.isWithEnum ? [] : '');
@@ -204,26 +223,7 @@ const SelectVariableValueDialog = ({
         <Typography variant="h6" color="text.primary" mb={2}>
           {isCondition ? 'Enter condition' : 'Enter output'}
         </Typography>
-        <Content
-          control={control}
-          isOperatorDisabled={!isCondition}
-          isValueSelectMultiple={dataType.isWithEnum}
-          isValueSelectDisabled={watchOperator === OPERATORS.ANY}
-          isValueInputDisabled={
-            watchOperator === OPERATORS.ANY || isVariableType
-          }
-          hasBounds={watchOperator === OPERATORS.BETWEEN}
-          hasValueAsSelect={
-            (dataType.isWithEnum || dataType.isBoolean) && !isVariableType
-          }
-          operatorOptions={getOperatorOptions(dataType)}
-          valueOptions={getFormattedOptions(
-            dataType.isBoolean
-              ? BOOLEAN_OPTIONS
-              : selectedCell.allowedValues || []
-          )}
-          valueLabel={!isVariableType ? 'Value*' : 'Variable*'}
-        />
+        <DialogContent />
       </Box>
     </DataDictionaryDialog>
   ) : (
@@ -236,26 +236,7 @@ const SelectVariableValueDialog = ({
       maxWidth="lg"
     >
       <form onSubmit={handleSubmit((data) => onSubmit(data))}>
-        <Content
-          control={control}
-          isOperatorDisabled={!isCondition}
-          isValueSelectMultiple={dataType.isWithEnum}
-          isValueSelectDisabled={watchOperator === OPERATORS.ANY}
-          isValueInputDisabled={
-            watchOperator === OPERATORS.ANY || isVariableType
-          }
-          hasBounds={watchOperator === OPERATORS.BETWEEN}
-          hasValueAsSelect={
-            (dataType.isWithEnum || dataType.isBoolean) && !isVariableType
-          }
-          operatorOptions={getOperatorOptions(dataType)}
-          valueOptions={getFormattedOptions(
-            dataType.isBoolean
-              ? BOOLEAN_OPTIONS
-              : selectedCell.allowedValues || []
-          )}
-          valueLabel={!isVariableType ? 'Value*' : 'Variable*'}
-        />
+        <DialogContent />
         <Stack pt={1} spacing={1} direction="row" justifyContent="flex-end">
           <LoadingButton
             loading={isSubmitting}

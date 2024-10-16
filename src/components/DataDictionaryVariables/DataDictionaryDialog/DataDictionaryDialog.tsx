@@ -62,38 +62,6 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   const [selectedObjectProperty, setSelectedObjectProperty] =
     useState<null | Variable>(null);
 
-  useEffect(() => {
-    setSelectedVariable(null);
-    setSelectedObjectProperty(null);
-  }, [querySource]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setQuerySource('');
-      setQueryVariable('');
-      setQueryAttribute('');
-      setSelectedDict(null);
-      setSelectedVariable(null);
-      setSelectedObjectProperty(null);
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (data) {
-      const activeDict =
-        Object.keys(data).find((key) =>
-          data[key].find((i) => i.sourceType === activeVariable?.sourceType)
-        ) || null;
-      setSelectedDict(activeDict);
-    }
-    setSelectedVariable(activeVariable || null);
-    setSelectedObjectProperty(activeProperty || null);
-  }, []);
-
-  useEffect(() => {
-    if (onSelect) onSelect(getVariable() as Variable);
-  }, [selectedVariable, selectedObjectProperty]);
-
   const filteredSource = useMemo(() => {
     if (!data) {
       return [];
@@ -194,6 +162,38 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
       setSelectedObjectProperty(property);
     }
   };
+
+  useEffect(() => {
+    setSelectedVariable(null);
+    setSelectedObjectProperty(null);
+  }, [querySource]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setQuerySource('');
+      setQueryVariable('');
+      setQueryAttribute('');
+      setSelectedDict(null);
+      setSelectedVariable(null);
+      setSelectedObjectProperty(null);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (data) {
+      const activeDict =
+        Object.keys(data).find((key) =>
+          data[key].find((i) => i.sourceType === activeVariable?.sourceType)
+        ) || null;
+      setSelectedDict(activeDict);
+    }
+    setSelectedVariable(activeVariable || null);
+    setSelectedObjectProperty(activeProperty || null);
+  }, []);
+
+  useEffect(() => {
+    if (onSelect) onSelect(getVariable() as Variable);
+  }, [selectedVariable, selectedObjectProperty]);
 
   return (
     <Dialog fullWidth maxWidth="md" open={isOpen} onClose={onClose}>
