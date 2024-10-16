@@ -153,6 +153,7 @@ type Output = {
   stack: string;
   store: string;
   decision: string;
+  deniedBy: string;
   denialReason: string;
 };
 

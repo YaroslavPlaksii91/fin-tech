@@ -13,6 +13,7 @@ export const INITIAL_FILTERS: IFilters = {
   affiliate: '',
   ssn: '',
   email: '',
+  deniedBy: '',
   denialReason: '',
   apiVersion: '',
   cachedConnector: '',

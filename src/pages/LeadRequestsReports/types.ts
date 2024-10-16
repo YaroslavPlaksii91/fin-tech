@@ -21,6 +21,7 @@ export enum COLUMN_IDS {
   ssn = 'leadRequest.ssn',
   email = 'leadRequest.email',
   decision = 'leadResponse.result',
+  deniedBy = 'leadResponse.deniedBy',
   denialReason = 'leadResponse.rejectionReason',
   state = 'leadRequest.state',
   apiVersion = 'processingMetadata.apiVersion',
@@ -63,6 +64,7 @@ export type IFilters = {
   ssn: string;
   email: string;
   decision: string[];
+  deniedBy: string;
   denialReason: string;
   state: string[];
   apiVersion: string;
