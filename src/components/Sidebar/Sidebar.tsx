@@ -83,7 +83,7 @@ const Sidebar = () => {
 
   const [expanded, setExpanded] = useState(true);
   const [expandedFlow, setExpandedFlow] = useState<string | false>(false);
-  const [expandedFlowList, setExpandedFlowList] = useState<boolean>(true);
+  const [expandedFlowList, setExpandedFlowList] = useState<boolean>(false);
   const [expandedReports, setExpandedReports] = useState(false);
 
   const [reportMenuAnchorEl, setReportMenuAnchorEl] =
