@@ -195,13 +195,6 @@ const Filters = ({
       />
       <InputText
         fullWidth
-        name="deniedBy"
-        label="Denied By"
-        placeholder="Denied By"
-        control={control}
-      />
-      <InputText
-        fullWidth
         name="denialReason"
         label="Denial Reason"
         placeholder="Denial Reason"

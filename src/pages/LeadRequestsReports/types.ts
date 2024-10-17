@@ -64,7 +64,6 @@ export type IFilters = {
   ssn: string;
   email: string;
   decision: string[];
-  deniedBy: string;
   denialReason: string;
   state: string[];
   apiVersion: string;
