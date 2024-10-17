@@ -44,8 +44,12 @@ const FlowSelect = () => {
           }
         }}
       >
-        <StyledListSubheader>Flow on Production</StyledListSubheader>
-        <MenuItem value={PRODUCTION_FLOW_ID}>{flowProduction?.name}</MenuItem>
+        <StyledListSubheader sx={{ pointerEvents: 'none' }}>
+          Flow on Production
+        </StyledListSubheader>
+        {flowProduction && (
+          <MenuItem value={PRODUCTION_FLOW_ID}>{flowProduction.name}</MenuItem>
+        )}
         <StyledListSubheader>Draft Flows</StyledListSubheader>
         {flowList.map((flow) => (
           <MenuItem key={flow.id} value={flow.id}>
