@@ -78,7 +78,7 @@ const getDataGridColumns = ({
       );
     }
   },
-  { field: COLUMN_IDS.deniedBy, headerName: 'Denied By', width: 144 },
+  { field: COLUMN_IDS.deniedBy, headerName: 'Denied By', width: 192 },
   { field: COLUMN_IDS.denialReason, headerName: 'Denial Reason', width: 440 },
   { field: COLUMN_IDS.state, headerName: 'State', width: 120 },
   { field: COLUMN_IDS.apiVersion, headerName: 'API Version', width: 120 },
