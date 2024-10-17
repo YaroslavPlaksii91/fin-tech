@@ -3,13 +3,12 @@ import { map } from 'lodash';
 import { TableHead, TableBody, Table } from '@mui/material';
 import dayjs from 'dayjs';
 
-import { TableHeader } from '../constants';
 import {
   getProductionUserDefinedUsage,
   getUserDefinedUsage,
   getUserDefinedUsageStepIds
 } from '../utils';
-import { TAB } from '../types';
+import { TAB, TableHeader } from '../types';
 
 import { TableRow } from './TableRow';
 

@@ -3,7 +3,7 @@ import {
   GRID_AGGREGATION_FUNCTIONS,
   GridSortModel
 } from '@mui/x-data-grid-premium';
-import { Box, Button, Paper, Stack, Typography } from '@mui/material';
+import { Box, Paper, Stack, Typography } from '@mui/material';
 
 import { COLUMN_IDS, FetchList, IFilters, RowData } from './types';
 import { buildParams, getFormattedRows } from './utils';
@@ -19,10 +19,10 @@ import { theme } from '@theme';
 import { reportingService } from '@services/reports';
 import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
-import TuneIcon from '@icons/tune.svg';
-import ExportCSVButton from '@components/shared/ExportCSVButton';
+import ExportCSVButton from '@components/shared/Buttons/ExportCSV';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 import Filters from '@components/DenialReasons/Filters';
+import FiltersButton from '@components/shared/Buttons/Filters';
 
 const DenialReasons = () => {
   const [loading, setLoading] = useState(false);
@@ -99,16 +99,7 @@ const DenialReasons = () => {
             defaultFileName={DEFAULT_EXPORT_FILE_NAME}
             exportFile={handleExportDenialReasonReports}
           />
-          <Button
-            size="small"
-            color="inherit"
-            variant="outlined"
-            sx={{ minWidth: '80px', borderRadius: '6px' }}
-            startIcon={<TuneIcon />}
-            onClick={handleFiltersOpen}
-          >
-            Filters
-          </Button>
+          <FiltersButton onClick={handleFiltersOpen} />
         </Stack>
       </Stack>
       <Paper

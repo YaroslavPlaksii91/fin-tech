@@ -18,7 +18,7 @@ import List from './List';
 
 import { palette } from '@theme';
 import { highlightText } from '@utils/text';
-import LoadingButton from '@components/shared/LoadingButton';
+import LoadingButton from '@components/shared/Buttons/Loading';
 import {
   CRA_REPORT_VARIABLES,
   VARIABLE_DATA_TYPE,

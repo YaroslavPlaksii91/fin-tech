@@ -13,7 +13,7 @@ import {
 import validationSchema from './validationSchema';
 
 import Dialog from '@components/shared/Modals/Dialog';
-import LoadingButton from '@components/shared/LoadingButton';
+import LoadingButton from '@components/shared/Buttons/Loading';
 import InputText from '@components/shared/Forms/InputText';
 import Select from '@components/shared/Forms/Select';
 import { BOOLEAN_OPTIONS } from '@constants/common';

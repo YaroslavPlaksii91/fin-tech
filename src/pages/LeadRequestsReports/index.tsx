@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
-import { Box, Button, Paper, Stack, Typography } from '@mui/material';
+import { Box, Paper, Stack, Typography } from '@mui/material';
 
 import { COLUMN_IDS, FetchList, RowData, IFilters } from './types';
 import { buildParams, getFormattedRows } from './utils';
@@ -19,11 +19,11 @@ import Details from '@components/LeadRequestsReports/Details';
 import useTablePagination from '@hooks/useTablePagination';
 import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
-import TuneIcon from '@icons/tune.svg';
-import ExportCSVButton from '@components/shared/ExportCSVButton';
+import ExportCSVButton from '@components/shared/Buttons/ExportCSV';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 import Filters from '@components/LeadRequestsReports/Filters';
 import { Drawer } from '@components/shared/Drawer';
+import FiltersButton from '@components/shared/Buttons/Filters';
 
 const LeadRequestsReports = () => {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -128,16 +128,7 @@ const LeadRequestsReports = () => {
             defaultFileName={DEFAULT_EXPORT_FILE_NAME}
             exportFile={handleExport}
           />
-          <Button
-            size="small"
-            color="inherit"
-            variant="outlined"
-            sx={{ minWidth: '80px', borderRadius: '6px' }}
-            startIcon={<TuneIcon />}
-            onClick={handleFiltersOpen}
-          >
-            Filters
-          </Button>
+          <FiltersButton onClick={handleFiltersOpen} />
         </Stack>
       </Stack>
       <Paper

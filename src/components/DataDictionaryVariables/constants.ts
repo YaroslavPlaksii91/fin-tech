@@ -1,6 +1,6 @@
-import { FILTER_BY } from './types';
+import { FILTER_BY, TAB, TableHeader } from './types';
 
-import { Variable, DATA_DICTIONARY_GROUP } from '@domain/dataDictionary';
+import { DATA_DICTIONARY_GROUP } from '@domain/dataDictionary';
 
 export const SOURCES_DESCRIPTIONS: { [key: string]: string } = {
   laPMSVariables:
@@ -18,9 +18,9 @@ export const SOURCES_DESCRIPTIONS: { [key: string]: string } = {
 };
 
 export const TAB_ALL = 'all';
-export const TABS = {
+export const TABS_KEYS = {
   ...DATA_DICTIONARY_GROUP,
-  all: TAB_ALL
+  [TAB_ALL]: TAB_ALL
 };
 
 export const TABS_LABELS: { [key: string]: string } = {
@@ -33,18 +33,16 @@ export const TABS_LABELS: { [key: string]: string } = {
   all: 'All'
 };
 
+export const TABS = Object.values(TABS_KEYS).map((tab) => ({
+  value: tab as TAB,
+  label: TABS_LABELS[tab]
+}));
+
 export const INITIAL_FILTERS = {
   [FILTER_BY.dataType]: [],
   [FILTER_BY.sourceType]: [],
   [FILTER_BY.source]: []
 };
-
-export interface TableHeader {
-  key: keyof Variable;
-  label?: string;
-  maxWidth?: string;
-  render?: (row: Variable) => void;
-}
 
 export const DEFAULT_HEADERS: TableHeader[] = [
   { key: 'name', label: 'Variable Name' },

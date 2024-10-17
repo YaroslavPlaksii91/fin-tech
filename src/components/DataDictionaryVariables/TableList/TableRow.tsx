@@ -3,8 +3,7 @@ import { IconButton, Stack, Button, Collapse, Typography } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
-import { TableHeader } from '../constants';
-import { TAB } from '../types';
+import { TAB, TableHeader } from '../types';
 
 import StepBreadcrumbs from './StepBreadcrumbs';
 

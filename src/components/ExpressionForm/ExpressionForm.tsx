@@ -30,7 +30,7 @@ import validationSchema from './validationSchema';
 import { FieldValues } from './types';
 import { mapVariablesToParamsAndSources } from './utils';
 
-import LoadingButton from '@components/shared/LoadingButton';
+import LoadingButton from '@components/shared/Buttons/Loading';
 import { Expression } from '@views/Calculation/types';
 import ExpressionOperatorsList from '@components/ExpressionForm/ExpressionOperatorsList/ExpressionOperatorsList';
 import {
