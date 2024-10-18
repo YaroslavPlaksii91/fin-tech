@@ -114,7 +114,10 @@ const Sidebar = () => {
     setReportMenuAnchorEl(null);
   };
 
-  const handleReportsToggle = () => setExpandedReports((prev) => !prev);
+  const handleReportsToggle = () => {
+    setExpandedReports((prev) => !prev);
+    setStoredState(EXPANDED_REPORTS_KEY, !expandedReports);
+  };
 
   const handleExpandIconClick = (
     e: React.MouseEvent<SVGSVGElement>,
@@ -231,14 +234,6 @@ const Sidebar = () => {
     }
   }, [id]);
 
-  useEffect(() => {
-    setStoredState(EXPANDED_FLOW_LIST_KEY, expandedFlowList);
-  }, [expandedFlowList]);
-
-  useEffect(() => {
-    setStoredState(EXPANDED_REPORTS_KEY, expandedReports);
-  }, [expandedReports]);
-
   return (
     <StyledPaper
       elevation={0}
@@ -288,7 +283,10 @@ const Sidebar = () => {
           {expanded ? (
             <StyledAccordion
               expanded={expandedFlowList}
-              onChange={() => setExpandedFlowList(!expandedFlowList)}
+              onChange={() => {
+                setExpandedFlowList(!expandedFlowList);
+                setStoredState(EXPANDED_FLOW_LIST_KEY, !expandedFlowList);
+              }}
               slotProps={{ transition: { unmountOnExit: true } }}
             >
               <StyledMainAccordionSummary
