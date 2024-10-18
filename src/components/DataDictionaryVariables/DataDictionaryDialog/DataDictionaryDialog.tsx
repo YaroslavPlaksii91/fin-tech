@@ -178,7 +178,12 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                     dense
                     onClick={() => setSelectedDict(key)}
                   >
-                    <ListItemText sx={{ margin: 0 }} primary={startCase(key)} />
+                    <ListItemText
+                      sx={{ margin: 0 }}
+                      primary={startCase(
+                        key === 'laPMSVariables' ? 'applicationVariables' : key
+                      )}
+                    />
                   </StyledListItemButton>
                 ))}
               </List>

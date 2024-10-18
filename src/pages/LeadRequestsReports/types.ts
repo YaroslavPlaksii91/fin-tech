@@ -21,6 +21,7 @@ export enum COLUMN_IDS {
   ssn = 'leadRequest.ssn',
   email = 'leadRequest.email',
   decision = 'leadResponse.result',
+  deniedBy = 'leadResponse.deniedBy',
   denialReason = 'leadResponse.rejectionReason',
   state = 'leadRequest.state',
   apiVersion = 'processingMetadata.apiVersion',
