@@ -115,8 +115,10 @@ const Sidebar = () => {
   };
 
   const handleReportsToggle = () => {
-    setExpandedReports((prev) => !prev);
-    setStoredState(EXPANDED_REPORTS_KEY, !expandedReports);
+    setExpandedReports((prev) => {
+      setStoredState(EXPANDED_REPORTS_KEY, !prev);
+      return !prev;
+    });
   };
 
   const handleExpandIconClick = (
@@ -284,8 +286,10 @@ const Sidebar = () => {
             <StyledAccordion
               expanded={expandedFlowList}
               onChange={() => {
-                setExpandedFlowList(!expandedFlowList);
-                setStoredState(EXPANDED_FLOW_LIST_KEY, !expandedFlowList);
+                setExpandedFlowList((prev) => {
+                  setStoredState(EXPANDED_FLOW_LIST_KEY, !prev);
+                  return !prev;
+                });
               }}
               slotProps={{ transition: { unmountOnExit: true } }}
             >
