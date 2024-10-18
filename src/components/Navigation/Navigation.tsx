@@ -19,6 +19,11 @@ import Dialog from '@components/shared/Modals/Dialog';
 import { selectUserInfo } from '@store/auth';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchUserInfo } from '@store/auth/asyncThunk';
+import { clearStoredState } from '@utils/localeStorage';
+import {
+  EXPANDED_FLOW_LIST_KEY,
+  EXPANDED_REPORTS_KEY
+} from '@components/Sidebar/config';
 
 function Navigation() {
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -65,7 +70,10 @@ function Navigation() {
         <Dialog
           open={openModal}
           onClose={() => setOpenModal(false)}
-          onConfirm={() => void authService.logout()}
+          onConfirm={() => {
+            clearStoredState([EXPANDED_FLOW_LIST_KEY, EXPANDED_REPORTS_KEY]);
+            void authService.logout();
+          }}
           title="Sign out"
           maxWidth="xs"
         >
