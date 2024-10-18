@@ -34,6 +34,8 @@ import {
 import {
   DEFAULT_SIDEBAR_WIDTH,
   MIN_SIDEBAR_WIDTH,
+  EXPANDED_FLOW_LIST_KEY,
+  EXPANDED_REPORTS_KEY,
   animationStyles,
   pages,
   reportPages
@@ -66,6 +68,7 @@ import { CROSS_PLATFORM_DRAWER_WIDTH } from '@constants/themeConstants';
 import FlowListIcon from '@icons/flow-list.svg';
 import FlowIcon from '@icons/flow.svg';
 import ReportsIcon from '@icons/reports.svg';
+import { getStoredState, setStoredState } from '@utils/localeStorage';
 
 const Sidebar = () => {
   const { id } = useParams();
@@ -83,8 +86,13 @@ const Sidebar = () => {
 
   const [expanded, setExpanded] = useState(true);
   const [expandedFlow, setExpandedFlow] = useState<string | false>(false);
-  const [expandedFlowList, setExpandedFlowList] = useState<boolean>(false);
-  const [expandedReports, setExpandedReports] = useState(false);
+  const [expandedFlowList, setExpandedFlowList] = useState(() =>
+    getStoredState(EXPANDED_FLOW_LIST_KEY, false)
+  );
+
+  const [expandedReports, setExpandedReports] = useState(() =>
+    getStoredState(EXPANDED_REPORTS_KEY, false)
+  );
 
   const [reportMenuAnchorEl, setReportMenuAnchorEl] =
     useState<null | HTMLElement>(null);
@@ -222,6 +230,14 @@ const Sidebar = () => {
       dispatch(setInitialFlow());
     }
   }, [id]);
+
+  useEffect(() => {
+    setStoredState(EXPANDED_FLOW_LIST_KEY, expandedFlowList);
+  }, [expandedFlowList]);
+
+  useEffect(() => {
+    setStoredState(EXPANDED_REPORTS_KEY, expandedReports);
+  }, [expandedReports]);
 
   return (
     <StyledPaper

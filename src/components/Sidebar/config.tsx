@@ -30,6 +30,8 @@ export const animationStyles = (expanded: boolean) => ({
 
 export const DEFAULT_SIDEBAR_WIDTH = 256;
 export const MIN_SIDEBAR_WIDTH = 48;
+export const EXPANDED_FLOW_LIST_KEY = 'expandedFlowList';
+export const EXPANDED_REPORTS_KEY = 'expandedReports';
 
 export interface MenuItem {
   icon: React.ReactElement;
