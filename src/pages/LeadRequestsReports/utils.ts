@@ -16,6 +16,10 @@ export const getFormattedRows = (data: LeadRequestReport[]) => {
     return {
       id,
       data: row,
+      [COLUMN_IDS.fullName]:
+        leadRequest.firstName || leadRequest.lastName
+          ? `${leadRequest.firstName ?? ''} ${leadRequest.lastName ?? ''}`.trim()
+          : '-',
       [COLUMN_IDS.origin]: leadRequest.origin ?? '-',
       [COLUMN_IDS.craScore]: processingMetadata?.craScore ?? '-',
       [COLUMN_IDS.requestId]: leadRequest.requestId ?? '-',

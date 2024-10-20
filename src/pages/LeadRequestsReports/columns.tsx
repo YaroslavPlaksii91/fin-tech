@@ -12,6 +12,9 @@ interface GetDataGridColumnsProps {
 const getDataGridColumns = ({
   handleDetails
 }: GetDataGridColumnsProps): GridColDef[] => [
+  { field: COLUMN_IDS.fullName, headerName: 'Name', width: 144 },
+  { field: COLUMN_IDS.ssn, headerName: 'SSN', width: 120 },
+  { field: COLUMN_IDS.email, headerName: 'Email', width: 304 },
   {
     field: COLUMN_IDS.origin,
     headerName: 'Origin',
@@ -47,8 +50,6 @@ const getDataGridColumns = ({
   { field: COLUMN_IDS.loanType, headerName: 'Loan Type', width: 144 },
   { field: COLUMN_IDS.promoCode, headerName: 'Promo Code', width: 144 },
   { field: COLUMN_IDS.store, headerName: 'Store', width: 96 },
-  { field: COLUMN_IDS.ssn, headerName: 'SSN', width: 120 },
-  { field: COLUMN_IDS.email, headerName: 'Email', width: 304 },
   {
     field: COLUMN_IDS.decision,
     headerName: 'Decision',
