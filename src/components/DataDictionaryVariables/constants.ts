@@ -24,7 +24,7 @@ export const TABS_KEYS = {
 };
 
 export const TABS_LABELS: { [key: string]: string } = {
-  laPMSVariables: 'LaPMS (Input)',
+  laPMSVariables: 'Application (Input)',
   lmsInputVariables: 'LMS',
   userDefined: 'User Defined',
   outputVariables: 'Output',

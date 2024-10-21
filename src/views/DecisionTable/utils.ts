@@ -103,7 +103,10 @@ export const getColumns = (
 
 export const getVariableSources = (entries: Entry[], variables: Variable[]) =>
   entries.reduce(
-    (acc, { name, sourceName, sourceType }) => {
+    (
+      acc,
+      { name, sourceName, sourceType, isDataDictionaryExpression, expression }
+    ) => {
       const isAdded = Boolean(
         acc.find(
           (variableSource) =>
@@ -116,13 +119,26 @@ export const getVariableSources = (entries: Entry[], variables: Variable[]) =>
 
       if (!name.length || isAdded || !variableSourceType) return acc;
 
-      return [
-        ...acc,
-        {
-          name: sourceName || name,
-          sourceType: sourceType || variableSourceType
+      acc.push({
+        name: sourceName || name,
+        sourceType: sourceType || variableSourceType
+      });
+
+      if (isDataDictionaryExpression) {
+        const variableName = expression.split(/\.(.+)/)[0];
+        const expressionSourceType = variables.find(
+          (variable) => variable.name === variableName
+        )?.sourceType;
+
+        if (expressionSourceType) {
+          acc.push({
+            name: variableName,
+            sourceType: expressionSourceType
+          });
         }
-      ];
+      }
+
+      return acc;
     },
     [] as {
       name: string;

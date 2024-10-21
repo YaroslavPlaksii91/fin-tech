@@ -18,7 +18,8 @@ import {
   CaseEntry,
   CATEGORIES,
   CATEGORY,
-  SelectedCell
+  SelectedCell,
+  VALUE_TYPES
 } from './types';
 import { getColumns, getVariableSources, updateCaseEntry } from './utils';
 import Table from './Table/Table';
@@ -58,7 +59,6 @@ import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import InputText from '@components/shared/Forms/InputText';
 import { selectDataDictionary } from '@store/dataDictionary/selectors';
 import { selectUserDefinedVariables } from '@store/flow/selectors';
-
 type DecisionTableStepProps = {
   flow: IFlow;
   mainFlow?: IFlow;
@@ -296,7 +296,8 @@ const DecisionTable = ({
               : {
                   ...column,
                   expression: data.value,
-                  operator: data.operator
+                  operator: data.operator,
+                  isDataDictionaryExpression: data.type === VALUE_TYPES.Variable
                 }
           )
         };
