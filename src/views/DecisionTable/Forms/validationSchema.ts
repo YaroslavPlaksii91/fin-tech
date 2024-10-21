@@ -1,10 +1,9 @@
 import * as yup from 'yup';
 
-import { Operator, OPERATORS } from '../types';
+import { Operator, OPERATORS, VALUE_TYPES, ValueType } from '../types';
 
 import { isDecimal, isInteger } from '@utils/validation';
 import { checkDataType } from '@components/DataDictionaryVariables/utils';
-
 export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
   yup.object().shape({
     name: yup.string().required(),
@@ -12,9 +11,13 @@ export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
       .mixed<Operator | ''>()
       .oneOf(Object.values(OPERATORS), 'Operator is required')
       .required(),
+    type: yup
+      .mixed<ValueType>()
+      .oneOf(Object.values(VALUE_TYPES), 'Type is required')
+      .required(),
     value: dataType.isWithEnum
-      ? yup.array().when(['operator'], ([operator], schema) => {
-          if (operator === OPERATORS.ANY)
+      ? yup.array().when(['operator'], ([operator, type], schema) => {
+          if (operator === OPERATORS.ANY || type === VALUE_TYPES.Variable)
             return schema.notRequired().nullable();
 
           return schema
@@ -35,8 +38,12 @@ export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
               (value) => value.length !== 0
             );
         })
-      : yup.string().when(['operator'], ([operator], schema) => {
-          if (operator === OPERATORS.ANY || operator === OPERATORS.BETWEEN)
+      : yup.string().when(['operator'], ([operator, type], schema) => {
+          if (
+            operator === OPERATORS.ANY ||
+            operator === OPERATORS.BETWEEN ||
+            type === VALUE_TYPES.Variable
+          )
             return schema.notRequired().nullable();
 
           return schema

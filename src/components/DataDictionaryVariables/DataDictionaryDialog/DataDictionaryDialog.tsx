@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState, ReactNode } from 'react';
 import {
   Box,
   Dialog,
   Divider,
   Grid,
   ListItemText,
-  TextField
+  Typography
 } from '@mui/material';
 import { startCase } from 'lodash';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -46,75 +46,65 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   isOpen,
   onClose,
   onConfirm,
-  setSelectedObjectPropertyFunction
+  setSelectedObjectPropertyFunction,
+  onSelect,
+  activeVariable,
+  activeProperty,
+  children,
+  maxWidth = 'md'
 }) => {
-  const [query, setQuery] = React.useState<string>('');
-  const [selectedDict, setSelectedDict] = React.useState<null | string>(null);
-  const [selectedVar, setSelectedVar] = React.useState<null | Variable>(null);
-  const [selectedObjectProperty, setSelectedObjectProperty] =
-    React.useState<null | Variable>(null);
-
-  useEffect(() => {
-    setSelectedVar(null);
-    setSelectedObjectProperty(null);
-  }, [query]);
-
-  useEffect(() => {
-    setSelectedObjectProperty(null);
-  }, [selectedDict, selectedVar]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setQuery('');
-      setSelectedDict(null);
-      setSelectedVar(null);
-      setSelectedObjectProperty(null);
-    }
-  }, [isOpen]);
-
-  const filteredData = useMemo(
-    () =>
-      data
-        ? Object.keys(data).reduce<DataDictionaryVariables>((acc, curr) => {
-            const filteredVariables = data[curr].filter((i) => {
-              const nameContainsQuery = i.name
-                .toLowerCase()
-                .includes(query.toLowerCase());
-
-              if (objectVariableTypes.includes(i.dataType)) {
-                const relatedIntegratedDataList =
-                  integrationData?.[objectVariablesDataSourceMap[i.dataType]] ||
-                  [];
-
-                return (
-                  nameContainsQuery ||
-                  relatedIntegratedDataList.some((property) =>
-                    property.name.toLowerCase().includes(query.toLowerCase())
-                  )
-                );
-              }
-
-              return nameContainsQuery;
-            });
-
-            if (filteredVariables.length > 0) {
-              return {
-                ...acc,
-                [curr]: filteredVariables
-              };
-            }
-
-            return acc;
-          }, {})
-        : {},
-    [data, integrationData, query]
+  const [querySource, setQuerySource] = useState('');
+  const [queryVariable, setQueryVariable] = useState('');
+  const [queryAttribute, setQueryAttribute] = useState('');
+  const [selectedDict, setSelectedDict] = useState<null | string>(null);
+  const [selectedVariable, setSelectedVariable] = useState<null | Variable>(
+    null
   );
+  const [selectedObjectProperty, setSelectedObjectProperty] =
+    useState<null | Variable>(null);
+
+  const filteredSource = useMemo(() => {
+    if (!data) {
+      return [];
+    }
+    const filteredData = Object.keys(data).filter(
+      (key) =>
+        key.toLowerCase().includes(querySource.toLowerCase()) &&
+        data[key].length > 0
+    );
+    return filteredData;
+  }, [data, querySource]);
+
+  const filteredData = useMemo(() => {
+    if (!data) return {};
+    return Object.keys(data).reduce<DataDictionaryVariables>((acc, curr) => {
+      if (curr !== selectedDict) {
+        return { ...acc, [curr]: data[curr] };
+      }
+      const filteredVariables = data[curr].filter((i) => {
+        const nameContainsQuery = i.name
+          .toLowerCase()
+          .includes(queryVariable.toLowerCase());
+
+        return nameContainsQuery;
+      });
+
+      if (filteredVariables.length > 0) {
+        return {
+          ...acc,
+          [curr]: filteredVariables
+        };
+      }
+
+      return acc;
+    }, {});
+  }, [data, queryVariable]);
 
   const filteredIntegrationDataList = useMemo(() => {
     const integrationDataList =
       integrationData?.[
         objectVariablesDataSourceMap[
-          selectedVar?.dataType as VARIABLE_DATA_TYPE
+          selectedVariable?.dataType as VARIABLE_DATA_TYPE
         ]
       ];
 
@@ -122,47 +112,105 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
       return [];
     }
 
-    if (!query) {
+    if (!queryAttribute) {
       return integrationDataList;
     }
 
     return integrationDataList.filter((property) =>
-      property.name.toLowerCase().includes(query.toLowerCase())
+      property.name.toLowerCase().includes(queryAttribute.toLowerCase())
     );
-  }, [integrationData, selectedVar, query]);
+  }, [integrationData, selectedVariable, queryAttribute]);
 
-  const dictsEmptyState = Object.keys(filteredData).length === 0;
+  const dictsEmptyState = filteredSource.length === 0;
   const variablesEmptyState = !selectedDict || !filteredData[selectedDict];
 
   // Need to set user-defined variables with data types Object:CraClarity and Object:CraFactorTrust without attributes for saving the result of the GET REPORT function
   const selectVarIsObjectType =
     showAttributes &&
-    objectVariableTypes.includes(selectedVar?.dataType as VARIABLE_DATA_TYPE);
+    objectVariableTypes.includes(
+      selectedVariable?.dataType as VARIABLE_DATA_TYPE
+    );
 
-  const handleConfirmClick = () => {
-    const value = selectVarIsObjectType
+  const getVariable = () =>
+    selectVarIsObjectType
       ? {
           ...selectedObjectProperty,
-          name: [selectedVar?.name, selectedObjectProperty?.name].join('.')
+          name: [selectedVariable?.name, selectedObjectProperty?.name].join('.')
         }
-      : selectedVar;
-    onConfirm(value! as Variable);
+      : selectedVariable;
+
+  const handleConfirmClick = () => {
+    onConfirm(getVariable() as Variable);
     onClose();
   };
 
+  const handleSourceChange = (key: string) => {
+    setSelectedDict(key);
+    setQueryVariable('');
+    setSelectedVariable(null);
+  };
+
+  const handleVariableChange = (variable: Variable) => {
+    setSelectedVariable(variable);
+  };
+
+  const handleAttributeChange = (property: Variable) => {
+    if (setSelectedObjectPropertyFunction && selectedVariable) {
+      setSelectedObjectProperty(
+        setSelectedObjectPropertyFunction(selectedVariable, property)
+      );
+    } else {
+      setSelectedObjectProperty(property);
+    }
+  };
+
+  useEffect(() => {
+    setSelectedVariable(null);
+    setSelectedObjectProperty(null);
+  }, [querySource]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setQuerySource('');
+      setQueryVariable('');
+      setQueryAttribute('');
+      setSelectedDict(null);
+      setSelectedVariable(null);
+      setSelectedObjectProperty(null);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (data) {
+      const activeDict =
+        Object.keys(data).find((key) =>
+          data[key].find((i) => i.sourceType === activeVariable?.sourceType)
+        ) || null;
+      setSelectedDict(activeDict);
+    }
+    setSelectedVariable(activeVariable || null);
+    setSelectedObjectProperty(activeProperty || null);
+  }, []);
+
+  useEffect(() => {
+    if (onSelect) onSelect(getVariable() as Variable);
+  }, [selectedVariable, selectedObjectProperty]);
+
   return (
-    <Dialog fullWidth maxWidth="md" open={isOpen} onClose={onClose}>
+    <Dialog fullWidth maxWidth={maxWidth} open={isOpen} onClose={onClose}>
+      {children}
       <DialogTitle>{title}</DialogTitle>
+      <Typography
+        variant="body1"
+        color="text.secondary"
+        sx={{ mx: 3, mb: 1.5 }}
+      >
+        If you can&apos;t find a suitable variable for your needs, you can
+        create one in the Data Dictionary for this flow. Note that the created
+        variable for this flow will exist only for this flow. For other flows,
+        you will need to create this variable separately again.
+      </Typography>
       <DialogContent sx={{ paddingBottom: 0 }}>
-        <TextField
-          fullWidth
-          placeholder="Search by Keyword"
-          size="small"
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-          }}
-        />
         <Box mt={1} mx={-3}>
           <Grid container>
             <Grid item xs={selectVarIsObjectType ? 4 : 6}>
@@ -170,19 +218,33 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                 isEmpty={dictsEmptyState}
                 emptyStateText="The list is empty. Try to change search query"
                 title="Select Source"
+                subtitle="Choose a source of data you want to use in calculations."
+                searchQuery={querySource}
+                onSearch={setQuerySource}
               >
-                {Object.keys(filteredData).map((key) => (
+                {filteredSource.map((key) => (
                   <StyledListItemButton
                     selected={selectedDict === key}
                     key={key}
                     dense
-                    onClick={() => setSelectedDict(key)}
+                    onClick={() => handleSourceChange(key)}
                   >
                     <ListItemText
                       sx={{ margin: 0 }}
-                      primary={startCase(
-                        key === 'laPMSVariables' ? 'applicationVariables' : key
-                      )}
+                      primary={
+                        <span
+                          dangerouslySetInnerHTML={{
+                            __html: highlightText(
+                              [querySource],
+                              startCase(
+                                key === 'laPMSVariables'
+                                  ? 'applicationVariables'
+                                  : key
+                              )
+                            )
+                          }}
+                        />
+                      }
                     />
                   </StyledListItemButton>
                 ))}
@@ -200,23 +262,27 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                 isEmpty={variablesEmptyState}
                 emptyStateText="The list is empty. To fill it select item from the another list."
                 title="Available Variables"
+                subtitle="Choose a variable you want to use in calculations."
+                searchQuery={queryVariable}
+                onSearch={setQueryVariable}
               >
                 {(selectedDict ? filteredData[selectedDict] : [])?.map(
                   (variable) => (
                     <StyledListItemButton
                       key={variable.name}
                       dense
-                      selected={selectedVar?.name === variable.name}
-                      onClick={() => {
-                        setSelectedVar(variable);
-                      }}
+                      selected={selectedVariable?.name === variable.name}
+                      onClick={() => handleVariableChange(variable)}
                     >
                       <ListItemText
                         sx={{ margin: 0 }}
                         primary={
                           <span
                             dangerouslySetInnerHTML={{
-                              __html: highlightText([query], variable.name)
+                              __html: highlightText(
+                                [queryVariable],
+                                variable.name
+                              )
                             }}
                           />
                         }
@@ -237,8 +303,11 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
               >
                 <List
                   title="Available Attributes"
+                  subtitle="Choose an inner attribute or score you want to use in calculations."
                   emptyStateText="The list is empty. To fill it select item from the another list."
                   isEmpty={filteredIntegrationDataList.length === 0}
+                  searchQuery={queryAttribute}
+                  onSearch={setQueryAttribute}
                 >
                   {filteredIntegrationDataList.map((property) => {
                     const title = [property.source, property.name].join('.');
@@ -249,21 +318,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                         }
                         key={property.name}
                         dense
-                        onClick={() => {
-                          if (
-                            setSelectedObjectPropertyFunction &&
-                            selectedVar
-                          ) {
-                            setSelectedObjectProperty(
-                              setSelectedObjectPropertyFunction(
-                                selectedVar,
-                                property
-                              )
-                            );
-                          } else {
-                            setSelectedObjectProperty(property);
-                          }
-                        }}
+                        onClick={() => handleAttributeChange(property)}
                         title={title}
                       >
                         <ListItemText
@@ -271,7 +326,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                           primary={
                             <span
                               dangerouslySetInnerHTML={{
-                                __html: highlightText([query], title)
+                                __html: highlightText([queryAttribute], title)
                               }}
                             />
                           }
@@ -291,7 +346,8 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
       <DialogActions sx={{ padding: '8px 16px' }}>
         <LoadingButton
           disabled={
-            !selectedVar || (selectVarIsObjectType && !selectedObjectProperty)
+            !selectedVariable ||
+            (selectVarIsObjectType && !selectedObjectProperty)
           }
           loading={false}
           variant="text"
@@ -320,6 +376,11 @@ interface DataDictionaryDialogProps {
     object: Variable,
     property: Variable
   ) => Variable;
+  onSelect?: (variable: Variable | null) => void;
+  activeVariable?: Variable;
+  activeProperty?: Variable;
+  children?: ReactNode;
+  maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export default DataDictionaryDialog;

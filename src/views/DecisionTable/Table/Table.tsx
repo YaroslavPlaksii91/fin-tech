@@ -220,6 +220,8 @@ const Table = ({
           handleClose={() => setSelectedCell(null)}
           selectedCell={selectedCell}
           handleSubmitForm={handleSubmitSelectedCellData}
+          variables={variables}
+          integrationData={integrationData}
         />
       )}
     </>

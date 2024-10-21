@@ -12,6 +12,7 @@ export type Entry = {
   dataType?: VARIABLE_DATA_TYPE;
   sourceType?: VARIABLE_SOURCE_TYPE | CONTROL_FILES;
   sourceName?: string;
+  isDataDictionaryExpression?: boolean;
 };
 
 export type CaseEntry = {
@@ -38,9 +39,10 @@ export type FormFieldsProps = {
   name: string;
   operator: Operator;
   value?: string | string[];
-  lowerBound?: string | null;
-  upperBound?: string | null;
+  lowerBound?: string;
+  upperBound?: string;
   dataType?: string;
+  type: ValueType;
 };
 
 export enum OPERATORS {
@@ -64,5 +66,11 @@ export enum CATEGORIES {
   Actions = 'actions'
 }
 
+export enum VALUE_TYPES {
+  Value = 'Value',
+  Variable = 'Variable'
+}
+
 export type CATEGORY = `${CATEGORIES}`;
 export type Operator = `${OPERATORS}`;
+export type ValueType = `${VALUE_TYPES}`;

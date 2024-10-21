@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 
-import { formatFlowOnSave } from '../utils/flowUtils';
+import { formatFlowOnSave, isFlowChanged } from '../utils/flowUtils';
 import { ControlPanelProps } from '../types';
 
 import { StyledPanel } from './styled';
@@ -58,6 +58,14 @@ const ControlPanelSubFlow: React.FC<ControlPanelProps> = ({
     }
   }, [rfInstance, flow]);
 
+  const handleCancel = () => {
+    const isChanged = isFlowChanged({
+      flow,
+      rfInstance
+    });
+    setOpenDiscardModal(isChanged);
+  };
+
   return (
     <StyledPanel position="top-right">
       <Box>
@@ -66,11 +74,7 @@ const ControlPanelSubFlow: React.FC<ControlPanelProps> = ({
       </Box>
       {!isPreview && (
         <Stack spacing={1} direction="row" justifyContent="flex-end">
-          <Button
-            size="small"
-            variant="outlined"
-            onClick={() => setOpenDiscardModal(true)}
-          >
+          <Button size="small" variant="outlined" onClick={handleCancel}>
             Cancel
           </Button>
           <Button size="small" variant="contained" onClick={onSave}>
