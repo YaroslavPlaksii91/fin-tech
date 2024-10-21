@@ -5,6 +5,7 @@ import routes from '@constants/routes';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
 import ChangesHistoryIcon from '@icons/changes-history.svg';
 import DataDictionaryIcon from '@icons/data-dictionary.svg';
+import ApplicationsIcon from '@icons/applications.svg';
 
 const iconSize = 24;
 
@@ -41,7 +42,7 @@ export interface MenuItem {
 }
 
 export const applicationsPage = {
-  icon: <DataDictionaryIcon />,
+  icon: <ApplicationsIcon />,
   text: 'Applications',
   to: routes.underwriting.leadRequest,
   permission: permissionsMap.canViewLeadRequestReport
