@@ -58,6 +58,14 @@ const ControlPanelSubFlow: React.FC<ControlPanelProps> = ({
     }
   }, [rfInstance, flow]);
 
+  const handleCancel = () => {
+    const isChanged = isFlowChanged({
+      flow,
+      rfInstance
+    });
+    setOpenDiscardModal(isChanged);
+  };
+
   return (
     <StyledPanel position="top-right">
       <Box>
@@ -66,17 +74,7 @@ const ControlPanelSubFlow: React.FC<ControlPanelProps> = ({
       </Box>
       {!isPreview && (
         <Stack spacing={1} direction="row" justifyContent="flex-end">
-          <Button
-            size="small"
-            variant="outlined"
-            onClick={() => {
-              const isChanged = isFlowChanged({
-                flow,
-                rfInstance
-              });
-              setOpenDiscardModal(isChanged);
-            }}
-          >
+          <Button size="small" variant="outlined" onClick={handleCancel}>
             Cancel
           </Button>
           <Button size="small" variant="contained" onClick={onSave}>
