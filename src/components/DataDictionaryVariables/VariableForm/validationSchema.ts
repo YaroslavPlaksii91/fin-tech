@@ -69,6 +69,16 @@ export const validationSchema = yup.object().shape({
           }
         )
         .test(
+          'integer-length',
+          'Integer value cannot exceed 10 digits',
+          function (value) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            return this.parent.dataType === VARIABLE_DATA_TYPE.Integer
+              ? value.length <= 10
+              : true;
+          }
+        )
+        .test(
           'is-string-array',
           'Default value must be an empty array or an array of strings, each wrapped in double quotes',
           function (value) {
