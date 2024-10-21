@@ -12,7 +12,7 @@ interface GetDataGridColumnsProps {
 const getDataGridColumns = ({
   handleDetails
 }: GetDataGridColumnsProps): GridColDef[] => [
-  { field: COLUMN_IDS.fullName, headerName: 'Name', width: 144 },
+  { field: COLUMN_IDS.fullName, headerName: 'Full Name', width: 200 },
   { field: COLUMN_IDS.ssn, headerName: 'SSN', width: 120 },
   { field: COLUMN_IDS.email, headerName: 'Email', width: 304 },
   {
