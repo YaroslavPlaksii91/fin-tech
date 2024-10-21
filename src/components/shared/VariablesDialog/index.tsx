@@ -1,17 +1,17 @@
-import React, { useEffect, useMemo, useState, ReactNode } from 'react';
+import { useEffect, useMemo, useState, ReactNode } from 'react';
 import {
   Box,
   Dialog,
   Divider,
   Grid,
   ListItemText,
-  Typography
+  Typography,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button
 } from '@mui/material';
 import { startCase } from 'lodash';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
 
 import { StyledListItemButton } from './styled';
 import List from './List';
@@ -38,7 +38,7 @@ const objectVariablesDataSourceMap: Record<string, string> = {
     CRA_REPORT_VARIABLES.craFactorTrustReportVariables
 };
 
-const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
+const DataDictionaryDialog = ({
   title = 'Add Input Variable',
   showAttributes = true,
   data,
@@ -52,7 +52,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   activeProperty,
   children,
   maxWidth = 'md'
-}) => {
+}: DataDictionaryDialogProps) => {
   const [querySource, setQuerySource] = useState('');
   const [queryVariable, setQueryVariable] = useState('');
   const [queryAttribute, setQueryAttribute] = useState('');

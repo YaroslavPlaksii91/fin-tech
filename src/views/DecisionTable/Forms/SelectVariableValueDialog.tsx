@@ -25,7 +25,7 @@ import { BOOLEAN_OPTIONS } from '@constants/common';
 import { flowService } from '@services/flow-service';
 import { parseExpressionError } from '@utils/helpers';
 import { checkDataType } from '@components/DataDictionaryVariables/utils';
-import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog';
+import VariablesDialog from '@components/shared/VariablesDialog';
 import { Variable, VARIABLE_DATA_TYPE } from '@domain/dataDictionary';
 import { useAppSelector } from '@store/hooks';
 import { selectDataDictionary } from '@store/dataDictionary/selectors';
@@ -209,7 +209,7 @@ const SelectVariableValueDialog = ({
   }, [watchOperator]);
 
   return isVariableType ? (
-    <DataDictionaryDialog
+    <VariablesDialog
       title="Select Variable"
       isOpen={modalOpen}
       onClose={handleClose}
@@ -236,7 +236,7 @@ const SelectVariableValueDialog = ({
         </Typography>
         <DialogContent />
       </Box>
-    </DataDictionaryDialog>
+    </VariablesDialog>
   ) : (
     <Dialog
       title={isCondition ? 'Enter condition' : 'Enter output'}
