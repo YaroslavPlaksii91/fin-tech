@@ -14,8 +14,7 @@ import { TableRow } from './TableRow';
 
 import {
   StyledTableCell,
-  StyledTableRow,
-  StyledPaper
+  StyledTableRow
 } from '@components/shared/Table/styled';
 import {
   Variable,
@@ -28,6 +27,7 @@ import TablePagination from '@components/shared/TablePagination';
 import useTablePagination from '@hooks/useTablePagination';
 import { checkIsProductionFlow } from '@utils/helpers';
 import { DATE_FORMAT } from '@constants/common';
+import Paper from '@components/shared/Paper';
 
 interface TableListProps {
   flowNodes: FlowNode[];
@@ -86,7 +86,7 @@ const TableList = ({
   }, [tabName, flowId]);
 
   return (
-    <StyledPaper sx={{ overflow: 'auto' }}>
+    <Paper>
       <Table stickyHeader size="small" aria-label="sticky table">
         <TableHead>
           <StyledTableRow>
@@ -144,7 +144,7 @@ const TableList = ({
           onPageApply={handlePageApply}
         />
       )}
-    </StyledPaper>
+    </Paper>
   );
 };
 

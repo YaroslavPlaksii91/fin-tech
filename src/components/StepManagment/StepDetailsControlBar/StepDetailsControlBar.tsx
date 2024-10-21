@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import { Box, Button, Divider, Paper, Stack, Typography } from '@mui/material';
+import { Box, Button, Divider, Stack, Typography } from '@mui/material';
 
 import LoadingButton from '@components/shared/Buttons/Loading';
 import Dialog from '@components/shared/Modals/Dialog';
+import { theme } from '@theme';
 
 const StepDetailsControlBar: React.FC<StepDetailsControlBarProps> = ({
   isShow = true,
@@ -20,7 +21,7 @@ const StepDetailsControlBar: React.FC<StepDetailsControlBarProps> = ({
 
   return (
     isShow && (
-      <Paper elevation={1}>
+      <Box sx={{ background: theme.palette.common.white }}>
         <Divider />
         <Box px={3} py={2}>
           <Stack
@@ -57,7 +58,7 @@ const StepDetailsControlBar: React.FC<StepDetailsControlBarProps> = ({
             cannot be canceled. Are you sure you want to cancel the changes?
           </Typography>
         </Dialog>
-      </Paper>
+      </Box>
     )
   );
 };

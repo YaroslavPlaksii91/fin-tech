@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridSortModel } from '@mui/x-data-grid-premium';
-import { Box, Paper, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 import { FetchData, IFilters } from './types';
 import { getFormattedRows, buildParams } from './utils';
@@ -13,7 +13,6 @@ import {
 } from './constants';
 import { StyledDataGridPremium } from './styled';
 
-import { theme } from '@theme';
 import { reportingService } from '@services/reports';
 import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
@@ -22,6 +21,7 @@ import ExportCSVButton from '@components/shared/Buttons/ExportCSV';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 import Filters from '@components/Waterfall/Filters';
 import FiltersButton from '@components/shared/Buttons/Filters';
+import Paper from '@components/shared/Paper';
 
 const Waterfall = () => {
   const [loading, setLoading] = useState(false);
@@ -108,13 +108,7 @@ const Waterfall = () => {
           <FiltersButton onClick={handleFiltersOpen} />
         </Stack>
       </Stack>
-      <Paper
-        sx={{
-          border: `1px solid ${theme.palette.divider}`,
-          borderRadius: '16px',
-          overflow: 'hidden'
-        }}
-      >
+      <Paper>
         <StyledDataGridPremium
           disableColumnMenu
           hideFooter

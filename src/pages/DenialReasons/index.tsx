@@ -3,7 +3,7 @@ import {
   GRID_AGGREGATION_FUNCTIONS,
   GridSortModel
 } from '@mui/x-data-grid-premium';
-import { Box, Paper, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 import { COLUMN_IDS, FetchList, IFilters, RowData } from './types';
 import { buildParams, getFormattedRows } from './utils';
@@ -15,7 +15,6 @@ import {
 } from './constants';
 
 import { StyledDataGridPremium } from '@components/shared/Table/styled';
-import { theme } from '@theme';
 import { reportingService } from '@services/reports';
 import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
@@ -23,6 +22,7 @@ import ExportCSVButton from '@components/shared/Buttons/ExportCSV';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 import Filters from '@components/DenialReasons/Filters';
 import FiltersButton from '@components/shared/Buttons/Filters';
+import Paper from '@components/shared/Paper';
 
 const DenialReasons = () => {
   const [loading, setLoading] = useState(false);
@@ -102,13 +102,7 @@ const DenialReasons = () => {
           <FiltersButton onClick={handleFiltersOpen} />
         </Stack>
       </Stack>
-      <Paper
-        sx={{
-          border: `1px solid ${theme.palette.divider}`,
-          borderRadius: '16px',
-          overflow: 'hidden'
-        }}
-      >
+      <Paper>
         <StyledDataGridPremium
           disableColumnMenu
           hideFooter

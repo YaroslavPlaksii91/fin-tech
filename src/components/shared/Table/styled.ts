@@ -1,4 +1,4 @@
-import { Paper, TableContainer, TableRow } from '@mui/material';
+import { TableContainer, TableRow } from '@mui/material';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { blueGrey } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
@@ -45,19 +45,6 @@ export const StyledTableRow = styled(TableRow)<{ parity?: 'odd' | 'even' }>(
 export const StyledTableContainer = styled(TableContainer)(() => ({
   maxHeight: `calc(100vh - 450px)`
 }));
-
-export const StyledPaper = styled(Paper)(
-  ({
-    theme: {
-      palette: { divider }
-    }
-  }) => ({
-    width: '100%',
-    overflow: 'hidden',
-    marginBottom: '8px',
-    border: `1px solid ${divider}`
-  })
-);
 
 export const StyledDataGridPremium = styled(DataGridPremium)(
   ({

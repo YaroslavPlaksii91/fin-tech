@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Box, Paper, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import { TOTAL_ROW_NAME } from './constants';
 
 import { StyledDataGridPremium } from '@components/shared/Table/styled';
-import { theme } from '@theme';
 import { reportingService } from '@services/reports';
 import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
 import { BillingReport } from '@domain/billingReport';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
+import Paper from '@components/shared/Paper';
 
 const BillingReports = () => {
   const [loading, setLoading] = useState(false);
@@ -53,14 +53,7 @@ const BillingReports = () => {
       >
         <Typography variant="h4">Billing Report</Typography>
       </Stack>
-      <Paper
-        elevation={1}
-        sx={{
-          border: `1px solid ${theme.palette.divider}`,
-          borderRadius: '16px',
-          overflow: 'hidden'
-        }}
-      >
+      <Paper>
         <StyledDataGridPremium
           disableColumnMenu
           hideFooter

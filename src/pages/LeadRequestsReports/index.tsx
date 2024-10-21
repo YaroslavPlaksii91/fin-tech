@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
-import { Box, Paper, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 import { COLUMN_IDS, FetchList, RowData, IFilters } from './types';
 import { buildParams, getFormattedRows } from './utils';
@@ -13,7 +13,6 @@ import {
 
 import { reportingService } from '@services/reports';
 import TablePagination from '@components/shared/TablePagination';
-import { theme } from '@theme';
 import { StyledDataGridPremium } from '@components/shared/Table/styled';
 import Details from '@components/LeadRequestsReports/Details';
 import useTablePagination from '@hooks/useTablePagination';
@@ -24,6 +23,7 @@ import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOver
 import Filters from '@components/LeadRequestsReports/Filters';
 import { Drawer } from '@components/shared/Drawer';
 import FiltersButton from '@components/shared/Buttons/Filters';
+import Paper from '@components/shared/Paper';
 
 const LeadRequestsReports = () => {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -131,13 +131,7 @@ const LeadRequestsReports = () => {
           <FiltersButton onClick={handleFiltersOpen} />
         </Stack>
       </Stack>
-      <Paper
-        sx={{
-          border: `1px solid ${theme.palette.divider}`,
-          borderRadius: '16px',
-          overflow: 'hidden'
-        }}
-      >
+      <Paper>
         <StyledDataGridPremium
           autoHeight
           disableColumnMenu
