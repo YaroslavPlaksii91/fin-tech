@@ -180,6 +180,9 @@ const SelectVariableValueDialog = ({
       isOperatorDisabled={!isCondition}
       isValueSelectMultiple={dataType.isWithEnum}
       isValueSelectDisabled={watchOperator === OPERATORS.ANY}
+      isTypeSelectDisabled={
+        watchOperator === OPERATORS.ANY || watchOperator === OPERATORS.BETWEEN
+      }
       isValueInputDisabled={watchOperator === OPERATORS.ANY || isVariableType}
       hasBounds={watchOperator === OPERATORS.BETWEEN}
       hasValueAsSelect={
@@ -194,8 +197,13 @@ const SelectVariableValueDialog = ({
   );
 
   useEffect(() => {
-    if (watchOperator === OPERATORS.ANY)
+    if (watchOperator === OPERATORS.ANY) {
+      setValue('type', VALUE_TYPES.Value);
       setValue('value', dataType.isWithEnum ? [] : '');
+    }
+    if (watchOperator === OPERATORS.BETWEEN) {
+      setValue('type', VALUE_TYPES.Value);
+    }
 
     clearErrors();
   }, [watchOperator]);
@@ -220,6 +228,7 @@ const SelectVariableValueDialog = ({
       onConfirm={async (selectedVariable) => {
         await handleSubmit((data) => onSubmit(data, selectedVariable))();
       }}
+      maxWidth="lg"
     >
       <Box p="16px 24px 0">
         <Typography variant="h6" color="text.primary" mb={2}>

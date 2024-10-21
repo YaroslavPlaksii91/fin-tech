@@ -13,6 +13,7 @@ interface ContentProps {
   isOperatorDisabled: boolean;
   isValueSelectMultiple: boolean;
   isValueSelectDisabled: boolean;
+  isTypeSelectDisabled: boolean;
   isValueInputDisabled: boolean;
   hasBounds: boolean;
   hasValueAsSelect: boolean;
@@ -26,6 +27,7 @@ const Content: React.FC<ContentProps> = ({
   isOperatorDisabled,
   isValueSelectMultiple,
   isValueSelectDisabled,
+  isTypeSelectDisabled,
   isValueInputDisabled,
   hasBounds,
   hasValueAsSelect,
@@ -73,6 +75,7 @@ const Content: React.FC<ContentProps> = ({
         minWidth: '158px'
       }}
       label="Type*"
+      disabled={isTypeSelectDisabled}
       options={getFormattedOptions(Object.values(VALUE_TYPES))}
     />
     {hasValueAsSelect ? (

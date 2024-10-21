@@ -50,7 +50,8 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   onSelect,
   activeVariable,
   activeProperty,
-  children
+  children,
+  maxWidth = 'md'
 }) => {
   const [querySource, setQuerySource] = useState('');
   const [queryVariable, setQueryVariable] = useState('');
@@ -196,7 +197,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
   }, [selectedVariable, selectedObjectProperty]);
 
   return (
-    <Dialog fullWidth maxWidth="md" open={isOpen} onClose={onClose}>
+    <Dialog fullWidth maxWidth={maxWidth} open={isOpen} onClose={onClose}>
       {children}
       <DialogTitle>{title}</DialogTitle>
       <Typography
@@ -217,7 +218,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                 isEmpty={dictsEmptyState}
                 emptyStateText="The list is empty. Try to change search query"
                 title="Select Source"
-                subtitle="Some self explanatory text what this column is, no longer than 2 lines."
+                subtitle="Choose a source of data you want to use in calculations."
                 searchQuery={querySource}
                 onSearch={setQuerySource}
               >
@@ -254,7 +255,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                 isEmpty={variablesEmptyState}
                 emptyStateText="The list is empty. To fill it select item from the another list."
                 title="Available Variables"
-                subtitle="Some self explanatory text what this column is, no longer than 2 lines."
+                subtitle="Choose a variable you want to use in calculations."
                 searchQuery={queryVariable}
                 onSearch={setQueryVariable}
               >
@@ -295,7 +296,7 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
               >
                 <List
                   title="Available Attributes"
-                  subtitle="Some self explanatory text what this column is, no longer than 2 lines."
+                  subtitle="Choose an inner attribute or score you want to use in calculations."
                   emptyStateText="The list is empty. To fill it select item from the another list."
                   isEmpty={filteredIntegrationDataList.length === 0}
                   searchQuery={queryAttribute}
@@ -372,6 +373,7 @@ interface DataDictionaryDialogProps {
   activeVariable?: Variable;
   activeProperty?: Variable;
   children?: ReactNode;
+  maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export default DataDictionaryDialog;
