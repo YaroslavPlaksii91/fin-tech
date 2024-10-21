@@ -234,7 +234,14 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
                       primary={
                         <span
                           dangerouslySetInnerHTML={{
-                            __html: highlightText([querySource], startCase(key))
+                            __html: highlightText(
+                              [querySource],
+                              startCase(
+                                key === 'laPMSVariables'
+                                  ? 'applicationVariables'
+                                  : key
+                              )
+                            )
                           }}
                         />
                       }
