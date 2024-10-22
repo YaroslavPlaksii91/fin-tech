@@ -63,7 +63,7 @@ const ControlPanelSubFlow: React.FC<ControlPanelProps> = ({
       flow,
       rfInstance
     });
-    setOpenDiscardModal(isChanged);
+    isChanged ? setOpenDiscardModal(isChanged) : handleDiscardChanges();
   };
 
   return (
