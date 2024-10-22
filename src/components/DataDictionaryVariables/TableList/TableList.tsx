@@ -23,7 +23,7 @@ import {
   UserDefinedVariable
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
-import TablePagination from '@components/shared/TablePagination';
+import TablePagination from '@components/shared/Table/TablePagination';
 import useTablePagination from '@hooks/useTablePagination';
 import { checkIsProductionFlow } from '@utils/helpers';
 import { DATE_FORMAT } from '@constants/common';

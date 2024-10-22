@@ -49,7 +49,7 @@ export const StyledTableContainer = styled(TableContainer)(() => ({
 export const StyledDataGridPremium = styled(DataGridPremium)(
   ({
     theme: {
-      palette: { text, divider, common, background }
+      palette: { text, common, background }
     }
   }) => ({
     border: 'transparent',
@@ -67,7 +67,7 @@ export const StyledDataGridPremium = styled(DataGridPremium)(
       }
     },
     [`& .${gridClasses.row}`]: {
-      borderBottom: `1px solid ${divider}`,
+      borderBottom: 'transparent',
       backgroundColor: 'var(--unstable_DataGrid-overlayBackground)',
       [`&.even .${gridClasses.cell}`]: {
         backgroundColor: common.white
@@ -84,14 +84,8 @@ export const StyledDataGridPremium = styled(DataGridPremium)(
         outline: 'transparent'
       }
     },
-    [`& .${gridClasses.cell}`]: {
-      outline: 'transparent',
-      border: 'transparent',
-
-      '&:focus-within': {
-        outline: 'transparent',
-        border: 'transparent'
-      }
+    [`& .${gridClasses.cell}:focus`]: {
+      outline: 'none'
     },
     [`& .${gridClasses['cell--pinnedRight']}`]: {
       boxShadow: 'rgba(0, 0, 0, 0.21) -2px 0px 4px -2px'

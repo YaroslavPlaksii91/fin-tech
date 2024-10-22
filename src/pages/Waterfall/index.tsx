@@ -116,9 +116,6 @@ const Waterfall = () => {
           sx={{ height: TABLE.HEIGHT }}
           columnHeaderHeight={TABLE.COLUMN_HEIGHT}
           rowHeight={TABLE.ROW_HEIGHT}
-          // We have border bottom 1px for each row, to include it in rowHeight calculation need also add spacing here
-          getRowSpacing={() => ({ bottom: 1 })}
-          rowSpacingType="border"
           pinnedRows={{ bottom: totalRow }}
           rows={rows}
           columns={columns}

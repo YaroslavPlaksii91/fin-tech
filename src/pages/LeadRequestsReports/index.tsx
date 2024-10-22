@@ -12,7 +12,7 @@ import {
 } from './constants';
 
 import { reportingService } from '@services/reports';
-import TablePagination from '@components/shared/TablePagination';
+import TablePagination from '@components/shared/Table/TablePagination';
 import { StyledDataGridPremium } from '@components/shared/Table/styled';
 import Details from '@components/LeadRequestsReports/Details';
 import useTablePagination from '@hooks/useTablePagination';
@@ -138,8 +138,8 @@ const LeadRequestsReports = () => {
           columnHeaderHeight={TABLE.COLUMN_HEIGHT}
           rowHeight={TABLE.ROW_HEIGHT}
           // We have border bottom 1px for each row, to include it in rowHeight calculation need also add spacing here
-          getRowSpacing={() => ({ bottom: 1 })}
-          rowSpacingType="border"
+          // getRowSpacing={() => ({ bottom: 1 })}
+          // rowSpacingType="border"
           rows={rows}
           columns={columns}
           loading={loading}

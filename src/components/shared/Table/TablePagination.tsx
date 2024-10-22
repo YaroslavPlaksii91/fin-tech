@@ -69,7 +69,8 @@ const TablePagination = ({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        p: '8px 16px'
+        p: '8px 16px',
+        borderTop: `1px solid ${theme.palette.divider}`
       }}
     >
       <MuiTablePagination
