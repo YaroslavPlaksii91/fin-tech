@@ -116,7 +116,6 @@ const Filters = ({
         title="Lead Price"
         startAdornmentSymb="$"
         name="leadPrice"
-        type="number"
         control={control}
         inputProps={{ min: MIN_RANGE_VALUE_FILTER }}
       />
