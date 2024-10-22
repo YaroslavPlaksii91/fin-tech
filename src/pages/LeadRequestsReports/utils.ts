@@ -20,6 +20,9 @@ export const getFormattedRows = (data: LeadRequestReport[]) => {
         leadRequest.firstName || leadRequest.lastName
           ? `${leadRequest.firstName ?? ''} ${leadRequest.lastName ?? ''}`.trim()
           : '-',
+      [COLUMN_IDS.ssn]: leadRequest.ssn ?? '-',
+      [COLUMN_IDS.email]: leadRequest.email ?? '-',
+      [COLUMN_IDS.phoneNumber]: leadRequest.homePhone ?? '-',
       [COLUMN_IDS.origin]: leadRequest.origin ?? '-',
       [COLUMN_IDS.craScore]: processingMetadata?.craScore ?? '-',
       [COLUMN_IDS.requestId]: leadRequest.requestId ?? '-',
@@ -41,8 +44,6 @@ export const getFormattedRows = (data: LeadRequestReport[]) => {
       [COLUMN_IDS.loanType]: leadRequest.customFields.requestType ?? '-',
       [COLUMN_IDS.promoCode]: leadRequest.customFields?.promoCode ?? '-',
       [COLUMN_IDS.store]: output?.store ?? '-',
-      [COLUMN_IDS.ssn]: leadRequest.ssn ?? '-',
-      [COLUMN_IDS.email]: leadRequest.email,
       [COLUMN_IDS.decision]: leadResponse.result ?? '-',
       [COLUMN_IDS.deniedBy]: leadResponse?.denied_by ?? '-',
       [COLUMN_IDS.denialReason]: leadResponse?.rejection_reason ?? '-',

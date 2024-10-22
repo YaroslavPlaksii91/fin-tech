@@ -5,6 +5,9 @@ import { DateFilter, RangeFilter } from '@utils/filters';
 
 export enum COLUMN_IDS {
   fullName = 'fullName',
+  ssn = 'leadRequest.ssn',
+  email = 'leadRequest.email',
+  phoneNumber = 'leadRequest.homePhone',
   origin = 'leadRequest.origin',
   requestId = 'leadRequest.requestId',
   loanId = 'leadResponse.loanId',
@@ -19,8 +22,6 @@ export enum COLUMN_IDS {
   loanType = 'leadRequest.customFields.requestType',
   promoCode = 'leadRequest.customFields.promoCode',
   store = 'output.store',
-  ssn = 'leadRequest.ssn',
-  email = 'leadRequest.email',
   decision = 'leadResponse.result',
   deniedBy = 'leadResponse.deniedBy',
   denialReason = 'leadResponse.rejectionReason',

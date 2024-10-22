@@ -15,6 +15,7 @@ const getDataGridColumns = ({
   { field: COLUMN_IDS.fullName, headerName: 'Full Name', width: 200 },
   { field: COLUMN_IDS.ssn, headerName: 'SSN', width: 120 },
   { field: COLUMN_IDS.email, headerName: 'Email', width: 304 },
+  { field: COLUMN_IDS.phoneNumber, headerName: 'Phone Number', width: 168 },
   {
     field: COLUMN_IDS.origin,
     headerName: 'Origin',
