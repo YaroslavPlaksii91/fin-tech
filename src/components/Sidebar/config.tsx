@@ -5,6 +5,7 @@ import routes from '@constants/routes';
 import { PRODUCTION_FLOW_ID } from '@constants/common';
 import ChangesHistoryIcon from '@icons/changes-history.svg';
 import DataDictionaryIcon from '@icons/data-dictionary.svg';
+import ApplicationsIcon from '@icons/applications.svg';
 
 const iconSize = 24;
 
@@ -40,6 +41,13 @@ export interface MenuItem {
   permission: string;
 }
 
+export const applicationsPage = {
+  icon: <ApplicationsIcon />,
+  text: 'Applications',
+  to: routes.underwriting.leadRequest,
+  permission: permissionsMap.canViewLeadRequestReport
+};
+
 export const pages = [
   {
     icon: <DataDictionaryIcon />,
@@ -56,12 +64,6 @@ export const pages = [
 ];
 
 export const reportPages = [
-  {
-    icon: DotActiveIcon,
-    text: 'Applications',
-    to: routes.underwriting.leadRequest,
-    permission: permissionsMap.canViewLeadRequestReport
-  },
   {
     icon: DotActiveIcon,
     text: 'Denial Reasons',
