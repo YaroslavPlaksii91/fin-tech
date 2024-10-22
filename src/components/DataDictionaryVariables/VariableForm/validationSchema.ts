@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-import { MAX_INTEGER_DIGITS } from '../constants';
+import { MAX_INTEGER_VALUE } from '../constants';
 
 import {
   VARIABLE_SOURCE_TYPE,
@@ -71,12 +71,12 @@ export const validationSchema = yup.object().shape({
           }
         )
         .test(
-          'integer-length',
-          `Integer value cannot exceed ${MAX_INTEGER_DIGITS} digits`,
+          'max-integer-value',
+          `Integer value cannot exceed ${MAX_INTEGER_VALUE}`,
           function (value) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             return this.parent.dataType === VARIABLE_DATA_TYPE.Integer
-              ? value.length <= MAX_INTEGER_DIGITS
+              ? Number(value) <= MAX_INTEGER_VALUE
               : true;
           }
         )

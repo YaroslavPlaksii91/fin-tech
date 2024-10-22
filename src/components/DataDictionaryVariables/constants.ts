@@ -64,4 +64,4 @@ export const CRA_REPORTS_HEADERS: TableHeader[] = [
 export const STRING_ARRAY_HINT =
   'A string Array is a collection or list of string values, where each element in the array holds a string - ["value1", "value2", "value"...”N”].<br/><br/>Example: ["SSN1", "SSN2", "SSN3"]';
 
-export const MAX_INTEGER_DIGITS = 10;
+export const MAX_INTEGER_VALUE = 2147483647;
