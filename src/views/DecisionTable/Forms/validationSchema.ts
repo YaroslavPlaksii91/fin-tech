@@ -16,7 +16,7 @@ export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
       .oneOf(Object.values(VALUE_TYPES), 'Type is required')
       .required(),
     value: dataType.isWithEnum
-      ? yup.array().when(['operator'], ([operator, type], schema) => {
+      ? yup.array().when(['operator', 'type'], ([operator, type], schema) => {
           if (operator === OPERATORS.ANY || type === VALUE_TYPES.Variable)
             return schema.notRequired().nullable();
 
@@ -38,7 +38,7 @@ export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
               (value) => value.length !== 0
             );
         })
-      : yup.string().when(['operator'], ([operator, type], schema) => {
+      : yup.string().when(['operator', 'type'], ([operator, type], schema) => {
           if (
             operator === OPERATORS.ANY ||
             operator === OPERATORS.BETWEEN ||
