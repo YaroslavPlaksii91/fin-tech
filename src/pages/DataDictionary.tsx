@@ -58,7 +58,7 @@ const DataDictionary = () => {
       variant="body1"
       color={theme.palette.text.primary}
     >
-      Data dictionary
+      Data Dictionary
     </Typography>
   ];
 
