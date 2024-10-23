@@ -4,7 +4,7 @@ import { Grid, Stack, Typography, Box } from '@mui/material';
 import Logger from '@utils/logger';
 import { ChangeHistoryRecord } from '@domain/changeHistory';
 import { useLoading } from '@contexts/LoadingContext';
-import LoadingButton from '@components/shared/LoadingButton';
+import LoadingButton from '@components/shared/Buttons/Loading';
 import ChangeHistoryItem from '@components/ChangeHistory/ChangeHistoryItem';
 import { flowService } from '@services/flow-service';
 

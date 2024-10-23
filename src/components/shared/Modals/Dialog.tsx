@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import { IconButton } from '@mui/material';
 import { Breakpoint } from '@mui/system';
 
-import LoadingButton from '../LoadingButton';
+import LoadingButton from '../Buttons/Loading';
 import { CloseIcon } from '../Icons';
 
 import { StyledDialog, StyledDialogTitle } from './styled';

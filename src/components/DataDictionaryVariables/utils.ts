@@ -1,5 +1,5 @@
 import { FILTER_BY, TAB } from './types';
-import { TABS } from './constants';
+import { TABS_KEYS } from './constants';
 
 import {
   VARIABLE_DATA_TYPE,
@@ -77,18 +77,18 @@ export const getFiltersGroup = (enumDataTypes: string[]) => [
     filterBy: FILTER_BY.dataType,
     text: 'By Data Type',
     fields: [...Object.values(VARIABLE_DATA_TYPE), ...enumDataTypes],
-    applyFor: Object.values(TABS) as TAB[]
+    applyFor: Object.values(TABS_KEYS) as TAB[]
   },
   {
     filterBy: FILTER_BY.source,
     text: 'By CRA',
     fields: Object.values(INTEGRATION_VARIABLE_SOURCE_TYPE),
-    applyFor: [TABS.craReportVariables] as TAB[]
+    applyFor: [TABS_KEYS.craReportVariables] as TAB[]
   },
   {
     filterBy: FILTER_BY.sourceType,
     text: 'By Report Name',
     fields: Object.values(CONTROL_FILES),
-    applyFor: [TABS.craReportVariables] as TAB[]
+    applyFor: [TABS_KEYS.craReportVariables] as TAB[]
   }
 ];

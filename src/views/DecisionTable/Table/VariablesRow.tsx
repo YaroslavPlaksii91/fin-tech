@@ -14,7 +14,7 @@ import EditIcon from '@icons/editPencil.svg';
 import GridSquarePlusIcon from '@icons/gridSquarePlus.svg';
 import { DataDictionaryVariable, Variable } from '@domain/dataDictionary';
 import { StyledTableRow } from '@components/shared/Table/styled';
-import DataDictionaryDialog from '@components/DataDictionaryVariables/DataDictionaryDialog/DataDictionaryDialog';
+import VariablesDialog from '@components/shared/VariablesDialog';
 
 interface VariablesRowProps {
   columns: ColumnData[];
@@ -121,7 +121,7 @@ const VariablesRow = ({
       ))}
       <TableCell sx={{ bgcolor: lightGreen[50], width: 0 }} />
       {selectedColumn ? (
-        <DataDictionaryDialog
+        <VariablesDialog
           data={filterVariablesByUsageMode(variables, selectedColumn.category)}
           integrationData={
             selectedColumn.category === 'actions' ? undefined : integrationData

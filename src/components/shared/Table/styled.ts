@@ -1,4 +1,4 @@
-import { Paper, TableContainer, TableRow } from '@mui/material';
+import { TableContainer, TableRow } from '@mui/material';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { blueGrey } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
@@ -46,23 +46,10 @@ export const StyledTableContainer = styled(TableContainer)(() => ({
   maxHeight: `calc(100vh - 450px)`
 }));
 
-export const StyledPaper = styled(Paper)(
-  ({
-    theme: {
-      palette: { divider }
-    }
-  }) => ({
-    width: '100%',
-    overflow: 'hidden',
-    marginBottom: '8px',
-    border: `1px solid ${divider}`
-  })
-);
-
 export const StyledDataGridPremium = styled(DataGridPremium)(
   ({
     theme: {
-      palette: { text, divider, common, background }
+      palette: { text, common, background }
     }
   }) => ({
     border: 'transparent',
@@ -80,7 +67,7 @@ export const StyledDataGridPremium = styled(DataGridPremium)(
       }
     },
     [`& .${gridClasses.row}`]: {
-      borderBottom: `1px solid ${divider}`,
+      borderBottom: 'transparent',
       backgroundColor: 'var(--unstable_DataGrid-overlayBackground)',
       [`&.even .${gridClasses.cell}`]: {
         backgroundColor: common.white
@@ -97,14 +84,8 @@ export const StyledDataGridPremium = styled(DataGridPremium)(
         outline: 'transparent'
       }
     },
-    [`& .${gridClasses.cell}`]: {
-      outline: 'transparent',
-      border: 'transparent',
-
-      '&:focus-within': {
-        outline: 'transparent',
-        border: 'transparent'
-      }
+    [`& .${gridClasses.cell}:focus`]: {
+      outline: 'none'
     },
     [`& .${gridClasses['cell--pinnedRight']}`]: {
       boxShadow: 'rgba(0, 0, 0, 0.21) -2px 0px 4px -2px'

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
-import { Box, Button, Paper, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 import { COLUMN_IDS, FetchList, RowData, IFilters } from './types';
 import { buildParams, getFormattedRows } from './utils';
@@ -12,18 +12,18 @@ import {
 } from './constants';
 
 import { reportingService } from '@services/reports';
-import TablePagination from '@components/shared/TablePagination';
-import { theme } from '@theme';
+import TablePagination from '@components/shared/Table/TablePagination';
 import { StyledDataGridPremium } from '@components/shared/Table/styled';
 import Details from '@components/LeadRequestsReports/Details';
 import useTablePagination from '@hooks/useTablePagination';
 import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
-import TuneIcon from '@icons/tune.svg';
-import ExportCSVButton from '@components/shared/ExportCSVButton';
+import ExportCSVButton from '@components/shared/Buttons/ExportCSV';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 import Filters from '@components/LeadRequestsReports/Filters';
 import { Drawer } from '@components/shared/Drawer';
+import FiltersButton from '@components/shared/Buttons/Filters';
+import Paper from '@components/shared/Paper';
 
 const LeadRequestsReports = () => {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -128,33 +128,18 @@ const LeadRequestsReports = () => {
             defaultFileName={DEFAULT_EXPORT_FILE_NAME}
             exportFile={handleExport}
           />
-          <Button
-            size="small"
-            color="inherit"
-            variant="outlined"
-            sx={{ minWidth: '80px', borderRadius: '6px' }}
-            startIcon={<TuneIcon />}
-            onClick={handleFiltersOpen}
-          >
-            Filters
-          </Button>
+          <FiltersButton onClick={handleFiltersOpen} />
         </Stack>
       </Stack>
-      <Paper
-        sx={{
-          border: `1px solid ${theme.palette.divider}`,
-          borderRadius: '16px',
-          overflow: 'hidden'
-        }}
-      >
+      <Paper>
         <StyledDataGridPremium
           autoHeight
           disableColumnMenu
           columnHeaderHeight={TABLE.COLUMN_HEIGHT}
           rowHeight={TABLE.ROW_HEIGHT}
           // We have border bottom 1px for each row, to include it in rowHeight calculation need also add spacing here
-          getRowSpacing={() => ({ bottom: 1 })}
-          rowSpacingType="border"
+          // getRowSpacing={() => ({ bottom: 1 })}
+          // rowSpacingType="border"
           rows={rows}
           columns={columns}
           loading={loading}

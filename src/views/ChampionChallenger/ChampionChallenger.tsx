@@ -30,7 +30,6 @@ import {
 import ErrorMessage from '@components/shared/ErrorText/ErrorText';
 import InputText from '@components/shared/Forms/InputText';
 import {
-  StyledPaper,
   StyledTableCell,
   StyledTableContainer,
   StyledTableRow
@@ -51,6 +50,7 @@ import { useAppSelector } from '@store/hooks';
 import { selectUserInfo } from '@store/auth';
 import { getFullUserName } from '@utils/helpers';
 import { useIsDirty } from '@contexts/IsDirtyContext';
+import Paper from '@components/shared/Paper';
 
 const DEFAULT_PERCENTAGE_SPLIT = 10;
 
@@ -235,7 +235,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
             details="A Champion Challenger is a step that allows you to split traffic into several groups and run experiment."
           />
           <Stack>
-            <StyledPaper>
+            <Paper sx={{ borderRadius: '4px' }}>
               <StyledTableContainer>
                 <Table stickyHeader aria-label="sticky table">
                   <TableHead>
@@ -313,7 +313,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                   </TableBody>
                 </Table>
               </StyledTableContainer>
-            </StyledPaper>
+            </Paper>
             <ErrorMessage errors={errors} name="splits" />
             {!isPreview && (
               <Button

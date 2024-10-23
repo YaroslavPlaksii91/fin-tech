@@ -1,20 +1,16 @@
 import { useState, useMemo } from 'react';
-import { Box, Stack, Tabs, Typography, Button } from '@mui/material';
+import { Box, Stack, Typography, Button } from '@mui/material';
 import { omitBy, indexOf, map } from 'lodash';
 
 import {
   TABS,
-  TABS_LABELS,
   SOURCES_DESCRIPTIONS,
   INITIAL_FILTERS,
   CRA_REPORTS_HEADERS,
-  DEFAULT_HEADERS,
-  TableHeader
+  DEFAULT_HEADERS
 } from './constants';
 import TableList from './TableList/TableList';
-import TabPanel from './Tabs/TabPanel';
-import { StyledTab } from './styled';
-import { TAB } from './types';
+import { TAB, TableHeader } from './types';
 import Filters, { IFormState } from './Filters';
 import FlowSelect from './FlowSelect';
 import { getFiltersGroup } from './utils';
@@ -22,7 +18,6 @@ import { VariableForm } from './VariableForm/VariableForm';
 import { DeleteVariable } from './DeleteVariable/DeleteVariable';
 
 import { AddIcon } from '@components/shared/Icons';
-import TuneIcon from '@icons/tune.svg';
 import { theme } from '@theme';
 import { IFlow } from '@domain/flow';
 import {
@@ -37,6 +32,9 @@ import { permissionsMap } from '@constants/permissions';
 import { useAppSelector } from '@store/hooks';
 import { selectUserDefinedVariables } from '@store/flow/selectors';
 import { selectDataDictionary } from '@store/dataDictionary/selectors';
+import Tabs from '@components/shared/Tabs';
+import TabPanel from '@components/shared/Tabs/TabPanel';
+import FiltersButton from '@components/shared/Buttons/Filters';
 
 const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const { integrationVariables, variables, enumDataTypes } =
@@ -159,10 +157,6 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
     handleFiltersClose();
   };
 
-  const handleChange = (_event: React.SyntheticEvent, newValue: TAB) => {
-    setTab(newValue);
-  };
-
   const handleVariableModalClose = () => {
     setSelectedVariable(undefined);
     setIsVariableModalOpen(false);
@@ -233,26 +227,9 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
         </Typography>
         <FlowSelect />
       </Box>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs
-          value={tab}
-          onChange={handleChange}
-          aria-label="tabs"
-          variant="scrollable"
-        >
-          {Object.keys(TABS).map((tabName, index) => (
-            <StyledTab
-              key={index}
-              label={TABS_LABELS[tabName]}
-              value={tabName}
-              id={`tab-${index}`}
-              aria-controls={`tabpanel-${index}`}
-            />
-          ))}
-        </Tabs>
-      </Box>
-      {Object.keys(TABS).map((tabName) => (
-        <TabPanel key={tabName} value={tab} tabName={tabName}>
+      <Tabs activeTab={tab} tabs={TABS} onChange={setTab} />
+      {TABS.map(({ value }) => (
+        <TabPanel key={value} value={tab} tabName={value}>
           <>
             <Stack
               alignItems="flex-start"
@@ -263,20 +240,11 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
               spacing={4}
             >
               <Typography variant="body1" color="gray">
-                {SOURCES_DESCRIPTIONS[tabName]}
+                {SOURCES_DESCRIPTIONS[value]}
               </Typography>
               <Stack direction="row" spacing={1}>
-                <Button
-                  size="small"
-                  color="inherit"
-                  variant="outlined"
-                  sx={{ minWidth: '80px', borderRadius: '6px' }}
-                  startIcon={<TuneIcon />}
-                  onClick={handleFiltersOpen}
-                >
-                  Filters
-                </Button>
-                {tabName === 'userDefined' && !isViewMode && (
+                <FiltersButton onClick={handleFiltersOpen} />
+                {value === 'userDefined' && !isViewMode && (
                   <Button
                     size="small"
                     variant="contained"
@@ -292,7 +260,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
             <TableList
               headers={headers}
               tableData={filteredBySelects}
-              tabName={tabName as TAB}
+              tabName={value}
               flowNodes={flow.nodes}
               flowId={flow.id}
               onEdit={handleEditClick}

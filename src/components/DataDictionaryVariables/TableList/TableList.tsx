@@ -3,20 +3,18 @@ import { map } from 'lodash';
 import { TableHead, TableBody, Table } from '@mui/material';
 import dayjs from 'dayjs';
 
-import { TableHeader } from '../constants';
 import {
   getProductionUserDefinedUsage,
   getUserDefinedUsage,
   getUserDefinedUsageStepIds
 } from '../utils';
-import { TAB } from '../types';
+import { TAB, TableHeader } from '../types';
 
 import { TableRow } from './TableRow';
 
 import {
   StyledTableCell,
-  StyledTableRow,
-  StyledPaper
+  StyledTableRow
 } from '@components/shared/Table/styled';
 import {
   Variable,
@@ -25,10 +23,11 @@ import {
   UserDefinedVariable
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
-import TablePagination from '@components/shared/TablePagination';
+import TablePagination from '@components/shared/Table/TablePagination';
 import useTablePagination from '@hooks/useTablePagination';
 import { checkIsProductionFlow } from '@utils/helpers';
 import { DATE_FORMAT } from '@constants/common';
+import Paper from '@components/shared/Paper';
 
 interface TableListProps {
   flowNodes: FlowNode[];
@@ -87,7 +86,7 @@ const TableList = ({
   }, [tabName, flowId]);
 
   return (
-    <StyledPaper sx={{ overflow: 'auto' }}>
+    <Paper>
       <Table stickyHeader size="small" aria-label="sticky table">
         <TableHead>
           <StyledTableRow>
@@ -145,7 +144,7 @@ const TableList = ({
           onPageApply={handlePageApply}
         />
       )}
-    </StyledPaper>
+    </Paper>
   );
 };
 

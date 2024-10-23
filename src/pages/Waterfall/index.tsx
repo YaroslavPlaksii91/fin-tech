@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridSortModel } from '@mui/x-data-grid-premium';
-import { Box, Button, Paper, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 import { FetchData, IFilters } from './types';
 import { getFormattedRows, buildParams } from './utils';
@@ -13,15 +13,15 @@ import {
 } from './constants';
 import { StyledDataGridPremium } from './styled';
 
-import { theme } from '@theme';
 import { reportingService } from '@services/reports';
 import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
-import TuneIcon from '@icons/tune.svg';
 import { WaterfallReport } from '@domain/waterfallReport';
-import ExportCSVButton from '@components/shared/ExportCSVButton';
+import ExportCSVButton from '@components/shared/Buttons/ExportCSV';
 import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 import Filters from '@components/Waterfall/Filters';
+import FiltersButton from '@components/shared/Buttons/Filters';
+import Paper from '@components/shared/Paper';
 
 const Waterfall = () => {
   const [loading, setLoading] = useState(false);
@@ -105,25 +105,10 @@ const Waterfall = () => {
             defaultFileName={DEFAULT_EXPORT_FILE_NAME}
             exportFile={handleExport}
           />
-          <Button
-            size="small"
-            color="inherit"
-            variant="outlined"
-            sx={{ minWidth: '80px', borderRadius: '6px' }}
-            startIcon={<TuneIcon />}
-            onClick={handleFiltersOpen}
-          >
-            Filters
-          </Button>
+          <FiltersButton onClick={handleFiltersOpen} />
         </Stack>
       </Stack>
-      <Paper
-        sx={{
-          border: `1px solid ${theme.palette.divider}`,
-          borderRadius: '16px',
-          overflow: 'hidden'
-        }}
-      >
+      <Paper>
         <StyledDataGridPremium
           disableColumnMenu
           hideFooter
@@ -131,9 +116,6 @@ const Waterfall = () => {
           sx={{ height: TABLE.HEIGHT }}
           columnHeaderHeight={TABLE.COLUMN_HEIGHT}
           rowHeight={TABLE.ROW_HEIGHT}
-          // We have border bottom 1px for each row, to include it in rowHeight calculation need also add spacing here
-          getRowSpacing={() => ({ bottom: 1 })}
-          rowSpacingType="border"
           pinnedRows={{ bottom: totalRow }}
           rows={rows}
           columns={columns}

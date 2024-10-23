@@ -19,7 +19,7 @@ import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { createFlow } from '@store/flowList/asyncThunk';
 import { selectUserInfo } from '@store/auth';
 import { getFullUserName } from '@utils/helpers';
-import LoadingButton from '@components/shared/LoadingButton';
+import LoadingButton from '@components/shared/Buttons/Loading';
 import InputText from '@components/shared/Forms/InputText';
 
 interface DuplicateFlowProps {
