@@ -141,7 +141,6 @@ const DataDictionaryDialog: React.FC<DataDictionaryDialogProps> = ({
 
   const handleConfirmClick = () => {
     onConfirm(getVariable() as Variable);
-    onClose();
   };
 
   const handleSourceChange = (key: string) => {

@@ -331,6 +331,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
           if (dataDictMode === DataDictMode.Expression) {
             onVariableListClick(variable);
           }
+          setDataDictMode(null);
         }}
         setSelectedObjectPropertyFunction={(object, property) => ({
           ...property,

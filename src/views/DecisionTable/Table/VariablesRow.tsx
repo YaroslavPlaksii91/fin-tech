@@ -123,7 +123,10 @@ const VariablesRow = ({
           title="Add Variable"
           isOpen={isDialogOpen}
           onClose={handleCloseDialog}
-          onConfirm={handleChangeColumn(selectedColumn)}
+          onConfirm={(selectedVariable) => {
+            handleChangeColumn(selectedColumn)(selectedVariable);
+            handleCloseDialog();
+          }}
           setSelectedObjectPropertyFunction={(object, property) => ({
             ...property,
             // Technically is not correct source type, but for calculations this is backend requirement -
