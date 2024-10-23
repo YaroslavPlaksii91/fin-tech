@@ -22,8 +22,9 @@ interface VariablesRowProps {
   variables: Record<string, Variable[]>;
   integrationData: Record<string, Variable[]>;
   handleChangeColumn: (
-    column: ColumnData
-  ) => (variable: DataDictionaryVariable) => void;
+    column: ColumnData,
+    variable: DataDictionaryVariable
+  ) => void;
   handleAddColumn: (column: ColumnData) => void;
   handleDeleteColumn: (column: ColumnData) => void;
 }
@@ -88,6 +89,11 @@ const VariablesRow = ({
     setSelectedColumn(column);
   };
 
+  const handleConfirm = (selectedVariable: DataDictionaryVariable) => {
+    handleChangeColumn(selectedColumn!, selectedVariable);
+    handleCloseDialog();
+  };
+
   return (
     <StyledTableRow>
       {columns.map((column, columnIndex) => (
@@ -123,7 +129,7 @@ const VariablesRow = ({
           title="Add Variable"
           isOpen={isDialogOpen}
           onClose={handleCloseDialog}
-          onConfirm={handleChangeColumn(selectedColumn)}
+          onConfirm={handleConfirm}
           setSelectedObjectPropertyFunction={(object, property) => ({
             ...property,
             // Technically is not correct source type, but for calculations this is backend requirement -

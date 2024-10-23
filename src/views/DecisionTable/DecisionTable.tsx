@@ -258,27 +258,28 @@ const DecisionTable = ({
     );
   };
 
-  const handleChangeColumn =
-    ({ category, index }: ColumnData) =>
-    (newVariable: DataDictionaryVariable) => {
-      const insertEntry = {
-        ...INITIAL_ENTRY,
-        name: newVariable.name,
-        dataType: newVariable.dataType,
-        sourceName: newVariable.sourceName,
-        sourceType: newVariable.sourceType
-      };
-
-      setCaseEntries((prev) =>
-        updateCaseEntry({
-          caseEntries: prev.length ? prev : INITIAL_CASE_ENTRIES,
-          category,
-          start: index,
-          deleteCount: 1,
-          insertEntry
-        })
-      );
+  const handleChangeColumn = (
+    { category, index }: ColumnData,
+    newVariable: DataDictionaryVariable
+  ) => {
+    const insertEntry = {
+      ...INITIAL_ENTRY,
+      name: newVariable.name,
+      dataType: newVariable.dataType,
+      sourceName: newVariable.sourceName,
+      sourceType: newVariable.sourceType
     };
+
+    setCaseEntries((prev) =>
+      updateCaseEntry({
+        caseEntries: prev.length ? prev : INITIAL_CASE_ENTRIES,
+        category,
+        start: index,
+        deleteCount: 1,
+        insertEntry
+      })
+    );
+  };
 
   const handleEntryChange = (
     data: FormFieldsProps,

@@ -44,8 +44,9 @@ interface Table {
   handleDeleteColumn: (column: ColumnData) => void;
   handleChangeStep: (rowIndex: number, stepId: string) => void;
   handleChangeColumn: (
-    column: ColumnData
-  ) => (variable: DataDictionaryVariable) => void;
+    column: ColumnData,
+    variable: DataDictionaryVariable
+  ) => void;
   handleEntryChange: (
     data: FormFieldsProps,
     selectedCell: SelectedCell
