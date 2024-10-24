@@ -68,7 +68,8 @@ const SelectVariableValueDialog = ({
     watch,
     setValue,
     clearErrors,
-    setError
+    setError,
+    getValues
   } = useForm<FormFieldsProps>({
     resolver: yupResolver(validationSchema(dataType)),
     defaultValues: {
@@ -89,32 +90,29 @@ const SelectVariableValueDialog = ({
 
   const watchOperator = watch('operator');
   const watchType = watch('type');
-  const value = watch('value');
   const isVariableType = watchType === VALUE_TYPES.Variable;
 
-  const activeVariable = useMemo(
-    () =>
-      Object.values(variables)
-        .flat()
-        .find((variable) =>
-          typeof value === 'string'
-            ? variable.name === value?.split(/\.(.+)/)[0]
-            : false
-        ),
-    [variables, value]
-  );
+  const activeVariable = useMemo(() => {
+    const value = getValues('value');
+    return Object.values(variables)
+      .flat()
+      .find((variable) =>
+        typeof value === 'string'
+          ? variable.name === value?.split(/\.(.+)/)[0]
+          : false
+      );
+  }, [variables]);
 
-  const activeProperty = useMemo(
-    () =>
-      Object.values(integrationData)
-        .flat()
-        .find((variable) =>
-          typeof value === 'string'
-            ? variable.name === value?.split(/\.(.+)/)[1]
-            : false
-        ),
-    [integrationData, value]
-  );
+  const activeProperty = useMemo(() => {
+    const value = getValues('value');
+    return Object.values(integrationData)
+      .flat()
+      .find((variable) =>
+        typeof value === 'string'
+          ? variable.name === value?.split(/\.(.+)/)[1]
+          : false
+      );
+  }, [integrationData]);
 
   const onSubmit = async (
     data: FormFieldsProps,
