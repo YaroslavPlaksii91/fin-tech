@@ -22,7 +22,7 @@ export const getFormattedRows = (data: LeadRequestReport[]) => {
           : '-',
       [COLUMN_IDS.ssn]: leadRequest.ssn ?? '-',
       [COLUMN_IDS.email]: leadRequest.email ?? '-',
-      [COLUMN_IDS.phoneNumber]: leadRequest.homePhone ?? '-',
+      [COLUMN_IDS.phoneNumber]: leadRequest.mobilePhone ?? '-',
       [COLUMN_IDS.origin]: leadRequest.origin ?? '-',
       [COLUMN_IDS.craScore]: processingMetadata?.craScore ?? '-',
       [COLUMN_IDS.requestId]: leadRequest.requestId ?? '-',

@@ -7,7 +7,7 @@ export enum COLUMN_IDS {
   fullName = 'fullName',
   ssn = 'leadRequest.ssn',
   email = 'leadRequest.email',
-  phoneNumber = 'leadRequest.homePhone',
+  phoneNumber = 'leadRequest.mobilePhone',
   origin = 'leadRequest.origin',
   requestId = 'leadRequest.requestId',
   loanId = 'leadResponse.loanId',
