@@ -132,41 +132,39 @@ const LeadRequestsReports = () => {
         </Stack>
       </Stack>
       <Paper>
-        <StyledDataGridPremium
-          autoHeight
-          disableColumnMenu
-          columnHeaderHeight={TABLE.COLUMN_HEIGHT}
-          rowHeight={TABLE.ROW_HEIGHT}
-          // We have border bottom 1px for each row, to include it in rowHeight calculation need also add spacing here
-          // getRowSpacing={() => ({ bottom: 1 })}
-          // rowSpacingType="border"
-          rows={rows}
-          columns={columns}
-          loading={loading}
-          sortingMode="server"
-          paginationMode="client"
-          pinnedColumns={{ right: [COLUMN_IDS.details] }}
-          onSortModelChange={handleSortModelChange}
-          onRowClick={handleRowSelection}
-          getRowClassName={(params) =>
-            params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
-          }
-          slots={{
-            noRowsOverlay: CustomNoResultsOverlay,
-            footer: () => (
-              <TablePagination
-                isDisabled={loading}
-                count={totalCount}
-                totalPages={totalPages}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handlePageChange}
-                onRowsPerPageChange={handleRowsPerPageChange}
-                onPageApply={handlePageApply}
-              />
-            )
-          }}
-        />
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <StyledDataGridPremium
+            disableColumnMenu
+            columnHeaderHeight={TABLE.COLUMN_HEIGHT}
+            rowHeight={TABLE.ROW_HEIGHT}
+            rows={rows}
+            columns={columns}
+            loading={loading}
+            sortingMode="server"
+            paginationMode="client"
+            pinnedColumns={{ right: [COLUMN_IDS.details] }}
+            onSortModelChange={handleSortModelChange}
+            onRowClick={handleRowSelection}
+            getRowClassName={(params) =>
+              params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
+            }
+            slots={{
+              noRowsOverlay: CustomNoResultsOverlay,
+              footer: () => (
+                <TablePagination
+                  isDisabled={loading}
+                  count={totalCount}
+                  totalPages={totalPages}
+                  page={page}
+                  rowsPerPage={rowsPerPage}
+                  onPageChange={handlePageChange}
+                  onRowsPerPageChange={handleRowsPerPageChange}
+                  onPageApply={handlePageApply}
+                />
+              )
+            }}
+          />
+        </Box>
       </Paper>
       <Filters
         isOpen={isFiltersOpen}

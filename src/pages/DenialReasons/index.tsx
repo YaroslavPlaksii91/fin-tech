@@ -103,38 +103,41 @@ const DenialReasons = () => {
         </Stack>
       </Stack>
       <Paper>
-        <StyledDataGridPremium
-          disableColumnMenu
-          hideFooter
-          autoHeight={rows.length * TABLE.ROW_HEIGHT < TABLE.HEIGHT}
-          sx={{ height: TABLE.HEIGHT }}
-          columnHeaderHeight={TABLE.COLUMN_HEIGHT}
-          rowHeight={TABLE.ROW_HEIGHT}
-          rows={rows}
-          aggregationFunctions={{
-            totalLabel: {
-              apply: () => 'Total',
-              label: ''
-            },
-            // To not show the header aggregation label for columns in aggregationModel according to design
-            sum: { ...GRID_AGGREGATION_FUNCTIONS.sum, label: '' }
-          }}
-          aggregationModel={{
-            [COLUMN_IDS.denialReason]: 'totalLabel',
-            [COLUMN_IDS.totalCount]: 'sum',
-            [COLUMN_IDS.percentage]: 'sum'
-          }}
-          columns={getDataGridColumns()}
-          loading={loading}
-          sortingMode="server"
-          paginationMode="client"
-          onSortModelChange={handleSortModelChange}
-          getRowClassName={(params) => {
-            if (!rows.length) return '';
-            return params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd';
-          }}
-          slots={{ noRowsOverlay: CustomNoResultsOverlay }}
-        />
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <StyledDataGridPremium
+            disableColumnMenu
+            hideFooter
+            sx={{ height: TABLE.HEIGHT }}
+            columnHeaderHeight={TABLE.COLUMN_HEIGHT}
+            rowHeight={TABLE.ROW_HEIGHT}
+            rows={rows}
+            aggregationFunctions={{
+              totalLabel: {
+                apply: () => 'Total',
+                label: ''
+              },
+              // To not show the header aggregation label for columns in aggregationModel according to design
+              sum: { ...GRID_AGGREGATION_FUNCTIONS.sum, label: '' }
+            }}
+            aggregationModel={{
+              [COLUMN_IDS.denialReason]: 'totalLabel',
+              [COLUMN_IDS.totalCount]: 'sum',
+              [COLUMN_IDS.percentage]: 'sum'
+            }}
+            columns={getDataGridColumns()}
+            loading={loading}
+            sortingMode="server"
+            paginationMode="client"
+            onSortModelChange={handleSortModelChange}
+            getRowClassName={(params) => {
+              if (!rows.length) return '';
+              return params.indexRelativeToCurrentPage % 2 === 0
+                ? 'even'
+                : 'odd';
+            }}
+            slots={{ noRowsOverlay: CustomNoResultsOverlay }}
+          />
+        </Box>
       </Paper>
       <Filters
         isOpen={isFiltersOpen}

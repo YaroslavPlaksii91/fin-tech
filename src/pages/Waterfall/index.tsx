@@ -109,25 +109,28 @@ const Waterfall = () => {
         </Stack>
       </Stack>
       <Paper>
-        <StyledDataGridPremium
-          disableColumnMenu
-          hideFooter
-          autoHeight={rows.length * TABLE.ROW_HEIGHT < TABLE.HEIGHT}
-          sx={{ height: TABLE.HEIGHT }}
-          columnHeaderHeight={TABLE.COLUMN_HEIGHT}
-          rowHeight={TABLE.ROW_HEIGHT}
-          pinnedRows={{ bottom: totalRow }}
-          rows={rows}
-          columns={columns}
-          loading={loading}
-          sortingMode="server"
-          onSortModelChange={handleSortModelChange}
-          getRowClassName={(params) => {
-            if (!rows.length) return '';
-            return params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd';
-          }}
-          slots={{ noRowsOverlay: CustomNoResultsOverlay }}
-        />
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <StyledDataGridPremium
+            disableColumnMenu
+            hideFooter
+            sx={{ height: TABLE.HEIGHT }}
+            columnHeaderHeight={TABLE.COLUMN_HEIGHT}
+            rowHeight={TABLE.ROW_HEIGHT}
+            pinnedRows={{ bottom: totalRow }}
+            rows={rows}
+            columns={columns}
+            loading={loading}
+            sortingMode="server"
+            onSortModelChange={handleSortModelChange}
+            getRowClassName={(params) => {
+              if (!rows.length) return '';
+              return params.indexRelativeToCurrentPage % 2 === 0
+                ? 'even'
+                : 'odd';
+            }}
+            slots={{ noRowsOverlay: CustomNoResultsOverlay }}
+          />
+        </Box>
       </Paper>
       <Filters
         isOpen={isFiltersOpen}
