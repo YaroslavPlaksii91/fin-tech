@@ -4,6 +4,7 @@ import { Operator, OPERATORS, VALUE_TYPES, ValueType } from '../types';
 
 import { isDecimal, isInteger } from '@utils/validation';
 import { checkDataType } from '@components/DataDictionaryVariables/utils';
+
 export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
   yup.object().shape({
     name: yup.string().required(),
@@ -16,28 +17,30 @@ export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
       .oneOf(Object.values(VALUE_TYPES), 'Type is required')
       .required(),
     value: dataType.isWithEnum
-      ? yup.array().when(['operator', 'type'], ([operator, type], schema) => {
-          if (operator === OPERATORS.ANY || type === VALUE_TYPES.Variable)
-            return schema.notRequired().nullable();
+      ? yup
+          .mixed<string | string[]>()
+          .when(['operator', 'type'], ([operator, type], schema) => {
+            if (operator === OPERATORS.ANY || type === VALUE_TYPES.Variable)
+              return schema.notRequired().nullable();
 
-          return schema
-            .required('Value is required')
-            .test(
-              'is-single',
-              "Value must be a single with operators '=' and '!='",
-              (value) =>
-                [OPERATORS.EQUAL, OPERATORS.NOT_EQUAL].includes(
-                  operator as OPERATORS
-                )
-                  ? value.length <= 1
-                  : true
-            )
-            .test(
-              'is-empty',
-              'Value is required',
-              (value) => value.length !== 0
-            );
-        })
+            return schema
+              .required('Value is required')
+              .test(
+                'is-single',
+                "Value must be a single with operators '=' and '!='",
+                (value) =>
+                  [OPERATORS.EQUAL, OPERATORS.NOT_EQUAL].includes(
+                    operator as OPERATORS
+                  )
+                    ? value.length <= 1
+                    : true
+              )
+              .test(
+                'is-empty',
+                'Value is required',
+                (value) => value.length !== 0
+              );
+          })
       : yup.string().when(['operator', 'type'], ([operator, type], schema) => {
           if (
             operator === OPERATORS.ANY ||

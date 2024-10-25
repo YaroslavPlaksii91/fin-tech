@@ -138,7 +138,7 @@ const SelectVariableValueDialog = ({
       dataType: selectedVariable?.dataType || VARIABLE_DATA_TYPE.String
     };
 
-    if (selectedVariable) {
+    if (selectedVariable && selectedCell.name !== selectedVariable.name) {
       params.push(expressionVariableParam);
     }
 
