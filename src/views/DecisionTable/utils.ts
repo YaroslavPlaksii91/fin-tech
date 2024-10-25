@@ -126,11 +126,14 @@ export const getVariableSources = (entries: Entry[], variables: Variable[]) =>
 
       if (isDataDictionaryExpression) {
         const variableName = expression.split(/\.(.+)/)[0];
+        const isVariableAdded = Boolean(
+          acc.find((variableSource) => variableSource.name === variableName)
+        );
         const expressionSourceType = variables.find(
           (variable) => variable.name === variableName
         )?.sourceType;
 
-        if (expressionSourceType) {
+        if (expressionSourceType && !isVariableAdded) {
           acc.push({
             name: variableName,
             sourceType: expressionSourceType
