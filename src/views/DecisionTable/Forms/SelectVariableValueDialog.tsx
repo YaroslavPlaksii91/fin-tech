@@ -91,6 +91,7 @@ const SelectVariableValueDialog = ({
   const watchOperator = watch('operator');
   const watchType = watch('type');
   const isVariableType = watchType === VALUE_TYPES.Variable;
+  const isValueType = watchType === VALUE_TYPES.Value;
 
   const activeVariable = useMemo(() => {
     const value = getValues('value');
@@ -206,6 +207,26 @@ const SelectVariableValueDialog = ({
 
     clearErrors();
   }, [watchOperator]);
+
+  useEffect(() => {
+    const isVariableWithoutExpression =
+      isVariableType && !selectedCell.isDataDictionaryExpression;
+    const isValueWithExpression =
+      isValueType && selectedCell.isDataDictionaryExpression;
+
+    if (isVariableWithoutExpression || isValueWithExpression) {
+      setValue('value', dataType.isWithEnum ? [] : '');
+    } else {
+      setValue(
+        'value',
+        dataType.isWithEnum
+          ? selectedCell.expression
+            ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
+            : []
+          : selectedCell.expression
+      );
+    }
+  }, [watchType]);
 
   return isVariableType ? (
     <VariablesDialog
