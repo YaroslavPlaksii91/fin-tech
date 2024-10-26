@@ -29,9 +29,18 @@ const List = ({
   onSearch
 }: ListProps) => (
   <MuiList
-    sx={{ padding: 0 }}
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+      padding: 0
+    }}
     subheader={
-      <StyledListSubheader>
+      <StyledListSubheader
+        sx={{
+          flexGrow: 1
+        }}
+      >
         <Typography variant="body1">{title}</Typography>
         <Typography variant="body2" color="text.secondary">
           {subtitle}
