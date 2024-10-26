@@ -49,7 +49,16 @@ const List = ({
         flexDirection: 'column'
       }}
     >
-      <Box sx={{ px: 3, mb: 1 }}>
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+          backgroundColor: 'background.paper',
+          px: 3,
+          mb: 1
+        }}
+      >
         <TextField
           fullWidth
           placeholder="Search by Keyword"
