@@ -9,6 +9,8 @@ import {
 
 import { StyledListSubheader } from './styled';
 
+import { theme } from '@theme';
+
 interface ListProps {
   isEmpty: boolean;
   emptyStateText: string;
@@ -49,7 +51,16 @@ const List = ({
         flexDirection: 'column'
       }}
     >
-      <Box sx={{ px: 3, mb: 1 }}>
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+          backgroundColor: theme.palette.background.paper,
+          px: 3,
+          mb: 1
+        }}
+      >
         <TextField
           fullWidth
           placeholder="Search by Keyword"
