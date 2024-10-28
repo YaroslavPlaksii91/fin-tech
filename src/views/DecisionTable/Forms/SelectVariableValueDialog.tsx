@@ -64,12 +64,11 @@ const SelectVariableValueDialog = ({
   const {
     handleSubmit,
     control,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
     watch,
     setValue,
     clearErrors,
-    setError,
-    getValues
+    setError
   } = useForm<FormFieldsProps>({
     resolver: yupResolver(validationSchema(dataType)),
     defaultValues: {
@@ -91,30 +90,31 @@ const SelectVariableValueDialog = ({
   const watchOperator = watch('operator');
   const watchType = watch('type');
   const isVariableType = watchType === VALUE_TYPES.Variable;
-  const isValueType = watchType === VALUE_TYPES.Value;
+  const watchValue = watch('value');
 
-  const activeVariable = useMemo(() => {
-    const value = getValues('value');
-    return Object.values(variables)
-      .flat()
-      .find((variable) =>
-        typeof value === 'string'
-          ? variable.name === value ||
-            variable.name === value?.split(/\.(.+)/)[0]
-          : false
-      );
-  }, [variables]);
+  const activeVariable = useMemo(
+    () =>
+      Object.values(variables)
+        .flat()
+        .find((variable) =>
+          typeof watchValue === 'string'
+            ? variable.name === watchValue?.split(/\.(.+)/)[0]
+            : false
+        ),
+    [variables, watchValue]
+  );
 
-  const activeProperty = useMemo(() => {
-    const value = getValues('value');
-    return Object.values(integrationData)
-      .flat()
-      .find((variable) =>
-        typeof value === 'string'
-          ? variable.name === value?.split(/\.(.+)/)[1]
-          : false
-      );
-  }, [integrationData]);
+  const activeProperty = useMemo(
+    () =>
+      Object.values(integrationData)
+        .flat()
+        .find((variable) =>
+          typeof watchValue === 'string'
+            ? variable.name === watchValue?.split(/\.(.+)/)[1]
+            : false
+        ),
+    [integrationData, watchValue]
+  );
 
   const onSubmit = async (
     data: FormFieldsProps,
@@ -201,6 +201,7 @@ const SelectVariableValueDialog = ({
       setValue('type', VALUE_TYPES.Value);
       setValue('value', dataType.isWithEnum ? [] : '');
     }
+
     if (watchOperator === OPERATORS.BETWEEN) {
       setValue('type', VALUE_TYPES.Value);
     }
@@ -209,23 +210,7 @@ const SelectVariableValueDialog = ({
   }, [watchOperator]);
 
   useEffect(() => {
-    const isVariableWithoutExpression =
-      isVariableType && !selectedCell.isDataDictionaryExpression;
-    const isValueWithExpression =
-      isValueType && selectedCell.isDataDictionaryExpression;
-
-    if (isVariableWithoutExpression || isValueWithExpression) {
-      setValue('value', dataType.isWithEnum ? [] : '');
-    } else {
-      setValue(
-        'value',
-        dataType.isWithEnum
-          ? selectedCell.expression
-            ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
-            : []
-          : selectedCell.expression
-      );
-    }
+    if (isDirty) setValue('value', dataType.isWithEnum ? [] : '');
   }, [watchType]);
 
   return isVariableType ? (
