@@ -44,17 +44,17 @@ export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
               'Value is required',
               (value) => value.length !== 0
             );
-        } else {
-          return yup
-            .string()
-            .required('Value is required')
-            .test('is-decimal', 'Value must be a valid decimal', (value) =>
-              dataType.isDecimal ? isDecimal(value) : true
-            )
-            .test('is-integer', 'Value must be a valid integer', (value) =>
-              dataType.isInteger ? isInteger(value) : true
-            );
         }
+
+        return yup
+          .string()
+          .required('Value is required')
+          .test('is-decimal', 'Value must be a valid decimal', (value) =>
+            dataType.isDecimal ? isDecimal(value) : true
+          )
+          .test('is-integer', 'Value must be a valid integer', (value) =>
+            dataType.isInteger ? isInteger(value) : true
+          );
       }),
     lowerBound: yup.string().when(['operator'], ([operator], schema) =>
       operator === OPERATORS.BETWEEN
