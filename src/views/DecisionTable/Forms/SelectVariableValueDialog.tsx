@@ -98,7 +98,8 @@ const SelectVariableValueDialog = ({
         .flat()
         .find((variable) =>
           typeof watchValue === 'string'
-            ? variable.name === watchValue?.split(/\.(.+)/)[0]
+            ? variable.name === watchValue ||
+              variable.name === watchValue?.split(/\.(.+)/)[0]
             : false
         ),
     [variables, watchValue]
