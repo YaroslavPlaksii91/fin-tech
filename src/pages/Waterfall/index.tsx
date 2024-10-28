@@ -53,7 +53,6 @@ const Waterfall = () => {
   };
 
   const handleSortModelChange = useCallback((model: GridSortModel) => {
-    if (!model.length) return;
     const sortParams = `${model[0].field} ${model[0].sort}`;
 
     setSort(sortParams);

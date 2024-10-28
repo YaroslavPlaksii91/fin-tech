@@ -4,6 +4,8 @@ import { ExtractArrayElementType } from '@utils/types';
 import { DateFilter, RangeFilter } from '@utils/filters';
 
 export enum COLUMN_IDS {
+  firstName = 'leadRequest.firstName',
+  lastName = 'leadRequest.lastName',
   fullName = 'fullName',
   origin = 'leadRequest.origin',
   requestId = 'leadRequest.requestId',

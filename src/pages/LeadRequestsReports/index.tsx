@@ -66,8 +66,11 @@ const LeadRequestsReports = () => {
   };
 
   const handleSortModelChange = (model: GridSortModel) => {
-    if (!model.length) return;
-    const sortParams = `${model[0].field} ${model[0].sort}`;
+    let sortParams = `${model[0].field} ${model[0].sort}`;
+
+    if (model[0].field === 'fullName')
+      sortParams = `${COLUMN_IDS.firstName} ${model[0].sort}, ${COLUMN_IDS.lastName} ${model[0].sort}`;
+
     setSort(sortParams);
   };
 
