@@ -98,7 +98,8 @@ const SelectVariableValueDialog = ({
         .flat()
         .find((variable) =>
           typeof watchValue === 'string'
-            ? variable.name === watchValue?.split(/\.(.+)/)[0]
+            ? variable.name === watchValue ||
+              variable.name === watchValue?.split(/\.(.+)/)[0]
             : false
         ),
     [variables, watchValue]
@@ -138,7 +139,7 @@ const SelectVariableValueDialog = ({
       dataType: selectedVariable?.dataType || VARIABLE_DATA_TYPE.String
     };
 
-    if (selectedVariable) {
+    if (selectedVariable && selectedCell.name !== selectedVariable.name) {
       params.push(expressionVariableParam);
     }
 

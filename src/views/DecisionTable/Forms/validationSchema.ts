@@ -4,6 +4,7 @@ import { Operator, OPERATORS, VALUE_TYPES, ValueType } from '../types';
 
 import { isDecimal, isInteger } from '@utils/validation';
 import { checkDataType } from '@components/DataDictionaryVariables/utils';
+
 export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
   yup.object().shape({
     name: yup.string().required(),
@@ -15,11 +16,17 @@ export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
       .mixed<ValueType>()
       .oneOf(Object.values(VALUE_TYPES), 'Type is required')
       .required(),
-    value: dataType.isWithEnum
-      ? yup.array().when(['operator', 'type'], ([operator, type], schema) => {
-          if (operator === OPERATORS.ANY || type === VALUE_TYPES.Variable)
-            return schema.notRequired().nullable();
+    value: yup
+      .mixed<string | string[]>()
+      .when(['operator', 'type'], ([operator, type], schema) => {
+        if (
+          operator === OPERATORS.ANY ||
+          operator === OPERATORS.BETWEEN ||
+          type === VALUE_TYPES.Variable
+        )
+          return schema.notRequired().nullable();
 
+        if (dataType.isWithEnum) {
           return schema
             .required('Value is required')
             .test(
@@ -37,24 +44,18 @@ export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
               'Value is required',
               (value) => value.length !== 0
             );
-        })
-      : yup.string().when(['operator', 'type'], ([operator, type], schema) => {
-          if (
-            operator === OPERATORS.ANY ||
-            operator === OPERATORS.BETWEEN ||
-            type === VALUE_TYPES.Variable
-          )
-            return schema.notRequired().nullable();
+        }
 
-          return schema
-            .required('Value is required')
-            .test('is-decimal', 'Value must be a valid decimal', (value) =>
-              dataType.isDecimal ? isDecimal(value) : true
-            )
-            .test('is-integer', 'Value must be a valid integer', (value) =>
-              dataType.isInteger ? isInteger(value) : true
-            );
-        }),
+        return yup
+          .string()
+          .required('Value is required')
+          .test('is-decimal', 'Value must be a valid decimal', (value) =>
+            dataType.isDecimal ? isDecimal(value) : true
+          )
+          .test('is-integer', 'Value must be a valid integer', (value) =>
+            dataType.isInteger ? isInteger(value) : true
+          );
+      }),
     lowerBound: yup.string().when(['operator'], ([operator], schema) =>
       operator === OPERATORS.BETWEEN
         ? schema
