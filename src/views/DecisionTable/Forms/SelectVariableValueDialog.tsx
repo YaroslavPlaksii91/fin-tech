@@ -174,28 +174,6 @@ const SelectVariableValueDialog = ({
     clearErrors();
   };
 
-  const DialogContent = () => (
-    <Content
-      control={control}
-      isOperatorDisabled={!isCondition}
-      isValueSelectMultiple={dataType.isWithEnum}
-      isValueSelectDisabled={watchOperator === OPERATORS.ANY}
-      isTypeSelectDisabled={
-        watchOperator === OPERATORS.ANY || watchOperator === OPERATORS.BETWEEN
-      }
-      isValueInputDisabled={watchOperator === OPERATORS.ANY || isVariableType}
-      hasBounds={watchOperator === OPERATORS.BETWEEN}
-      hasValueAsSelect={
-        (dataType.isWithEnum || dataType.isBoolean) && !isVariableType
-      }
-      operatorOptions={getOperatorOptions(dataType)}
-      valueOptions={getFormattedOptions(
-        dataType.isBoolean ? BOOLEAN_OPTIONS : selectedCell.allowedValues || []
-      )}
-      valueLabel={!isVariableType ? 'Value*' : 'Variable*'}
-    />
-  );
-
   useEffect(() => {
     if (watchOperator === OPERATORS.ANY) {
       setValue('type', VALUE_TYPES.Value);
@@ -239,7 +217,30 @@ const SelectVariableValueDialog = ({
         <Typography variant="h6" color="text.primary" mb={2}>
           {isCondition ? 'Enter condition' : 'Enter output'}
         </Typography>
-        <DialogContent />
+        <Content
+          control={control}
+          isOperatorDisabled={!isCondition}
+          isValueSelectMultiple={dataType.isWithEnum}
+          isValueSelectDisabled={watchOperator === OPERATORS.ANY}
+          isTypeSelectDisabled={
+            watchOperator === OPERATORS.ANY ||
+            watchOperator === OPERATORS.BETWEEN
+          }
+          isValueInputDisabled={
+            watchOperator === OPERATORS.ANY || isVariableType
+          }
+          hasBounds={watchOperator === OPERATORS.BETWEEN}
+          hasValueAsSelect={
+            (dataType.isWithEnum || dataType.isBoolean) && !isVariableType
+          }
+          operatorOptions={getOperatorOptions(dataType)}
+          valueOptions={getFormattedOptions(
+            dataType.isBoolean
+              ? BOOLEAN_OPTIONS
+              : selectedCell.allowedValues || []
+          )}
+          valueLabel={!isVariableType ? 'Value*' : 'Variable*'}
+        />
       </Box>
     </VariablesDialog>
   ) : (
@@ -252,7 +253,30 @@ const SelectVariableValueDialog = ({
       maxWidth="lg"
     >
       <form onSubmit={handleSubmit((data) => onSubmit(data))}>
-        <DialogContent />
+        <Content
+          control={control}
+          isOperatorDisabled={!isCondition}
+          isValueSelectMultiple={dataType.isWithEnum}
+          isValueSelectDisabled={watchOperator === OPERATORS.ANY}
+          isTypeSelectDisabled={
+            watchOperator === OPERATORS.ANY ||
+            watchOperator === OPERATORS.BETWEEN
+          }
+          isValueInputDisabled={
+            watchOperator === OPERATORS.ANY || isVariableType
+          }
+          hasBounds={watchOperator === OPERATORS.BETWEEN}
+          hasValueAsSelect={
+            (dataType.isWithEnum || dataType.isBoolean) && !isVariableType
+          }
+          operatorOptions={getOperatorOptions(dataType)}
+          valueOptions={getFormattedOptions(
+            dataType.isBoolean
+              ? BOOLEAN_OPTIONS
+              : selectedCell.allowedValues || []
+          )}
+          valueLabel={!isVariableType ? 'Value*' : 'Variable*'}
+        />
         <Stack pt={1} spacing={1} direction="row" justifyContent="flex-end">
           <LoadingButton
             loading={isSubmitting}
