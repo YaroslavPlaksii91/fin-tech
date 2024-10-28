@@ -209,7 +209,12 @@ const DataDictionaryDialog = ({
         variable for this flow will exist only for this flow. For other flows,
         you will need to create this variable separately again.
       </Typography>
-      <DialogContent sx={{ paddingBottom: 0 }}>
+      <DialogContent
+        sx={{
+          paddingBottom: 0,
+          overflowY: 'visible'
+        }}
+      >
         <Box mt={1} mx={-3}>
           <Grid container>
             <Grid item xs={selectVarIsObjectType ? 4 : 6}>
@@ -342,7 +347,14 @@ const DataDictionaryDialog = ({
       <Box>
         <Divider />
       </Box>
-      <DialogActions sx={{ padding: '8px 16px' }}>
+      <DialogActions
+        sx={{
+          position: 'sticky',
+          bottom: 0,
+          backgroundColor: palette.white,
+          padding: '8px 16px'
+        }}
+      >
         <LoadingButton
           disabled={
             !selectedVariable ||
