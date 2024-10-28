@@ -16,40 +16,37 @@ export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
       .mixed<ValueType>()
       .oneOf(Object.values(VALUE_TYPES), 'Type is required')
       .required(),
-    value: dataType.isWithEnum
-      ? yup
-          .mixed<string | string[]>()
-          .when(['operator', 'type'], ([operator, type], schema) => {
-            if (operator === OPERATORS.ANY || type === VALUE_TYPES.Variable)
-              return schema.notRequired().nullable();
+    value: yup
+      .mixed<string | string[]>()
+      .when(['operator', 'type'], ([operator, type], schema) => {
+        if (
+          operator === OPERATORS.ANY ||
+          operator === OPERATORS.BETWEEN ||
+          type === VALUE_TYPES.Variable
+        )
+          return schema.notRequired().nullable();
 
-            return schema
-              .required('Value is required')
-              .test(
-                'is-single',
-                "Value must be a single with operators '=' and '!='",
-                (value) =>
-                  [OPERATORS.EQUAL, OPERATORS.NOT_EQUAL].includes(
-                    operator as OPERATORS
-                  )
-                    ? value.length <= 1
-                    : true
-              )
-              .test(
-                'is-empty',
-                'Value is required',
-                (value) => value.length !== 0
-              );
-          })
-      : yup.string().when(['operator', 'type'], ([operator, type], schema) => {
-          if (
-            operator === OPERATORS.ANY ||
-            operator === OPERATORS.BETWEEN ||
-            type === VALUE_TYPES.Variable
-          )
-            return schema.notRequired().nullable();
-
+        if (dataType.isWithEnum) {
           return schema
+            .required('Value is required')
+            .test(
+              'is-single',
+              "Value must be a single with operators '=' and '!='",
+              (value) =>
+                [OPERATORS.EQUAL, OPERATORS.NOT_EQUAL].includes(
+                  operator as OPERATORS
+                )
+                  ? value.length <= 1
+                  : true
+            )
+            .test(
+              'is-empty',
+              'Value is required',
+              (value) => value.length !== 0
+            );
+        } else {
+          return yup
+            .string()
             .required('Value is required')
             .test('is-decimal', 'Value must be a valid decimal', (value) =>
               dataType.isDecimal ? isDecimal(value) : true
@@ -57,7 +54,8 @@ export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
             .test('is-integer', 'Value must be a valid integer', (value) =>
               dataType.isInteger ? isInteger(value) : true
             );
-        }),
+        }
+      }),
     lowerBound: yup.string().when(['operator'], ([operator], schema) =>
       operator === OPERATORS.BETWEEN
         ? schema
