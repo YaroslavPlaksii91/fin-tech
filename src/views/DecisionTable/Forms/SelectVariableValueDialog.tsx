@@ -98,7 +98,8 @@ const SelectVariableValueDialog = ({
       .flat()
       .find((variable) =>
         typeof value === 'string'
-          ? variable.name === value?.split(/\.(.+)/)[0]
+          ? variable.name === value ||
+            variable.name === value?.split(/\.(.+)/)[0]
           : false
       );
   }, [variables]);
