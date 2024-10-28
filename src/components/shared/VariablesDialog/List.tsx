@@ -9,6 +9,8 @@ import {
 
 import { StyledListSubheader } from './styled';
 
+import { theme } from '@theme';
+
 interface ListProps {
   isEmpty: boolean;
   emptyStateText: string;
@@ -54,7 +56,7 @@ const List = ({
           position: 'sticky',
           top: 0,
           zIndex: 1,
-          backgroundColor: 'background.paper',
+          backgroundColor: theme.palette.background.paper,
           px: 3,
           mb: 1
         }}
