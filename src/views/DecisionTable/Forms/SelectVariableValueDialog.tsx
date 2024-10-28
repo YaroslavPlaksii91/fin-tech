@@ -64,12 +64,11 @@ const SelectVariableValueDialog = ({
   const {
     handleSubmit,
     control,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
     watch,
     setValue,
     clearErrors,
-    setError,
-    getValues
+    setError
   } = useForm<FormFieldsProps>({
     resolver: yupResolver(validationSchema(dataType)),
     defaultValues: {
@@ -91,29 +90,31 @@ const SelectVariableValueDialog = ({
   const watchOperator = watch('operator');
   const watchType = watch('type');
   const isVariableType = watchType === VALUE_TYPES.Variable;
+  const watchValue = watch('value');
 
-  const activeVariable = useMemo(() => {
-    const value = getValues('value');
-    return Object.values(variables)
-      .flat()
-      .find((variable) =>
-        typeof value === 'string'
-          ? variable.name === value ||
-            variable.name === value?.split(/\.(.+)/)[0]
-          : false
-      );
-  }, [variables]);
+  const activeVariable = useMemo(
+    () =>
+      Object.values(variables)
+        .flat()
+        .find((variable) =>
+          typeof watchValue === 'string'
+            ? variable.name === watchValue?.split(/\.(.+)/)[0]
+            : false
+        ),
+    [variables, watchValue]
+  );
 
-  const activeProperty = useMemo(() => {
-    const value = getValues('value');
-    return Object.values(integrationData)
-      .flat()
-      .find((variable) =>
-        typeof value === 'string'
-          ? variable.name === value?.split(/\.(.+)/)[1]
-          : false
-      );
-  }, [integrationData]);
+  const activeProperty = useMemo(
+    () =>
+      Object.values(integrationData)
+        .flat()
+        .find((variable) =>
+          typeof watchValue === 'string'
+            ? variable.name === watchValue?.split(/\.(.+)/)[1]
+            : false
+        ),
+    [integrationData, watchValue]
+  );
 
   const onSubmit = async (
     data: FormFieldsProps,
@@ -173,39 +174,22 @@ const SelectVariableValueDialog = ({
     clearErrors();
   };
 
-  const DialogContent = () => (
-    <Content
-      control={control}
-      isOperatorDisabled={!isCondition}
-      isValueSelectMultiple={dataType.isWithEnum}
-      isValueSelectDisabled={watchOperator === OPERATORS.ANY}
-      isTypeSelectDisabled={
-        watchOperator === OPERATORS.ANY || watchOperator === OPERATORS.BETWEEN
-      }
-      isValueInputDisabled={watchOperator === OPERATORS.ANY || isVariableType}
-      hasBounds={watchOperator === OPERATORS.BETWEEN}
-      hasValueAsSelect={
-        (dataType.isWithEnum || dataType.isBoolean) && !isVariableType
-      }
-      operatorOptions={getOperatorOptions(dataType)}
-      valueOptions={getFormattedOptions(
-        dataType.isBoolean ? BOOLEAN_OPTIONS : selectedCell.allowedValues || []
-      )}
-      valueLabel={!isVariableType ? 'Value*' : 'Variable*'}
-    />
-  );
-
   useEffect(() => {
     if (watchOperator === OPERATORS.ANY) {
       setValue('type', VALUE_TYPES.Value);
       setValue('value', dataType.isWithEnum ? [] : '');
     }
+
     if (watchOperator === OPERATORS.BETWEEN) {
       setValue('type', VALUE_TYPES.Value);
     }
 
     clearErrors();
   }, [watchOperator]);
+
+  useEffect(() => {
+    if (isDirty) setValue('value', dataType.isWithEnum ? [] : '');
+  }, [watchType]);
 
   return isVariableType ? (
     <VariablesDialog
@@ -233,7 +217,30 @@ const SelectVariableValueDialog = ({
         <Typography variant="h6" color="text.primary" mb={2}>
           {isCondition ? 'Enter condition' : 'Enter output'}
         </Typography>
-        <DialogContent />
+        <Content
+          control={control}
+          isOperatorDisabled={!isCondition}
+          isValueSelectMultiple={dataType.isWithEnum}
+          isValueSelectDisabled={watchOperator === OPERATORS.ANY}
+          isTypeSelectDisabled={
+            watchOperator === OPERATORS.ANY ||
+            watchOperator === OPERATORS.BETWEEN
+          }
+          isValueInputDisabled={
+            watchOperator === OPERATORS.ANY || isVariableType
+          }
+          hasBounds={watchOperator === OPERATORS.BETWEEN}
+          hasValueAsSelect={
+            (dataType.isWithEnum || dataType.isBoolean) && !isVariableType
+          }
+          operatorOptions={getOperatorOptions(dataType)}
+          valueOptions={getFormattedOptions(
+            dataType.isBoolean
+              ? BOOLEAN_OPTIONS
+              : selectedCell.allowedValues || []
+          )}
+          valueLabel={!isVariableType ? 'Value*' : 'Variable*'}
+        />
       </Box>
     </VariablesDialog>
   ) : (
@@ -246,7 +253,30 @@ const SelectVariableValueDialog = ({
       maxWidth="lg"
     >
       <form onSubmit={handleSubmit((data) => onSubmit(data))}>
-        <DialogContent />
+        <Content
+          control={control}
+          isOperatorDisabled={!isCondition}
+          isValueSelectMultiple={dataType.isWithEnum}
+          isValueSelectDisabled={watchOperator === OPERATORS.ANY}
+          isTypeSelectDisabled={
+            watchOperator === OPERATORS.ANY ||
+            watchOperator === OPERATORS.BETWEEN
+          }
+          isValueInputDisabled={
+            watchOperator === OPERATORS.ANY || isVariableType
+          }
+          hasBounds={watchOperator === OPERATORS.BETWEEN}
+          hasValueAsSelect={
+            (dataType.isWithEnum || dataType.isBoolean) && !isVariableType
+          }
+          operatorOptions={getOperatorOptions(dataType)}
+          valueOptions={getFormattedOptions(
+            dataType.isBoolean
+              ? BOOLEAN_OPTIONS
+              : selectedCell.allowedValues || []
+          )}
+          valueLabel={!isVariableType ? 'Value*' : 'Variable*'}
+        />
         <Stack pt={1} spacing={1} direction="row" justifyContent="flex-end">
           <LoadingButton
             loading={isSubmitting}
