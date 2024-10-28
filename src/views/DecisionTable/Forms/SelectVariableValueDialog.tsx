@@ -78,7 +78,7 @@ const SelectVariableValueDialog = ({
         ? VALUE_TYPES.Variable
         : VALUE_TYPES.Value,
       value: dataType.isWithEnum
-        ? selectedCell.expression
+        ? typeof selectedCell.expression === 'string'
           ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
           : []
         : selectedCell.expression,
