@@ -54,25 +54,28 @@ const BillingReports = () => {
         <Typography variant="h4">Billing Report</Typography>
       </Stack>
       <Paper>
-        <StyledDataGridPremium
-          disableColumnMenu
-          hideFooter
-          disableColumnSorting
-          autoHeight={rows.length * TABLE.ROW_HEIGHT < TABLE.HEIGHT}
-          sx={{ height: TABLE.HEIGHT }}
-          columnHeaderHeight={TABLE.COLUMN_HEIGHT}
-          rowHeight={TABLE.ROW_HEIGHT}
-          pinnedRows={{ bottom: totalRow }}
-          rows={rows}
-          columns={getDataGridColumns()}
-          loading={loading}
-          sortingMode="server"
-          getRowClassName={(params) => {
-            if (!rows.length) return '';
-            return params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd';
-          }}
-          slots={{ noRowsOverlay: CustomNoResultsOverlay }}
-        />
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <StyledDataGridPremium
+            disableColumnMenu
+            hideFooter
+            disableColumnSorting
+            sx={{ height: TABLE.HEIGHT }}
+            columnHeaderHeight={TABLE.COLUMN_HEIGHT}
+            rowHeight={TABLE.ROW_HEIGHT}
+            pinnedRows={{ bottom: totalRow }}
+            rows={rows}
+            columns={getDataGridColumns()}
+            loading={loading}
+            sortingMode="server"
+            getRowClassName={(params) => {
+              if (!rows.length) return '';
+              return params.indexRelativeToCurrentPage % 2 === 0
+                ? 'even'
+                : 'odd';
+            }}
+            slots={{ noRowsOverlay: CustomNoResultsOverlay }}
+          />
+        </Box>
       </Paper>
     </Box>
   );

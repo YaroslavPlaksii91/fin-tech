@@ -91,20 +91,21 @@ const Details = ({ data, onClose }: DetailsProps) => {
         </IconButton>
         <Typography variant="h6">Details</Typography>
       </Box>
-      <StyledDataGridPremium
-        hideFooter
-        autoHeight
-        disableColumnReorder
-        disableColumnMenu
-        showCellVerticalBorder
-        showColumnVerticalBorder
-        columnHeaderHeight={39}
-        rowHeight={52}
-        columns={columns}
-        rows={rows}
-        onRowClick={handleRowSelection}
-        sx={{ width: '100%' }}
-      />
+      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        <StyledDataGridPremium
+          hideFooter
+          disableColumnReorder
+          disableColumnMenu
+          showCellVerticalBorder
+          showColumnVerticalBorder
+          columnHeaderHeight={39}
+          rowHeight={52}
+          columns={columns}
+          rows={rows}
+          onRowClick={handleRowSelection}
+          sx={{ width: '100%' }}
+        />
+      </Box>
       <Dialog
         title="Request/Response Details"
         cancelText="Close"
