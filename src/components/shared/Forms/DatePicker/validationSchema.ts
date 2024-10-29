@@ -1,5 +1,8 @@
 import * as yup from 'yup';
 import dayjs, { Dayjs } from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+
+dayjs.extend(isSameOrAfter);
 
 type DateRange = {
   from: Dayjs | null;
@@ -30,7 +33,8 @@ const rangeDateValidationSchema = (fieldName: string) =>
           'Date To must be greater than Date From',
           function (value) {
             const { from } = this.parent as DateRange;
-            return !from || !value || dayjs(value).isAfter(dayjs(from));
+
+            return !from || !value || dayjs(value).isSameOrAfter(dayjs(from));
           }
         )
     })
