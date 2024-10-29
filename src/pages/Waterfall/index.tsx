@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridSortModel } from '@mui/x-data-grid-premium';
 import { Box, Stack, Typography } from '@mui/material';
 
-import { FetchData, IFilters } from './types';
+import { FetchData } from './types';
 import { getFormattedRows, buildParams } from './utils';
 import getDataGridColumns from './columns';
 import {
@@ -22,13 +22,21 @@ import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOver
 import Filters from '@components/Waterfall/Filters';
 import FiltersButton from '@components/shared/Buttons/Filters';
 import Paper from '@components/shared/Paper';
+import useFilters from '@hooks/useFilters';
 
 const Waterfall = () => {
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [data, setData] = useState<WaterfallReport[]>([]);
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [filters, setFilters] = useState<IFilters>(INITIAL_FILTERS);
+
+  const {
+    isFiltersOpen,
+    filters,
+    handleFiltersOpen,
+    handleFiltersClose,
+    handleFiltersSubmit,
+    handleFiltersReset
+  } = useFilters(INITIAL_FILTERS);
 
   const columns = useMemo(() => getDataGridColumns(data), [data]);
   const rows = useMemo(() => getFormattedRows(data), [data]);
@@ -37,20 +45,6 @@ const Waterfall = () => {
     () => rows.filter((row) => row.stack === TOTAL_ROW_NAME),
     [rows]
   );
-
-  const handleFiltersOpen = () => setIsFiltersOpen(true);
-
-  const handleFiltersClose = () => setIsFiltersOpen(false);
-
-  const handleFiltersReset = () => {
-    setFilters(INITIAL_FILTERS);
-    handleFiltersClose();
-  };
-
-  const handleSubmit = (data: IFilters) => {
-    setFilters(data);
-    handleFiltersClose();
-  };
 
   const handleSortModelChange = useCallback((model: GridSortModel) => {
     const sortParams = `${model[0].field} ${model[0].sort}`;
@@ -135,7 +129,7 @@ const Waterfall = () => {
         isOpen={isFiltersOpen}
         filters={filters}
         onReset={handleFiltersReset}
-        onSubmit={handleSubmit}
+        onSubmit={handleFiltersSubmit}
         onClose={handleFiltersClose}
       />
     </Box>
