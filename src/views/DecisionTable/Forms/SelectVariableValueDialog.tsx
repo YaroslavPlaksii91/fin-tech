@@ -79,7 +79,10 @@ const SelectVariableValueDialog = ({
         : VALUE_TYPES.Value,
       value: dataType.isWithEnum
         ? typeof selectedCell.expression === 'string'
-          ? selectedCell.expression.replace(/[[\]\s]/g, '').split(',')
+          ? selectedCell.expression
+              .replace(/[[\]\s]/g, '')
+              .split(',')
+              .filter(Boolean)
           : []
         : selectedCell.expression,
       lowerBound: bounds.length > 0 ? bounds[0].trim() : undefined,
@@ -122,7 +125,11 @@ const SelectVariableValueDialog = ({
     selectedVariable?: Variable
   ) => {
     if (data.operator === OPERATORS.ANY) {
-      handleSubmitForm({ ...data, dataType: selectedCell.dataType });
+      handleSubmitForm({
+        ...data,
+        value: '',
+        dataType: selectedCell.dataType
+      });
       return;
     }
 
