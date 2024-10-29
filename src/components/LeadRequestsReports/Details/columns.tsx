@@ -15,13 +15,20 @@ const getColumns = ({
   {
     field: COLUMN_IDS.api,
     headerName: 'API',
-    minWidth: 148
+    minWidth: 148,
+    maxWidth: 259
   },
-  { field: COLUMN_IDS.time, headerName: 'Time (sec)', minWidth: 143 },
+  {
+    field: COLUMN_IDS.time,
+    headerName: 'Time (sec)',
+    minWidth: 143,
+    maxWidth: 250.25
+  },
   {
     field: COLUMN_IDS.result,
     headerName: 'Result',
-    minWidth: 143
+    minWidth: 143,
+    maxWidth: 250.25
   },
   {
     field: COLUMN_IDS.scores,
