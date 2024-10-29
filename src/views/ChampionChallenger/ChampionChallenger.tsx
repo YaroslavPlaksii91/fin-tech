@@ -330,7 +330,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
               </Button>
             )}
           </Stack>
-          {!isPreview && (
+          {!isPreview ? (
             <NoteSection>
               <InputText
                 fullWidth
@@ -340,7 +340,11 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                 placeholder="Enter note here"
               />
             </NoteSection>
-          )}
+          ) : watchNote ? (
+            <NoteSection>
+              <Typography>{watchNote}</Typography>
+            </NoteSection>
+          ) : null}
         </form>
       </StepContentWrapper>
       <StepDetailsControlBar

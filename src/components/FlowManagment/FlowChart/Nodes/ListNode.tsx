@@ -5,11 +5,19 @@ import { StepListData } from '../types';
 import { getListNodesData } from '../utils/nodesUtils';
 
 import { NO_TAG_LABEL, STEP_ICONS } from '@constants/common';
+import { useHasUserPermission } from '@hooks/useHasUserPermission';
+import { permissionsMap } from '@constants/permissions';
 
-const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
+const ListNode: React.FC<NodeProps<StepListData>> = ({
+  data,
+  isConnectable
+}) => {
   const rfInstance = useReactFlow();
+  const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
 
   const dataToShow = getListNodesData(data, rfInstance);
+  const isPreview = !isConnectable || !canUpdateFlow;
+  const isNoteVisible = data.note && isPreview;
 
   return (
     <div id={data.stepId} className="node-list-container">
@@ -20,6 +28,7 @@ const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
           <p className="node-tag">{data?.tag || NO_TAG_LABEL}</p>
           <p className="node-label">{data.name}</p>
         </div>
+        {isNoteVisible && <div className="node-note__icon" />}
       </div>
       <ul className="node-list-container__list">
         {dataToShow.map((el, idx) => (
@@ -40,6 +49,7 @@ const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
           </div>
         ))}
       </ul>
+      {isNoteVisible && <div className="node-note">{data.note}</div>}
       {dataToShow.length === 0 ? (
         <Handle type="source" position={Position.Right} />
       ) : null}

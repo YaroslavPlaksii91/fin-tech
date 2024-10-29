@@ -269,7 +269,7 @@ const Calculation: React.FC<CalculationProps> = ({
                   </Button>
                 )}
               </Stack>
-              {!isPreview && (
+              {!isPreview ? (
                 <NoteSection>
                   <InputText
                     fullWidth
@@ -279,7 +279,11 @@ const Calculation: React.FC<CalculationProps> = ({
                     placeholder="Enter note here"
                   />
                 </NoteSection>
-              )}
+              ) : watchNote ? (
+                <NoteSection>
+                  <Typography>{watchNote}</Typography>
+                </NoteSection>
+              ) : null}
             </form>
           </StepContentWrapper>
           <StepDetailsControlBar

@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import { Button, Paper } from '@mui/material';
+import { Button, Paper, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { debounce, flatMap, isEmpty } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -464,7 +464,7 @@ const DecisionTable = ({
             Add new business layer
           </Button>
         )}
-        {!isPreview && (
+        {!isPreview ? (
           <form>
             <NoteSection>
               <InputText
@@ -476,7 +476,11 @@ const DecisionTable = ({
               />
             </NoteSection>
           </form>
-        )}
+        ) : watchNote ? (
+          <NoteSection>
+            <Typography>{watchNote}</Typography>
+          </NoteSection>
+        ) : null}
       </StepContentWrapper>
       <StepDetailsControlBar
         disabled={!isEmpty(errors) || isSubmitting}
