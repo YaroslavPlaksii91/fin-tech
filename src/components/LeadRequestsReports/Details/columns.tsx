@@ -22,13 +22,13 @@ const getColumns = ({
     field: COLUMN_IDS.time,
     headerName: 'Time (sec)',
     minWidth: 143,
-    maxWidth: 250.25
+    maxWidth: 250
   },
   {
     field: COLUMN_IDS.result,
     headerName: 'Result',
     minWidth: 143,
-    maxWidth: 250.25
+    maxWidth: 250
   },
   {
     field: COLUMN_IDS.scores,
