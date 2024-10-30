@@ -22,7 +22,7 @@
     "@microlink/react-json-view": "^1.23.0",
     "@mui/icons-material": "^5.15.14",
     "@mui/material": "^5.15.14",
-    "@mui/x-data-grid-premium": "7.22.0",
+    "@mui/x-data-grid-premium": "^7.22.0",
     "@mui/x-date-pickers-pro": "^7.6.1",
     "@mui/x-license-pro": "^6.10.2",
     "@reduxjs/toolkit": "^2.2.2",

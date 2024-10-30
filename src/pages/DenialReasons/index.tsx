@@ -92,7 +92,7 @@ const DenialReasons = () => {
           <FiltersButton onClick={handleFiltersOpen} />
         </Stack>
       </Stack>
-      <Paper sx={{ flexGrow: 0 }}>
+      <Paper>
         <DataGrid
           hideFooter
           rows={rows}
