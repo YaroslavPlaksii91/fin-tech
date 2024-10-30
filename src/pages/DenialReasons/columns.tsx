@@ -26,6 +26,7 @@ const getDataGridColumns = (): GridColDef[] => [
     headerName: 'Percentage of Total',
     type: 'number',
     width: 168,
+    resizable: false,
     valueFormatter: (value?: number) => {
       if (!value) return '-';
       const roundedValue = roundToHundredths(value);

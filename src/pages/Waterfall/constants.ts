@@ -1,4 +1,4 @@
-import { RANGE_FILTERS_KEYS, RangeFiltersKey } from './types';
+import { IFilters, RANGE_FILTERS_KEYS, RangeFiltersKey } from './types';
 
 import { INITIAL_RANGE_FILTER, INITIAL_DATE_FILTERS } from '@constants/filters';
 import { RangeFilter } from '@utils/filters';
@@ -71,7 +71,7 @@ export const RANGE_FILTERS_GROUPS = [
   }
 ];
 
-export const INITIAL_FILTERS = {
+export const INITIAL_FILTERS: IFilters = {
   stack: [],
   campaignId: [],
   date: INITIAL_DATE_FILTERS,

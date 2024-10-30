@@ -116,6 +116,7 @@ const getDataGridColumns = (data: WaterfallReport[]) => {
       field: column,
       sortable: false,
       disableReorder: true,
+      resizable: index !== externalSystemsColumns.length - 1,
       cellClassName: () => {
         const colorGroupIndex =
           Math.floor(index / EXTERNAL_SYSTEM_KEYS.length) %
@@ -136,7 +137,15 @@ const getDataGridColumns = (data: WaterfallReport[]) => {
     })
   );
 
-  return [...STATIC_COLUMNS, ...dynamicColumns];
+  const staticColumns = dynamicColumns.length
+    ? STATIC_COLUMNS
+    : STATIC_COLUMNS.map((column, index) =>
+        index !== STATIC_COLUMNS.length - 1
+          ? column
+          : { ...column, resizable: false }
+      );
+
+  return [...staticColumns, ...dynamicColumns];
 };
 
 export default getDataGridColumns;

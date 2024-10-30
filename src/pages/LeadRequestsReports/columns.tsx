@@ -88,7 +88,8 @@ const getDataGridColumns = ({
   {
     field: COLUMN_IDS.cachedConnector,
     headerName: 'Cached Connector',
-    width: 168
+    width: 168,
+    resizable: false
   },
   {
     field: COLUMN_IDS.details,

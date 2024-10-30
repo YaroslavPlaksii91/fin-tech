@@ -32,29 +32,24 @@ const ControlPanelSubFlow: React.FC<ControlPanelProps> = ({
   const handleDiscardChanges = () => resetActive();
 
   const onSave = useCallback(() => {
-    if (rfInstance && flow) {
-      try {
-        const formattedData = formatFlowOnSave({
-          flow,
-          rfInstance
-        });
-        setCopyFlow(formattedData);
+    try {
+      const formattedData = formatFlowOnSave({
+        flow,
+        rfInstance
+      });
+      setCopyFlow(formattedData);
 
-        enqueueSnackbar(
-          <SnackbarMessage
-            message="Success"
-            details={`Changes for the "${flow.data.name}" flow were successfully saved.`}
-          />,
-          { variant: SNACK_TYPE.SUCCESS }
-        );
-      } catch (error) {
-        enqueueSnackbar(
-          <SnackbarErrorMessage message="Error" error={error} />,
-          {
-            variant: SNACK_TYPE.ERROR
-          }
-        );
-      }
+      enqueueSnackbar(
+        <SnackbarMessage
+          message="Success"
+          details={`Changes for the "${flow.data.name}" flow were successfully saved.`}
+        />,
+        { variant: SNACK_TYPE.SUCCESS }
+      );
+    } catch (error) {
+      enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
+        variant: SNACK_TYPE.ERROR
+      });
     }
   }, [rfInstance, flow]);
 
