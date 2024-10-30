@@ -7,11 +7,11 @@ import {
 } from '@domain/leadRequestsReports';
 
 export const getFormattedRows = (data: FormattedData[]) =>
-  data.map((row) => {
+  data.map((row, index) => {
     const { id } = row;
 
     return {
-      id,
+      id: `${id}-${index}`,
       data: row,
       [COLUMN_IDS.api]: row.api ?? '-',
       [COLUMN_IDS.time]: row.time ?? '-',

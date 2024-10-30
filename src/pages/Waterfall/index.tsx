@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridSortModel } from '@mui/x-data-grid-premium';
-import { Box, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 
 import { FetchData } from './types';
-import { getFormattedRows, buildParams } from './utils';
+import { getFormattedRows, buildParams, getTableStyles } from './utils';
 import getDataGridColumns from './columns';
 import {
   DEFAULT_EXPORT_FILE_NAME,
@@ -11,18 +11,18 @@ import {
   INITIAL_FILTERS,
   TOTAL_ROW_NAME
 } from './constants';
-import { StyledDataGridPremium } from './styled';
 
 import { reportingService } from '@services/reports';
 import Logger from '@utils/logger';
-import { TABLE } from '@constants/themeConstants';
 import { WaterfallReport } from '@domain/waterfallReport';
 import ExportCSVButton from '@components/shared/Buttons/ExportCSV';
-import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 import Filters from '@components/Waterfall/Filters';
 import FiltersButton from '@components/shared/Buttons/Filters';
 import Paper from '@components/shared/Paper';
 import useFilters from '@hooks/useFilters';
+import DataGrid from '@components/shared/Table/DataGrid';
+import { TABLE_WRAPPER_HEIGHT } from '@constants/themeConstants';
+import { Wrapper } from '@components/Layouts/styled';
 
 const Waterfall = () => {
   const [loading, setLoading] = useState(false);
@@ -41,8 +41,8 @@ const Waterfall = () => {
   const columns = useMemo(() => getDataGridColumns(data), [data]);
   const rows = useMemo(() => getFormattedRows(data), [data]);
 
-  const totalRow = useMemo(
-    () => rows.filter((row) => row.stack === TOTAL_ROW_NAME),
+  const pinnedRows = useMemo(
+    () => ({ bottom: rows.filter((row) => row.stack === TOTAL_ROW_NAME) }),
     [rows]
   );
 
@@ -79,7 +79,7 @@ const Waterfall = () => {
   }, [sort, filters]);
 
   return (
-    <Box sx={{ padding: '16px 24px' }}>
+    <Wrapper>
       <Stack
         direction="row"
         justifyContent="space-between"
@@ -102,28 +102,17 @@ const Waterfall = () => {
         </Stack>
       </Stack>
       <Paper>
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <StyledDataGridPremium
-            disableColumnMenu
-            hideFooter
-            sx={{ height: TABLE.HEIGHT }}
-            columnHeaderHeight={TABLE.COLUMN_HEIGHT}
-            rowHeight={TABLE.ROW_HEIGHT}
-            pinnedRows={{ bottom: totalRow }}
-            rows={rows}
-            columns={columns}
-            loading={loading}
-            sortingMode="server"
-            onSortModelChange={handleSortModelChange}
-            getRowClassName={(params) => {
-              if (!rows.length) return '';
-              return params.indexRelativeToCurrentPage % 2 === 0
-                ? 'even'
-                : 'odd';
-            }}
-            slots={{ noRowsOverlay: CustomNoResultsOverlay }}
-          />
-        </Box>
+        <DataGrid
+          hideFooter
+          pinnedRows={pinnedRows}
+          rows={rows}
+          columns={columns}
+          loading={loading}
+          sortingMode="server"
+          onSortModelChange={handleSortModelChange}
+          sx={getTableStyles()}
+          wrapperSx={{ maxHeight: TABLE_WRAPPER_HEIGHT }}
+        />
       </Paper>
       <Filters
         isOpen={isFiltersOpen}
@@ -132,7 +121,7 @@ const Waterfall = () => {
         onSubmit={handleFiltersSubmit}
         onClose={handleFiltersClose}
       />
-    </Box>
+    </Wrapper>
   );
 };
 

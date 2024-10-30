@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
-import { Box, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 
 import { COLUMN_IDS, FetchList, RowData } from './types';
 import { buildParams, getFormattedRows } from './utils';
@@ -8,23 +8,24 @@ import getDataGridColumns from './columns';
 import {
   DEFAULT_EXPORT_FILE_NAME,
   DEFAULT_SORT,
-  INITIAL_FILTERS
+  INITIAL_FILTERS,
+  PINNED_COLUMNS
 } from './constants';
 
 import { reportingService } from '@services/reports';
 import TablePagination from '@components/shared/Table/TablePagination';
-import { StyledDataGridPremium } from '@components/shared/Table/styled';
 import Details from '@components/LeadRequestsReports/Details';
 import useTablePagination from '@hooks/useTablePagination';
 import useFilters from '@hooks/useFilters';
 import Logger from '@utils/logger';
-import { TABLE } from '@constants/themeConstants';
 import ExportCSVButton from '@components/shared/Buttons/ExportCSV';
-import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 import Filters from '@components/LeadRequestsReports/Filters';
 import { Drawer } from '@components/shared/Drawer';
 import FiltersButton from '@components/shared/Buttons/Filters';
 import Paper from '@components/shared/Paper';
+import DataGrid from '@components/shared/Table/DataGrid';
+import { TABLE_WRAPPER_HEIGHT } from '@constants/themeConstants';
+import { Wrapper } from '@components/Layouts/styled';
 
 const LeadRequestsReports = () => {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -47,28 +48,59 @@ const LeadRequestsReports = () => {
     rowsPerPage,
     page,
     totalPages,
+    setPage,
     handlePageChange,
-    handlePageApply,
     handleRowsPerPageChange
   } = useTablePagination({ totalCount });
 
-  const handleDetailsOpen = () => setIsDetailsOpen(true);
+  const handleDetailsOpen = useCallback(() => setIsDetailsOpen(true), []);
 
   const handleDetailsClose = () => setIsDetailsOpen(false);
 
-  const columns = getDataGridColumns({ handleDetails: handleDetailsOpen });
+  const dataGridSlots = useMemo(
+    () => ({
+      footer: () => (
+        <TablePagination
+          isDisabled={loading}
+          count={totalCount}
+          totalPages={totalPages}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handlePageChange}
+          onRowsPerPageChange={handleRowsPerPageChange}
+          onPageApply={setPage}
+        />
+      )
+    }),
+    [
+      loading,
+      totalCount,
+      totalPages,
+      page,
+      rowsPerPage,
+      handlePageChange,
+      handleRowsPerPageChange
+    ]
+  );
 
-  const handleSortModelChange = (model: GridSortModel) => {
+  const columns = useMemo(
+    () => getDataGridColumns({ handleDetails: handleDetailsOpen }),
+    [handleDetailsOpen]
+  );
+
+  const handleSortModelChange = useCallback((model: GridSortModel) => {
     let sortParams = `${model[0].field} ${model[0].sort}`;
 
     if (model[0].field === 'fullName')
       sortParams = `${COLUMN_IDS.firstName} ${model[0].sort}, ${COLUMN_IDS.lastName} ${model[0].sort}`;
 
     setSort(sortParams);
-  };
+  }, []);
 
-  const handleRowSelection = (data: GridRowParams<RowData>) =>
-    setSelectedRow(data.row);
+  const handleRowSelection = useCallback(
+    (data: GridRowParams<RowData>) => setSelectedRow(data.row),
+    []
+  );
 
   const handleExport = useCallback(async () => {
     const params = buildParams({ sort, filters });
@@ -105,7 +137,7 @@ const LeadRequestsReports = () => {
   }, [page, rowsPerPage, sort, filters]);
 
   return (
-    <Box sx={{ padding: '16px 24px' }}>
+    <Wrapper>
       <Stack
         direction="row"
         justifyContent="space-between"
@@ -128,39 +160,20 @@ const LeadRequestsReports = () => {
         </Stack>
       </Stack>
       <Paper>
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <StyledDataGridPremium
-            disableColumnMenu
-            columnHeaderHeight={TABLE.COLUMN_HEIGHT}
-            rowHeight={TABLE.ROW_HEIGHT}
-            rows={rows}
-            columns={columns}
-            loading={loading}
-            sortingMode="server"
-            paginationMode="client"
-            pinnedColumns={{ right: [COLUMN_IDS.details] }}
-            onSortModelChange={handleSortModelChange}
-            onRowClick={handleRowSelection}
-            getRowClassName={(params) =>
-              params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
-            }
-            slots={{
-              noRowsOverlay: CustomNoResultsOverlay,
-              footer: () => (
-                <TablePagination
-                  isDisabled={loading}
-                  count={totalCount}
-                  totalPages={totalPages}
-                  page={page}
-                  rowsPerPage={rowsPerPage}
-                  onPageChange={handlePageChange}
-                  onRowsPerPageChange={handleRowsPerPageChange}
-                  onPageApply={handlePageApply}
-                />
-              )
-            }}
-          />
-        </Box>
+        <DataGrid
+          rows={rows}
+          rowCount={rows.length ? rowsPerPage : 0}
+          columns={columns}
+          loading={loading}
+          sortingMode="server"
+          paginationMode="server"
+          rowsLoadingMode="server"
+          pinnedColumns={PINNED_COLUMNS}
+          onSortModelChange={handleSortModelChange}
+          onRowClick={handleRowSelection}
+          slots={dataGridSlots}
+          wrapperSx={{ maxHeight: TABLE_WRAPPER_HEIGHT }}
+        />
       </Paper>
       <Filters
         isOpen={isFiltersOpen}
@@ -179,7 +192,7 @@ const LeadRequestsReports = () => {
           <Details onClose={handleDetailsClose} data={selectedRow.data} />
         ) : null}
       </Drawer>
-    </Box>
+    </Wrapper>
   );
 };
 
