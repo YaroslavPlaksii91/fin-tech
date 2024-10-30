@@ -464,19 +464,18 @@ const DecisionTable = ({
             Add new business layer
           </Button>
         )}
-        {!isPreview && (
-          <form>
-            <NoteSection>
-              <InputText
-                fullWidth
-                name="note"
-                control={control}
-                label="Note"
-                placeholder="Enter note here"
-              />
-            </NoteSection>
-          </form>
-        )}
+        <form>
+          <NoteSection>
+            <InputText
+              fullWidth
+              name="note"
+              control={control}
+              label="Note"
+              placeholder="Enter note here"
+              disabled={isPreview}
+            />
+          </NoteSection>
+        </form>
       </StepContentWrapper>
       <StepDetailsControlBar
         disabled={!isEmpty(errors) || isSubmitting}

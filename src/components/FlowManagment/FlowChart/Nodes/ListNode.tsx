@@ -20,6 +20,7 @@ const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
           <p className="node-tag">{data?.tag || NO_TAG_LABEL}</p>
           <p className="node-label">{data.name}</p>
         </div>
+        {data.note && <div className="node-note__icon" />}
       </div>
       <ul className="node-list-container__list">
         {dataToShow.map((el, idx) => (
@@ -40,6 +41,7 @@ const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
           </div>
         ))}
       </ul>
+      {data.note && <div className="node-note">{data.note}</div>}
       {dataToShow.length === 0 ? (
         <Handle type="source" position={Position.Right} />
       ) : null}

@@ -6,17 +6,21 @@ import { NO_TAG_LABEL, STEP_ICONS } from '@constants/common';
 const RectangleNode: React.FC<NodeProps<NodeData & DecisionTableData>> = ({
   data
 }) => (
-  <div id={data.stepId} className="node-container">
-    <Handle type="source" position={Position.Right} />
-    <div className="node-header">
-      {STEP_ICONS[data.stepType]}
-      <div>
-        <p className="node-tag">{data?.tag || NO_TAG_LABEL}</p>
-        <p className="node-label">{data.name}</p>
+  <>
+    <div id={data.stepId} className="node-container">
+      <Handle type="source" position={Position.Right} />
+      <div className="node-header">
+        {STEP_ICONS[data.stepType]}
+        <div>
+          <p className="node-tag">{data?.tag || NO_TAG_LABEL}</p>
+          <p className="node-label">{data.name}</p>
+        </div>
+        {data.note && <div className="node-note__icon" />}
       </div>
+      <Handle type="target" position={Position.Left} />
     </div>
-    <Handle type="target" position={Position.Left} />
-  </div>
+    {data.note && <div className="node-note">{data.note}</div>}
+  </>
 );
 
 export default RectangleNode;

@@ -104,6 +104,36 @@
   padding: 9px;
 }
 
+.node-list-container__header:hover ~ .node-note,
+.node-container:hover ~ .node-note {
+  visibility: visible;
+}
+
+.node-note {
+  position: absolute;
+  visibility: hidden;
+  width: max-content;
+  max-width: 290px;
+  padding: 4px 8px;
+  margin-top: 8px;
+  border-radius: 4px;
+  color: #fff;
+  background: #616161e5;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.node-note__icon {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background-color: #03a9f4;
+}
+
 /* Tooltip  */
 .tooltip {
   position: relative;
@@ -149,6 +179,10 @@
 .react-flow__node:hover .node-container,
 .react-flow__node:hover .node-list-container__header {
   background: rgba(236, 239, 241, 1);
+}
+
+.react-flow__node:hover {
+  z-index: 1 !important;
 }
 
 /* Styles for node if menu is opened */
