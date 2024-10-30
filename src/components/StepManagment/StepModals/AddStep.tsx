@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -52,7 +51,6 @@ export const AddStep: React.FC<AddStepProps> = ({
   const {
     handleSubmit,
     control,
-    setValue,
     formState: { isSubmitting }
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema)
@@ -83,10 +81,6 @@ export const AddStep: React.FC<AddStepProps> = ({
     handleCloseModal();
   };
 
-  useEffect(() => {
-    setValue('name', defaultValue[stepType]);
-  }, [stepType]);
-
   return (
     <Dialog
       title={`Name this ${defaultValue[stepType]}`}
@@ -99,8 +93,8 @@ export const AddStep: React.FC<AddStepProps> = ({
           fullWidth
           name="name"
           control={control}
-          label="Name"
-          placeholder="Enter name"
+          label="Step Name*"
+          placeholder="Step Name*"
         />
         <Stack mt={3} spacing={1} direction="row" justifyContent="flex-end">
           <LoadingButton
