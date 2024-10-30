@@ -330,21 +330,16 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
               </Button>
             )}
           </Stack>
-          {!isPreview ? (
-            <NoteSection>
-              <InputText
-                fullWidth
-                name="note"
-                control={control}
-                label="Note"
-                placeholder="Enter note here"
-              />
-            </NoteSection>
-          ) : watchNote ? (
-            <NoteSection>
-              <Typography>{watchNote}</Typography>
-            </NoteSection>
-          ) : null}
+          <NoteSection>
+            <InputText
+              fullWidth
+              name="note"
+              control={control}
+              label="Note"
+              placeholder="Enter note here"
+              disabled={isPreview}
+            />
+          </NoteSection>
         </form>
       </StepContentWrapper>
       <StepDetailsControlBar
