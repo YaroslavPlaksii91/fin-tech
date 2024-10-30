@@ -26,6 +26,7 @@ const getDataGridColumns = (): GridColDef[] => [
     headerName: 'Cost',
     minWidth: 132,
     flex: 1,
+    resizable: false,
     renderCell: (params) => `$${params.value as number}`
   }
 ];

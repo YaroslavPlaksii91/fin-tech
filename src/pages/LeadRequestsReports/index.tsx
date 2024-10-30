@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
 import { Box, Stack, Typography } from '@mui/material';
 
-import { COLUMN_IDS, FetchList, RowData, IFilters } from './types';
+import { COLUMN_IDS, FetchList, RowData } from './types';
 import { buildParams, getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
@@ -16,6 +16,7 @@ import TablePagination from '@components/shared/Table/TablePagination';
 import { StyledDataGridPremium } from '@components/shared/Table/styled';
 import Details from '@components/LeadRequestsReports/Details';
 import useTablePagination from '@hooks/useTablePagination';
+import useFilters from '@hooks/useFilters';
 import Logger from '@utils/logger';
 import { TABLE } from '@constants/themeConstants';
 import ExportCSVButton from '@components/shared/Buttons/ExportCSV';
@@ -32,9 +33,15 @@ const LeadRequestsReports = () => {
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [totalCount, setTotalCount] = useState(0);
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
-  const [filters, setFilters] = useState<IFilters>(INITIAL_FILTERS);
+  const {
+    isFiltersOpen,
+    filters,
+    handleFiltersOpen,
+    handleFiltersClose,
+    handleFiltersSubmit,
+    handleFiltersReset
+  } = useFilters(INITIAL_FILTERS);
 
   const {
     rowsPerPage,
@@ -50,20 +57,6 @@ const LeadRequestsReports = () => {
   const handleDetailsClose = () => setIsDetailsOpen(false);
 
   const columns = getDataGridColumns({ handleDetails: handleDetailsOpen });
-
-  const handleFiltersOpen = () => setIsFiltersOpen(true);
-
-  const handleFiltersClose = () => setIsFiltersOpen(false);
-
-  const handleFiltersReset = () => {
-    setFilters(INITIAL_FILTERS);
-    handleFiltersClose();
-  };
-
-  const handleSubmit = (data: IFilters) => {
-    setFilters(data);
-    handleFiltersClose();
-  };
 
   const handleSortModelChange = (model: GridSortModel) => {
     let sortParams = `${model[0].field} ${model[0].sort}`;
@@ -173,18 +166,14 @@ const LeadRequestsReports = () => {
         isOpen={isFiltersOpen}
         filters={filters}
         onReset={handleFiltersReset}
-        onSubmit={handleSubmit}
+        onSubmit={handleFiltersSubmit}
         onClose={handleFiltersClose}
       />
       <Drawer
         anchor="right"
         open={isDetailsOpen}
         onClose={handleDetailsClose}
-        ModalProps={{
-          BackdropProps: {
-            style: { opacity: 0 }
-          }
-        }}
+        ModalProps={{ BackdropProps: { style: { opacity: 0 } } }}
       >
         {selectedRow ? (
           <Details onClose={handleDetailsClose} data={selectedRow.data} />

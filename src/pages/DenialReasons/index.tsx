@@ -5,7 +5,7 @@ import {
 } from '@mui/x-data-grid-premium';
 import { Box, Stack, Typography } from '@mui/material';
 
-import { COLUMN_IDS, FetchList, IFilters, RowData } from './types';
+import { COLUMN_IDS, FetchList, RowData } from './types';
 import { buildParams, getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
@@ -23,28 +23,21 @@ import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOver
 import Filters from '@components/DenialReasons/Filters';
 import FiltersButton from '@components/shared/Buttons/Filters';
 import Paper from '@components/shared/Paper';
+import useFilters from '@hooks/useFilters';
 
 const DenialReasons = () => {
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [rows, setRows] = useState<RowData[]>([]);
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
-  const [filters, setFilters] = useState<IFilters>(INITIAL_FILTERS);
-
-  const handleFiltersOpen = () => setIsFiltersOpen(true);
-
-  const handleFiltersClose = () => setIsFiltersOpen(false);
-
-  const handleFiltersReset = () => {
-    setFilters(INITIAL_FILTERS);
-    handleFiltersClose();
-  };
-
-  const handleSubmit = (data: IFilters) => {
-    setFilters(data);
-    handleFiltersClose();
-  };
+  const {
+    isFiltersOpen,
+    filters,
+    handleFiltersOpen,
+    handleFiltersClose,
+    handleFiltersSubmit,
+    handleFiltersReset
+  } = useFilters(INITIAL_FILTERS);
 
   const handleSortModelChange = (model: GridSortModel) => {
     const sortParams = `${model[0].field} ${model[0].sort}`;
@@ -141,7 +134,7 @@ const DenialReasons = () => {
         isOpen={isFiltersOpen}
         filters={filters}
         onReset={handleFiltersReset}
-        onSubmit={handleSubmit}
+        onSubmit={handleFiltersSubmit}
         onClose={handleFiltersClose}
       />
     </Box>
