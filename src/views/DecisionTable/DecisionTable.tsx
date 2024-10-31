@@ -338,12 +338,16 @@ const DecisionTable = ({
           ({ actions, conditions }, index) => ({
             conditions,
             edgeId: splitEdges[index]?.target ? splitEdges[index].id : null,
-            actions: actions?.map((action) => ({
-              ...action,
-              destinationType: flatVariables.find(
-                ({ name }) => action.name === name
-              )?.destinationType
-            }))
+            actions: actions?.map((action) => {
+              if (action.destinationType) return action;
+              return {
+                ...action,
+                destinationType: flatVariables.find(
+                  ({ name, sourceType }) =>
+                    action.name === name && action.sourceType === sourceType
+                )?.destinationType
+              };
+            })
           })
         );
 
