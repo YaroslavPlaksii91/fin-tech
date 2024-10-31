@@ -1,29 +1,28 @@
 import { useCallback, useEffect, useState } from 'react';
-import {
-  GRID_AGGREGATION_FUNCTIONS,
-  GridSortModel
-} from '@mui/x-data-grid-premium';
-import { Box, Stack, Typography } from '@mui/material';
+import { GridSortModel } from '@mui/x-data-grid-premium';
+import { Stack, Typography } from '@mui/material';
 
-import { COLUMN_IDS, FetchList, RowData } from './types';
+import { FetchList, RowData } from './types';
 import { buildParams, getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
 import {
+  AGGREGATION_FUNCTIONS,
+  AGGREGATION_MODEL,
   DEFAULT_EXPORT_FILE_NAME,
   DEFAULT_SORT,
   INITIAL_FILTERS
 } from './constants';
 
-import { StyledDataGridPremium } from '@components/shared/Table/styled';
 import { reportingService } from '@services/reports';
 import Logger from '@utils/logger';
-import { TABLE } from '@constants/themeConstants';
 import ExportCSVButton from '@components/shared/Buttons/ExportCSV';
-import CustomNoResultsOverlay from '@components/shared/Table/CustomNoResultsOverlay';
 import Filters from '@components/DenialReasons/Filters';
 import FiltersButton from '@components/shared/Buttons/Filters';
 import Paper from '@components/shared/Paper';
 import useFilters from '@hooks/useFilters';
+import DataGrid from '@components/shared/Table/DataGrid';
+import { TABLE_WRAPPER_HEIGHT } from '@constants/themeConstants';
+import { Wrapper } from '@components/Layouts/styled';
 
 const DenialReasons = () => {
   const [loading, setLoading] = useState(false);
@@ -65,13 +64,13 @@ const DenialReasons = () => {
     void fetchList({ sort, filters });
   }, [sort, filters]);
 
-  const handleExportDenialReasonReports = useCallback(async () => {
+  const handleExport = useCallback(async () => {
     const params = buildParams({ sort, filters });
     return reportingService.getDenialReasonsReportExportCSV({ params });
   }, [sort, filters]);
 
   return (
-    <Box sx={{ padding: '16px 24px' }}>
+    <Wrapper>
       <Stack
         direction="row"
         justifyContent="space-between"
@@ -88,47 +87,23 @@ const DenialReasons = () => {
         >
           <ExportCSVButton
             defaultFileName={DEFAULT_EXPORT_FILE_NAME}
-            exportFile={handleExportDenialReasonReports}
+            exportFile={handleExport}
           />
           <FiltersButton onClick={handleFiltersOpen} />
         </Stack>
       </Stack>
       <Paper>
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <StyledDataGridPremium
-            disableColumnMenu
-            hideFooter
-            sx={{ height: TABLE.HEIGHT }}
-            columnHeaderHeight={TABLE.COLUMN_HEIGHT}
-            rowHeight={TABLE.ROW_HEIGHT}
-            rows={rows}
-            aggregationFunctions={{
-              totalLabel: {
-                apply: () => 'Total',
-                label: ''
-              },
-              // To not show the header aggregation label for columns in aggregationModel according to design
-              sum: { ...GRID_AGGREGATION_FUNCTIONS.sum, label: '' }
-            }}
-            aggregationModel={{
-              [COLUMN_IDS.denialReason]: 'totalLabel',
-              [COLUMN_IDS.totalCount]: 'sum',
-              [COLUMN_IDS.percentage]: 'sum'
-            }}
-            columns={getDataGridColumns()}
-            loading={loading}
-            sortingMode="server"
-            paginationMode="client"
-            onSortModelChange={handleSortModelChange}
-            getRowClassName={(params) => {
-              if (!rows.length) return '';
-              return params.indexRelativeToCurrentPage % 2 === 0
-                ? 'even'
-                : 'odd';
-            }}
-            slots={{ noRowsOverlay: CustomNoResultsOverlay }}
-          />
-        </Box>
+        <DataGrid
+          hideFooter
+          rows={rows}
+          aggregationFunctions={AGGREGATION_FUNCTIONS}
+          aggregationModel={AGGREGATION_MODEL}
+          columns={getDataGridColumns()}
+          loading={loading}
+          sortingMode="server"
+          onSortModelChange={handleSortModelChange}
+          wrapperSx={{ maxHeight: TABLE_WRAPPER_HEIGHT }}
+        />
       </Paper>
       <Filters
         isOpen={isFiltersOpen}
@@ -137,7 +112,7 @@ const DenialReasons = () => {
         onSubmit={handleFiltersSubmit}
         onClose={handleFiltersClose}
       />
-    </Box>
+    </Wrapper>
   );
 };
 

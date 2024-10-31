@@ -27,6 +27,7 @@ const Details = ({ data, onClose }: DetailsProps) => {
   const [isScoresOpen, setIsScoresOpen] = useState(false);
 
   const rows = useMemo(() => getFormattedRows(getFormattedData(data)), [data]);
+
   const columns = useMemo(
     () =>
       getColumns({

@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { getFlow, getProductionFlow } from '@store/flow/asyncThunk';
 import { setInitialFlow } from '@store/flow';
 import { selectFlow } from '@store/flow/selectors';
+import { Wrapper } from '@components/Layouts/styled';
 
 const DataDictionary = () => {
   const { id } = useParams();
@@ -65,14 +66,14 @@ const DataDictionary = () => {
   if (!flow) return null;
 
   return (
-    <Stack px={3} pt={2} pb={3}>
+    <Wrapper>
       <Stack spacing={2}>
         <Breadcrumbs separator="/" aria-label="breadcrumb">
           {breadcrumbs}
         </Breadcrumbs>
       </Stack>
       <DataDictionaryVariables flow={flow} />
-    </Stack>
+    </Wrapper>
   );
 };
 
