@@ -1,4 +1,5 @@
 import { Box, SxProps, Theme } from '@mui/material';
+import { useMemo } from 'react';
 import {
   DataGridPremiumProps,
   GridRowClassNameParams
@@ -25,29 +26,37 @@ const DataGrid = ({
   disableRowSelectionOnClick = true,
   rows = [],
   ...props
-}: DataGridProps) => (
-  <Box
-    sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      minHeight: '200px',
-      width: '100%',
-      ...wrapperSx
-    }}
-  >
-    <StyledDataGridPremium
-      disableColumnMenu={disableColumnMenu}
-      disableAutosize={disableAutosize}
-      disableRowSelectionOnClick={disableRowSelectionOnClick}
-      columnHeaderHeight={TABLE.COLUMN_HEIGHT}
-      rowHeight={TABLE.ROW_HEIGHT}
-      rows={rows}
-      getRowClassName={getRowClassName}
-      sx={{ height: TABLE.HEIGHT, ...sx }}
-      slots={{ noRowsOverlay: CustomNoResultsOverlay, ...slots }}
-      {...props}
-    />
-  </Box>
-);
+}: DataGridProps) => {
+  const memoizedSx = useMemo(() => ({ height: TABLE.HEIGHT, ...sx }), [sx]);
 
+  const memoizedSlots = useMemo(
+    () => ({ noRowsOverlay: CustomNoResultsOverlay, ...slots }),
+    [slots]
+  );
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '200px',
+        width: '100%',
+        ...wrapperSx
+      }}
+    >
+      <StyledDataGridPremium
+        disableColumnMenu={disableColumnMenu}
+        disableAutosize={disableAutosize}
+        disableRowSelectionOnClick={disableRowSelectionOnClick}
+        columnHeaderHeight={TABLE.COLUMN_HEIGHT}
+        rowHeight={TABLE.ROW_HEIGHT}
+        rows={rows}
+        getRowClassName={getRowClassName}
+        sx={memoizedSx}
+        slots={memoizedSlots}
+        {...props}
+      />
+    </Box>
+  );
+};
 export default DataGrid;
