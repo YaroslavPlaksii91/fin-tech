@@ -28,3 +28,5 @@ export const INITIAL_FILTERS: IFilters = {
   [RANGE_FILTERS_KEYS.leadPrice]: INITIAL_RANGE_FILTER,
   [RANGE_FILTERS_KEYS.requestedAmount]: INITIAL_RANGE_FILTER
 };
+
+export const PINNED_COLUMNS = { right: [COLUMN_IDS.details] };

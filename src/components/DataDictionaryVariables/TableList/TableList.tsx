@@ -57,8 +57,8 @@ const TableList = ({
     rowsPerPage,
     page,
     totalPages,
+    setPage,
     handlePageChange,
-    handlePageApply,
     handleRowsPerPageChange
   } = useTablePagination({ totalCount: tableData.length });
 
@@ -141,7 +141,7 @@ const TableList = ({
           rowsPerPage={rowsPerPage}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleRowsPerPageChange}
-          onPageApply={handlePageApply}
+          onPageApply={setPage}
         />
       )}
     </Paper>
