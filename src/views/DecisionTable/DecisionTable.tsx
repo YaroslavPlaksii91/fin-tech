@@ -23,6 +23,7 @@ import {
 } from './types';
 import { getColumns, getVariableSources, updateCaseEntry } from './utils';
 import Table from './Table/Table';
+import ConditionsCard from './ConditionsCard';
 import validationSchema, { FieldValues } from './validationSchema';
 
 import {
@@ -59,6 +60,7 @@ import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import InputText from '@components/shared/Forms/InputText';
 import { selectDataDictionary } from '@store/dataDictionary/selectors';
 import { selectUserDefinedVariables } from '@store/flow/selectors';
+
 type DecisionTableStepProps = {
   flow: IFlow;
   mainFlow?: IFlow;
@@ -467,6 +469,9 @@ const DecisionTable = ({
           >
             Add new business layer
           </Button>
+        )}
+        {caseEntries.length > 0 && (
+          <ConditionsCard caseEntries={caseEntries} nodes={nodes} />
         )}
         <form>
           <NoteSection>
