@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Box,
   Typography,
@@ -12,8 +12,8 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 
-import { ChangesHistoryRow } from './ChangesHistoryRow';
-import ChangeHistoryDetailedView from './ChangeHistoryDetailedView';
+import Row from './Row';
+import DetailedView from './DetailedView';
 
 import CheckCircleDoneIcon from '@icons/checkCircleDone.svg';
 import CheckDuotoneIcon from '@icons/checkDuotone.svg';
@@ -25,15 +25,12 @@ import {
   StyledTableRow
 } from '@components/shared/Table/styled';
 
-interface ChangeHistoryItemProps {
+interface ItemProps {
   data: ChangeHistoryRecord;
   index: number;
 }
 
-const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
-  data,
-  index
-}) => {
+const Item = ({ data, index }: ItemProps) => {
   const diffsList = useMemo(() => {
     if (data.diffs) {
       return data.diffs;
@@ -146,7 +143,7 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
               </TableHead>
               <TableBody>
                 {diffsList.map((row, index) => (
-                  <ChangesHistoryRow
+                  <Row
                     isFirstChangeHistoryItem={isFirstChangeHistoryItem}
                     index={index}
                     handleRowClick={handleRowClick}
@@ -157,7 +154,7 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
               </TableBody>
             </Table>
             {selectedRowIndex !== null && (
-              <ChangeHistoryDetailedView
+              <DetailedView
                 data={data}
                 selectedRowIndex={selectedRowIndex}
                 setSelectedRowIndex={setSelectedRowIndex}
@@ -172,4 +169,4 @@ const ChangeHistoryItem: React.FC<ChangeHistoryItemProps> = ({
   );
 };
 
-export default ChangeHistoryItem;
+export default Item;

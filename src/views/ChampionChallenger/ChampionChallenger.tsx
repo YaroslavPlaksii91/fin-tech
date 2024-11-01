@@ -10,7 +10,7 @@ import {
 import { useFieldArray, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { yupResolver } from '@hookform/resolvers/yup';
-import isEmpty from 'lodash/isEmpty';
+import * as _ from 'lodash-es';
 import { enqueueSnackbar } from 'notistack';
 
 import { formatFlowDataForValidation, getConnectableNodes } from './utils';
@@ -343,7 +343,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
         </form>
       </StepContentWrapper>
       <StepDetailsControlBar
-        disabled={!isEmpty(errors) || isSubmitting}
+        disabled={!_.isEmpty(errors) || isSubmitting}
         resetActiveStepId={resetActiveStepId}
         isEdited={isDirty}
         isSubmitting={isSubmitting}

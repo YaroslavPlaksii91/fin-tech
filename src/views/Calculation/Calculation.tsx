@@ -16,7 +16,7 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { enqueueSnackbar } from 'notistack';
 import TableCell from '@mui/material/TableCell';
 import { yupResolver } from '@hookform/resolvers/yup';
-import isEmpty from 'lodash/isEmpty';
+import * as _ from 'lodash-es';
 
 import { COLUMN_IDS, Expression, FieldValues, columns } from './types';
 import validationSchema from './validationSchema';
@@ -282,7 +282,7 @@ const Calculation: React.FC<CalculationProps> = ({
             </form>
           </StepContentWrapper>
           <StepDetailsControlBar
-            disabled={!isEmpty(errors) || isSubmitting}
+            disabled={!_.isEmpty(errors) || isSubmitting}
             isEdited={isDirty}
             resetActiveStepId={resetActiveStepId}
             isSubmitting={isSubmitting}

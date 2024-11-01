@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { cloneDeep } from 'lodash';
+import * as _ from 'lodash-es';
 
 import { selectFlow } from '@store/flow/selectors';
 import { useAppSelector } from '@store/hooks';
@@ -13,7 +13,7 @@ const FlowEdit = () => {
   const [copyFlow, setCopyFlow] = useState<IFlow>();
 
   useEffect(() => {
-    const flowDeepCopy = cloneDeep(flow);
+    const flowDeepCopy = _.cloneDeep(flow);
     setCopyFlow(flowDeepCopy);
   }, [flow.id]);
 

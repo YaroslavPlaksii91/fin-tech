@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { isEqual, pick } from 'lodash';
+import * as _ from 'lodash-es';
 
 import { CustomReactFlowInstance, DEFAULT_EDGE_TYPE } from '../types';
 
@@ -30,22 +30,22 @@ export const isFlowChanged = ({ flow, rfInstance }: inputData) => {
   const selectedFlow = {
     viewport: flow.viewport,
     nodes: flow.nodes.map((node) =>
-      pick(node, ['id', 'data', 'position', 'type'])
+      _.pick(node, ['id', 'data', 'position', 'type'])
     ),
-    edges: flow.edges.map((edge) => pick(edge, ['id', 'source', 'target']))
+    edges: flow.edges.map((edge) => _.pick(edge, ['id', 'source', 'target']))
   };
 
   const selectedFlowInstance = {
     viewport: flowInstance.viewport,
     nodes: flowInstance.nodes.map((node) =>
-      pick(node, ['id', 'data', 'position', 'type'])
+      _.pick(node, ['id', 'data', 'position', 'type'])
     ),
     edges: flowInstance.edges.map((edge) =>
-      pick(edge, ['id', 'source', 'target'])
+      _.pick(edge, ['id', 'source', 'target'])
     )
   };
 
-  return !isEqual(selectedFlow, selectedFlowInstance);
+  return !_.isEqual(selectedFlow, selectedFlowInstance);
 };
 
 const getNodePath = (

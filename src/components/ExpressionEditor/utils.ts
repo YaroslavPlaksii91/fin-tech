@@ -2,11 +2,11 @@ import { Chunk, findAll } from 'highlight-words-core';
 import color from 'color';
 
 import {
-  FunctionConfig,
   functionsConfig,
   functionsConfigDict,
   sortedFunctionsConfig
-} from '@components/ExpressionEditor/ExpressionEditor.constants';
+} from './constants';
+import { FunctionConfig } from './types';
 
 export function filterFunctionsSuggestList(
   value: string,

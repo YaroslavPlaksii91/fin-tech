@@ -9,7 +9,7 @@ import React, {
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { useReactFlow } from 'reactflow';
-import cloneDeep from 'lodash/cloneDeep';
+import * as _ from 'lodash-es';
 
 import { editStepNameConfirmDialog } from '../StepModals/EditStepName';
 
@@ -170,7 +170,7 @@ const StepActionsMenu: React.FC<StepActionsMenuOnNode> = ({
         setNodes(updatedNodes);
       }
 
-      dispatch(addNode({ subFlowId, node: cloneDeep(duplicatedNode) }));
+      dispatch(addNode({ subFlowId, node: _.cloneDeep(duplicatedNode) }));
     },
     [flowNode, activeStep, subFlowId]
   );

@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useCallback } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import isEmpty from 'lodash/isEmpty';
+import * as _ from 'lodash-es';
 
 import validationSchema from './validationSchema';
 
@@ -52,7 +52,7 @@ const Filters = ({
 
   return (
     <Template
-      isSubmitDisabled={!isEmpty(errors)}
+      isSubmitDisabled={!_.isEmpty(errors)}
       isOpen={isOpen}
       onClose={handleClose}
       onReset={onReset}

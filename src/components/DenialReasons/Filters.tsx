@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useCallback } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import isEmpty from 'lodash/isEmpty';
+import isEmpty from 'lodash-es/isEmpty';
 
 import validationSchema from './validationSchema';
 

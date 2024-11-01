@@ -3,10 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { getActionType, getName } from './utils';
 import { StyledTableCell } from './styled';
-import {
-  BreadcrumbItem,
-  FirstBreadcrumbItem
-} from './ChangeHistoryBreadCrumbItems';
+import { BreadcrumbItem, FirstBreadcrumbItem } from './BreadCrumbItems';
 
 import { StyledTableRow } from '@components/shared/Table/styled';
 import { ChangeHistoryDifference } from '@domain/changeHistory';
@@ -14,13 +11,19 @@ import { PRODUCTION_FLOW_ID } from '@constants/common';
 import routes from '@constants/routes';
 import EyeIcon from '@icons/eye.svg';
 
-export function ChangesHistoryRow(props: {
+interface RowProps {
   row: ChangeHistoryDifference;
   isFirstChangeHistoryItem: boolean;
   handleRowClick: (rowId: string) => void;
   index: number;
-}) {
-  const { row, handleRowClick, index, isFirstChangeHistoryItem } = props;
+}
+
+const Row = ({
+  row,
+  handleRowClick,
+  index,
+  isFirstChangeHistoryItem
+}: RowProps) => {
   const navigate = useNavigate();
 
   const rowParity = index % 2 === 0 ? 'even' : 'odd';
@@ -73,4 +76,6 @@ export function ChangesHistoryRow(props: {
       </StyledTableCell>
     </StyledTableRow>
   );
-}
+};
+
+export default Row;

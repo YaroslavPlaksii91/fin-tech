@@ -1,24 +1,29 @@
 import React from 'react';
-import { ListItemText, MenuItem, Paper } from '@mui/material';
+import { ListItemText, MenuItem } from '@mui/material';
 import Highlighter from 'react-highlight-words';
 
-import {
-  ExpressionEditorFunction,
-  functionsConfigDict
-} from '@components/ExpressionEditor/ExpressionEditor.constants';
+import { functionsConfigDict } from './constants';
 import {
   getDomesticDescriptionForGetReportFunction,
   regExpHelpers
-} from '@components/ExpressionEditor/ExpressionEditor.utils';
-import styles from '@components/ExpressionEditor/ExpressionEditor.module.scss';
+} from './utils';
+import { StyledPaper } from './styled';
+import { ExpressionEditorFunction } from './types';
+
+interface FunctionArgumentsTooltipProps {
+  value: string;
+  currentOperatorIndex: number;
+  controlFiles: string[];
+  currentOperatorLiteral?: string;
+}
 
 // @TODO: Based on the cursor position in post-MVP?
-const FunctionArgumentsTooltip: React.FC<FunctionArgumentsTooltipProps> = ({
+const FunctionArgumentsTooltip = ({
   value,
   currentOperatorIndex,
   currentOperatorLiteral,
   controlFiles
-}) => {
+}: FunctionArgumentsTooltipProps) => {
   if (!currentOperatorLiteral) {
     return null;
   }
@@ -63,7 +68,7 @@ const FunctionArgumentsTooltip: React.FC<FunctionArgumentsTooltipProps> = ({
       : [];
 
   return (
-    <Paper className={styles.suggestBox} variant="outlined" elevation={12}>
+    <StyledPaper variant="outlined" elevation={0}>
       <MenuItem disableRipple dense>
         <ListItemText
           primaryTypographyProps={{
@@ -72,6 +77,7 @@ const FunctionArgumentsTooltip: React.FC<FunctionArgumentsTooltipProps> = ({
         >
           {currentOperatorLiteral}
           <Highlighter
+            highlightStyle={{ background: '#abdcb9' }}
             autoEscape={true}
             searchWords={searchWord}
             textToHighlight={domesticDescription.replace(
@@ -81,15 +87,8 @@ const FunctionArgumentsTooltip: React.FC<FunctionArgumentsTooltipProps> = ({
           />
         </ListItemText>
       </MenuItem>
-    </Paper>
+    </StyledPaper>
   );
 };
-
-interface FunctionArgumentsTooltipProps {
-  value: string;
-  currentOperatorIndex: number;
-  controlFiles: string[];
-  currentOperatorLiteral?: string;
-}
 
 export default React.memo(FunctionArgumentsTooltip);

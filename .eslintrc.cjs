@@ -30,8 +30,8 @@ module.exports = {
           '@constants': './src/constants',
           '@components': './src/components',
           '@hook': './src/hook',
-          '@domain': 'src/domain',
-          '@services': 'src/services',
+          '@domain': './src/domain',
+          '@services': './src/services',
           '@pages': './src/pages',
           '@utils': './src/utils',
           '@hooks': './src/hooks',
@@ -51,6 +51,7 @@ module.exports = {
     }
   },
   rules: {
+    'no-restricted-imports': ['error', { patterns: ['@mui/*/*/*'] }],
     'arrow-body-style': ['error', 'as-needed'],
     'no-console': 'error',
     'import/no-unresolved': [2, { caseSensitive: true, ignore: ['.svg'] }],
