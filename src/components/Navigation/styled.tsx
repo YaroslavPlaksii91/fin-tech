@@ -19,7 +19,7 @@ export const StyledAppBar = styled(AppBar)(() => ({
 }));
 
 export const StyledHeaderIconButton = styled(IconButton)(() => ({
-  padding: '4px',
+  padding: '0px',
   width: '30px',
   height: '30px',
   ...headerButtonStyles,
