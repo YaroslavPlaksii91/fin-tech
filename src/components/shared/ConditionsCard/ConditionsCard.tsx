@@ -1,9 +1,9 @@
 import React from 'react';
 import { Card, Typography, Box } from '@mui/material';
 
-import { CaseEntry } from './types';
 import { getFormattedRules } from './utils';
 
+import { CaseEntry } from '@views/DecisionTable/types';
 import { customBoxShadows, theme } from '@theme';
 import { FlowNode } from '@domain/flow';
 

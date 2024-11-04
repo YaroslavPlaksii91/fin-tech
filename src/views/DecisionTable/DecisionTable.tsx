@@ -23,7 +23,6 @@ import {
 } from './types';
 import { getColumns, getVariableSources, updateCaseEntry } from './utils';
 import Table from './Table/Table';
-import ConditionsCard from './ConditionsCard';
 import validationSchema, { FieldValues } from './validationSchema';
 
 import {
@@ -44,6 +43,7 @@ import {
   SnackbarErrorMessage,
   SnackbarMessage
 } from '@components/shared/Snackbar/SnackbarMessage';
+import ConditionsCard from '@components/shared/ConditionsCard/ConditionsCard';
 import { SNACK_TYPE } from '@constants/common';
 import {
   VARIABLE_DATA_TYPE,
