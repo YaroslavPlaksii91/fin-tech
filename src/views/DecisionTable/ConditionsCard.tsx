@@ -12,10 +12,7 @@ interface ConditionsCardProps {
   nodes: FlowNode[];
 }
 
-const ConditionsCard: React.FC<ConditionsCardProps> = ({
-  caseEntries,
-  nodes
-}) => {
+const ConditionsCard = ({ caseEntries, nodes }: ConditionsCardProps) => {
   const rules = getFormattedRules(caseEntries);
 
   const renderItems = (items: string[]) =>
@@ -50,12 +47,12 @@ const ConditionsCard: React.FC<ConditionsCardProps> = ({
   return (
     <Card
       sx={{
+        ...theme.typography.caption,
         display: 'flex',
         flexDirection: 'column',
         gap: 1,
         mt: 2,
         padding: '8px 16px',
-        ...theme.typography.caption,
         border: `1px solid ${theme.palette.divider}`,
         borderRadius: '16px',
         boxShadow: customBoxShadows.elevation1

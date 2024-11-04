@@ -43,7 +43,7 @@ import {
   SnackbarErrorMessage,
   SnackbarMessage
 } from '@components/shared/Snackbar/SnackbarMessage';
-import ConditionsCard from '@components/shared/ConditionsCard/ConditionsCard';
+import ConditionsCard from '@views/DecisionTable/ConditionsCard';
 import { SNACK_TYPE } from '@constants/common';
 import {
   VARIABLE_DATA_TYPE,
