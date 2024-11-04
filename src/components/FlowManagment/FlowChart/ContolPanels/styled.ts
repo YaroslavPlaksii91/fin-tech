@@ -7,7 +7,7 @@ export const StyledPanel = styled(Panel)(({ theme }) => ({
   alignItems: 'flex-end',
   backgroundColor: theme.palette.background.default,
   padding: '16px 24px',
-  margin: '0',
+  margin: '0px !important',
   borderBottom: `1px solid ${theme.palette.divider}`,
   left: 0
 }));

@@ -22,9 +22,8 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { groupBy } from 'lodash';
+import * as _ from 'lodash-es';
 import { yupResolver } from '@hookform/resolvers/yup';
-import pick from 'lodash/pick';
 
 import validationSchema from './validationSchema';
 import { FieldValues } from './types';
@@ -40,12 +39,12 @@ import {
 } from '@domain/dataDictionary';
 import ExpressionEditor, {
   ExpressionEditorAPI
-} from '@components/ExpressionEditor/ExpressionEditor';
+} from '@components/ExpressionEditor';
 import {
   functionsConfig,
   functionsLiterals,
   operatorsConfig
-} from '@components/ExpressionEditor/ExpressionEditor.constants';
+} from '@components/ExpressionEditor/constants';
 import VariablesDialog from '@components/shared/VariablesDialog';
 import { StepContentWrapper } from '@views/styled';
 import { customBoxShadows } from '@theme';
@@ -56,8 +55,8 @@ import { selectDataDictionary } from '@store/dataDictionary/selectors';
 import { selectUserDefinedVariables } from '@store/flow/selectors';
 
 const operatorsList = [
-  ...Object.values(groupBy(operatorsConfig, 'category')),
-  ...Object.values(groupBy(functionsConfig, 'category'))
+  ...Object.values(_.groupBy(operatorsConfig, 'category')),
+  ...Object.values(_.groupBy(functionsConfig, 'category'))
 ];
 
 interface ExpressionFormProps {
@@ -158,7 +157,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
 
   const variableFieldDataDict = useMemo(
     () =>
-      pick(allVariables, [
+      _.pick(allVariables, [
         DATA_DICTIONARY_GROUP.userDefined,
         DATA_DICTIONARY_GROUP.outputVariables
       ]),

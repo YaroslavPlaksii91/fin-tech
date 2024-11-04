@@ -1,5 +1,5 @@
 import { lightGreen, lightBlue } from '@mui/material/colors';
-import { mapValues, filter, cloneDeep } from 'lodash';
+import * as _ from 'lodash-es';
 
 import {
   CaseEntry,
@@ -206,7 +206,7 @@ export const filterVariablesByUsageMode = (
   category: CATEGORY
 ) => {
   let usageModes: VARIABLE_USAGE_MODE[];
-  const copyVariables = cloneDeep(variables);
+  const copyVariables = _.cloneDeep(variables);
 
   switch (category) {
     case 'conditions':
@@ -231,8 +231,8 @@ export const filterVariablesByUsageMode = (
     }
   }
 
-  return mapValues(copyVariables, (arr) =>
-    filter(arr, (item) => usageModes.includes(item.usageMode))
+  return _.mapValues(copyVariables, (arr) =>
+    _.filter(arr, (item) => usageModes.includes(item.usageMode))
   );
 };
 

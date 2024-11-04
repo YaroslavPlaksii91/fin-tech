@@ -16,7 +16,7 @@ import ReactFlow, {
 } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 import 'reactflow/dist/style.css';
-import debounce from 'lodash/debounce';
+import * as _ from 'lodash-es';
 
 import { nodeTypes } from '../Nodes';
 import { edgeTypes } from '../Edges';
@@ -270,7 +270,7 @@ const withFlowChartEditor =
       }
     };
 
-    const debounceCheckIsDirty = useCallback(debounce(checkIsDirty, 300), []);
+    const debounceCheckIsDirty = useCallback(_.debounce(checkIsDirty, 300), []);
 
     useEffect(() => {
       debounceCheckIsDirty({

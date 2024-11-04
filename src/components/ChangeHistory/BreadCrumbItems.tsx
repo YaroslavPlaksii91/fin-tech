@@ -3,10 +3,10 @@ import { Box } from '@mui/system';
 
 import { theme } from '@theme';
 
-type BreadcrumbItemProps = {
+interface BreadcrumbItemProps {
   part: { id: string; name: string };
   index: number;
-};
+}
 
 export const FirstBreadcrumbItem = ({
   part,

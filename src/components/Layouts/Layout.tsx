@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { ReactFlowProvider } from 'reactflow';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 
 import Navigation from '../Navigation/Navigation';
 
@@ -17,10 +17,11 @@ import {
 } from '@store/dataDictionary/asyncThunk';
 import { setEnumDataTypes } from '@store/dataDictionary';
 import Logger from '@utils/logger';
+import LoadingFullscreen from '@components/shared/LoadingFullscreen';
 
 export default function Layout() {
   const dispatch = useAppDispatch();
-  const { startLoading, stopLoading } = useLoading();
+  const { startLoading, stopLoading, loading } = useLoading();
 
   useEffect(() => {
     const fetchDataDictionaryVariables = async () => {
@@ -49,9 +50,11 @@ export default function Layout() {
           <LayoutContainer>
             <CrossPlatformDrawer />
             <Sidebar />
-            <MainContainer>
-              <Outlet />
-            </MainContainer>
+            <Suspense fallback={loading ? null : <LoadingFullscreen />}>
+              <MainContainer>
+                <Outlet />
+              </MainContainer>
+            </Suspense>
           </LayoutContainer>
         </ActiveStepProvider>
       </ReactFlowProvider>

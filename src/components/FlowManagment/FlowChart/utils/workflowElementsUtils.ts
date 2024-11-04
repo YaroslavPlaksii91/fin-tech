@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Edge, Node, XYPosition } from 'reactflow';
-import pick from 'lodash/pick';
+import * as _ from 'lodash-es';
 
 import {
   ADD_BUTTON_ON_EDGE,
@@ -158,19 +158,19 @@ export const checkIfFlowIsEdit = ({
   edges: Edge[];
 }) => {
   const formattedInitialEdges = initialEdges.map((edg) =>
-    pick(edg, ['source', 'target', 'sourceHandle'])
+    _.pick(edg, ['source', 'target', 'sourceHandle'])
   );
   const formattedOutputEdges = edges.map((edg) =>
-    pick(edg, ['source', 'target', 'sourceHandle'])
+    _.pick(edg, ['source', 'target', 'sourceHandle'])
   );
   const isEditEdges =
     JSON.stringify(formattedInitialEdges) !==
     JSON.stringify(formattedOutputEdges);
 
   const formattedInitialNodes = initialNodes.map((node) =>
-    pick(node, ['data'])
+    _.pick(node, ['data'])
   );
-  const formatteOutputdNodes = nodes.map((node) => pick(node, ['data']));
+  const formatteOutputdNodes = nodes.map((node) => _.pick(node, ['data']));
   const isEditNodes =
     JSON.stringify(formattedInitialNodes) !==
     JSON.stringify(formatteOutputdNodes);

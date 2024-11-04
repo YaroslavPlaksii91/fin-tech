@@ -11,7 +11,7 @@ import {
   DialogActions,
   Button
 } from '@mui/material';
-import { startCase } from 'lodash';
+import * as _ from 'lodash-es';
 
 import { StyledListItemButton } from './styled';
 import List from './List';
@@ -240,7 +240,7 @@ const DataDictionaryDialog = ({
                           dangerouslySetInnerHTML={{
                             __html: highlightText(
                               [querySource],
-                              startCase(
+                              _.startCase(
                                 key === 'laPMSVariables'
                                   ? 'applicationVariables'
                                   : key

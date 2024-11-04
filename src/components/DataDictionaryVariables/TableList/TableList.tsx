@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { map } from 'lodash';
+import * as _ from 'lodash-es';
 import { TableHead, TableBody, Table } from '@mui/material';
 import dayjs from 'dayjs';
 
@@ -74,7 +74,7 @@ const TableList = ({
   useEffect(() => {
     if (tabName !== 'userDefined') return;
 
-    const variables = map(tableData, 'name');
+    const variables = _.map(tableData, 'name');
 
     isProductionFlow
       ? void getProductionUserDefinedUsage(variables).then((data) =>

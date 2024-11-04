@@ -1,7 +1,7 @@
 import { Button, Stack } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { cloneDeep } from 'lodash';
+import * as _ from 'lodash-es';
 import { XYPosition } from 'reactflow';
 
 import { validationSchema, FormData } from './validationSchema';
@@ -67,7 +67,7 @@ export const AddStep: React.FC<AddStepProps> = ({
 
     if (newNode) {
       // For update list of steps in the sidebar
-      dispatch(addNode({ node: cloneDeep(newNode), subFlowId }));
+      dispatch(addNode({ node: _.cloneDeep(newNode), subFlowId }));
     }
     handleCloseModal();
   };

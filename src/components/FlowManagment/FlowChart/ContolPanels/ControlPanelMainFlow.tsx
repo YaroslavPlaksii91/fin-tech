@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { unwrapResult } from '@reduxjs/toolkit';
-import cloneDeep from 'lodash/cloneDeep';
+import * as _ from 'lodash-es';
 import { NavLink } from 'react-router-dom';
 
 import {
@@ -68,7 +68,7 @@ const ControlPanelMainFlow = ({
       });
       const resultAction = await dispatch(saveFlow(formattedData));
       const savedFlow = unwrapResult(resultAction);
-      setCopyFlow(cloneDeep(savedFlow));
+      setCopyFlow(_.cloneDeep(savedFlow));
       dispatch(updateFlowListItem({ ...savedFlow.data, id: savedFlow.id }));
 
       enqueueSnackbar(

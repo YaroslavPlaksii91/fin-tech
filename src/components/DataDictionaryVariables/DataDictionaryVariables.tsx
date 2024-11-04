@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Box, Stack, Typography, Button } from '@mui/material';
-import { omitBy, indexOf, map } from 'lodash';
+import * as _ from 'lodash-es';
 
 import {
   TABS,
@@ -86,7 +86,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
     if (tab === 'userDefined') {
       const userDefinedHeaders = Object.values(
-        omitBy(DEFAULT_HEADERS, { key: 'isRequired' })
+        _.omitBy(DEFAULT_HEADERS, { key: 'isRequired' })
       ) as TableHeader[];
       return userDefinedHeaders;
     }
@@ -175,8 +175,8 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       DATA_DICTIONARY_GROUP.userDefined
     ].filter(({ sourceType }) => sourceType === row.sourceType);
 
-    const indexOfVariable = indexOf(
-      map(userDefinedVariablesGroup, 'name'),
+    const indexOfVariable = _.indexOf(
+      _.map(userDefinedVariablesGroup, 'name'),
       row.name
     );
 

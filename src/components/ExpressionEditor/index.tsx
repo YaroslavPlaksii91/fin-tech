@@ -8,31 +8,39 @@ import React, {
   useState
 } from 'react';
 import {
+  Box,
   Button,
   InputAdornment,
   InputBaseProps,
   TextField
 } from '@mui/material';
 
-import styles from './ExpressionEditor.module.scss';
-
+import { ColoredText } from './styled';
 import {
   regExpHelpers,
   highlightChunks,
   filterFunctionsSuggestList
-} from '@components/ExpressionEditor/ExpressionEditor.utils';
-import { functionsLiterals } from '@components/ExpressionEditor/ExpressionEditor.constants';
-import FunctionArgumentsTooltip from '@components/ExpressionEditor/components/FunctionArgumentsTooltip';
+} from './utils';
+import { functionsLiterals } from './constants';
+import FunctionArgumentsTooltip from './FunctionArgumentsTooltip';
 import FunctionsAutosuggestion, {
   FunctionsAutosuggestionAPI
-} from '@components/ExpressionEditor/components/FunctionsAutosuggestion';
+} from './FunctionsAutosuggestion';
+
 import { selectDataDictionary } from '@store/dataDictionary/selectors';
 import { fetchControlFiles } from '@store/dataDictionary/asyncThunk';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
-
 export interface ExpressionEditorAPI {
   focus: (payload: { selectionStart: number }) => void;
   getCursorPosition: () => number;
+}
+
+interface ExpressionEditorProps extends InputBaseProps {
+  name: string;
+  value: string;
+  errorMessage?: string;
+  onAddVariableClick: () => void;
+  placeholder?: string;
 }
 
 const ExpressionEditor: ForwardRefRenderFunction<
@@ -141,7 +149,14 @@ const ExpressionEditor: ForwardRefRenderFunction<
   }, []);
 
   return (
-    <div className={styles.root}>
+    <Box
+      sx={{
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%'
+      }}
+    >
       <TextField
         inputRef={textareaRef}
         value={value}
@@ -168,8 +183,8 @@ const ExpressionEditor: ForwardRefRenderFunction<
           )
         }}
       />
-      <div
-        className={styles.coloredValue}
+      {/* TODO: This part of the features is about adding color functions, we don't have colors yet */}
+      <ColoredText
         dangerouslySetInnerHTML={{ __html: highlightChunks(value) }}
       />
       <FunctionArgumentsTooltip
@@ -186,17 +201,9 @@ const ExpressionEditor: ForwardRefRenderFunction<
           onKeyDown={handleMenuListKeyDown}
         />
       )}
-    </div>
+    </Box>
   );
 };
-
-interface ExpressionEditorProps extends InputBaseProps {
-  name: string;
-  value: string;
-  errorMessage?: string;
-  onAddVariableClick: () => void;
-  placeholder?: string;
-}
 
 export default React.forwardRef<ExpressionEditorAPI, ExpressionEditorProps>(
   ExpressionEditor

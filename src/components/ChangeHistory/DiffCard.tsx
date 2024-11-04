@@ -3,15 +3,12 @@ import { Typography, Box, Divider } from '@mui/material';
 
 import { theme } from '@theme';
 
-interface ChangeHistoryDiffCardProps {
+interface DiffCardProps {
   label: string;
   children: React.ReactNode;
 }
 
-const ChangeHistoryDiffCard: React.FC<ChangeHistoryDiffCardProps> = ({
-  label,
-  children
-}) => (
+const DiffCard = ({ label, children }: DiffCardProps) => (
   <Box
     sx={{
       border: `1px solid ${theme.palette.divider}`,
@@ -46,4 +43,4 @@ const ChangeHistoryDiffCard: React.FC<ChangeHistoryDiffCardProps> = ({
   </Box>
 );
 
-export default ChangeHistoryDiffCard;
+export default DiffCard;

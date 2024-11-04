@@ -1,17 +1,20 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { lazy } from 'react';
 
+const Home = lazy(() => import('@pages/Home'));
+const FlowEdit = lazy(() => import('@pages/FlowEdit'));
+const DataDictionary = lazy(() => import('@pages/DataDictionary'));
+const ChangeHistoryPage = lazy(() => import('@pages/ChangeHistory'));
+const AccessVerificationPage = lazy(
+  () => import('@pages/auth/AccessVerification')
+);
+const LeadRequestsReports = lazy(() => import('@pages/LeadRequestsReports'));
+const DenialReasons = lazy(() => import('@pages/DenialReasons'));
+const Waterfall = lazy(() => import('@pages/Waterfall'));
+const BillingReport = lazy(() => import('@pages/BillingReport'));
+const FlowList = lazy(() => import('@pages/FlowList'));
+const PermissionDenied = lazy(() => import('@pages/PermissionDenied'));
 import Login from '@pages/auth/Login';
-import Home from '@pages/Home';
-import FlowEdit from '@pages/FlowEdit';
-import DataDictionary from '@pages/DataDictionary';
-import ChangeHistoryPage from '@pages/ChangeHistory';
-import AccessVerificationPage from '@pages/auth/AccessVerification';
-import LeadRequestsReports from '@pages/LeadRequestsReports';
-import DenialReasons from '@pages/DenialReasons';
-import Waterfall from '@pages/Waterfall';
-import BillingReport from '@pages/BillingReport';
-import FlowList from '@pages/FlowList';
-import PermissionDenied from '@pages/PermissionDenied';
 import Layout from '@components/Layouts/Layout';
 import PrivateRoutes from '@components/Router/PrivateRoutes';
 import PrivateAuthRoute from '@components/Router/PrivateAuthRoute';

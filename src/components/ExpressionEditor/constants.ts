@@ -1,60 +1,12 @@
-import { ReactNode } from 'react';
-import { keyBy, sortBy } from 'lodash';
+import * as _ from 'lodash-es';
 
-enum ExpressionOperatorCategory {
-  ARITHMETIC = 'ARITHMETIC',
-  LOGICAL = 'LOGICAL',
-  COMPARISON = 'COMPARISON',
-  INCLUSION = 'INCLUSION',
-  BASIC_MATH = 'BASIC_MATH',
-  BASIC_TEXT = 'BASIC_TEXT',
-  MISCELANEOUS = 'MISCELANEOUS',
-  EXTERNAL = 'EXTERNAL',
-  ADVANCED = 'ADVANCED'
-}
-
-export interface FunctionConfig {
-  literal: ExpressionEditorFunction;
-  description: ReactNode;
-  domesticDescription: string;
-  category: ExpressionOperatorCategory | string;
-  color?: string;
-}
-
-export interface OperatorConfig {
-  literal: string;
-  category: ExpressionOperatorCategory | string;
-}
-
-export enum ExpressionEditorFunction {
-  MIN = 'MIN',
-  MAX = 'MAX',
-  SIGN = 'SIGN',
-  ABS = 'ABS',
-  ROUND = 'ROUND',
-  TRUNC = 'TRUNC',
-  INT = 'INT',
-  LEFT = 'LEFT',
-  RIGHT = 'RIGHT',
-  CONTAINS = 'CONTAINS',
-  LEN = 'LEN',
-  SUBSTRING = 'SUBSTRING',
-  DATEDIFF = 'DATEDIFF',
-  TODAY = 'TODAY',
-  GET_REPORT = 'GET_REPORT',
-  MATCH = 'MATCH',
-  STRCMP = 'STRCMP',
-  DOESNOTCONTAIN = 'DOESNOTCONTAIN'
-}
-
-// POST MVP
-enum FunctionGroupColor {
-  pink = '#FCE4EC',
-  orange = '#FFF3E0',
-  latte = '#F9FBE7',
-  mint = '#F1F8E9',
-  blue = '#E1F5FE'
-}
+import {
+  ExpressionEditorFunction,
+  ExpressionOperatorCategory,
+  FunctionConfig,
+  FunctionGroupColor,
+  OperatorConfig
+} from './types';
 
 export const operatorsConfig: OperatorConfig[] = [
   {
@@ -234,8 +186,8 @@ export const functionsConfig: FunctionConfig[] = [
   }
 ];
 
-export const sortedFunctionsConfig = sortBy(functionsConfig, 'literal');
-export const functionsConfigDict = keyBy(functionsConfig, 'literal');
+export const sortedFunctionsConfig = _.sortBy(functionsConfig, 'literal');
+export const functionsConfigDict = _.keyBy(functionsConfig, 'literal');
 export const functionsLiterals: string[] = sortedFunctionsConfig.map(
   ({ literal }) => literal
 );
