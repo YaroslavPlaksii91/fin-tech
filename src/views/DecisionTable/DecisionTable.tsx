@@ -43,6 +43,7 @@ import {
   SnackbarErrorMessage,
   SnackbarMessage
 } from '@components/shared/Snackbar/SnackbarMessage';
+import ConditionsCard from '@views/DecisionTable/ConditionsCard';
 import { SNACK_TYPE } from '@constants/common';
 import {
   VARIABLE_DATA_TYPE,
@@ -59,6 +60,7 @@ import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import InputText from '@components/shared/Forms/InputText';
 import { selectDataDictionary } from '@store/dataDictionary/selectors';
 import { selectUserDefinedVariables } from '@store/flow/selectors';
+
 type DecisionTableStepProps = {
   flow: IFlow;
   mainFlow?: IFlow;
@@ -467,6 +469,9 @@ const DecisionTable = ({
           >
             Add new business layer
           </Button>
+        )}
+        {caseEntries.length > 0 && (
+          <ConditionsCard caseEntries={caseEntries} nodes={nodes} />
         )}
         <form>
           <NoteSection>
