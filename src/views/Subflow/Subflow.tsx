@@ -1,6 +1,6 @@
 import { Edge, ReactFlowProvider } from 'reactflow';
 import { useCallback, useMemo } from 'react';
-import { cloneDeep } from 'lodash';
+import * as _ from 'lodash-es';
 
 import {
   addNodeInSubFlow,
@@ -43,7 +43,7 @@ const SubFlow: React.FC<SubFlowProps> = ({
   useDeselectNodes();
 
   const subFlow = useMemo(() => {
-    const subFlowNode = cloneDeep(findSubFlow(activeStepId, mainFlowNodes));
+    const subFlowNode = _.cloneDeep(findSubFlow(activeStepId, mainFlowNodes));
     if (subFlowNode) {
       return {
         id: subFlowNode.id,

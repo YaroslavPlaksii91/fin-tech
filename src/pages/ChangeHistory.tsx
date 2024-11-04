@@ -5,12 +5,12 @@ import Logger from '@utils/logger';
 import { ChangeHistoryRecord } from '@domain/changeHistory';
 import { useLoading } from '@contexts/LoadingContext';
 import LoadingButton from '@components/shared/Buttons/Loading';
-import ChangeHistoryItem from '@components/ChangeHistory/ChangeHistoryItem';
+import Item from '@components/ChangeHistory/Item';
 import { flowService } from '@services/flow-service';
 
 const PAGE_SIZE = 10;
 
-const ChangeHistoryPage = () => {
+const ChangeHistory = () => {
   const { startLoading, stopLoading, loading } = useLoading();
   const [list, setList] = useState<ChangeHistoryRecord[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -53,7 +53,7 @@ const ChangeHistoryPage = () => {
           <Grid container spacing={2}>
             {list.map((item, index) => (
               <Grid key={item.id + index} item xs={12}>
-                <ChangeHistoryItem data={item} index={index} />
+                <Item data={item} index={index} />
               </Grid>
             ))}
           </Grid>
@@ -76,4 +76,4 @@ const ChangeHistoryPage = () => {
   );
 };
 
-export default ChangeHistoryPage;
+export default ChangeHistory;

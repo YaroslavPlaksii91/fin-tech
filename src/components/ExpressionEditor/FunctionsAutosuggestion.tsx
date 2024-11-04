@@ -4,13 +4,19 @@ import React, {
   useImperativeHandle,
   useRef
 } from 'react';
-import { ListItemText, MenuItem, MenuList, Paper } from '@mui/material';
+import { ListItemText, MenuItem, MenuList } from '@mui/material';
 
-import styles from '@components/ExpressionEditor/ExpressionEditor.module.scss';
-import { FunctionConfig } from '@components/ExpressionEditor/ExpressionEditor.constants';
+import { StyledPaper } from './styled';
+import { FunctionConfig } from './types';
 
 export interface FunctionsAutosuggestionAPI {
   focus: () => void;
+}
+
+interface FunctionsAutosuggestionProps {
+  list: FunctionConfig[];
+  onClick: (literal: string) => void;
+  onKeyDown: (e: React.KeyboardEvent<HTMLUListElement>) => void;
 }
 
 const FunctionsAutosuggestion: ForwardRefRenderFunction<
@@ -34,7 +40,7 @@ const FunctionsAutosuggestion: ForwardRefRenderFunction<
   );
 
   return (
-    <Paper className={styles.suggestBox} variant="outlined" elevation={12}>
+    <StyledPaper variant="outlined" elevation={0}>
       <MenuList dense style={{ padding: 0 }} onKeyDown={onKeyDown}>
         {list.map((fnConf, index) => (
           <MenuItem
@@ -58,15 +64,9 @@ const FunctionsAutosuggestion: ForwardRefRenderFunction<
           </MenuItem>
         ))}
       </MenuList>
-    </Paper>
+    </StyledPaper>
   );
 };
-
-interface FunctionsAutosuggestionProps {
-  list: FunctionConfig[];
-  onClick: (literal: string) => void;
-  onKeyDown: (e: React.KeyboardEvent<HTMLUListElement>) => void;
-}
 
 export default React.forwardRef<
   FunctionsAutosuggestionAPI,

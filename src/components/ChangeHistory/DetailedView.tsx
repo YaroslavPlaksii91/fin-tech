@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   Typography,
   Breadcrumbs,
@@ -11,7 +11,7 @@ import ReactDiffViewer from 'react-diff-viewer';
 import dayjs from 'dayjs';
 
 import { DetailedViewContainer } from './styled';
-import ChangeHistoryDiffCard from './ChangeHistoryDiffCard';
+import ChangeHistoryDiffCard from './DiffCard';
 import {
   generalDiffStyles,
   getInfoForConnections,
@@ -27,7 +27,7 @@ import AngleLeftIcon from '@icons/angleLeft.svg';
 import AngleRightIcon from '@icons/angleRight.svg';
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 
-interface ChangeHistoryDetailedViewProps {
+interface DetailedViewProps {
   data: ChangeHistoryRecord;
   selectedRowIndex: number;
   setSelectedRowIndex: (rowIndex: null) => void;
@@ -35,13 +35,13 @@ interface ChangeHistoryDetailedViewProps {
   handleNextRow: () => void;
 }
 
-const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
+const DetailedView = ({
   data,
   selectedRowIndex,
   setSelectedRowIndex,
   handlePrevRow,
   handleNextRow
-}) => {
+}: DetailedViewProps) => {
   const selectedRow = useMemo(
     () => data.diffs[selectedRowIndex],
     [data.diffs, selectedRowIndex]
@@ -205,4 +205,4 @@ const ChangeHistoryDetailedView: React.FC<ChangeHistoryDetailedViewProps> = ({
   );
 };
 
-export default ChangeHistoryDetailedView;
+export default DetailedView;

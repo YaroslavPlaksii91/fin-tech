@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { Button, Paper } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
-import { debounce, flatMap, isEmpty } from 'lodash';
+import * as _ from 'lodash-es';
 import { v4 as uuidv4 } from 'uuid';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -124,7 +124,7 @@ const DecisionTable = ({
     [variables, userDefinedVariables]
   );
 
-  const flatVariables = useMemo(() => flatMap(allVariables), [allVariables]);
+  const flatVariables = useMemo(() => _.flatMap(allVariables), [allVariables]);
 
   const stepIds = caseEntries.map(({ edgeId }) => edgeId);
 
@@ -417,7 +417,7 @@ const DecisionTable = ({
     setIsDirty(hasChangesInCaseEntries || isNoteValueChanged);
   };
 
-  const debounceCheckIsDirty = useCallback(debounce(checkIsDirty, 300), [
+  const debounceCheckIsDirty = useCallback(_.debounce(checkIsDirty, 300), [
     step.data
   ]);
 
@@ -487,7 +487,7 @@ const DecisionTable = ({
         </form>
       </StepContentWrapper>
       <StepDetailsControlBar
-        disabled={!isEmpty(errors) || isSubmitting}
+        disabled={!_.isEmpty(errors) || isSubmitting}
         isEdited={isDirty}
         resetActiveStepId={resetActiveStepId}
         handleConfirm={() => {

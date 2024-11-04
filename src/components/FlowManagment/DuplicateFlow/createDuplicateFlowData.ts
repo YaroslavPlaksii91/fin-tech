@@ -1,4 +1,4 @@
-import omit from 'lodash/omit';
+import * as _ from 'lodash-es';
 
 import { IFlow } from '@domain/flow';
 
@@ -7,7 +7,7 @@ export const createDuplicateFlowData = (
   username: string,
   name: string
 ) => {
-  const omitFlowData = omit(flow, ['id', 'data']);
+  const omitFlowData = _.omit(flow, ['id', 'data']);
 
   return {
     ...omitFlowData,
