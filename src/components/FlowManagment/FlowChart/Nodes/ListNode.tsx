@@ -1,12 +1,12 @@
 import { Handle, NodeProps, Position, useReactFlow } from 'reactflow';
 
-import CustomHandler from '../CustomHandler/CustomHandler';
+import CustomHandler from '../CustomHandler';
 import { StepListData } from '../types';
 import { getListNodesData } from '../utils/nodesUtils';
 
 import { NO_TAG_LABEL, STEP_ICONS } from '@constants/common';
 
-const ListNode: React.FC<NodeProps<StepListData>> = ({ data }) => {
+const ListNode = ({ data }: NodeProps<StepListData>) => {
   const rfInstance = useReactFlow();
 
   const dataToShow = getListNodesData(data, rfInstance);
