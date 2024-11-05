@@ -7,7 +7,7 @@ export const fetchUserInfo = createAppAsyncThunk(
   async () => {
     try {
       const response = await authService.fetchUserInfo();
-      return response.data;
+      return response?.data;
     } catch (e) {
       Logger.error(e);
     }
