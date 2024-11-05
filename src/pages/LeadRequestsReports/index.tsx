@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
-import { Stack, Typography } from '@mui/material';
 
 import { COLUMN_IDS, FetchList, RowData } from './types';
 import { buildParams, getFormattedRows } from './utils';
@@ -26,6 +25,7 @@ import Paper from '@components/shared/Paper';
 import DataGrid from '@components/shared/Table/DataGrid';
 import { TABLE_WRAPPER_HEIGHT } from '@constants/themeConstants';
 import { Wrapper } from '@components/Layouts/styled';
+import PageHeader from '@components/Layouts/PageHeader';
 
 const LeadRequestsReports = () => {
   const [rows, setRows] = useState<RowData[]>([]);
@@ -138,27 +138,13 @@ const LeadRequestsReports = () => {
 
   return (
     <Wrapper>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        spacing={2}
-        pb={2}
-      >
-        <Typography variant="h4">Applications</Typography>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          spacing={1}
-        >
-          <ExportCSVButton
-            defaultFileName={DEFAULT_EXPORT_FILE_NAME}
-            exportFile={handleExport}
-          />
-          <FiltersButton onClick={handleFiltersOpen} />
-        </Stack>
-      </Stack>
+      <PageHeader title="Applications">
+        <ExportCSVButton
+          defaultFileName={DEFAULT_EXPORT_FILE_NAME}
+          exportFile={handleExport}
+        />
+        <FiltersButton onClick={handleFiltersOpen} />
+      </PageHeader>
       <Paper>
         <DataGrid
           rows={rows}

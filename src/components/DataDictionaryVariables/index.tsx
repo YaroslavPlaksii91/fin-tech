@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Box, Stack, Typography, Button } from '@mui/material';
+import { Stack, Typography, Button } from '@mui/material';
 import * as _ from 'lodash-es';
 
 import {
@@ -14,11 +14,10 @@ import { TAB, TableHeader } from './types';
 import Filters from './Filters';
 import FlowSelect from './FlowSelect';
 import { getFiltersGroup } from './utils';
-import { VariableForm } from './VariableForm/VariableForm';
-import { DeleteVariable } from './DeleteVariable/DeleteVariable';
+import VariableForm from './VariableForm';
+import DeleteVariable from './DeleteVariable';
 
 import { AddIcon } from '@components/shared/Icons';
-import { theme } from '@theme';
 import { IFlow } from '@domain/flow';
 import {
   VARIABLE_DATA_TYPE,
@@ -36,6 +35,7 @@ import FiltersButton from '@components/shared/Buttons/Filters';
 import { useVariables } from '@hooks/useVariables';
 import { typeSafeObjectEntries } from '@utils/object';
 import useFilters from '@hooks/useFilters';
+import PageHeader from '@components/Layouts/PageHeader';
 
 const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const { enumDataTypes } = useAppSelector(selectDataDictionary);
@@ -191,23 +191,9 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
   return (
     <Stack>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}
-      >
-        <Typography
-          variant="h4"
-          pt={1}
-          pb={1}
-          color={theme.palette.text.primary}
-        >
-          Data Dictionary
-        </Typography>
+      <PageHeader title="Data Dictionary" wrapperProps={{ pb: 1 }}>
         <FlowSelect />
-      </Box>
+      </PageHeader>
       <Tabs activeTab={tab} tabs={TABS} onChange={setTab} />
       {TABS.map(({ value }) => (
         <TabPanel key={value} value={tab} tabName={value}>
@@ -260,6 +246,11 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       />
       {isVariableModalOpen && (
         <VariableForm
+          variables={{
+            ...allVariables,
+            ...integrationVariables,
+            ...userDefinedVariables
+          }}
           flowId={flow.id}
           formData={selectedVariable}
           isOpen={isVariableModalOpen}

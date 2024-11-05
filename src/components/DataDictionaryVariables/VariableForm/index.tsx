@@ -18,7 +18,8 @@ import Select from '@components/shared/Forms/Select';
 import {
   VARIABLE_SOURCE_TYPE,
   VARIABLE_DATA_TYPE,
-  DataDictionaryVariable
+  DataDictionaryVariable,
+  DataDictionaryVariables
 } from '@domain/dataDictionary';
 import { JSONPatchOperation } from '@domain/entity';
 import Logger from '@utils/logger';
@@ -29,7 +30,8 @@ import { parseErrorMessages } from '@utils/helpers';
 import { useAppDispatch } from '@store/hooks';
 import { updateFlow } from '@store/flow/asyncThunk';
 
-type VariableFormProps = {
+interface VariableFormProps {
+  variables: DataDictionaryVariables;
   flowId: string;
   isOpen: boolean;
   formData?: DataDictionaryVariable & {
@@ -37,7 +39,7 @@ type VariableFormProps = {
     variableIsUsed: boolean;
   };
   onClose: () => void;
-};
+}
 
 const VARIABLE_SOURCE_TYPE_OPTIONS = [
   {
@@ -62,12 +64,13 @@ const DATA_TYPES_OF_PERMANENT_VARIABLE = ALL_DATA_TYPES.filter(
     ].includes(type as VARIABLE_DATA_TYPE)
 );
 
-export const VariableForm: React.FC<VariableFormProps> = ({
+const VariableForm = ({
+  variables,
   flowId,
   isOpen,
   onClose,
   formData
-}) => {
+}: VariableFormProps) => {
   const dispatch = useAppDispatch();
 
   const [dataTypeOptions, setDataTypeOptions] = useState(ALL_DATA_TYPES);
@@ -81,7 +84,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     formState: { isSubmitting, errors }
   } = useForm({
     mode: 'onChange',
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(validationSchema(variables)),
     defaultValues: {
       name: formData ? formData.name : '',
       sourceType: formData
@@ -273,3 +276,5 @@ export const VariableForm: React.FC<VariableFormProps> = ({
     </Dialog>
   );
 };
+
+export default VariableForm;

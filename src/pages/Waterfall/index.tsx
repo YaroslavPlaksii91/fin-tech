@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridSortModel } from '@mui/x-data-grid-premium';
-import { Stack, Typography } from '@mui/material';
 
 import { FetchData } from './types';
 import { getFormattedRows, buildParams, getTableStyles } from './utils';
@@ -23,6 +22,7 @@ import useFilters from '@hooks/useFilters';
 import DataGrid from '@components/shared/Table/DataGrid';
 import { TABLE_WRAPPER_HEIGHT } from '@constants/themeConstants';
 import { Wrapper } from '@components/Layouts/styled';
+import PageHeader from '@components/Layouts/PageHeader';
 
 const Waterfall = () => {
   const [loading, setLoading] = useState(false);
@@ -80,27 +80,13 @@ const Waterfall = () => {
 
   return (
     <Wrapper>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        spacing={2}
-        pb={2}
-      >
-        <Typography variant="h4">Waterfall</Typography>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          spacing={1}
-        >
-          <ExportCSVButton
-            defaultFileName={DEFAULT_EXPORT_FILE_NAME}
-            exportFile={handleExport}
-          />
-          <FiltersButton onClick={handleFiltersOpen} />
-        </Stack>
-      </Stack>
+      <PageHeader title="Waterfall">
+        <ExportCSVButton
+          defaultFileName={DEFAULT_EXPORT_FILE_NAME}
+          exportFile={handleExport}
+        />
+        <FiltersButton onClick={handleFiltersOpen} />
+      </PageHeader>
       <Paper>
         <DataGrid
           hideFooter

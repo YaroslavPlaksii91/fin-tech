@@ -17,7 +17,7 @@ interface DeleteVariableProps {
   onClose: () => void;
 }
 
-export const DeleteVariable = ({
+const DeleteVariable = ({
   flowId,
   variable,
   isOpen,
@@ -68,3 +68,5 @@ export const DeleteVariable = ({
     </Dialog>
   );
 };
+
+export default DeleteVariable;

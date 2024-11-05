@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Stack, Typography } from '@mui/material';
 
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
@@ -12,6 +11,7 @@ import Paper from '@components/shared/Paper';
 import DataGrid from '@components/shared/Table/DataGrid';
 import { TABLE_WRAPPER_HEIGHT } from '@constants/themeConstants';
 import { Wrapper } from '@components/Layouts/styled';
+import PageHeader from '@components/Layouts/PageHeader';
 
 const BillingReports = () => {
   const [loading, setLoading] = useState(false);
@@ -44,15 +44,7 @@ const BillingReports = () => {
 
   return (
     <Wrapper>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        spacing={2}
-        pb={2}
-      >
-        <Typography variant="h4">Billing Report</Typography>
-      </Stack>
+      <PageHeader title="Billing Report" />
       <Paper>
         <DataGrid
           hideFooter
