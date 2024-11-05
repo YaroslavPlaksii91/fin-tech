@@ -79,10 +79,11 @@ function Navigation() {
             clearStoredState([EXPANDED_FLOW_LIST_KEY, EXPANDED_REPORTS_KEY]);
             void authService.logout();
           }}
-          title="Sign out"
+          title="Log out"
+          cancelText="Cancel"
           maxWidth="xs"
         >
-          Do you want to sign out from your account?
+          Do you want to log out from your account?
         </Dialog>
       )}
     </>
