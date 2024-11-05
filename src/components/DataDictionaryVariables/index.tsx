@@ -246,11 +246,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       />
       {isVariableModalOpen && (
         <VariableForm
-          variables={{
-            ...allVariables,
-            ...integrationVariables,
-            ...userDefinedVariables
-          }}
+          variables={{ ...allVariables, ...integrationVariables }}
           flowId={flow.id}
           formData={selectedVariable}
           isOpen={isVariableModalOpen}
