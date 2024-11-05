@@ -24,7 +24,7 @@ import LoadingButton from '@components/shared/Buttons/Loading';
 import { BOOLEAN_OPTIONS } from '@constants/common';
 import { flowService } from '@services/flow-service';
 import { parseExpressionError } from '@utils/helpers';
-import { checkDataType } from '@components/DataDictionaryVariables/utils';
+import { checkDataType } from '@utils/validation';
 import VariablesDialog from '@components/shared/VariablesDialog';
 import { Variable, VARIABLE_DATA_TYPE } from '@domain/dataDictionary';
 import { useAppSelector } from '@store/hooks';

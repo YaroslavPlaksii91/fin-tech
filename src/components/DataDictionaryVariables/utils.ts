@@ -60,18 +60,6 @@ export const getUserDefinedUsageStepIds = ({
   return stepIds;
 };
 
-export const checkDataType = (
-  dataType: VARIABLE_DATA_TYPE,
-  enumDataTypes: string[]
-) => ({
-  isWithEnum: enumDataTypes.includes(dataType),
-  isBoolean: dataType === VARIABLE_DATA_TYPE.Boolean,
-  isString: dataType === VARIABLE_DATA_TYPE.String,
-  isInteger: dataType === VARIABLE_DATA_TYPE.Integer,
-  isDecimal: dataType === VARIABLE_DATA_TYPE.Decimal,
-  isStringArray: dataType === VARIABLE_DATA_TYPE.StringArray
-});
-
 export const getFiltersGroup = (enumDataTypes: string[]) => [
   {
     filterBy: FILTER_BY.dataType,

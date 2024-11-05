@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-const useFilters = <T,>(initialData: T) => {
+const useFilters = <T>(initialData: T) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   const [filters, setFilters] = useState<T>(initialData);

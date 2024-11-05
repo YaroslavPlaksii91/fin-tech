@@ -11,7 +11,7 @@ import {
 } from './constants';
 import TableList from './TableList/TableList';
 import { TAB, TableHeader } from './types';
-import Filters, { IFormState } from './Filters';
+import Filters from './Filters';
 import FlowSelect from './FlowSelect';
 import { getFiltersGroup } from './utils';
 import { VariableForm } from './VariableForm/VariableForm';
@@ -22,7 +22,6 @@ import { theme } from '@theme';
 import { IFlow } from '@domain/flow';
 import {
   VARIABLE_DATA_TYPE,
-  Variable,
   UserDefinedVariable,
   DATA_DICTIONARY_GROUP
 } from '@domain/dataDictionary';
@@ -30,23 +29,33 @@ import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { checkIsProductionFlow } from '@utils/helpers';
 import { permissionsMap } from '@constants/permissions';
 import { useAppSelector } from '@store/hooks';
-import { selectUserDefinedVariables } from '@store/flow/selectors';
 import { selectDataDictionary } from '@store/dataDictionary/selectors';
 import Tabs from '@components/shared/Tabs';
 import TabPanel from '@components/shared/Tabs/TabPanel';
 import FiltersButton from '@components/shared/Buttons/Filters';
+import { useVariables } from '@hooks/useVariables';
+import { typeSafeObjectEntries } from '@utils/object';
+import useFilters from '@hooks/useFilters';
 
 const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
-  const { integrationVariables, variables, enumDataTypes } =
-    useAppSelector(selectDataDictionary);
-  const userDefinedVariables = useAppSelector(selectUserDefinedVariables);
+  const { enumDataTypes } = useAppSelector(selectDataDictionary);
 
   const hasUserPermission = useHasUserPermission(permissionsMap.canUpdateFlow);
 
+  const { allVariables, integrationVariables, userDefinedVariables } =
+    useVariables();
+
+  const {
+    isFiltersOpen,
+    filters,
+    handleFiltersOpen,
+    handleFiltersClose,
+    handleFiltersSubmit,
+    handleFiltersReset
+  } = useFilters(INITIAL_FILTERS);
+
   const [tab, setTab] = useState<TAB>('laPMSVariables');
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [search, setSearch] = useState('');
-  const [filters, setFilters] = useState(INITIAL_FILTERS);
+
   const [selectedVariable, setSelectedVariable] = useState<
     UserDefinedVariable & {
       index: number;
@@ -58,13 +67,6 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
   const isProductionFlow = checkIsProductionFlow();
   const isViewMode = isProductionFlow || !hasUserPermission;
-  const allVariables = useMemo(
-    () => ({
-      ...variables,
-      ...userDefinedVariables
-    }),
-    [variables, userDefinedVariables]
-  );
 
   const tableData = useMemo(() => {
     if (tab === 'craReportVariables')
@@ -72,8 +74,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
 
     if (tab === 'all')
       return [
-        ...Object.values(allVariables).flat(),
-        ...Object.values(integrationVariables).flat()
+        ...Object.values({ ...allVariables, ...integrationVariables }).flat()
       ];
 
     return allVariables[tab] || [];
@@ -107,7 +108,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   );
 
   const filteredBySearch = useMemo(() => {
-    const filterBySearch = search.trim().toUpperCase();
+    const filterBySearch = filters.search.trim().toUpperCase();
 
     if (filterBySearch)
       return tableData.filter((tableEl) =>
@@ -115,13 +116,10 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       );
 
     return tableData;
-  }, [tableData, search]);
+  }, [tableData, filters.search]);
 
   const filteredBySelects = useMemo(() => {
-    const filtersEntries = Object.entries(filters) as [
-      keyof Variable,
-      string[]
-    ][];
+    const filtersEntries = typeSafeObjectEntries(filters.selects);
 
     let filteredData = filteredBySearch;
 
@@ -133,29 +131,12 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
         return;
 
       filteredData = filteredData.filter((el) =>
-        activeFilters.includes(el[field] as string)
+        activeFilters.includes(el[field])
       );
     });
 
     return filteredData;
-  }, [filteredBySearch, filters]);
-
-  const handleFiltersOpen = () => setIsFiltersOpen(true);
-
-  const handleFiltersClose = () => setIsFiltersOpen(false);
-
-  const handleFiltersReset = () => {
-    setFilters(INITIAL_FILTERS);
-    setSearch('');
-    handleFiltersClose();
-  };
-
-  const handleSubmit = (data: IFormState) => {
-    setFilters(data.filters);
-    setSearch(data.search);
-
-    handleFiltersClose();
-  };
+  }, [filteredBySearch, filters.selects]);
 
   const handleVariableModalClose = () => {
     setSelectedVariable(undefined);
@@ -272,10 +253,9 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
       <Filters
         isOpen={isFiltersOpen}
         filters={filters}
-        search={search}
         filterGroups={filterGroups}
         onReset={handleFiltersReset}
-        onSubmit={handleSubmit}
+        onSubmit={handleFiltersSubmit}
         onClose={handleFiltersClose}
       />
       {isVariableModalOpen && (

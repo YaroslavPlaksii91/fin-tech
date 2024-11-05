@@ -59,7 +59,7 @@ import { useIsDirty } from '@contexts/IsDirtyContext';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import InputText from '@components/shared/Forms/InputText';
 import { selectDataDictionary } from '@store/dataDictionary/selectors';
-import { selectUserDefinedVariables } from '@store/flow/selectors';
+import { useVariables } from '@hooks/useVariables';
 
 type DecisionTableStepProps = {
   flow: IFlow;
@@ -90,9 +90,8 @@ const DecisionTable = ({
   const { isDirty, setIsDirty } = useIsDirty();
   const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
   const user = useAppSelector(selectUserInfo);
-  const { integrationVariables, variables, enumDataTypes } =
-    useAppSelector(selectDataDictionary);
-  const userDefinedVariables = useAppSelector(selectUserDefinedVariables);
+  const { allVariables, integrationVariables } = useVariables();
+  const { enumDataTypes } = useAppSelector(selectDataDictionary);
 
   const [caseEntries, setCaseEntries] = useState<CaseEntry[]>([]);
 
@@ -115,14 +114,6 @@ const DecisionTable = ({
   const username = getFullUserName(user);
   const nodes: FlowNode[] = getNodes();
   const edges = getEdges();
-
-  const allVariables = useMemo(
-    () => ({
-      ...variables,
-      ...userDefinedVariables
-    }),
-    [variables, userDefinedVariables]
-  );
 
   const flatVariables = useMemo(() => _.flatMap(allVariables), [allVariables]);
 

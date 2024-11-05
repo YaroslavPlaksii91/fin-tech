@@ -17,7 +17,7 @@ import {
   VARIABLE_USAGE_MODE,
   Variable
 } from '@domain/dataDictionary';
-import { checkDataType } from '@components/DataDictionaryVariables/utils';
+import { checkDataType } from '@utils/validation';
 
 export const getOperatorOptions = ({
   isWithEnum,

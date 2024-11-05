@@ -10,6 +10,15 @@ export enum FILTER_BY {
   source = 'source'
 }
 
+export type IFilters = {
+  selects: {
+    [FILTER_BY.dataType]: string[];
+    [FILTER_BY.sourceType]: string[];
+    [FILTER_BY.source]: string[];
+  };
+  search: string;
+};
+
 export interface TableHeader {
   key: keyof Variable;
   label?: string;

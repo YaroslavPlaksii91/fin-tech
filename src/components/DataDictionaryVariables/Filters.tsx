@@ -1,35 +1,29 @@
 import { useForm } from 'react-hook-form';
 
-import { INITIAL_FILTERS } from './constants';
+import { IFilters } from './types';
 import { getFiltersGroup } from './utils';
 
 import Template, { TemplateProps } from '@components/shared/Filters';
 import InputText from '@components/shared/Forms/InputText';
 import Select from '@components/shared/Forms/Select';
 
-export interface IFormState {
-  search: string;
-  filters: typeof INITIAL_FILTERS;
-}
-
 interface FiltersProps
-  extends Pick<TemplateProps, 'isOpen' | 'onClose' | 'onReset'>,
-    IFormState {
+  extends Pick<TemplateProps, 'isOpen' | 'onClose' | 'onReset'> {
   filterGroups: ReturnType<typeof getFiltersGroup>;
-  onSubmit: (data: IFormState) => void;
+  filters: IFilters;
+  onSubmit: (data: IFilters) => void;
 }
 
 const Filters = ({
   isOpen,
-  search,
   filters,
   filterGroups,
   onClose,
   onReset,
   onSubmit
 }: FiltersProps) => {
-  const { handleSubmit, control, reset } = useForm<IFormState>({
-    values: { search, filters }
+  const { handleSubmit, control, reset } = useForm<IFilters>({
+    values: filters
   });
 
   const handleClose = () => {
@@ -57,7 +51,7 @@ const Filters = ({
           multiple
           clearable
           key={filterBy}
-          name={`filters.${filterBy}`}
+          name={`selects.${filterBy}`}
           variant="outlined"
           label={text}
           control={control}

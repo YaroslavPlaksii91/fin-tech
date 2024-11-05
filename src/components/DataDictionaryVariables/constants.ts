@@ -1,4 +1,4 @@
-import { FILTER_BY, TAB, TableHeader } from './types';
+import { FILTER_BY, IFilters, TAB, TableHeader } from './types';
 
 import { DATA_DICTIONARY_GROUP } from '@domain/dataDictionary';
 
@@ -38,10 +38,13 @@ export const TABS = Object.values(TABS_KEYS).map((tab) => ({
   label: TABS_LABELS[tab]
 }));
 
-export const INITIAL_FILTERS = {
-  [FILTER_BY.dataType]: [],
-  [FILTER_BY.sourceType]: [],
-  [FILTER_BY.source]: []
+export const INITIAL_FILTERS: IFilters = {
+  selects: {
+    [FILTER_BY.dataType]: [],
+    [FILTER_BY.sourceType]: [],
+    [FILTER_BY.source]: []
+  },
+  search: ''
 };
 
 export const DEFAULT_HEADERS: TableHeader[] = [
