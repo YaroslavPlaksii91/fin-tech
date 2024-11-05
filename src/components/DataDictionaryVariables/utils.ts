@@ -5,7 +5,7 @@ import {
   VARIABLE_DATA_TYPE,
   CONTROL_FILES,
   INTEGRATION_VARIABLE_SOURCE_TYPE,
-  Variable,
+  DataDictionaryVariable,
   VariableUsageParams
 } from '@domain/dataDictionary';
 import { dataDictionaryService } from '@services/data-dictionary';
@@ -46,7 +46,7 @@ export const getUserDefinedUsageStepIds = ({
   variable
 }: {
   userDefinedUsage: VariableUsageParams;
-  variable: Variable;
+  variable: DataDictionaryVariable;
 }) => {
   const stepIds: string[] = [];
 

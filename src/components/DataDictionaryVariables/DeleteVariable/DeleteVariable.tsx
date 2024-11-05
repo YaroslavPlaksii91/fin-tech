@@ -6,13 +6,13 @@ import Dialog from '@components/shared/Modals/Dialog';
 import Logger from '@utils/logger';
 import { JSONPatchOperation } from '@domain/entity';
 import { modifyFirstLetter } from '@utils/text';
-import { Variable } from '@domain/dataDictionary';
+import { DataDictionaryVariable } from '@domain/dataDictionary';
 import { updateFlow } from '@store/flow/asyncThunk';
 import { useAppDispatch } from '@store/hooks';
 
 interface DeleteVariableProps {
   flowId: string;
-  variable: Variable & { index: number; variableIsUsed: boolean };
+  variable: DataDictionaryVariable & { index: number; variableIsUsed: boolean };
   isOpen: boolean;
   onClose: () => void;
 }

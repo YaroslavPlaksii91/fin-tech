@@ -1,6 +1,6 @@
 import { TABS_KEYS } from './constants';
 
-import { Variable } from '@domain/dataDictionary';
+import { DataDictionaryVariable } from '@domain/dataDictionary';
 
 export type TAB = keyof typeof TABS_KEYS;
 
@@ -20,8 +20,8 @@ export type IFilters = {
 };
 
 export interface TableHeader {
-  key: keyof Variable;
+  key: keyof DataDictionaryVariable;
   label?: string;
   maxWidth?: string;
-  render?: (row: Variable) => void;
+  render?: (row: DataDictionaryVariable) => void;
 }

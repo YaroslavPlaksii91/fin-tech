@@ -18,8 +18,7 @@ import Select from '@components/shared/Forms/Select';
 import {
   VARIABLE_SOURCE_TYPE,
   VARIABLE_DATA_TYPE,
-  UserDefinedVariable,
-  Variable
+  DataDictionaryVariable
 } from '@domain/dataDictionary';
 import { JSONPatchOperation } from '@domain/entity';
 import Logger from '@utils/logger';
@@ -33,10 +32,9 @@ import { updateFlow } from '@store/flow/asyncThunk';
 type VariableFormProps = {
   flowId: string;
   isOpen: boolean;
-  formData?: Variable & {
+  formData?: DataDictionaryVariable & {
     index: number;
     variableIsUsed: boolean;
-    sourceType: VARIABLE_SOURCE_TYPE;
   };
   onClose: () => void;
 };
@@ -97,7 +95,7 @@ export const VariableForm: React.FC<VariableFormProps> = ({
 
   const onSubmit = async (
     data: Pick<
-      UserDefinedVariable,
+      DataDictionaryVariable,
       'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
     >
   ) => {

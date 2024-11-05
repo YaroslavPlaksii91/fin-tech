@@ -22,7 +22,7 @@ import { theme } from '@theme';
 import { IFlow } from '@domain/flow';
 import {
   VARIABLE_DATA_TYPE,
-  UserDefinedVariable,
+  DataDictionaryVariable,
   DATA_DICTIONARY_GROUP
 } from '@domain/dataDictionary';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
@@ -57,7 +57,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   const [tab, setTab] = useState<TAB>('laPMSVariables');
 
   const [selectedVariable, setSelectedVariable] = useState<
-    UserDefinedVariable & {
+    DataDictionaryVariable & {
       index: number;
       variableIsUsed: boolean;
     }
@@ -149,7 +149,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   };
 
   const handleVariable = (
-    row: UserDefinedVariable,
+    row: DataDictionaryVariable,
     variableUsageStepIds: string[]
   ) => {
     const userDefinedVariablesGroup = userDefinedVariables[
@@ -169,7 +169,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   };
 
   const handleEditClick = (
-    row: UserDefinedVariable,
+    row: DataDictionaryVariable,
     variableUsageStepIds: string[]
   ) => {
     handleVariable(row, variableUsageStepIds);
@@ -177,7 +177,7 @@ const DataDictionaryVariables = ({ flow }: { flow: IFlow }) => {
   };
 
   const handleDeleteClick = (
-    row: UserDefinedVariable,
+    row: DataDictionaryVariable,
     variableUsageStepIds: string[]
   ) => {
     handleVariable(row, variableUsageStepIds);

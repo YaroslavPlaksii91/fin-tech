@@ -34,8 +34,7 @@ import { Expression } from '@views/Calculation/types';
 import ExpressionOperatorsList from '@components/ExpressionForm/ExpressionOperatorsList/ExpressionOperatorsList';
 import {
   DATA_DICTIONARY_GROUP,
-  DataDictionaryVariable,
-  UserDefinedVariable
+  DataDictionaryVariable
 } from '@domain/dataDictionary';
 import ExpressionEditor, {
   ExpressionEditorAPI
@@ -185,7 +184,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   );
 
   const onVariableListClick = useCallback(
-    (variable: DataDictionaryVariable | UserDefinedVariable) => {
+    (variable: DataDictionaryVariable) => {
       const cursorPosition =
         expressionEditorRef.current?.getCursorPosition() || 0;
       const prev = getValues('expressionString');

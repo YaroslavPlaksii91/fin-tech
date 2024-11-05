@@ -15,7 +15,8 @@ import {
   CONTROL_FILES,
   VARIABLE_SOURCE_TYPE,
   VARIABLE_USAGE_MODE,
-  Variable
+  DataDictionaryVariable,
+  DataDictionaryVariables
 } from '@domain/dataDictionary';
 import { checkDataType } from '@utils/validation';
 
@@ -74,7 +75,7 @@ export const getOperatorOptions = ({
 
 export const getColumns = (
   entries: Entry[],
-  variables: Variable[],
+  variables: DataDictionaryVariable[],
   enumDataTypes: string[],
   category: CATEGORY
 ) =>
@@ -101,7 +102,10 @@ export const getColumns = (
     };
   });
 
-export const getVariableSources = (entries: Entry[], variables: Variable[]) =>
+export const getVariableSources = (
+  entries: Entry[],
+  variables: DataDictionaryVariable[]
+) =>
   entries.reduce(
     (
       acc,
@@ -202,7 +206,7 @@ export const getFormattedOptions = (
 };
 
 export const filterVariablesByUsageMode = (
-  variables: Record<string, Variable[]>,
+  variables: DataDictionaryVariables,
   category: CATEGORY
 ) => {
   let usageModes: VARIABLE_USAGE_MODE[];

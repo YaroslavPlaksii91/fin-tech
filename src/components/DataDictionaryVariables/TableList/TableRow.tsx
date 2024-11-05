@@ -13,7 +13,7 @@ import {
   StyledTableCell,
   StyledTableRow
 } from '@components/shared/Table/styled';
-import { UserDefinedVariable, Variable } from '@domain/dataDictionary';
+import { DataDictionaryVariable } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import { dataDictionaryService } from '@services/data-dictionary';
 import Logger from '@utils/logger';
@@ -26,14 +26,17 @@ import { PRODUCTION_FLOW_ID } from '@constants/common';
 
 type TableRowProps = {
   headers: TableHeader[];
-  row: Variable;
+  row: DataDictionaryVariable;
   index: number;
   tabName: TAB;
   flowId: string;
   flowNodes: FlowNode[];
   userDefinedUsageStepIds: string[] | undefined;
-  onDelete: (row: UserDefinedVariable, variableUsageStepIds: string[]) => void;
-  onEdit: (row: UserDefinedVariable, variableUsageStepIds: string[]) => void;
+  onDelete: (
+    row: DataDictionaryVariable,
+    variableUsageStepIds: string[]
+  ) => void;
+  onEdit: (row: DataDictionaryVariable, variableUsageStepIds: string[]) => void;
 };
 
 export const TableRow = ({
@@ -145,7 +148,7 @@ export const TableRow = ({
                     width: 'auto',
                     p: 0
                   }}
-                  onClick={() => onEdit(row as UserDefinedVariable, stepIds)}
+                  onClick={() => onEdit(row, stepIds)}
                 >
                   <EditIcon color={theme.palette.action.active} />
                 </Button>
@@ -155,7 +158,7 @@ export const TableRow = ({
                     width: 'auto',
                     p: 0
                   }}
-                  onClick={() => onDelete(row as UserDefinedVariable, stepIds)}
+                  onClick={() => onDelete(row, stepIds)}
                 >
                   <TrashIcon color={theme.palette.error.main} />
                 </Button>

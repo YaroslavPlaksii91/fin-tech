@@ -17,10 +17,9 @@ import {
   StyledTableRow
 } from '@components/shared/Table/styled';
 import {
-  Variable,
+  DataDictionaryVariable,
   VariableUsageParams,
-  VARIABLE_DATA_TYPE,
-  UserDefinedVariable
+  VARIABLE_DATA_TYPE
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import TablePagination from '@components/shared/Table/TablePagination';
@@ -33,10 +32,13 @@ interface TableListProps {
   flowNodes: FlowNode[];
   tabName: TAB;
   headers: TableHeader[];
-  tableData: Variable[];
+  tableData: DataDictionaryVariable[];
   flowId: string;
-  onEdit: (row: UserDefinedVariable, variableUsageStepIds: string[]) => void;
-  onDelete: (row: UserDefinedVariable, variableUsageStepIds: string[]) => void;
+  onEdit: (row: DataDictionaryVariable, variableUsageStepIds: string[]) => void;
+  onDelete: (
+    row: DataDictionaryVariable,
+    variableUsageStepIds: string[]
+  ) => void;
 }
 
 const TableList = ({

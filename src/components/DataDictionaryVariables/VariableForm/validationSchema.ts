@@ -4,7 +4,8 @@ import { MAX_INTEGER_VALUE } from '../constants';
 
 import {
   VARIABLE_SOURCE_TYPE,
-  VARIABLE_DATA_TYPE
+  VARIABLE_DATA_TYPE,
+  CONTROL_FILES
 } from '@domain/dataDictionary';
 import { isDecimal, isInteger, isStringArray } from '@utils/validation';
 
@@ -31,7 +32,7 @@ export const validationSchema = yup.object().shape({
       }
     ),
   sourceType: yup
-    .mixed<VARIABLE_SOURCE_TYPE>()
+    .mixed<VARIABLE_SOURCE_TYPE | CONTROL_FILES>()
     .oneOf(Object.values(VARIABLE_SOURCE_TYPE))
     .required(),
   dataType: yup

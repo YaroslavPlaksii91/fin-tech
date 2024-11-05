@@ -26,7 +26,11 @@ import { flowService } from '@services/flow-service';
 import { parseExpressionError } from '@utils/helpers';
 import { checkDataType } from '@utils/validation';
 import VariablesDialog from '@components/shared/VariablesDialog';
-import { Variable, VARIABLE_DATA_TYPE } from '@domain/dataDictionary';
+import {
+  DataDictionaryVariable,
+  DataDictionaryVariables,
+  VARIABLE_DATA_TYPE
+} from '@domain/dataDictionary';
 import { useAppSelector } from '@store/hooks';
 import { selectDataDictionary } from '@store/dataDictionary/selectors';
 
@@ -36,8 +40,8 @@ type SelectVariableValueDialogProps = {
   selectedCell: SelectedCell;
   handleClose: () => void;
   handleSubmitForm: (data: FormFieldsProps) => void;
-  variables: Record<string, Variable[]>;
-  integrationData: Record<string, Variable[]>;
+  variables: DataDictionaryVariables;
+  integrationData: DataDictionaryVariables;
 };
 
 const SelectVariableValueDialog = ({
@@ -122,7 +126,7 @@ const SelectVariableValueDialog = ({
 
   const onSubmit = async (
     data: FormFieldsProps,
-    selectedVariable?: Variable
+    selectedVariable?: DataDictionaryVariable
   ) => {
     if (data.operator === OPERATORS.ANY) {
       handleSubmitForm({
@@ -177,7 +181,7 @@ const SelectVariableValueDialog = ({
     }
   };
 
-  const handleSelectVariable = (variable: Variable | null) => {
+  const handleSelectVariable = (variable: DataDictionaryVariable | null) => {
     setValue('value', variable?.name);
     clearErrors();
   };

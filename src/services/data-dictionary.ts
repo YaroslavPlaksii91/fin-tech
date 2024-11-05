@@ -1,12 +1,12 @@
 import { api } from '@utils/api';
 import {
-  DataDictionaryVariable,
+  DataDictionaryVariables,
   VariableUsageParams
 } from '@domain/dataDictionary';
 
 class DataDictionaryService {
   async getDataDictionaryVariables() {
-    const { data } = await api.get<Record<string, DataDictionaryVariable[]>>(
+    const { data } = await api.get<DataDictionaryVariables>(
       '/expression-builder/data-dictionary-variables'
     );
     return data;

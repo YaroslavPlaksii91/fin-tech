@@ -22,7 +22,7 @@ import LoadingButton from '@components/shared/Buttons/Loading';
 import {
   CRA_REPORT_VARIABLES,
   VARIABLE_DATA_TYPE,
-  Variable,
+  DataDictionaryVariable,
   DataDictionaryVariables
 } from '@domain/dataDictionary';
 
@@ -57,11 +57,10 @@ const DataDictionaryDialog = ({
   const [queryVariable, setQueryVariable] = useState('');
   const [queryAttribute, setQueryAttribute] = useState('');
   const [selectedDict, setSelectedDict] = useState<null | string>(null);
-  const [selectedVariable, setSelectedVariable] = useState<null | Variable>(
-    null
-  );
+  const [selectedVariable, setSelectedVariable] =
+    useState<null | DataDictionaryVariable>(null);
   const [selectedObjectProperty, setSelectedObjectProperty] =
-    useState<null | Variable>(null);
+    useState<null | DataDictionaryVariable>(null);
 
   const filteredSource = useMemo(() => {
     if (!data) {
@@ -140,7 +139,7 @@ const DataDictionaryDialog = ({
       : selectedVariable;
 
   const handleConfirmClick = () => {
-    onConfirm(getVariable() as Variable);
+    onConfirm(getVariable() as DataDictionaryVariable);
   };
 
   const handleSourceChange = (key: string) => {
@@ -149,11 +148,11 @@ const DataDictionaryDialog = ({
     setSelectedVariable(null);
   };
 
-  const handleVariableChange = (variable: Variable) => {
+  const handleVariableChange = (variable: DataDictionaryVariable) => {
     setSelectedVariable(variable);
   };
 
-  const handleAttributeChange = (property: Variable) => {
+  const handleAttributeChange = (property: DataDictionaryVariable) => {
     if (setSelectedObjectPropertyFunction && selectedVariable) {
       setSelectedObjectProperty(
         setSelectedObjectPropertyFunction(selectedVariable, property)
@@ -192,7 +191,7 @@ const DataDictionaryDialog = ({
   }, []);
 
   useEffect(() => {
-    if (onSelect) onSelect(getVariable() as Variable);
+    if (onSelect) onSelect(getVariable() as DataDictionaryVariable);
   }, [selectedVariable, selectedObjectProperty]);
 
   return (
@@ -380,16 +379,16 @@ interface DataDictionaryDialogProps {
   isOpen: boolean;
   showAttributes?: boolean;
   onClose: () => void;
-  onConfirm: (variable: Variable) => void;
+  onConfirm: (variable: DataDictionaryVariable) => void;
   data?: DataDictionaryVariables;
   integrationData?: DataDictionaryVariables;
   setSelectedObjectPropertyFunction?: (
-    object: Variable,
-    property: Variable
-  ) => Variable;
-  onSelect?: (variable: Variable | null) => void;
-  activeVariable?: Variable;
-  activeProperty?: Variable;
+    object: DataDictionaryVariable,
+    property: DataDictionaryVariable
+  ) => DataDictionaryVariable;
+  onSelect?: (variable: DataDictionaryVariable | null) => void;
+  activeVariable?: DataDictionaryVariable;
+  activeProperty?: DataDictionaryVariable;
   children?: ReactNode;
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 }
