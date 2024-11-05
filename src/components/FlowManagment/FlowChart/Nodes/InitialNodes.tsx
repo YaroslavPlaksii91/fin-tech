@@ -1,13 +1,21 @@
-import { Handle, Position } from 'reactflow';
+import { Handle, NodeProps, Position } from 'reactflow';
 
 import { StepType } from '../types';
 
 import { STEP_ICONS } from '@constants/common';
+import { useNodeConnection } from '@hooks/useNodeConnection';
+import { NodeData } from '@domain/flow';
 
-export function StartNode() {
+export const StartNode = ({ id }: NodeProps<NodeData>) => {
+  const isConnectable = useNodeConnection('source', id);
+
   return (
     <>
-      <Handle type="source" position={Position.Right} />
+      <Handle
+        isConnectable={isConnectable}
+        type="source"
+        position={Position.Right}
+      />
       <div className="node-container">
         <p className="node-label">
           {STEP_ICONS[StepType.START]}
@@ -16,18 +24,16 @@ export function StartNode() {
       </div>
     </>
   );
-}
+};
 
-export function EndNode() {
-  return (
-    <>
-      <Handle type="target" position={Position.Left} />
-      <div className="node-container">
-        <p className="node-label">
-          {STEP_ICONS[StepType.END]}
-          Ending point
-        </p>
-      </div>
-    </>
-  );
-}
+export const EndNode = () => (
+  <>
+    <Handle type="target" position={Position.Left} />
+    <div className="node-container">
+      <p className="node-label">
+        {STEP_ICONS[StepType.END]}
+        Ending point
+      </p>
+    </div>
+  </>
+);
