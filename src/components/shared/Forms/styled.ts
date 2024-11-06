@@ -5,7 +5,6 @@ import InfoIcon from '@mui/icons-material/Info';
 export const StyledTextarea = styled(TextareaAutosize)(({ theme }) => ({
   fontFamily: 'Inter, sans-serif',
   fontSize: '14px',
-  fontWeight: 600,
   boxSizing: 'border-box',
   borderRadius: '8px',
   border: `1px solid ${theme.palette.gray}`,
