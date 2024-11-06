@@ -48,7 +48,7 @@ function Navigation() {
           <Stack direction="row" gap="16px" alignItems="center">
             <Link
               component={RouterLink}
-              to={routes.index}
+              to={routes.home}
               sx={{ display: 'flex' }}
             >
               <LogoIcon height={40} color={palette.white} />

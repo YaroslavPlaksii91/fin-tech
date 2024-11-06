@@ -44,7 +44,7 @@ export interface MenuItem {
 export const applicationsPage = {
   icon: <ApplicationsIcon />,
   text: 'Applications',
-  to: routes.underwriting.leadRequest,
+  to: routes.index,
   permission: permissionsMap.canViewLeadRequestReport
 };
 

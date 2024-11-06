@@ -17,7 +17,7 @@ const PermissionDenied = () => (
       <Typography variant="h5">
         You do not have permission to view this page
       </Typography>
-      <Button type="button" variant="contained" href={routes.index}>
+      <Button type="button" variant="contained" href={routes.home}>
         Go to homepage
       </Button>
     </Box>
