@@ -462,12 +462,13 @@ const DecisionTable = ({
         </Paper>
         {!isPreview && (
           <Button
+            size="small"
             sx={{ width: 'fit-content', mt: 1 }}
             variant="outlined"
             onClick={handleAddNewLayer}
             startIcon={<PlusSquareIcon />}
           >
-            Add new business layer
+            Add New Business Layer
           </Button>
         )}
         {caseEntries.length > 0 && (
