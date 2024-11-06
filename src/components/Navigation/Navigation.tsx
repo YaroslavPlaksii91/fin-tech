@@ -48,7 +48,7 @@ function Navigation() {
           <Stack direction="row" gap="16px" alignItems="center">
             <Link
               component={RouterLink}
-              to={routes.index}
+              to={routes.home}
               sx={{ display: 'flex' }}
             >
               <LogoIcon height={40} color={palette.white} />
@@ -79,10 +79,11 @@ function Navigation() {
             clearStoredState([EXPANDED_FLOW_LIST_KEY, EXPANDED_REPORTS_KEY]);
             void authService.logout();
           }}
-          title="Sign out"
+          title="Log out"
+          cancelText="Cancel"
           maxWidth="xs"
         >
-          Do you want to sign out from your account?
+          Do you want to log out from your account?
         </Dialog>
       )}
     </>

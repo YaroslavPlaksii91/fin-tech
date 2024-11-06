@@ -1,5 +1,6 @@
 const routes = {
   index: '/',
+  home: '/home',
   auth: {
     login: '/login',
     accessVerification: '/access-verification'
@@ -11,7 +12,6 @@ const routes = {
       dataDictionary: (id: string) => `/data-dictionary/${id}`
     },
     changeHistory: '/change-history',
-    leadRequest: '/lead-request',
     denialReasons: '/denial-reasons',
     waterfall: '/waterfall',
     billingReport: '/billing-report'

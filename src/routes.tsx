@@ -24,7 +24,15 @@ export const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: '/',
+        path: routes.index,
+        element: (
+          <PrivateRoutes permission={permissionsMap.canViewLeadRequestReport}>
+            <LeadRequestsReports />
+          </PrivateRoutes>
+        )
+      },
+      {
+        path: routes.home,
         element: (
           <PrivateRoutes>
             <Home />
@@ -52,14 +60,6 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoutes>
             <DataDictionary />
-          </PrivateRoutes>
-        )
-      },
-      {
-        path: routes.underwriting.leadRequest,
-        element: (
-          <PrivateRoutes permission={permissionsMap.canViewLeadRequestReport}>
-            <LeadRequestsReports />
           </PrivateRoutes>
         )
       },

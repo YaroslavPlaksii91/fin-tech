@@ -1,10 +1,8 @@
-import { Link, Typography } from '@mui/material';
-import { Link as RRLink } from 'react-router-dom';
+import { Typography } from '@mui/material';
 
 import { StepBreadcrumbsLink } from './styled';
 
 import { theme } from '@theme';
-import routes from '@constants/routes';
 import { FlowNode, IFlow } from '@domain/flow';
 
 type CreateBreadcrumbsParams = {
@@ -31,16 +29,6 @@ const createBreadcrumbs = ({
   if (!path) return null;
 
   const breadcrumbs = [
-    <Link
-      underline="hover"
-      key="main-flow"
-      variant="body1"
-      component={RRLink}
-      color={theme.palette.text.secondary}
-      to={routes.index}
-    >
-      Home
-    </Link>,
     <StepBreadcrumbsLink
       key="main-flow"
       variant="body1"
