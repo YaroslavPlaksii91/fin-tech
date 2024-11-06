@@ -5,14 +5,12 @@ import { enqueueSnackbar } from 'notistack';
 import { unwrapResult } from '@reduxjs/toolkit';
 
 import { theme } from '@theme';
-import Dialog from '@components/shared/Modals/Dialog';
+import Dialog from '@components/shared/Dialog';
 import { useAppDispatch } from '@store/hooks';
 import { deleteFlow } from '@store/flowList/asyncThunk';
 import routes from '@constants/routes';
-import {
-  SnackbarErrorMessage,
-  SnackbarMessage
-} from '@components/shared/Snackbar/SnackbarMessage';
+import Message from '@components/shared/Snackbar/Message';
+import ErrorMessage from '@components/shared/Snackbar/ErrorMessage';
 import { SNACK_TYPE } from '@constants/common';
 
 interface DeleteFlowProps {
@@ -26,7 +24,7 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
   modalOpen,
   setModalOpen
 }) => {
-  const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -37,7 +35,7 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
       const resultAction = await dispatch(deleteFlow(flowId));
       const deletedFlow = unwrapResult(resultAction);
       enqueueSnackbar(
-        <SnackbarMessage
+        <Message
           message="Success"
           details={`"${deletedFlow.data.name}" was successfully deleted.`}
         />,
@@ -48,7 +46,7 @@ export const DeleteFlow: React.FC<DeleteFlowProps> = ({
         return;
       }
     } catch (error) {
-      enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
+      enqueueSnackbar(<ErrorMessage message="Error" error={error} />, {
         variant: SNACK_TYPE.ERROR
       });
     } finally {

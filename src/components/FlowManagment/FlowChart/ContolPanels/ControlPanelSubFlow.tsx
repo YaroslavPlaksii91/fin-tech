@@ -7,13 +7,11 @@ import { ControlPanelProps } from '../types';
 
 import { StyledPanel } from './styled';
 
-import {
-  SnackbarErrorMessage,
-  SnackbarMessage
-} from '@components/shared/Snackbar/SnackbarMessage';
+import Message from '@components/shared/Snackbar/Message';
+import ErrorMessage from '@components/shared/Snackbar/ErrorMessage';
 import { SNACK_TYPE } from '@constants/common';
 import { useActiveStep } from '@contexts/StepContext';
-import Dialog from '@components/shared/Modals/Dialog';
+import Dialog from '@components/shared/Dialog';
 import StepBreadcrumbs from '@components/StepManagment/StepDetailsHeader/StepBreadcrumbs';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
 import { permissionsMap } from '@constants/permissions';
@@ -24,7 +22,7 @@ const ControlPanelSubFlow: React.FC<ControlPanelProps> = ({
   setCopyFlow,
   isViewMode
 }) => {
-  const [openDiscardModal, setOpenDiscardModal] = useState<boolean>(false);
+  const [openDiscardModal, setOpenDiscardModal] = useState(false);
   const { resetActive } = useActiveStep();
   const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
   const isPreview = isViewMode || !canUserUpdateFlow;
@@ -40,14 +38,14 @@ const ControlPanelSubFlow: React.FC<ControlPanelProps> = ({
       setCopyFlow(formattedData);
 
       enqueueSnackbar(
-        <SnackbarMessage
+        <Message
           message="Success"
           details={`Changes for the "${flow.data.name}" flow were successfully saved.`}
         />,
         { variant: SNACK_TYPE.SUCCESS }
       );
     } catch (error) {
-      enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
+      enqueueSnackbar(<ErrorMessage message="Error" error={error} />, {
         variant: SNACK_TYPE.ERROR
       });
     }

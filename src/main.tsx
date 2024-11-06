@@ -25,10 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           autoHideDuration={3000}
           preventDuplicate
           hideIconVariant
-          Components={{
-            success: StyledSnackbar,
-            error: StyledSnackbar
-          }}
+          Components={{ success: StyledSnackbar, error: StyledSnackbar }}
         >
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <App />

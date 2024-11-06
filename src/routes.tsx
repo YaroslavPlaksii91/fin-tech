@@ -4,17 +4,15 @@ import { lazy } from 'react';
 const Home = lazy(() => import('@pages/Home'));
 const FlowEdit = lazy(() => import('@pages/FlowEdit'));
 const DataDictionary = lazy(() => import('@pages/DataDictionary'));
-const ChangeHistoryPage = lazy(() => import('@pages/ChangeHistory'));
-const AccessVerificationPage = lazy(
-  () => import('@pages/auth/AccessVerification')
-);
+const ChangeHistory = lazy(() => import('@pages/ChangeHistory'));
+const AccessVerification = lazy(() => import('@pages/AccessVerification'));
 const LeadRequestsReports = lazy(() => import('@pages/LeadRequestsReports'));
 const DenialReasons = lazy(() => import('@pages/DenialReasons'));
 const Waterfall = lazy(() => import('@pages/Waterfall'));
 const BillingReport = lazy(() => import('@pages/BillingReport'));
 const FlowList = lazy(() => import('@pages/FlowList'));
 const PermissionDenied = lazy(() => import('@pages/PermissionDenied'));
-import Login from '@pages/auth/Login';
+import Login from '@pages/Login';
 import Layout from '@components/Layouts/Layout';
 import PrivateRoutes from '@components/Router/PrivateRoutes';
 import PrivateAuthRoute from '@components/Router/PrivateAuthRoute';
@@ -93,7 +91,7 @@ export const router = createBrowserRouter([
         path: routes.underwriting.changeHistory,
         element: (
           <PrivateRoutes permission={permissionsMap.canViewChangeHistory}>
-            <ChangeHistoryPage />
+            <ChangeHistory />
           </PrivateRoutes>
         )
       },
@@ -117,7 +115,7 @@ export const router = createBrowserRouter([
   },
   {
     path: routes.auth.accessVerification,
-    element: <AccessVerificationPage />
+    element: <AccessVerification />
   },
   { path: '*', element: <p>Not found</p> }
 ]);

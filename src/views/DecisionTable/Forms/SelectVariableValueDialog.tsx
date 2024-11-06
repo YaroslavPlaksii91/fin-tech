@@ -19,7 +19,7 @@ import {
 import validationSchema from './validationSchema';
 import Content from './Content';
 
-import Dialog from '@components/shared/Modals/Dialog';
+import Dialog from '@components/shared/Dialog';
 import LoadingButton from '@components/shared/Buttons/Loading';
 import { BOOLEAN_OPTIONS } from '@constants/common';
 import { flowService } from '@services/flow-service';

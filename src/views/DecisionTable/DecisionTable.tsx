@@ -39,10 +39,8 @@ import { customBoxShadows, theme } from '@theme';
 import PlusSquareIcon from '@icons/plusSquare.svg';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
-import {
-  SnackbarErrorMessage,
-  SnackbarMessage
-} from '@components/shared/Snackbar/SnackbarMessage';
+import Message from '@components/shared/Snackbar/Message';
+import ErrorMessage from '@components/shared/Snackbar/ErrorMessage';
 import ConditionsCard from '@views/DecisionTable/ConditionsCard';
 import { SNACK_TYPE } from '@constants/common';
 import {
@@ -385,7 +383,7 @@ const DecisionTable = ({
       setNodes(updatedNodes);
       setEdges(newEdges);
       enqueueSnackbar(
-        <SnackbarMessage
+        <Message
           message="Success"
           details={`Changes for the "${step.data.name}" step were successfully applied.`}
         />,
@@ -393,7 +391,7 @@ const DecisionTable = ({
       );
       resetActiveStepId();
     } catch (error) {
-      enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
+      enqueueSnackbar(<ErrorMessage message="Error" error={error} />, {
         variant: SNACK_TYPE.ERROR
       });
     }

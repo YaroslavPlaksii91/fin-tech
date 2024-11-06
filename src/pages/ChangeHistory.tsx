@@ -13,8 +13,8 @@ const PAGE_SIZE = 10;
 const ChangeHistory = () => {
   const { startLoading, stopLoading, loading } = useLoading();
   const [list, setList] = useState<ChangeHistoryRecord[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   const fetchList = async (page: number) => {
     try {
