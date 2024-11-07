@@ -65,7 +65,7 @@ const ExpressionEditor: ForwardRefRenderFunction<
 
   const functionAutosuggestionRef: MutableRefObject<FunctionsAutosuggestionAPI | null> =
     useRef(null);
-  const [caretPosition, setCaretPosition] = useState<number>(0);
+  const [caretPosition, setCaretPosition] = useState(0);
 
   useImperativeHandle(
     ref,

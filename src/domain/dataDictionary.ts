@@ -56,22 +56,7 @@ export interface DataDictionaryVariable {
   sourceName?: string;
 }
 
-export type UserDefinedVariable = {
-  name: string;
-  dataType: VARIABLE_DATA_TYPE;
-  defaultValue?: string;
-  description?: string;
-  destinationType: string;
-  source: VARIABLE_SOURCE_TYPE;
-  sourceType: VARIABLE_SOURCE_TYPE;
-  allowedValues?: string | string[];
-  usageMode: VARIABLE_USAGE_MODE;
-  isRequired?: boolean;
-};
-
-export type Variable = DataDictionaryVariable | UserDefinedVariable;
-
-export type DataDictionaryVariables = Record<string, Variable[]>;
+export type DataDictionaryVariables = Record<string, DataDictionaryVariable[]>;
 
 export type ExpressionValidateParams = {
   name: string;
