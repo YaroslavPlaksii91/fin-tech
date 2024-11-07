@@ -21,25 +21,25 @@ export const viewStepOption = {
 };
 
 export const renameStepOption = {
-  label: 'Rename step',
+  label: 'Rename',
   dataKey: ActionTypes.RENAME_STEP,
   icon: <RenameIcon />
 };
 
 export const duplicateStepOption = {
-  label: 'Duplicate step',
+  label: 'Duplicate',
   dataKey: ActionTypes.DUPLICATE_STEP,
   icon: <CopyIcon />
 };
 
 export const editStepOption = {
-  label: 'Edit step',
+  label: 'Edit',
   dataKey: ActionTypes.EDIT_STEP,
   icon: <EditIcon />
 };
 
 export const deleteStepOption = {
-  label: 'Delete step',
+  label: 'Delete',
   dataKey: ActionTypes.DELETE_STEP,
   icon: <DeleteIcon />,
   textColor: theme.palette.error.main
