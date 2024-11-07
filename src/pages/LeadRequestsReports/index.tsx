@@ -162,7 +162,7 @@ const LeadRequestsReports = () => {
       <Paper>
         <DataGrid
           rows={rows}
-          rowCount={rows.length ? rowsPerPage : 0}
+          rowCount={loading ? 0 : rows.length}
           columns={columns}
           loading={loading}
           sortingMode="server"
