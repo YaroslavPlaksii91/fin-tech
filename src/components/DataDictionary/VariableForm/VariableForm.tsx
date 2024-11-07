@@ -107,7 +107,9 @@ const VariableForm = ({
       defaultValue:
         data.dataType === VARIABLE_DATA_TYPE.DateTime && data.defaultValue
           ? new Date(data.defaultValue).toISOString()
-          : data.defaultValue
+          : data.dataType === VARIABLE_DATA_TYPE.String && data.defaultValue
+            ? data.defaultValue.replace(/^"|"$/g, '')
+            : data.defaultValue
     };
     const operations: JSONPatchOperation[] = [
       {

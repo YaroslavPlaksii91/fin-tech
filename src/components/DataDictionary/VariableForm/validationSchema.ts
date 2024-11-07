@@ -8,7 +8,7 @@ import {
   CONTROL_FILES,
   DataDictionaryVariables
 } from '@domain/dataDictionary';
-import { isDecimal, isInteger, isStringArray } from '@utils/validation';
+import { isDecimal, isInteger, isStringArray, REGEX } from '@utils/validation';
 
 export const validationSchema = (variables: DataDictionaryVariables) =>
   yup.object().shape({
@@ -52,59 +52,72 @@ export const validationSchema = (variables: DataDictionaryVariables) =>
       .mixed<VARIABLE_DATA_TYPE>()
       .oneOf(Object.values(VARIABLE_DATA_TYPE))
       .required(),
-    defaultValue: yup.string().when('dataType', {
-      is: (val: VARIABLE_DATA_TYPE) =>
-        [
-          VARIABLE_DATA_TYPE.Decimal,
-          VARIABLE_DATA_TYPE.Boolean,
-          VARIABLE_DATA_TYPE.DateTime,
-          VARIABLE_DATA_TYPE.Integer,
-          VARIABLE_DATA_TYPE.StringArray
-        ].includes(val),
-      then: (schema) =>
-        schema
-          .required('Default value is required')
-          .test(
-            'is-decimal',
-            'Default value must be a valid decimal',
+    defaultValue: yup
+      .string()
+      .when('dataType', {
+        is: (val: VARIABLE_DATA_TYPE) =>
+          [
+            VARIABLE_DATA_TYPE.Decimal,
+            VARIABLE_DATA_TYPE.Boolean,
+            VARIABLE_DATA_TYPE.DateTime,
+            VARIABLE_DATA_TYPE.Integer,
+            VARIABLE_DATA_TYPE.StringArray
+          ].includes(val),
+        then: (schema) =>
+          schema
+            .required('Default value is required')
+            .test(
+              'is-decimal',
+              'Default value must be a valid decimal',
+              function (value) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                return this.parent.dataType === VARIABLE_DATA_TYPE.Decimal
+                  ? isDecimal(value)
+                  : true;
+              }
+            )
+            .test(
+              'is-integer',
+              'Default value must be a valid integer',
+              function (value) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                return this.parent.dataType === VARIABLE_DATA_TYPE.Integer
+                  ? isInteger(value)
+                  : true;
+              }
+            )
+            .test(
+              'max-integer-value',
+              `Integer value cannot exceed ${MAX_INTEGER_VALUE}`,
+              function (value) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                return this.parent.dataType === VARIABLE_DATA_TYPE.Integer
+                  ? Number(value) <= MAX_INTEGER_VALUE
+                  : true;
+              }
+            )
+            .test(
+              'is-string-array',
+              'Default value must be an empty array or an array of strings, each wrapped in double quotes',
+              function (value) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                return this.parent.dataType === VARIABLE_DATA_TYPE.StringArray
+                  ? isStringArray(value)
+                  : true;
+              }
+            )
+      })
+      .when('dataType', {
+        is: VARIABLE_DATA_TYPE.String,
+        then: (schema) =>
+          schema.test(
+            'is-string-with-double-quotes',
+            'Default value must be wrapped in double quotes',
             function (value) {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              return this.parent.dataType === VARIABLE_DATA_TYPE.Decimal
-                ? isDecimal(value)
-                : true;
+              return value ? REGEX.DOUBLE_QUOTES.test(value) : true;
             }
           )
-          .test(
-            'is-integer',
-            'Default value must be a valid integer',
-            function (value) {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              return this.parent.dataType === VARIABLE_DATA_TYPE.Integer
-                ? isInteger(value)
-                : true;
-            }
-          )
-          .test(
-            'max-integer-value',
-            `Integer value cannot exceed ${MAX_INTEGER_VALUE}`,
-            function (value) {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              return this.parent.dataType === VARIABLE_DATA_TYPE.Integer
-                ? Number(value) <= MAX_INTEGER_VALUE
-                : true;
-            }
-          )
-          .test(
-            'is-string-array',
-            'Default value must be an empty array or an array of strings, each wrapped in double quotes',
-            function (value) {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              return this.parent.dataType === VARIABLE_DATA_TYPE.StringArray
-                ? isStringArray(value)
-                : true;
-            }
-          )
-    }),
+      }),
     description: yup
       .string()
       .trim()

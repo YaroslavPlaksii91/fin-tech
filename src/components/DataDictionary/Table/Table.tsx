@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import * as _ from 'lodash-es';
 import { TableHead, TableBody, Table as MuiTable } from '@mui/material';
-import dayjs from 'dayjs';
 
 import {
   getProductionUserDefinedUsage,
@@ -10,6 +9,7 @@ import {
 } from '../utils';
 import { TAB, TableHeader } from '../types';
 
+import { getFormattedVariable } from './utils';
 import TableRow from './TableRow';
 
 import {
@@ -18,14 +18,12 @@ import {
 } from '@components/shared/Table/styled';
 import {
   DataDictionaryVariable,
-  VariableUsageParams,
-  VARIABLE_DATA_TYPE
+  VariableUsageParams
 } from '@domain/dataDictionary';
 import { FlowNode } from '@domain/flow';
 import TablePagination from '@components/shared/Table/TablePagination';
 import useTablePagination from '@hooks/useTablePagination';
 import { checkIsProductionFlow } from '@utils/helpers';
-import { DATE_FORMAT } from '@constants/common';
 import Paper from '@components/shared/Paper';
 
 interface TableProps {
@@ -106,16 +104,7 @@ const Table = ({
             <TableRow
               key={index}
               headers={headers}
-              row={
-                variable.dataType === VARIABLE_DATA_TYPE.DateTime
-                  ? {
-                      ...variable,
-                      defaultValue: dayjs(variable.defaultValue).format(
-                        DATE_FORMAT
-                      )
-                    }
-                  : variable
-              }
+              row={getFormattedVariable(variable)}
               index={index}
               tabName={tabName}
               flowId={flowId}
