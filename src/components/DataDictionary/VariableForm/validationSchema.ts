@@ -10,7 +10,13 @@ import {
 } from '@domain/dataDictionary';
 import { isDecimal, isInteger, isStringArray } from '@utils/validation';
 
-export const validationSchema = (variables: DataDictionaryVariables) =>
+export const validationSchema = ({
+  variables,
+  isEdit
+}: {
+  variables: DataDictionaryVariables;
+  isEdit: boolean;
+}) =>
   yup.object().shape({
     name: yup
       .string()
@@ -37,6 +43,8 @@ export const validationSchema = (variables: DataDictionaryVariables) =>
         'is-unique',
         'Variable with the specified name already exists, please choose a unique name',
         (val: string) => {
+          if (isEdit) return true;
+
           const isExist = Object.values(variables)
             .flat()
             .some(({ name }) => name === val);
