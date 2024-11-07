@@ -13,11 +13,9 @@ import { ControlPanelProps } from '../types';
 
 import { StyledPanel } from './styled';
 
-import {
-  SnackbarErrorMessage,
-  SnackbarMessage
-} from '@components/shared/Snackbar/SnackbarMessage';
-import Dialog from '@components/shared/Modals/Dialog';
+import Message from '@components/shared/Snackbar/Message';
+import ErrorMessage from '@components/shared/Snackbar/ErrorMessage';
+import Dialog from '@components/shared/Dialog';
 import { SNACK_TYPE } from '@constants/common';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { saveFlow } from '@store/flow/asyncThunk';
@@ -72,14 +70,14 @@ const ControlPanelMainFlow = ({
       dispatch(updateFlowListItem({ ...savedFlow.data, id: savedFlow.id }));
 
       enqueueSnackbar(
-        <SnackbarMessage
+        <Message
           message="Success"
           details={`Changes for the "${savedFlow.data.name}" flow were successfully saved.`}
         />,
         { variant: SNACK_TYPE.SUCCESS }
       );
     } catch (error) {
-      enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
+      enqueueSnackbar(<ErrorMessage message="Error" error={error} />, {
         variant: SNACK_TYPE.ERROR
       });
     } finally {
@@ -103,7 +101,7 @@ const ControlPanelMainFlow = ({
       const pushedFlow = unwrapResult(resultAction);
 
       enqueueSnackbar(
-        <SnackbarMessage
+        <Message
           message="Success"
           details={`"${pushedFlow.data.name}" flow is published into the production successfully.`}
         />,
@@ -115,11 +113,7 @@ const ControlPanelMainFlow = ({
         rfInstance.toObject().nodes
       );
       enqueueSnackbar(
-        <SnackbarErrorMessage
-          message="Error"
-          parsedErrors={errors}
-          error={error}
-        />,
+        <ErrorMessage message="Error" parsedErrors={errors} error={error} />,
         {
           variant: SNACK_TYPE.ERROR
         }

@@ -29,7 +29,7 @@ import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepD
 import { CustomReactFlowInstance } from '@components/FlowManagment/FlowChart/types';
 import { RULES_LIMIT, SNACK_TYPE } from '@constants/common';
 import { ExpressionForm } from '@components/ExpressionForm/ExpressionForm';
-import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
+import Message from '@components/shared/Snackbar/Message';
 import InputText from '@components/shared/Forms/InputText';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
@@ -58,7 +58,7 @@ const Calculation: React.FC<CalculationProps> = ({
   isViewMode
 }) => {
   const nodes: FlowNode[] = getNodes();
-  const [openExpEditorView, setOpenExpEditorView] = useState<boolean>(false);
+  const [openExpEditorView, setOpenExpEditorView] = useState(false);
   const [initialValue, setInitialValue] = useState<
     Expression & { id: string }
   >();
@@ -107,7 +107,7 @@ const Calculation: React.FC<CalculationProps> = ({
     });
     setNodes(updatedNodes);
     enqueueSnackbar(
-      <SnackbarMessage
+      <Message
         message="Success"
         details={`Changes for the "${step.data.name}" step were successfully applied.`}
       />,

@@ -1,4 +1,7 @@
-import { ExpressionValidateParams, Variable } from '@domain/dataDictionary';
+import {
+  ExpressionValidateParams,
+  DataDictionaryVariable
+} from '@domain/dataDictionary';
 import { ExpressionVariableSources } from '@domain/flow';
 
 interface MappingResult {
@@ -6,7 +9,9 @@ interface MappingResult {
   variableSources: ExpressionVariableSources;
 }
 
-export const mapVariablesToParamsAndSources = (variables: Variable[]) =>
+export const mapVariablesToParamsAndSources = (
+  variables: DataDictionaryVariable[]
+) =>
   variables.reduce<MappingResult>(
     (acc, variable) => {
       acc.params.push({

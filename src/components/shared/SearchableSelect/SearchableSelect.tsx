@@ -51,7 +51,7 @@ const SearchableSelect = <
   onChangeCb,
   disabled
 }: SearchableSelectProps<TFieldValues, TName>) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
 
   const displayedOptions = useMemo(
