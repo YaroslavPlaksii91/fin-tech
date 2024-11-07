@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 
 const sizes = {
   small: 20,
+  medium: 40,
   large: 60
 };
 
@@ -14,7 +15,7 @@ const Loader = ({ elSize = 'large', sx }: LoaderProps) => (
 );
 
 interface LoaderProps {
-  elSize?: 'small' | 'large';
+  elSize?: 'small' | 'medium' | 'large';
   sx?: CSSProperties;
 }
 

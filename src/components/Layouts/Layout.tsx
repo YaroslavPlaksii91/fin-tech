@@ -17,11 +17,11 @@ import {
 } from '@store/dataDictionary/asyncThunk';
 import { setEnumDataTypes } from '@store/dataDictionary';
 import Logger from '@utils/logger';
-import LoadingFullscreen from '@components/shared/LoadingFullscreen';
+import Loader from '@components/shared/Loader';
 
 export default function Layout() {
   const dispatch = useAppDispatch();
-  const { startLoading, stopLoading, loading } = useLoading();
+  const { startLoading, stopLoading } = useLoading();
 
   useEffect(() => {
     const fetchDataDictionaryVariables = async () => {
@@ -50,11 +50,11 @@ export default function Layout() {
           <LayoutContainer>
             <CrossPlatformDrawer />
             <Sidebar />
-            <Suspense fallback={loading ? null : <LoadingFullscreen />}>
-              <MainContainer>
+            <MainContainer>
+              <Suspense fallback={<Loader elSize="medium" />}>
                 <Outlet />
-              </MainContainer>
-            </Suspense>
+              </Suspense>
+            </MainContainer>
           </LayoutContainer>
         </ActiveStepProvider>
       </ReactFlowProvider>
