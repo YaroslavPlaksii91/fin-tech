@@ -14,7 +14,7 @@ interface IsDirtyContextProviderProps {
 export const IsDirtyProvider: React.FC<IsDirtyContextProviderProps> = ({
   children
 }) => {
-  const [isDirty, setIsDirty] = useState<boolean>(false);
+  const [isDirty, setIsDirty] = useState(false);
 
   const contextValue = {
     isDirty,

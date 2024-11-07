@@ -100,7 +100,7 @@ const withFlowChartEditor =
     const { isDirty, setIsDirty } = useIsDirty();
 
     const [rfInstance, setRfInstance] = useState<CustomReactFlowInstance>();
-    const [startDrag, setStartDrag] = useState<boolean>(false);
+    const [startDrag, setStartDrag] = useState(false);
     const { flowNode, nodeElement, onPaneClick, onNodeContextMenu } =
       useFlowChartContextMenu();
 

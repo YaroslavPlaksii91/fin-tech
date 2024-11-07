@@ -1,13 +1,11 @@
-import React from 'react';
-
 import { StyledNavLink } from './styled';
 
-interface Props {
+interface LinkProps {
   path: string;
   label: string;
 }
 
-const Link: React.FC<Props> = ({ path, label }) => (
+const Link = ({ path, label }: LinkProps) => (
   <StyledNavLink end to={path}>
     {label}
   </StyledNavLink>

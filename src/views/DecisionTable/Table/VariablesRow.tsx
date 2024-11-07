@@ -12,15 +12,18 @@ import TrashIcon from '@icons/trash.svg';
 import AddIcon from '@icons/plusSquare.svg';
 import EditIcon from '@icons/editPencil.svg';
 import GridSquarePlusIcon from '@icons/gridSquarePlus.svg';
-import { DataDictionaryVariable, Variable } from '@domain/dataDictionary';
+import {
+  DataDictionaryVariable,
+  DataDictionaryVariables
+} from '@domain/dataDictionary';
 import { StyledTableRow } from '@components/shared/Table/styled';
 import VariablesDialog from '@components/shared/VariablesDialog';
 
 interface VariablesRowProps {
   columns: ColumnData[];
   hasUserPermission: boolean;
-  variables: Record<string, Variable[]>;
-  integrationData: Record<string, Variable[]>;
+  variables: DataDictionaryVariables;
+  integrationData: DataDictionaryVariables;
   handleChangeColumn: (
     column: ColumnData,
     variable: DataDictionaryVariable

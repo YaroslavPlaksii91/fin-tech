@@ -1,18 +1,26 @@
-import React from 'react';
 import { ThemeProvider, Typography } from '@mui/material';
 import { confirmable, createConfirmation } from 'react-confirm';
 
 import { theme } from '@theme';
-import Dialog from '@components/shared/Modals/Dialog';
+import Dialog from '@components/shared/Dialog';
 
-const AsyncConfirmDialog: React.FC<AsyncConfirmDialogProps> = ({
+interface AsyncConfirmDialogProps {
+  show?: boolean;
+  proceed?: (flag: boolean) => void;
+  title: string;
+  message?: string;
+  confirmText?: string;
+  cancelText?: string;
+}
+
+const AsyncConfirmDialog = ({
   show,
   proceed,
   title,
   message,
   confirmText = 'Yes',
   cancelText = 'Cancel'
-}) => (
+}: AsyncConfirmDialogProps) => (
   <ThemeProvider theme={theme}>
     <Dialog
       open={Boolean(show)}
@@ -27,17 +35,6 @@ const AsyncConfirmDialog: React.FC<AsyncConfirmDialogProps> = ({
   </ThemeProvider>
 );
 
-interface AsyncConfirmDialogProps {
-  show?: boolean;
-  proceed?: (flag: boolean) => void;
-  title: string;
-  message?: string;
-  confirmText?: string;
-  cancelText?: string;
-}
-
 export const asyncConfirmDialog = createConfirmation(
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
   confirmable(AsyncConfirmDialog)
 );

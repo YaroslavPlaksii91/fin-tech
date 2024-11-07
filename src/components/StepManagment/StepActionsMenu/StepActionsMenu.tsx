@@ -16,7 +16,7 @@ import { editStepNameConfirmDialog } from '../StepModals/EditStepName';
 import Details from './Details';
 import { getDuplicatedNode } from './utils';
 
-import Menu from '@components/shared/Menu/Menu';
+import Menu from '@components/shared/Menu';
 import {
   ActionTypes,
   getEditModeOptions,
