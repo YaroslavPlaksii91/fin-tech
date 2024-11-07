@@ -60,6 +60,7 @@ import { selectUserInfo } from '@store/auth';
 import { getFullUserName, isDeleteKeyCodes } from '@utils/helpers';
 import { deleteNodes } from '@store/flow';
 import { useIsDirty } from '@contexts/IsDirtyContext';
+import { theme } from '@theme';
 
 type FlowChartEditorProps = {
   flow: IFlow;
@@ -230,7 +231,13 @@ const withFlowChartEditor =
       const edges = flow.edges.map((edge) => ({
         ...edge,
         type: isViewMode ? DEFAULT_EDGE_TYPE : ADD_BUTTON_ON_EDGE,
-        data: { onAdd: onAddNodeBetweenEdges }
+        data: { onAdd: onAddNodeBetweenEdges },
+        style: isViewMode
+          ? {
+              stroke: theme.palette.text.secondary,
+              strokeWidth: 1
+            }
+          : {}
       }));
 
       return { edges, nodes: flow.nodes };
