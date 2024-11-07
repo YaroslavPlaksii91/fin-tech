@@ -7,7 +7,7 @@ interface Column {
 }
 
 const columns: readonly Column[] = [
-  { id: 'split', label: 'User splits', width: '50%' },
+  { id: 'split', label: 'User Splits', width: '50%' },
   { id: 'step', label: 'Step', width: '50%' },
   {
     id: 'delete',

@@ -324,7 +324,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                 }}
                 startIcon={<AddIcon />}
               >
-                Add new split
+                Add New Split
               </Button>
             )}
           </Stack>
