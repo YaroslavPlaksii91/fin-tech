@@ -5,7 +5,7 @@ import {
   MenuProps as MuiMenuProps
 } from '@mui/material';
 
-import Link from '../Link/Link';
+import Link from '../Link';
 
 import { StyledMenu } from './styled';
 
@@ -25,13 +25,13 @@ interface MenuProps extends Omit<MuiMenuProps, 'open'> {
   footer?: React.ReactNode;
 }
 
-const Menu: React.FC<MenuProps> = ({
+const Menu = ({
   options,
   anchorEl,
   handleCloseMenu,
   footer,
   ...props
-}) => {
+}: MenuProps) => {
   const handleClick = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     handleCloseMenu(event.currentTarget.dataset.key);
   };

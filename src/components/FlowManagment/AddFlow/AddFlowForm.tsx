@@ -12,14 +12,14 @@ import {
 } from './validationSchema';
 import { StyledButton, StyledDiv } from './styled';
 
-import Dialog from '@components/shared/Modals/Dialog';
+import Dialog from '@components/shared/Dialog';
 import InputText from '@components/shared/Forms/InputText';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
 import LoadingButton from '@components/shared/Buttons/Loading';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { createFlow } from '@store/flowList/asyncThunk';
-import { SnackbarMessage } from '@components/shared/Snackbar/SnackbarMessage';
+import Message from '@components/shared/Snackbar/Message';
 import { SNACK_TYPE } from '@constants/common';
 import { permissionsMap } from '@constants/permissions';
 import { useHasUserPermission } from '@hooks/useHasUserPermission';
@@ -32,7 +32,7 @@ interface FormData {
 }
 
 export const AddFlow: React.FC = () => {
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector(selectUserInfo);
@@ -59,7 +59,7 @@ export const AddFlow: React.FC = () => {
       const createdFlow = unwrapResult(resultAction);
       navigate(`${routes.underwriting.flow.list(createdFlow.id)}`);
       enqueueSnackbar(
-        <SnackbarMessage
+        <Message
           message="Success"
           details={`New "${createdFlow.data.name}" was successfully created.`}
         />,

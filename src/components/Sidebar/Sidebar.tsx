@@ -230,6 +230,7 @@ const Sidebar = () => {
     };
 
     resetActive();
+
     if (id) {
       void fetchFlow(id);
     } else {

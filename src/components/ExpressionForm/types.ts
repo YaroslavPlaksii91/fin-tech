@@ -1,6 +1,6 @@
-import { Variable } from '@domain/dataDictionary';
+import { DataDictionaryVariable } from '@domain/dataDictionary';
 
 export type FieldValues = {
-  variable: Variable;
+  variable: DataDictionaryVariable;
   expressionString: string;
 };

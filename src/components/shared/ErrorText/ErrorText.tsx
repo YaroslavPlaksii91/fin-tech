@@ -1,4 +1,3 @@
-import React from 'react';
 import { FieldErrors } from 'react-hook-form';
 
 import { StyledErrorText } from './styled';
@@ -10,7 +9,7 @@ interface ErrorMessageProps {
   name: string;
 }
 
-const ErrorMessage: React.FC<ErrorMessageProps> = ({ errors, name }) => {
+const ErrorMessage = ({ errors, name }: ErrorMessageProps) => {
   if (!errors[name]) {
     return null;
   }

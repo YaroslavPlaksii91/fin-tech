@@ -6,7 +6,7 @@ interface LoadingButtonProps extends ButtonProps {
   loading: boolean;
 }
 
-const LoadingButton: React.FC<LoadingButtonProps> = ({ loading, ...props }) => (
+const LoadingButton = ({ loading, ...props }: LoadingButtonProps) => (
   <Button {...props} endIcon={loading && <CircularProgress size={16} />} />
 );
 

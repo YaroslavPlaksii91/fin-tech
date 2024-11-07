@@ -13,7 +13,7 @@ import {
   getOptionsProductionFlow
 } from './options';
 
-import Menu from '@components/shared/Menu/Menu';
+import Menu from '@components/shared/Menu';
 import { IFlowListItem } from '@domain/flow';
 import Logger from '@utils/logger';
 import routes from '@constants/routes';
@@ -28,9 +28,9 @@ const ActionsMenu: React.FC<{
   isProductionFlow?: boolean;
 }> = ({ flow, isProductionFlow = false }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [modalRenameOpen, setModalRenameOpen] = useState<boolean>(false);
-  const [modalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
-  const [modalDuplicateOpen, setModalDuplicateOpen] = useState<boolean>(false);
+  const [modalRenameOpen, setModalRenameOpen] = useState(false);
+  const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
+  const [modalDuplicateOpen, setModalDuplicateOpen] = useState(false);
   const navigate = useNavigate();
   const canUserViewFlow = useHasUserPermission(permissionsMap.canViewFlow);
   const canUserUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
