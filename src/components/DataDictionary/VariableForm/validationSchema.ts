@@ -8,7 +8,7 @@ import {
   CONTROL_FILES,
   DataDictionaryVariables
 } from '@domain/dataDictionary';
-import { isDecimal, isInteger, isStringArray } from '@utils/validation';
+import { isDecimal, isInteger, isStringArray, REGEX } from '@utils/validation';
 
 export const validationSchema = (variables: DataDictionaryVariables) =>
   yup.object().shape({
@@ -114,10 +114,7 @@ export const validationSchema = (variables: DataDictionaryVariables) =>
             'is-string-with-double-quotes',
             'Default value must be wrapped in double quotes',
             function (value) {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              return this.parent.dataType === VARIABLE_DATA_TYPE.String && value
-                ? /^".*"$/.test(value)
-                : true;
+              return value ? REGEX.DOUBLE_QUOTES.test(value) : true;
             }
           )
       }),
