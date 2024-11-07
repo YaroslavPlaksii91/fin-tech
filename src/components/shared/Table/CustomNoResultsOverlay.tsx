@@ -1,9 +1,8 @@
-import React from 'react';
 import Typography from '@mui/material/Typography';
 
 import { StyledGridOverlay } from './styled';
 
-const CustomNoResultsOverlay: React.FC = () => (
+const CustomNoResultsOverlay = () => (
   <StyledGridOverlay>
     <Typography variant="body1">No Results.</Typography>
   </StyledGridOverlay>

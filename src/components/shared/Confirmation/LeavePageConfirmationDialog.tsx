@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useBlocker, useBeforeUnload } from 'react-router-dom';
 import { Typography } from '@mui/material';
 
-import Dialog from '@components/shared/Modals/Dialog';
+import Dialog from '@components/shared/Dialog';
 import { ROUTER_BLOCKED_STATE } from '@constants/common';
 import { useAppSelector } from '@store/hooks';
 import { selectFlow } from '@store/flow/selectors';
@@ -16,15 +16,13 @@ interface LeavePageConfirmationDialogProps {
   cancelText?: string;
 }
 
-const LeavePageConfirmationDialog: React.FC<
-  LeavePageConfirmationDialogProps
-> = ({
+const LeavePageConfirmationDialog = ({
   isDirty,
   confirmText = 'Yes',
   cancelText = 'No',
   title = 'Leave page?',
   message = 'Changes that you made not be saved.'
-}) => {
+}: LeavePageConfirmationDialogProps) => {
   const { flow } = useAppSelector(selectFlow);
   const { flowList } = useAppSelector(selectFlowList);
 

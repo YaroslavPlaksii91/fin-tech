@@ -7,13 +7,11 @@ import { useForm } from 'react-hook-form';
 import { createDuplicateFlowData } from './createDuplicateFlowData';
 import { validationSchema, FormData } from './validationSchema';
 
-import Dialog from '@components/shared/Modals/Dialog';
+import Dialog from '@components/shared/Dialog';
 import { IFlowListItem } from '@domain/flow';
 import { flowService } from '@services/flow-service';
-import {
-  SnackbarErrorMessage,
-  SnackbarMessage
-} from '@components/shared/Snackbar/SnackbarMessage';
+import Message from '@components/shared/Snackbar/Message';
+import ErrorMessage from '@components/shared/Snackbar/ErrorMessage';
 import { SNACK_TYPE } from '@constants/common';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { createFlow } from '@store/flowList/asyncThunk';
@@ -57,14 +55,14 @@ export const DuplicateFlow: React.FC<DuplicateFlowProps> = ({
       const resultAction = await dispatch(createFlow(flowDuplicateData));
       const createdFlow = unwrapResult(resultAction);
       enqueueSnackbar(
-        <SnackbarMessage
+        <Message
           message="Success"
           details={`"${createdFlow.data.name}" was successfully duplicated.`}
         />,
         { variant: SNACK_TYPE.SUCCESS }
       );
     } catch (error) {
-      enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
+      enqueueSnackbar(<ErrorMessage message="Error" error={error} />, {
         variant: SNACK_TYPE.ERROR
       });
     } finally {

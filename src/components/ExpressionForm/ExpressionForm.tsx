@@ -34,8 +34,7 @@ import { Expression } from '@views/Calculation/types';
 import ExpressionOperatorsList from '@components/ExpressionForm/ExpressionOperatorsList/ExpressionOperatorsList';
 import {
   DATA_DICTIONARY_GROUP,
-  DataDictionaryVariable,
-  UserDefinedVariable
+  DataDictionaryVariable
 } from '@domain/dataDictionary';
 import ExpressionEditor, {
   ExpressionEditorAPI
@@ -50,9 +49,7 @@ import { StepContentWrapper } from '@views/styled';
 import { customBoxShadows } from '@theme';
 import { flowService } from '@services/flow-service';
 import { parseExpressionError } from '@utils/helpers';
-import { useAppSelector } from '@store/hooks';
-import { selectDataDictionary } from '@store/dataDictionary/selectors';
-import { selectUserDefinedVariables } from '@store/flow/selectors';
+import { useVariables } from '@hooks/useVariables';
 
 const operatorsList = [
   ...Object.values(_.groupBy(operatorsConfig, 'category')),
@@ -83,9 +80,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   onCancelClick,
   renderTitle
 }) => {
-  const { variables, integrationVariables } =
-    useAppSelector(selectDataDictionary);
-  const userDefinedVariables = useAppSelector(selectUserDefinedVariables);
+  const { allVariables, integrationVariables } = useVariables();
 
   const [dataDictMode, setDataDictMode] = useState<DataDictMode | null>(null);
 
@@ -109,14 +104,6 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
     // @ts-expect-error This @ts-expect-error directive is necessary because of a compatibility issue between the resolver type and the validationSchema type.
     resolver: yupResolver(validationSchema)
   });
-
-  const allVariables = useMemo(
-    () => ({
-      ...variables,
-      ...userDefinedVariables
-    }),
-    [variables, userDefinedVariables]
-  );
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     const arrayOfVariables = Object.values(allVariables).flat();
@@ -197,7 +184,7 @@ export const ExpressionForm: React.FC<ExpressionFormProps> = ({
   );
 
   const onVariableListClick = useCallback(
-    (variable: DataDictionaryVariable | UserDefinedVariable) => {
+    (variable: DataDictionaryVariable) => {
       const cursorPosition =
         expressionEditorRef.current?.getCursorPosition() || 0;
       const prev = getValues('expressionString');

@@ -16,7 +16,7 @@ import UserIcon from '@icons/user.svg';
 import { authService } from '@services/auth';
 import { palette } from '@theme';
 import routes from '@constants/routes';
-import Dialog from '@components/shared/Modals/Dialog';
+import Dialog from '@components/shared/Dialog';
 import { selectUserInfo } from '@store/auth';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchUserInfo } from '@store/auth/asyncThunk';
@@ -27,7 +27,7 @@ import {
 } from '@components/Sidebar/config';
 
 function Navigation() {
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState(false);
   const userInfo = useAppSelector(selectUserInfo);
   const dispatch = useAppDispatch();
 
