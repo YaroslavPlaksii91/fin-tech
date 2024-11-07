@@ -21,13 +21,13 @@ import TrashIcon from '@icons/trash.svg';
 import AddIcon from '@icons/plusSquare.svg';
 import { FlowNode, IFlow } from '@domain/flow';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
-import NumberRangeInput from '@components/shared/NumberRangeInput/NumberRangeInput';
-import SearchableSelect from '@components/shared/SearchableSelect/SearchableSelect';
+import NumberRangeInput from '@components/shared/NumberRangeInput';
+import SearchableSelect from '@components/shared/SearchableSelect';
 import {
   ADD_BUTTON_ON_EDGE,
   CustomReactFlowInstance
 } from '@components/FlowManagment/FlowChart/types';
-import ErrorMessage from '@components/shared/ErrorText/ErrorText';
+import ErrorText from '@components/shared/ErrorText';
 import InputText from '@components/shared/Forms/InputText';
 import {
   StyledTableCell,
@@ -35,10 +35,8 @@ import {
   StyledTableRow
 } from '@components/shared/Table/styled';
 import { RULES_LIMIT, SNACK_TYPE } from '@constants/common';
-import {
-  SnackbarErrorMessage,
-  SnackbarMessage
-} from '@components/shared/Snackbar/SnackbarMessage';
+import Message from '@components/shared/Snackbar/Message';
+import ErrorMessage from '@components/shared/Snackbar/ErrorMessage';
 import { flowService } from '@services/flow-service';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
 import { theme } from '@theme';
@@ -168,7 +166,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       setNodes(updatedNodes);
       setEdges(newEdges);
       enqueueSnackbar(
-        <SnackbarMessage
+        <Message
           message="Success"
           details={`Changes for the "${step.data.name}" step were successfully applied.`}
         />,
@@ -176,7 +174,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
       );
       resetActiveStepId();
     } catch (error) {
-      enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
+      enqueueSnackbar(<ErrorMessage message="Error" error={error} />, {
         variant: SNACK_TYPE.ERROR
       });
     }
@@ -314,7 +312,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                 </Table>
               </StyledTableContainer>
             </Paper>
-            <ErrorMessage errors={errors} name="splits" />
+            <ErrorText errors={errors} name="splits" />
             {!isPreview && (
               <Button
                 sx={{ width: '135px' }}

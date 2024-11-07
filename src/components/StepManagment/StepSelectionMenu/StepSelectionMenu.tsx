@@ -11,7 +11,7 @@ import { StyledRhombButton } from './styled';
 import { options } from './options';
 
 import { AddIcon } from '@components/shared/Icons';
-import Menu from '@components/shared/Menu/Menu';
+import Menu from '@components/shared/Menu';
 
 interface StepSelectionMenuProps {
   id: string;
@@ -25,7 +25,7 @@ export const StepSelectionMenu: React.FC<StepSelectionMenuProps> = ({
   nodePosition
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [addStepModalOpen, setAddStepModalOpen] = useState<boolean>(false);
+  const [addStepModalOpen, setAddStepModalOpen] = useState(false);
   const [selectedStep, setSelectedStep] = useState<FunctionalStepType | null>();
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
