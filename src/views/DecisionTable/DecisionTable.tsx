@@ -39,10 +39,8 @@ import { customBoxShadows, theme } from '@theme';
 import PlusSquareIcon from '@icons/plusSquare.svg';
 import StepDetailsHeader from '@components/StepManagment/StepDetailsHeader/StepDetailsHeader';
 import StepDetailsControlBar from '@components/StepManagment/StepDetailsControlBar/StepDetailsControlBar';
-import {
-  SnackbarErrorMessage,
-  SnackbarMessage
-} from '@components/shared/Snackbar/SnackbarMessage';
+import Message from '@components/shared/Snackbar/Message';
+import ErrorMessage from '@components/shared/Snackbar/ErrorMessage';
 import ConditionsCard from '@views/DecisionTable/ConditionsCard';
 import { SNACK_TYPE } from '@constants/common';
 import {
@@ -59,7 +57,7 @@ import { useIsDirty } from '@contexts/IsDirtyContext';
 import NoteSection from '@components/StepManagment/NoteSection/NoteSection';
 import InputText from '@components/shared/Forms/InputText';
 import { selectDataDictionary } from '@store/dataDictionary/selectors';
-import { selectUserDefinedVariables } from '@store/flow/selectors';
+import { useVariables } from '@hooks/useVariables';
 
 type DecisionTableStepProps = {
   flow: IFlow;
@@ -90,9 +88,8 @@ const DecisionTable = ({
   const { isDirty, setIsDirty } = useIsDirty();
   const canUpdateFlow = useHasUserPermission(permissionsMap.canUpdateFlow);
   const user = useAppSelector(selectUserInfo);
-  const { integrationVariables, variables, enumDataTypes } =
-    useAppSelector(selectDataDictionary);
-  const userDefinedVariables = useAppSelector(selectUserDefinedVariables);
+  const { allVariables, integrationVariables } = useVariables();
+  const { enumDataTypes } = useAppSelector(selectDataDictionary);
 
   const [caseEntries, setCaseEntries] = useState<CaseEntry[]>([]);
 
@@ -115,14 +112,6 @@ const DecisionTable = ({
   const username = getFullUserName(user);
   const nodes: FlowNode[] = getNodes();
   const edges = getEdges();
-
-  const allVariables = useMemo(
-    () => ({
-      ...variables,
-      ...userDefinedVariables
-    }),
-    [variables, userDefinedVariables]
-  );
 
   const flatVariables = useMemo(() => _.flatMap(allVariables), [allVariables]);
 
@@ -394,7 +383,7 @@ const DecisionTable = ({
       setNodes(updatedNodes);
       setEdges(newEdges);
       enqueueSnackbar(
-        <SnackbarMessage
+        <Message
           message="Success"
           details={`Changes for the "${step.data.name}" step were successfully applied.`}
         />,
@@ -402,7 +391,7 @@ const DecisionTable = ({
       );
       resetActiveStepId();
     } catch (error) {
-      enqueueSnackbar(<SnackbarErrorMessage message="Error" error={error} />, {
+      enqueueSnackbar(<ErrorMessage message="Error" error={error} />, {
         variant: SNACK_TYPE.ERROR
       });
     }

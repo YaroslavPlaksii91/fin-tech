@@ -4,7 +4,7 @@ import { IEntity } from './entity';
 import {
   VARIABLE_DATA_TYPE,
   CONTROL_FILES,
-  UserDefinedVariable,
+  DataDictionaryVariable,
   VARIABLE_SOURCE_TYPE
 } from './dataDictionary';
 
@@ -89,11 +89,11 @@ export interface IFlow {
   viewport: Viewport;
   data: Omit<FlowData, 'id'>;
   temporaryVariables: Pick<
-    UserDefinedVariable,
+    DataDictionaryVariable,
     'dataType' | 'defaultValue' | 'description' | 'name'
   >[];
   permanentVariables: Pick<
-    UserDefinedVariable,
+    DataDictionaryVariable,
     'dataType' | 'defaultValue' | 'description' | 'name'
   >[];
 }

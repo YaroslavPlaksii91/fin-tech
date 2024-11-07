@@ -30,14 +30,17 @@ import {
   StyledTableCell,
   StyledTableRow
 } from '@components/shared/Table/styled';
-import { DataDictionaryVariable, Variable } from '@domain/dataDictionary';
+import {
+  DataDictionaryVariable,
+  DataDictionaryVariables
+} from '@domain/dataDictionary';
 
 interface Table {
   stepIds: (string | null)[];
   columns: ColumnData[];
   rows: CaseEntry[];
-  variables: Record<string, Variable[]>;
-  integrationData: Record<string, Variable[]>;
+  variables: DataDictionaryVariables;
+  integrationData: DataDictionaryVariables;
   stepOptions: { value: string; label: string }[];
   handleDeleteRow: (index: number) => void;
   handleAddColumn: (column: ColumnData) => void;

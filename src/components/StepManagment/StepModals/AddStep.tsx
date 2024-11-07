@@ -6,7 +6,7 @@ import { XYPosition } from 'reactflow';
 
 import { validationSchema, FormData } from './validationSchema';
 
-import Dialog from '@components/shared/Modals/Dialog';
+import Dialog from '@components/shared/Dialog';
 import InputText from '@components/shared/Forms/InputText';
 import LoadingButton from '@components/shared/Buttons/Loading';
 import {
