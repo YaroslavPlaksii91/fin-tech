@@ -10,7 +10,13 @@ import {
 } from '@domain/dataDictionary';
 import { isDecimal, isInteger, isStringArray, REGEX } from '@utils/validation';
 
-export const validationSchema = (variables: DataDictionaryVariables) =>
+export const validationSchema = ({
+  variables,
+  currentName
+}: {
+  variables: DataDictionaryVariables;
+  currentName?: string;
+}) =>
   yup.object().shape({
     name: yup
       .string()
@@ -39,7 +45,7 @@ export const validationSchema = (variables: DataDictionaryVariables) =>
         (val: string) => {
           const isExist = Object.values(variables)
             .flat()
-            .some(({ name }) => name === val);
+            .some(({ name }) => name === val && name !== currentName);
 
           return !isExist;
         }
