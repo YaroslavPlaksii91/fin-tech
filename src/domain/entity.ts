@@ -1,4 +1,4 @@
-import { UserDefinedVariable } from '@domain/dataDictionary';
+import { DataDictionaryVariable } from '@domain/dataDictionary';
 export interface IEntity {
   id: string;
   createdBy: string;
@@ -11,7 +11,7 @@ export type JSONPatchOperation = {
   value?:
     | string
     | Pick<
-        UserDefinedVariable,
+        DataDictionaryVariable,
         'name' | 'dataType' | 'defaultValue' | 'description' | 'sourceType'
       >;
   path: string;

@@ -6,12 +6,7 @@ interface TabPanelProps {
   value: string;
 }
 
-const TabPanel: React.FC<TabPanelProps> = ({
-  children,
-  value,
-  tabName,
-  ...props
-}) => (
+const TabPanel = ({ children, value, tabName, ...props }: TabPanelProps) => (
   <div
     role="tabpanel"
     hidden={value !== tabName}

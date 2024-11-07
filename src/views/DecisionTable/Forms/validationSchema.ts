@@ -2,8 +2,7 @@ import * as yup from 'yup';
 
 import { Operator, OPERATORS, VALUE_TYPES, ValueType } from '../types';
 
-import { isDecimal, isInteger } from '@utils/validation';
-import { checkDataType } from '@components/DataDictionaryVariables/utils';
+import { isDecimal, isInteger, checkDataType } from '@utils/validation';
 
 export const validationSchema = (dataType: ReturnType<typeof checkDataType>) =>
   yup.object().shape({

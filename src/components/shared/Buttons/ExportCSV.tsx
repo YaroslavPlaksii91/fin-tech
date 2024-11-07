@@ -11,10 +11,10 @@ interface ExportCSVButtonProps {
   exportFile: () => Promise<AxiosResponse>;
 }
 
-const ExportCSVButton: React.FC<ExportCSVButtonProps> = ({
+const ExportCSVButton = ({
   defaultFileName,
   exportFile
-}) => {
+}: ExportCSVButtonProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleExport = async () => {

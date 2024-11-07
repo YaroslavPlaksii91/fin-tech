@@ -1,4 +1,4 @@
-import { DataDictionaryVariable } from '@domain/dataDictionary';
+import { DataDictionaryVariables } from '@domain/dataDictionary';
 import { integrationApi } from '@utils/api';
 
 class IntegrationsService {
@@ -12,9 +12,7 @@ class IntegrationsService {
 
   async getIntegrationVariables() {
     const { data } =
-      await integrationApi.get<Record<string, DataDictionaryVariable[]>>(
-        '/data-dictionary'
-      );
+      await integrationApi.get<DataDictionaryVariables>('/data-dictionary');
     return data;
   }
 }
