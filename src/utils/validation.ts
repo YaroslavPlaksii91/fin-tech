@@ -3,7 +3,8 @@ import { VARIABLE_DATA_TYPE } from '@domain/dataDictionary';
 export const REGEX = {
   INTEGER: /^(0|[1-9]\d*)$/,
   DECIMAL: /^(0|[1-9]\d*)(\.\d+)$/,
-  ENUM_DATA_TYPE: /^Enum:.+/
+  ENUM_DATA_TYPE: /^Enum:.+/,
+  DOUBLE_QUOTES: /^".*"$/
 };
 
 export const isInteger = (value?: string | number | null) => {

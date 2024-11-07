@@ -18,7 +18,7 @@ const NoteSection = ({ children }: StepNoteSectionProps) => (
   >
     <Stack sx={{ width: '50%', minWidth: '100px' }}>
       <Typography variant="h6" pb={1}>
-        Note for this step
+        Note for this Step
       </Typography>
       {children}
     </Stack>

@@ -233,7 +233,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
             details="A Champion Challenger is a step that allows you to split traffic into several groups and run experiment."
           />
           <Stack>
-            <Paper sx={{ borderRadius: '4px' }}>
+            <Paper sx={{ marginBottom: '8px', borderRadius: '4px' }}>
               <StyledTableContainer>
                 <Table stickyHeader aria-label="sticky table">
                   <TableHead>
@@ -324,7 +324,7 @@ const ChampionChallenger: React.FC<ChampionChallengerProps> = ({
                 }}
                 startIcon={<AddIcon />}
               >
-                Add new split
+                Add New Split
               </Button>
             )}
           </Stack>
