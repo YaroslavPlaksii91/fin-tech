@@ -12,10 +12,10 @@ import { isDecimal, isInteger, isStringArray } from '@utils/validation';
 
 export const validationSchema = ({
   variables,
-  isEdit
+  currentName
 }: {
   variables: DataDictionaryVariables;
-  isEdit: boolean;
+  currentName?: string;
 }) =>
   yup.object().shape({
     name: yup
@@ -43,11 +43,9 @@ export const validationSchema = ({
         'is-unique',
         'Variable with the specified name already exists, please choose a unique name',
         (val: string) => {
-          if (isEdit) return true;
-
           const isExist = Object.values(variables)
             .flat()
-            .some(({ name }) => name === val);
+            .some(({ name }) => name === val && name !== currentName);
 
           return !isExist;
         }

@@ -85,7 +85,7 @@ const VariableForm = ({
   } = useForm({
     mode: 'onChange',
     resolver: yupResolver(
-      validationSchema({ variables, isEdit: Boolean(formData) })
+      validationSchema({ variables, currentName: formData?.name })
     ),
     defaultValues: {
       name: formData ? formData.name : '',
