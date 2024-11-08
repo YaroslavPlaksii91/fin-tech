@@ -12,11 +12,14 @@ import ReactFlow, {
   Edge,
   ConnectionMode,
   Controls,
-  XYPosition
+  XYPosition,
+  updateEdge,
+  Connection
 } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 import 'reactflow/dist/style.css';
 import * as _ from 'lodash-es';
+import { differenceBy } from 'lodash-es';
 
 import { nodeTypes } from '../Nodes';
 import { edgeTypes } from '../Edges';
@@ -34,6 +37,7 @@ import {
   checkIfFlowIsEdit,
   checkIfNodeHasConnection,
   checkIfNodeIsInitial,
+  connectionLineStyle,
   createNewNode,
   elementsOverlap,
   getUpdatedChampionChallengerNodes,
@@ -527,6 +531,49 @@ const withFlowChartEditor =
       [rfInstance]
     );
 
+    const handleReconnect = useCallback(
+      (oldEdge: Edge<EdgeData>, newConnection: Connection) => {
+        setEdges((els) => {
+          const updatedEdges = updateEdge(oldEdge, newConnection, els);
+          const edgesDiff = differenceBy(updatedEdges, els, 'id');
+          const newEdge = edgesDiff?.[0];
+
+          // If source node still connected - we have to update data for decision table and champion challenger
+          if (newEdge && oldEdge.source === newConnection.source) {
+            const sourceNode = rfInstance?.getNode(newConnection.source);
+
+            if (sourceNode) {
+              switch (sourceNode.type) {
+                case StepType.CHAMPION_CHALLENGER: {
+                  const updatedNodes = getUpdatedChampionChallengerNodes({
+                    nodes,
+                    updatedNode: sourceNode,
+                    newEdgeId: newEdge.id,
+                    sourceHandle: oldEdge.sourceHandle || DEFAULT_SOURCE_HANDLE
+                  });
+                  setNodes(updatedNodes);
+                  break;
+                }
+                case StepType.DECISION_TABLE: {
+                  const updatedNodes = getUpdatedDecisionTableNodes({
+                    nodes,
+                    updatedNode: sourceNode,
+                    newEdgeId: newEdge.id,
+                    sourceHandle: oldEdge.sourceHandle || DEFAULT_SOURCE_HANDLE
+                  });
+                  setNodes(updatedNodes);
+                  break;
+                }
+              }
+            }
+          }
+
+          return updatedEdges;
+        });
+      },
+      [rfInstance, nodes]
+    );
+
     return (
       <>
         <ReactFlow
@@ -541,6 +588,7 @@ const withFlowChartEditor =
           onNodesChange={isViewMode ? undefined : onNodesChange}
           onEdgesChange={isViewMode ? undefined : onEdgesChange}
           onConnect={isViewMode ? undefined : onConnect}
+          onEdgeUpdate={isViewMode ? undefined : handleReconnect}
           nodesConnectable={!isViewMode}
           onPaneClick={onPaneClick}
           onNodeContextMenu={onNodeContextMenu}
@@ -554,11 +602,13 @@ const withFlowChartEditor =
               onAddNodeBetweenEdges
             });
           }}
+          deleteKeyCode={['Backspace', 'Delete']}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           attributionPosition="bottom-left"
           connectionMode={ConnectionMode.Loose}
           connectionLineType={ConnectionLineType.SmoothStep}
+          connectionLineStyle={connectionLineStyle}
         >
           <Background variant={BackgroundVariant.Dots} />
           {!isViewMode && <AutoLayoutButton onClick={handleAutoLayout} />}

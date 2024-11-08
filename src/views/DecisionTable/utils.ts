@@ -248,7 +248,7 @@ export const getFormatedValue = (data: FormFieldsProps): string => {
     case OPERATORS.NOT_EQUAL:
       formatedValue = Array.isArray(data.value)
         ? data.value[0]
-        : (data.value ?? '');
+        : data.value ?? '';
       break;
     case OPERATORS.ANY:
       formatedValue = '';
@@ -259,7 +259,7 @@ export const getFormatedValue = (data: FormFieldsProps): string => {
     default:
       formatedValue = Array.isArray(data.value)
         ? `[${data.value.join(',')}]`
-        : (data.value ?? '');
+        : data.value ?? '';
   }
 
   return formatedValue;
