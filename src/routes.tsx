@@ -1,17 +1,23 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { lazy } from 'react';
 
-const Home = lazy(() => import('@pages/Home'));
-const FlowEdit = lazy(() => import('@pages/FlowEdit'));
-const DataDictionary = lazy(() => import('@pages/DataDictionary'));
-const ChangeHistory = lazy(() => import('@pages/ChangeHistory'));
-const AccessVerification = lazy(() => import('@pages/AccessVerification'));
-const LeadRequestsReports = lazy(() => import('@pages/LeadRequestsReports'));
-const DenialReasons = lazy(() => import('@pages/DenialReasons'));
-const Waterfall = lazy(() => import('@pages/Waterfall'));
-const BillingReport = lazy(() => import('@pages/BillingReport'));
-const FlowList = lazy(() => import('@pages/FlowList'));
-const PermissionDenied = lazy(() => import('@pages/PermissionDenied'));
+import withLazyLoading from '@hocs/withLazyLoading';
+const Home = withLazyLoading(() => import('@pages/Home'));
+const FlowEdit = withLazyLoading(() => import('@pages/FlowEdit'));
+const DataDictionary = withLazyLoading(() => import('@pages/DataDictionary'));
+const ChangeHistory = withLazyLoading(() => import('@pages/ChangeHistory'));
+const AccessVerification = withLazyLoading(
+  () => import('@pages/AccessVerification')
+);
+const LeadRequestsReports = withLazyLoading(
+  () => import('@pages/LeadRequestsReports')
+);
+const DenialReasons = withLazyLoading(() => import('@pages/DenialReasons'));
+const Waterfall = withLazyLoading(() => import('@pages/Waterfall'));
+const BillingReport = withLazyLoading(() => import('@pages/BillingReport'));
+const FlowList = withLazyLoading(() => import('@pages/FlowList'));
+const PermissionDenied = withLazyLoading(
+  () => import('@pages/PermissionDenied')
+);
 import Login from '@pages/Login';
 import Layout from '@components/Layouts/Layout';
 import PrivateRoutes from '@components/Router/PrivateRoutes';

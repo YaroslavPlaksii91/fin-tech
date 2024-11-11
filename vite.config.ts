@@ -51,6 +51,10 @@ export default defineConfig(() => ({
         replacement: resolve(__dirname, './src/hooks')
       },
       {
+        find: '@hocs',
+        replacement: resolve(__dirname, './src/hocs')
+      },
+      {
         find: '@pages',
         replacement: resolve(__dirname, './src/pages')
       },
@@ -73,10 +77,6 @@ export default defineConfig(() => ({
       {
         find: '@domain',
         replacement: resolve(__dirname, './src/domain')
-      },
-      {
-        find: '@hook',
-        replacement: resolve(__dirname, './src/hook')
       },
       {
         find: '@contexts',
