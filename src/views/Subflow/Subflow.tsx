@@ -19,7 +19,7 @@ import { getFullUserName } from '@utils/helpers';
 import { updateNodes } from '@store/flow/utils';
 import { useDeselectNodes } from '@hooks/useDeselectNodes';
 
-interface SubFlowProps {
+interface SubflowProps {
   mainFlow: IFlow;
   activeStepId: string;
   resetActiveStepId: () => void;
@@ -27,23 +27,23 @@ interface SubFlowProps {
   isViewMode: boolean;
 }
 
-const SubFlow: React.FC<SubFlowProps> = ({
+const Subflow: React.FC<SubflowProps> = ({
   mainFlow,
   rfInstance,
-  rfInstance: { getNodes, setNodes },
   activeStepId,
   resetActiveStepId,
   isViewMode
 }) => {
   const user = useAppSelector(selectUserInfo);
   const username = getFullUserName(user);
-  const mainFlowNodes: FlowNode[] = getNodes();
+  const mainFlowNodes: FlowNode[] = rfInstance.getNodes();
 
   // Need to deselect all nodes to prevent deleting a node when pressing Backspace
   useDeselectNodes();
 
   const subFlow = useMemo(() => {
     const subFlowNode = _.cloneDeep(findSubFlow(activeStepId, mainFlowNodes));
+
     if (subFlowNode) {
       return {
         id: subFlowNode.id,
@@ -65,41 +65,54 @@ const SubFlow: React.FC<SubFlowProps> = ({
     return undefined;
   }, [activeStepId, mainFlowNodes.length]);
 
-  const saveSubflow = useCallback((subFlow: IFlow) => {
-    const mainFlowNodes: FlowNode[] = getNodes();
-    const updatedNodes = updateNodesInSubFlow(mainFlowNodes, subFlow, username);
-    setNodes(updatedNodes);
-    resetActiveStepId();
-  }, []);
+  const saveSubflow = useCallback(
+    (subFlow: IFlow) => {
+      const mainFlowNodes: FlowNode[] = rfInstance.getNodes();
+      const updatedNodes = updateNodesInSubFlow(
+        mainFlowNodes,
+        subFlow,
+        username
+      );
+      rfInstance.setNodes(updatedNodes);
+      resetActiveStepId();
+    },
+    [rfInstance]
+  );
 
   const addNodeAndSyncMainFlow = useCallback(
     (subFlowId: string, newNode: FlowNode, edges: Edge[]) => {
-      const mainFlowNodes: FlowNode[] = getNodes();
+      const mainFlowNodes: FlowNode[] = rfInstance.getNodes();
       const updatedNodes = addNodeInSubFlow(
         mainFlowNodes,
         subFlowId,
         newNode,
         edges
       );
-      setNodes(updatedNodes);
+      rfInstance.setNodes(updatedNodes);
     },
-    []
+    [rfInstance]
   );
 
-  const deleteNodeAndSyncMainFlow = useCallback((deleteNodes: FlowNode[]) => {
-    const mainFlowNodes: FlowNode[] = getNodes();
-    const updatedNodes = removeNodesAndEdgesInSubFlow(
-      mainFlowNodes,
-      deleteNodes
-    );
-    setNodes(updatedNodes);
-  }, []);
+  const deleteNodeAndSyncMainFlow = useCallback(
+    (deleteNodes: FlowNode[]) => {
+      const mainFlowNodes: FlowNode[] = rfInstance.getNodes();
+      const updatedNodes = removeNodesAndEdgesInSubFlow(
+        mainFlowNodes,
+        deleteNodes
+      );
+      rfInstance.setNodes(updatedNodes);
+    },
+    [rfInstance]
+  );
 
-  const updateNodeNameAndSyncMainFlow = useCallback((updatedNode: FlowNode) => {
-    const mainFlowNodes: FlowNode[] = getNodes();
-    const updatedNodes = updateNodes(mainFlowNodes, updatedNode);
-    setNodes(updatedNodes);
-  }, []);
+  const updateNodeNameAndSyncMainFlow = useCallback(
+    (updatedNode: FlowNode) => {
+      const mainFlowNodes: FlowNode[] = rfInstance.getNodes();
+      const updatedNodes = updateNodes(mainFlowNodes, updatedNode);
+      rfInstance.setNodes(updatedNodes);
+    },
+    [rfInstance]
+  );
 
   return (
     // As subFlow is sub instance main flow, it needs own flow provider
@@ -122,4 +135,4 @@ const SubFlow: React.FC<SubFlowProps> = ({
   );
 };
 
-export default SubFlow;
+export default Subflow;
