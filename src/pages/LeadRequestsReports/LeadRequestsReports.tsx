@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridRowParams, GridSortModel } from '@mui/x-data-grid-premium';
+import LinearProgress from '@mui/material/LinearProgress';
 
 import { COLUMN_IDS, FetchList, RowData } from './types';
 import { buildParams, getFormattedRows } from './utils';
@@ -70,7 +71,8 @@ const LeadRequestsReports = () => {
           onRowsPerPageChange={handleRowsPerPageChange}
           onPageApply={setPage}
         />
-      )
+      ),
+      loadingOverlay: () => <LinearProgress />
     }),
     [
       loading,
