@@ -524,6 +524,7 @@ const withFlowChartEditor =
       <>
         <ReactFlow
           id={flow.id}
+          key={flow.id}
           data-flow-id={flow.id}
           nodes={nodes}
           edges={edges}
