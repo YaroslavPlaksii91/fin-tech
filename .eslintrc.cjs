@@ -29,7 +29,7 @@ module.exports = {
         alias: {
           '@constants': './src/constants',
           '@components': './src/components',
-          '@hook': './src/hook',
+          '@hocs': './src/hocs',
           '@domain': './src/domain',
           '@services': './src/services',
           '@pages': './src/pages',

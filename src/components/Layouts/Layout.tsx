@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { ReactFlowProvider } from 'reactflow';
-import { Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import Navigation from '../Navigation/Navigation';
 
@@ -17,7 +17,6 @@ import {
 } from '@store/dataDictionary/asyncThunk';
 import { setEnumDataTypes } from '@store/dataDictionary';
 import Logger from '@utils/logger';
-import Loader from '@components/shared/Loader';
 
 export default function Layout() {
   const dispatch = useAppDispatch();
@@ -51,9 +50,7 @@ export default function Layout() {
             <CrossPlatformDrawer />
             <Sidebar />
             <MainContainer>
-              <Suspense fallback={<Loader elSize="medium" />}>
-                <Outlet />
-              </Suspense>
+              <Outlet />
             </MainContainer>
           </LayoutContainer>
         </ActiveStepProvider>

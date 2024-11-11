@@ -20,6 +20,7 @@
     "paths": {
       "@components/*": ["./components/*"],
       "@store/*": ["./store/*"],
+      "@hocs/*": ["./hocs/*"],
       "@hooks/*": ["./hooks/*"],
       "@pages/*": ["./pages/*"],
       "@utils/*": ["./utils/*"],
@@ -30,7 +31,7 @@
       "@views/*": ["./views/*"],
       "@theme": ["./themeConfig"],
       "@icons": ["./assets/icons"],
-      "@images": ["./assets/images"],
+      "@images": ["./assets/images"]
     },
 
     /* Linting */
