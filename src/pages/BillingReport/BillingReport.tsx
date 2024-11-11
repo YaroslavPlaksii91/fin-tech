@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import LinearProgress from '@mui/material/LinearProgress';
 
 import { getFormattedRows } from './utils';
 import getDataGridColumns from './columns';
@@ -56,9 +55,6 @@ const BillingReports = () => {
           loading={loading}
           sortingMode="server"
           wrapperSx={{ maxHeight: TABLE_WRAPPER_HEIGHT }}
-          slots={{
-            loadingOverlay: () => <LinearProgress />
-          }}
         />
       </Paper>
     </Wrapper>

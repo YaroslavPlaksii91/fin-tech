@@ -4,6 +4,7 @@ import {
   DataGridPremiumProps,
   GridRowClassNameParams
 } from '@mui/x-data-grid-premium';
+import LinearProgress from '@mui/material/LinearProgress';
 
 import { StyledDataGridPremium } from './styled';
 import CustomNoResultsOverlay from './CustomNoResultsOverlay';
@@ -30,7 +31,11 @@ const DataGrid = ({
   const memoizedSx = useMemo(() => ({ height: TABLE.HEIGHT, ...sx }), [sx]);
 
   const memoizedSlots = useMemo(
-    () => ({ noRowsOverlay: CustomNoResultsOverlay, ...slots }),
+    () => ({
+      noRowsOverlay: CustomNoResultsOverlay,
+      loadingOverlay: () => <LinearProgress />,
+      ...slots
+    }),
     [slots]
   );
 

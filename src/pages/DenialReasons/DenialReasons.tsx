@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { GridSortModel } from '@mui/x-data-grid-premium';
-import LinearProgress from '@mui/material/LinearProgress';
 
 import { FetchList, RowData } from './types';
 import { buildParams, getFormattedRows } from './utils';
@@ -90,9 +89,6 @@ const DenialReasons = () => {
           sortingMode="server"
           onSortModelChange={handleSortModelChange}
           wrapperSx={{ maxHeight: TABLE_WRAPPER_HEIGHT }}
-          slots={{
-            loadingOverlay: () => <LinearProgress />
-          }}
         />
       </Paper>
       <Filters

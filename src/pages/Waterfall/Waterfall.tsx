@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GridSortModel } from '@mui/x-data-grid-premium';
-import LinearProgress from '@mui/material/LinearProgress';
 
 import { FetchData } from './types';
 import { getFormattedRows, buildParams, getTableStyles } from './utils';
@@ -99,9 +98,6 @@ const Waterfall = () => {
           onSortModelChange={handleSortModelChange}
           sx={getTableStyles()}
           wrapperSx={{ maxHeight: TABLE_WRAPPER_HEIGHT }}
-          slots={{
-            loadingOverlay: () => <LinearProgress />
-          }}
         />
       </Paper>
       <Filters
