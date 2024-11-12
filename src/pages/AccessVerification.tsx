@@ -12,20 +12,26 @@ const AccessVerification = () => {
   const code = searchParams.get('code');
   const isLogout = searchParams.get('logout');
 
+  // This is a temporary solution for redirecting back
+  // to the previous page (after login or getting access token)
+  // Necessary for the Reports System
+  const backToPath = localStorage.getItem('back_to');
+
   useEffect(() => {
     if (isLogout) {
-      authService.onTokenChange(null);
-    } else {
-      if (authService.isTokenSet()) {
-        navigate(routes.index);
-      }
-      if (code) {
-        void authService.getAccessToken(code);
-      } else {
-        void navigate(routes.auth.login);
-      }
+      return void authService.onTokenChange(null);
     }
-  }, [code, navigate]);
+
+    if (code) {
+      return void authService.getAccessToken(code);
+    }
+
+    if (authService.isTokenSet()) {
+      navigate(backToPath || routes.index);
+    } else {
+      navigate(routes.auth.login);
+    }
+  }, []);
 
   return (
     <Stack alignItems="center" justifyContent="center" height="100vh">
