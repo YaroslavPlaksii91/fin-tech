@@ -24,12 +24,16 @@ export const authService = new Auth.IAMAuthService({
     }
   },
   onLogin() {
-    void router.navigate(routes.index);
+    // This is a temporary solution for redirecting back
+    // to the previous page (after login or getting access token)
+    // Necessary for the Reports System
+    const backToPath = localStorage.getItem('back_to');
+    void router.navigate(backToPath || routes.index);
   },
   onLogout() {
-    void router.navigate(routes.auth.login);
+    authService.redirectToAuthorize();
   },
   onError() {
-    void router.navigate(routes.auth.login);
+    authService.logout();
   }
 });

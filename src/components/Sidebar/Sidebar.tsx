@@ -238,6 +238,16 @@ const Sidebar = () => {
     }
   }, [id]);
 
+  useEffect(() => {
+    // This is a temporary solution for redirecting back
+    // to the previous page (after login or getting access token)
+    // Necessary for the Reports System
+    localStorage.setItem(
+      'back_to',
+      window.location.pathname + '?' + window.location.search
+    );
+  }, [window.location.pathname, window.location.search]);
+
   return (
     <StyledPaper
       elevation={0}
