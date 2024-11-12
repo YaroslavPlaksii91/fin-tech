@@ -9,7 +9,13 @@ import routes from '@constants/routes';
 
 export const authService = new Auth.IAMAuthService({
   clientId: CLIENT_ID,
-  scopes: [SCOPES_LIST.OFFLINE_ACCESS, SCOPES_LIST.ROLES],
+  scopes: [
+    // TODO: delete unnecessary scopes
+    SCOPES_LIST.OFFLINE_ACCESS,
+    SCOPES_LIST.OPEN_ID,
+    SCOPES_LIST.PROFILE,
+    SCOPES_LIST.POLICIES
+  ],
   apiUrl: authApiBaseUrl,
   callbackUrl: window.location.origin + routes.auth.accessVerification,
   onTokenChange(token: string | null) {

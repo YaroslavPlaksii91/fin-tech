@@ -45,17 +45,15 @@ export const KEY_CODES = {
 
 export const RULES_LIMIT = 10;
 
-export const SCOPES_LIST = {
-  OFFLINE_ACCESS: 'offline_access',
-  ROLES: 'roles'
-};
-
-export const GRANT_TYPES = {
-  AUTH_CODE: 'authorization_code',
-  REFRESH_TOKEN: 'refresh_token',
-  PASSWORD: 'password',
-  CLIENT_CREDENTIALS: 'client_credentials'
-};
+export enum SCOPES_LIST {
+  OFFLINE_ACCESS = 'offline_access',
+  ROLES = 'roles',
+  POLICIES = 'policies',
+  OPEN_ID = 'openid',
+  EMAIL = 'email',
+  PROFILE = 'profile',
+  ORGANIZATION = 'organization'
+}
 
 export const tooltipText = {
   cantUpdateFlow: "You don't have permission to update flow"
