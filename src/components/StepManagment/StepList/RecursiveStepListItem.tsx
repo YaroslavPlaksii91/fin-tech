@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import {
   ListItem,
   ListItemIcon,
@@ -10,6 +10,7 @@ import StepActionsMenu from '../StepActionsMenu/StepActionsMenu';
 
 import StepListItem from './StepListItem';
 import { StyledListItem, StyledStepItem } from './styled';
+import { sortNodesAlphabetically } from './utils';
 
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { ExpandMoreIcon } from '@components/shared/Icons';
@@ -27,12 +28,12 @@ interface RecursiveStepListItemProps {
   level: number;
   activeStep: ActiveStep;
   setActiveStep: (value: ActiveStep) => void;
-  subFlowId?: string;
+  subFlowId?: string | null;
   isEditMode: boolean;
   isProductionFlow: boolean;
 }
 
-const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
+const RecursiveStepListItem = ({
   step,
   activeStep,
   setActiveStep,
@@ -40,7 +41,7 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
   subFlowId = null,
   isProductionFlow,
   level
-}) => {
+}: RecursiveStepListItemProps) => {
   if (step.data.$type !== StepType.SUBFLOW) {
     return (
       <StepListItem
@@ -54,13 +55,18 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
     );
   }
 
+  const sortedNodes = useMemo(
+    () => sortNodesAlphabetically(step.data.nodes),
+    [step.data.nodes]
+  );
+
   const stepsSubflow = useMemo(
     () =>
-      step.data?.nodes?.filter(
+      sortedNodes.filter(
         (node) =>
           node.data.$type !== StepType.START && node.data.$type !== StepType.END
       ),
-    [step]
+    [sortedNodes]
   );
 
   return (
@@ -122,4 +128,4 @@ const RecursiveStepListItem: React.FC<RecursiveStepListItemProps> = ({
   );
 };
 
-export default React.memo(RecursiveStepListItem);
+export default memo(RecursiveStepListItem);
