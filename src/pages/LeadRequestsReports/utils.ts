@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import { COLUMN_IDS, IFilters } from './types';
+import { COLUMN_IDS, COLUMN_IDS_NULLABLE_ENUM_KEYS, IFilters } from './types';
 
 import { LeadRequestReport } from '@domain/leadRequestsReports';
 import { FULL_DATE_TIME_FORMAT } from '@constants/common';
@@ -81,6 +81,9 @@ export const buildParams = ({
     sort,
     pageSize: rowsPerPage,
     pageNumber: page,
-    filter: buildDynamicLINQFilterQuery({ ...filters, requestDate }, COLUMN_IDS)
+    filter: buildDynamicLINQFilterQuery(
+      { ...filters, requestDate },
+      { ...COLUMN_IDS, ...COLUMN_IDS_NULLABLE_ENUM_KEYS }
+    )
   };
 };
