@@ -14,9 +14,7 @@ export const authService = new Auth.IAMAuthService({
     SCOPES_LIST.OFFLINE_ACCESS,
     SCOPES_LIST.OPEN_ID,
     SCOPES_LIST.PROFILE,
-    SCOPES_LIST.POLICIES,
-    SCOPES_LIST.ROLES,
-    SCOPES_LIST.ORGANIZATION
+    SCOPES_LIST.POLICIES
   ],
   apiUrl: authApiBaseUrl,
   callbackUrl: window.location.origin + routes.auth.accessVerification,
