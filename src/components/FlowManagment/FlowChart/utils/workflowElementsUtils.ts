@@ -10,6 +10,7 @@ import {
 
 import { FlowNode } from '@domain/flow';
 import { createInitialFlow } from '@components/FlowManagment/AddFlow/initialFlowUtils';
+import { palette } from '@theme';
 
 interface GetUpdatedNodes {
   nodes: FlowNode[];
@@ -20,6 +21,10 @@ interface GetUpdatedNodes {
 
 const defaultPosition = { x: 0, y: 0 };
 const defaultNodeSize = { width: 140, height: 50 };
+export const connectionLineStyle = {
+  stroke: palette.error,
+  strokeWidth: 2
+};
 
 export const createNewNode = (
   type: StepType,
@@ -182,7 +187,7 @@ export const getUpdatedChampionChallengerNodes = ({
   nodes,
   updatedNode,
   newEdgeId,
-  sourceHandle
+  sourceHandle // index of the edge
 }: GetUpdatedNodes) => {
   const updatedSplits =
     updatedNode.data.splits?.map((split, index) => {
