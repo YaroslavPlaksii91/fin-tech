@@ -35,6 +35,10 @@ export enum COLUMN_IDS {
   craScore = 'processingMetadata.craScore'
 }
 
+export enum COLUMN_IDS_NULLABLE_ENUM_KEYS {
+  store = 'output.store.value'
+}
+
 export type RowData = ExtractArrayElementType<
   ReturnType<typeof getFormattedRows>
 >;
