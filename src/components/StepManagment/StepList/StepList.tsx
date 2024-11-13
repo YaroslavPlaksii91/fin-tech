@@ -21,15 +21,13 @@ const StepList = ({ nodes, isProductionFlow = false }: StepListProps) => {
   const location = useLocation();
   const isEditMode = location.pathname.includes('/edit');
 
-  const sortedNodes = useMemo(() => sortNodesAlphabetically(nodes), [nodes]);
-
   const steps = useMemo(
     () =>
-      sortedNodes.filter(
+      sortNodesAlphabetically(nodes).filter(
         (node) =>
           node.data.$type !== StepType.START && node.data.$type !== StepType.END
       ),
-    [sortedNodes]
+    [nodes]
   );
 
   return (

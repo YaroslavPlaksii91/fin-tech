@@ -55,18 +55,13 @@ const RecursiveStepListItem = ({
     );
   }
 
-  const sortedNodes = useMemo(
-    () => sortNodesAlphabetically(step.data.nodes),
-    [step.data.nodes]
-  );
-
   const stepsSubflow = useMemo(
     () =>
-      sortedNodes.filter(
+      sortNodesAlphabetically(step.data.nodes).filter(
         (node) =>
           node.data.$type !== StepType.START && node.data.$type !== StepType.END
       ),
-    [sortedNodes]
+    [step.data.nodes]
   );
 
   return (
