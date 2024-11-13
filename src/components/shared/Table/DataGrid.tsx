@@ -44,7 +44,7 @@ const DataGrid = ({
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '200px',
+        minHeight: rows.length ? 'auto' : '200px',
         width: '100%',
         ...wrapperSx
       }}
