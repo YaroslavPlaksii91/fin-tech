@@ -25,7 +25,15 @@ const createAPIClient = ({ baseURL }: { baseURL: string }) => {
   api.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
-      void authService.axiosResponseMiddleware(error.response?.status);
+      // Debugging
+      if (error.response?.status === 401) {
+        if (authService.isTokenSet()) {
+          await authService.axiosResponseMiddleware(401);
+        } else {
+          authService.redirectToAuthorize();
+        }
+      }
+
       return Promise.reject(error);
     }
   );
