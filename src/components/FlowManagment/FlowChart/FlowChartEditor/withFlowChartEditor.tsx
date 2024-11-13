@@ -65,6 +65,7 @@ import { getFullUserName, isDeleteKeyCodes } from '@utils/helpers';
 import { deleteNodes } from '@store/flow';
 import { useIsDirty } from '@contexts/IsDirtyContext';
 import { theme } from '@theme';
+import { KEY_CODES } from '@constants/common';
 
 type FlowChartEditorProps = {
   flow: IFlow;
@@ -602,7 +603,7 @@ const withFlowChartEditor =
               onAddNodeBetweenEdges
             });
           }}
-          deleteKeyCode={['Backspace', 'Delete']}
+          deleteKeyCode={[KEY_CODES.Backspace, KEY_CODES.Delete]}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           attributionPosition="bottom-left"
