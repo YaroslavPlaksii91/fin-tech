@@ -1,23 +1,21 @@
 import { List, ListItem, Typography } from '@mui/material';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { StyledStepItem } from './styled';
 import RecursiveStepListItem from './RecursiveStepListItem';
+import { sortNodesAlphabetically } from './utils';
 
 import { StepType } from '@components/FlowManagment/FlowChart/types';
 import { FlowNode } from '@domain/flow';
 import { useActiveStep } from '@contexts/StepContext';
 
-type StepListProps = {
+interface StepListProps {
   nodes: FlowNode[];
   isProductionFlow?: boolean;
-};
+}
 
-const StepList: React.FC<StepListProps> = ({
-  nodes,
-  isProductionFlow = false
-}) => {
+const StepList = ({ nodes, isProductionFlow = false }: StepListProps) => {
   const { activeStep, setActiveStep } = useActiveStep();
 
   const location = useLocation();
@@ -25,7 +23,7 @@ const StepList: React.FC<StepListProps> = ({
 
   const steps = useMemo(
     () =>
-      nodes.filter(
+      sortNodesAlphabetically(nodes).filter(
         (node) =>
           node.data.$type !== StepType.START && node.data.$type !== StepType.END
       ),
