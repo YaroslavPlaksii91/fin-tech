@@ -76,7 +76,7 @@ const NumberRangeInput = <
                   aria-label="Decrement"
                   disabled={+value <= rangeMin || disabled}
                   onClick={() => {
-                    onChange(+value - 1);
+                    onChange((+value - 1).toFixed(2));
                     onChangeCb?.();
                   }}
                 >
@@ -97,7 +97,7 @@ const NumberRangeInput = <
                   aria-label="Increment"
                   disabled={!(+value < rangeMax) || disabled}
                   onClick={() => {
-                    onChange(+value + 1);
+                    onChange((+value + 1).toFixed(2));
                     onChangeCb?.();
                   }}
                 >

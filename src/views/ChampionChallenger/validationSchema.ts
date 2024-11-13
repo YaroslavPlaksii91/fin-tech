@@ -39,7 +39,7 @@ const validationSchema = yup.object().shape({
         const splits = value as unknown as Split[];
 
         const totalPercentage = splits?.reduce(
-          (sum, split) => sum + split.percentage,
+          (sum, split) => Number((sum + split.percentage).toFixed(2)),
           0
         );
         if (totalPercentage > 100) {
