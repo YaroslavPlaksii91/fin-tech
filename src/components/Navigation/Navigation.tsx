@@ -54,7 +54,7 @@ function Navigation() {
               <LogoIcon height={40} color={palette.white} />
             </Link>
             <Divider variant="middle" orientation="vertical" flexItem />
-            <Typography>Underwriting System</Typography>
+            <Typography>Underwriting</Typography>
           </Stack>
           <Stack direction="row" alignItems="center" gap={1}>
             <StyledHeaderButton

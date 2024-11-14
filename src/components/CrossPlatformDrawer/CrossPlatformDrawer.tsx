@@ -35,7 +35,11 @@ const CrossPlatformDrawer: React.FC = () => {
     <StyledDrawer variant="permanent" open={true}>
       <StyledList>
         <ListItem disablePadding>
-          <Tooltip title="Launcher" followCursor placement="right-start">
+          <Tooltip
+            title="Application Launcher"
+            followCursor
+            placement="right-start"
+          >
             <StyledListItemButton
               onClick={() => handleRedirect(LAUNCHER_URL)}
               className="launcher"
